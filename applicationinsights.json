@@ -1,6 +1,6 @@
 {
   "role": {
-    "name": "hmpps-template-kotlin"
+    "name": "manage-recalls-api"
   },
   "customDimensions": {
     "service.version": "${BUILD_NUMBER}"
