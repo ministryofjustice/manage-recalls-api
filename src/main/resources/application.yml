@@ -1,10 +1,10 @@
 info.app:
-  name: HMPPS Template Kotlin
+  name: Manage Recalls Api
   version: 1.0
 
 spring:
   application:
-    name: hmpps-template-kotlin
+    name: manage-recalls-api
   codec:
     max-in-memory-size: 10MB
 
