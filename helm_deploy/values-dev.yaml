@@ -6,6 +6,3 @@ generic-service:
 
   ingress:
     host: manage-recalls-api-dev.hmpps.service.justice.gov.uk
-
-generic-prometheus-alerts:
-  alertSeverity: digital-prison-service-dev
