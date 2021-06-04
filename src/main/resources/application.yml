@@ -13,6 +13,20 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  security:
+    oauth2:
+      client:
+        registration:
+          offender-search-client:
+            client-name: offender-search-client
+            client-id: ${api-client-id:delius}
+            client-secret: ${api-client-secret:clientsecret}
+            authorization-grant-type: client_credentials
+            provider: hmpps-auth
+        provider:
+          hmpps-auth:
+            token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
+
   profiles:
     group:
       test:
@@ -49,3 +63,11 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+
+prisonerSearch:
+  endpoint:
+    url: 'http://localhost:9999'
+
+probationSearch:
+  endpoint:
+    url: 'http://localhost:9999'
