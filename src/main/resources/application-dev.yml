@@ -1,0 +1,14 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          public-key-location: classpath:local-public-key.pub
+
+logging:
+  level:
+    uk.gov: DEBUG
+
+server:
+  port: 9091
+  shutdown: immediate
