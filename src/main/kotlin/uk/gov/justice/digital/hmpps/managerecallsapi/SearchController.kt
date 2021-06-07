@@ -29,4 +29,5 @@ class SearchController(
   fun prisonerSearch(@RequestBody searchRequest: SearchRequest) =
     ResponseEntity.ok(
       prisonerOffenderSearchClient.search(searchRequest) + probationOffenderSearchClient.search(searchRequest)
-    )}
+    )
+}

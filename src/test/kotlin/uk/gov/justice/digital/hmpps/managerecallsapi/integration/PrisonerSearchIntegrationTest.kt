@@ -17,13 +17,27 @@ import org.mockserver.model.HttpStatusCode.UNAUTHORIZED_401
 import org.mockserver.springtest.MockServerTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpHeaders.*
+import org.springframework.http.HttpHeaders.ACCEPT
+import org.springframework.http.HttpHeaders.AUTHORIZATION
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.*
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Alias
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Offender
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderAlias
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderMatch
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderMatchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderMatches
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatch
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatches
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchAlias
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchResult
 import java.time.LocalDate
 import java.time.Month
-import java.util.*
+import java.util.Base64
 
 @MockServerTest(
   "prisonerSearch.endpoint.url=http://localhost:\${mockServerPort}",
