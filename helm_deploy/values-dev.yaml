@@ -6,6 +6,7 @@ generic-service:
 
   ingress:
     host: manage-recalls-api-dev.hmpps.service.justice.gov.uk
+    tlsSecretName: ppud-replacement-dev-cert
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth

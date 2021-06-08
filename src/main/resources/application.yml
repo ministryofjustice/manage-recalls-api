@@ -26,6 +26,9 @@ spring:
         provider:
           hmpps-auth:
             token-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/oauth/token
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/.well-known/jwks.json
 
   profiles:
     group:
