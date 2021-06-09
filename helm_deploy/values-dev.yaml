@@ -10,10 +10,6 @@ generic-service:
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth
-    SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth/.well-known/jwks.json"
-    PRISONERSEARCH_ENDPOINT_URL: "https://prisoner-offender-search-dev.prison.service.justice.gov.uk"
-    PROBATIONSEARCH_ENDPOINT_URL: "https://probation-offender-search-dev.hmpps.service.justice.gov.uk"
-
-generic-prometheus-alerts:
-  targetApplication: manage-recalls-api
-  alertSeverity: ppud-replacement-alerts
+    SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: https://sign-in-dev.hmpps.service.justice.gov.uk/auth/.well-known/jwks.json
+    PRISONERSEARCH_ENDPOINT_URL: https://prisoner-offender-search-dev.prison.service.justice.gov.uk
+    PROBATIONSEARCH_ENDPOINT_URL: https://probation-offender-search-dev.hmpps.service.justice.gov.uk
