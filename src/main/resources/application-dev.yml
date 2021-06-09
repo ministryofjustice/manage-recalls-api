@@ -12,11 +12,3 @@ logging:
 server:
   port: 9091
   shutdown: immediate
-
-prisonerSearch:
-  endpoint:
-    url: 'http://localhost:9999'
-
-probationSearch:
-  endpoint:
-    url: 'http://localhost:9999'
