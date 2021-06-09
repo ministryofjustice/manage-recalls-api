@@ -31,11 +31,13 @@ class JwtAuthenticationHelper {
   fun createTestJwt(
     subject: String = "Bertie",
     expiryTime: Duration = Duration.ofHours(1),
-    jwtId: String = UUID.randomUUID().toString()
+    jwtId: String = UUID.randomUUID().toString(),
+    role: String? = null
   ): String {
-    val claims = mutableMapOf<String, Any>(
+    val claims = mutableMapOf(
       "client_id" to "test_client_id",
-      "username" to subject
+      "username" to subject,
+      "authorities" to role?.let { listOf(role) }.orEmpty()
     )
     return Jwts.builder()
       .setId(jwtId)

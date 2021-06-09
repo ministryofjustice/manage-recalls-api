@@ -45,7 +45,7 @@ import java.util.Base64
   "probationSearch.endpoint.url=http://localhost:\${mockServerPort}",
   "oauth.endpoint.url=http://localhost:\${mockServerPort}"
 )
-internal class PrisonerSearchIntegrationTest(
+class PrisonerSearchIntegrationTest(
   @Autowired private val jwtAuthenticationHelper: JwtAuthenticationHelper,
   @Autowired private val objectMapper: ObjectMapper,
   @Value("\${spring.security.oauth2.client.registration.offender-search-client.client-id}") private val apiClientId: String,
@@ -55,7 +55,9 @@ internal class PrisonerSearchIntegrationTest(
 
   private var mockServerClient: MockServerClient? = null
 
-  private val testJwt = jwtAuthenticationHelper.createTestJwt()
+  private val apiClientJwt = jwtAuthenticationHelper.createTestJwt(subject = apiClientId)
+  private val invalidUserJwt = jwtTokenWithRole("ROLE_UNKNOWN")
+  private val validUserJwt = jwtTokenWithRole("ROLE_MANAGE_RECALLS")
 
   private val firstName = "John"
   private val middleNames = "Geoff"
@@ -65,6 +67,7 @@ internal class PrisonerSearchIntegrationTest(
   private val aliasFirstName = "Bertie"
   private val aliasMiddleNames = "Jim"
   private val aliasLastName = "Badger"
+  private val apiSearchRequest = SearchRequest(lastName)
   private val prisonerMatchRequest = PrisonerMatchRequest(null, lastName)
   private val offenderMatchRequest = OffenderMatchRequest(null, lastName)
 
@@ -85,7 +88,7 @@ internal class PrisonerSearchIntegrationTest(
         .withBody(
           """{
               "token_type": "bearer",
-              "access_token": "$testJwt"
+              "access_token": "$apiClientJwt"
           }
           """.trimIndent()
         )
@@ -93,25 +96,31 @@ internal class PrisonerSearchIntegrationTest(
   }
 
   @Test
-  internal fun `should handle unauthorized from prisoner search api`() {
+  fun `should respond with 401 if user does not have the MANAGE_RECALLS role`() {
+    sendAuthenticatedPostRequest("/search", apiSearchRequest, invalidUserJwt)
+      .expectStatus().is4xxClientError
+  }
+
+  @Test
+  fun `should handle unauthorized from prisoner search api`() {
     prisonerSearchRespondsWith(prisonerMatchRequest, UNAUTHORIZED_401)
 
-    sendAuthenticatedPostRequest("/search", prisonerMatchRequest)
+    sendAuthenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
       .expectStatus().is5xxServerError
   }
 
   @Test
-  internal fun `can send search request to prisoner search api and retrieve no matches`() {
+  fun `can send search request to prisoner search api and retrieve no matches`() {
     prisonerSearchRespondsWith(prisonerMatchRequest, PrisonerMatches())
     probationSearchRespondsWith(offenderMatchRequest, OffenderMatches())
 
-    val result = authenticatedPostRequest("/search", SearchRequest(lastName))
+    val result = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
 
     assertThat(result, isEmpty)
   }
 
   @Test
-  internal fun `can send search request to prisoner search api and retrieve matches`() {
+  fun `can send search request to prisoner search api and retrieve matches`() {
     val prisoner = Prisoner(
       prisonerNumber = nomisNumber,
       firstName = firstName,
@@ -159,7 +168,7 @@ internal class PrisonerSearchIntegrationTest(
       OffenderMatches(listOf(OffenderMatch(offender)))
     )
 
-    val response = authenticatedPostRequest("/search", SearchRequest(lastName))
+    val response = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
 
     assertThat(
       response,
@@ -184,7 +193,10 @@ internal class PrisonerSearchIntegrationTest(
     )
   }
 
-  private fun prisonerSearchRespondsWith(request: PrisonerMatchRequest, statusCode: HttpStatusCode) {
+  private fun prisonerSearchRespondsWith(
+    request: PrisonerMatchRequest,
+    statusCode: HttpStatusCode
+  ) {
     mockServerClient?.`when`(
       expectedPostRequest("/match-prisoners", request)
     )?.respond(
@@ -218,7 +230,7 @@ internal class PrisonerSearchIntegrationTest(
     .withMethod("POST")
     .withPath(path)
     .withHeaders(
-      header(AUTHORIZATION, "Bearer $testJwt"),
+      header(AUTHORIZATION, "Bearer $apiClientJwt"),
       header(CONTENT_TYPE, APPLICATION_JSON_VALUE),
       header(ACCEPT, APPLICATION_JSON_VALUE)
     )
@@ -226,10 +238,11 @@ internal class PrisonerSearchIntegrationTest(
 
   private fun authenticatedPostRequest(
     path: String,
-    request: Any
+    request: Any,
+    clientJwt: String
   ): List<SearchResult> {
     val responseType = object : ParameterizedTypeReference<List<SearchResult>>() {}
-    return sendAuthenticatedPostRequest(path, request)
+    return sendAuthenticatedPostRequest(path, request, clientJwt)
       .expectStatus().isOk
       .expectBody(responseType)
       .returnResult()
@@ -238,10 +251,13 @@ internal class PrisonerSearchIntegrationTest(
 
   private inline fun <reified T> sendAuthenticatedPostRequest(
     path: String,
-    request: T
+    request: T,
+    clientJwt: String
   ) = webTestClient.post()
     .uri(path)
     .body(Mono.just(request), T::class.java)
-    .headers { it.add(AUTHORIZATION, "Bearer $testJwt") }
+    .headers { it.add(AUTHORIZATION, "Bearer $clientJwt") }
     .exchange()
+
+  private fun jwtTokenWithRole(role: String? = null) = jwtAuthenticationHelper.createTestJwt(role = role)
 }

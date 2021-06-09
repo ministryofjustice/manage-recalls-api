@@ -4,7 +4,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import javax.validation.ValidationException
@@ -34,6 +36,20 @@ class ManageRecallsApiExceptionHandler {
         ErrorResponse(
           status = INTERNAL_SERVER_ERROR,
           userMessage = "Unexpected error: ${e.message}",
+          developerMessage = e.message
+        )
+      )
+  }
+
+  @ExceptionHandler(AccessDeniedException::class)
+  fun handleException(e: AccessDeniedException): ResponseEntity<ErrorResponse?>? {
+    log.error("Unexpected AccessDeniedException", e)
+    return ResponseEntity
+      .status(UNAUTHORIZED)
+      .body(
+        ErrorResponse(
+          status = UNAUTHORIZED,
+          userMessage = "Access Denied: ${e.message}",
           developerMessage = e.message
         )
       )
