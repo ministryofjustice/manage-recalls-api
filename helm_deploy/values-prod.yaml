@@ -1,0 +1,15 @@
+---
+# Per environment values which override defaults in manage-recalls-api/values.yaml
+
+generic-service:
+  replicaCount: 2
+
+  ingress:
+    host: manage-recalls-api.hmpps.service.justice.gov.uk
+    tlsSecretName: ppud-replacement-prod-cert
+
+  env:
+    OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
+    SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: https://sign-in.hmpps.service.justice.gov.uk/auth/.well-known/jwks.json
+    PRISONERSEARCH_ENDPOINT_URL: https://prisoner-offender-search.prison.service.justice.gov.uk
+    PROBATIONSEARCH_ENDPOINT_URL: https://probation-offender-search.hmpps.service.justice.gov.uk
