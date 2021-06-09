@@ -19,7 +19,7 @@ spring:
         registration:
           offender-search-client:
             client-name: offender-search-client
-            client-id: ${api-client-id:delius}
+            client-id: ${api-client-id:ppud-api-client}
             client-secret: ${api-client-secret:clientsecret}
             authorization-grant-type: client_credentials
             provider: hmpps-auth
@@ -69,8 +69,8 @@ management:
 
 prisonerSearch:
   endpoint:
-    url: 'http://localhost:9999'
+    url: http://localhost:9999
 
 probationSearch:
   endpoint:
-    url: 'http://localhost:9999'
+    url: http://localhost:9999

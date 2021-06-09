@@ -16,6 +16,7 @@ import org.mockserver.model.HttpStatusCode.OK_200
 import org.mockserver.model.HttpStatusCode.UNAUTHORIZED_401
 import org.mockserver.springtest.MockServerTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders.ACCEPT
 import org.springframework.http.HttpHeaders.AUTHORIZATION
@@ -46,7 +47,9 @@ import java.util.Base64
 )
 internal class PrisonerSearchIntegrationTest(
   @Autowired private val jwtAuthenticationHelper: JwtAuthenticationHelper,
-  @Autowired private val objectMapper: ObjectMapper
+  @Autowired private val objectMapper: ObjectMapper,
+  @Value("\${spring.security.oauth2.client.registration.offender-search-client.client-id}") private val apiClientId: String,
+  @Value("\${spring.security.oauth2.client.registration.offender-search-client.client-secret}") private val apiClientSecret: String
 ) :
   IntegrationTestBase() {
 
@@ -67,7 +70,7 @@ internal class PrisonerSearchIntegrationTest(
 
   @BeforeEach
   fun stubJwt() {
-    val oauthClientToken = Base64.getEncoder().encodeToString("delius:clientsecret".toByteArray())
+    val oauthClientToken = Base64.getEncoder().encodeToString("$apiClientId:$apiClientSecret".toByteArray())
     mockServerClient?.`when`(
       request()
         .withMethod("POST")
