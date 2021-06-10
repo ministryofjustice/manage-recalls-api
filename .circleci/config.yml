@@ -33,6 +33,14 @@ workflows:
           filters:
             tags:
               ignore: /.*/
+      - hmpps/veracode_policy_scan:
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
+      - hmpps/veracode_pipeline_scan:
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
       - hmpps/helm_lint:
           name: helm_lint
       - hmpps/build_docker:
@@ -43,7 +51,7 @@ workflows:
                 - main
       - hmpps/deploy_env:
           name: deploy_dev
-          env: "dev"
+          env: dev
           context: hmpps-common-vars
           filters:
             branches:
@@ -82,14 +90,23 @@ workflows:
   security:
     triggers:
       - schedule:
-          cron: "0 7 * * 1-5"
+          cron: "0 9 * * 1-5"
           filters:
             branches:
               only:
                 - main
+                - add-veracode-scans
     jobs:
       - hmpps/gradle_owasp_dependency_check:
           context:
+            - hmpps-common-vars
+      - hmpps/veracode_policy_scan:
+          context:
+            - veracode-credentials
+            - hmpps-common-vars
+      - hmpps/veracode_pipeline_scan:
+          context:
+            - veracode-credentials
             - hmpps-common-vars
 
 
