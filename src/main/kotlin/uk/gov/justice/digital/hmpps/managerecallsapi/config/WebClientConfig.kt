@@ -26,21 +26,10 @@ class WebClientConfig {
   @Value("\${prisonerSearch.endpoint.url}")
   private lateinit var prisonerOffenderSearchBaseUrl: String
 
-  @Value("\${probationSearch.endpoint.url}")
-  private lateinit var probationOffenderSearchBaseUrl: String
-
   @Bean
   fun prisonerOffenderSearchWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
     return AuthenticatingRestClient(
       webClientFactory(prisonerOffenderSearchBaseUrl, authorizedClientManager, Integer.MAX_VALUE),
-      "offender-search-client"
-    )
-  }
-
-  @Bean
-  fun probationOffenderSearchWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
-    return AuthenticatingRestClient(
-      webClientFactory(probationOffenderSearchBaseUrl, authorizedClientManager, Integer.MAX_VALUE),
       "offender-search-client"
     )
   }

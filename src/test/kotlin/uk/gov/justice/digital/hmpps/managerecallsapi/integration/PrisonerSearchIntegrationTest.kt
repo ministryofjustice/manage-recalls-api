@@ -24,11 +24,6 @@ import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Alias
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Offender
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderAlias
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderMatch
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderMatchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.OffenderMatches
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatch
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatchRequest
@@ -42,7 +37,6 @@ import java.util.Base64
 
 @MockServerTest(
   "prisonerSearch.endpoint.url=http://localhost:\${mockServerPort}",
-  "probationSearch.endpoint.url=http://localhost:\${mockServerPort}",
   "oauth.endpoint.url=http://localhost:\${mockServerPort}"
 )
 class PrisonerSearchIntegrationTest(
@@ -69,7 +63,6 @@ class PrisonerSearchIntegrationTest(
   private val aliasLastName = "Badger"
   private val apiSearchRequest = SearchRequest(lastName)
   private val prisonerMatchRequest = PrisonerMatchRequest(null, lastName)
-  private val offenderMatchRequest = OffenderMatchRequest(null, lastName)
 
   @BeforeEach
   fun stubJwt() {
@@ -112,7 +105,6 @@ class PrisonerSearchIntegrationTest(
   @Test
   fun `can send search request to prisoner search api and retrieve no matches`() {
     prisonerSearchRespondsWith(prisonerMatchRequest, PrisonerMatches())
-    probationSearchRespondsWith(offenderMatchRequest, OffenderMatches())
 
     val result = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
 
@@ -121,51 +113,12 @@ class PrisonerSearchIntegrationTest(
 
   @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
-    val prisoner = Prisoner(
-      prisonerNumber = nomisNumber,
-      firstName = firstName,
-      middleNames = middleNames,
-      lastName = lastName,
-      pncNumber = "pncNumber",
-      croNumber = "croNumber",
-      dateOfBirth = dateOfBirth,
-      gender = "gender",
-      status = "status",
-      aliases = listOf(
-        Alias(
-          firstName = aliasFirstName,
-          middleNames = aliasMiddleNames,
-          lastName = aliasLastName,
-          dateOfBirth = dateOfBirth,
-          gender = "gender"
-        )
-      )
-    )
-    val offender = Offender(
-      offenderId = 123L,
-      firstName = firstName,
-      middleNames = listOf(middleNames),
-      lastName = lastName,
-      dateOfBirth = dateOfBirth,
-      gender = "gender",
-      status = "status",
-      aliases = listOf(
-        OffenderAlias(
-          firstName = aliasFirstName,
-          middleNames = listOf(aliasMiddleNames),
-          lastName = aliasLastName,
-          dateOfBirth = dateOfBirth,
-          gender = "gender"
-        )
-      )
-    )
+    val prisoner1 = prisoner(nomisNumber)
+    val prisoner2 = prisoner(null)
+
     prisonerSearchRespondsWith(
       prisonerMatchRequest,
-      PrisonerMatches(listOf(PrisonerMatch(prisoner)))
-    )
-    probationSearchRespondsWith(
-      offenderMatchRequest,
-      OffenderMatches(listOf(OffenderMatch(offender)))
+      PrisonerMatches(listOf(PrisonerMatch(prisoner1), PrisonerMatch(prisoner2)))
     )
 
     val response = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
@@ -193,6 +146,27 @@ class PrisonerSearchIntegrationTest(
     )
   }
 
+  private fun prisoner(nomisNumber: String?) = Prisoner(
+    prisonerNumber = nomisNumber,
+    firstName = firstName,
+    middleNames = middleNames,
+    lastName = lastName,
+    pncNumber = "pncNumber",
+    croNumber = "croNumber",
+    dateOfBirth = dateOfBirth,
+    gender = "gender",
+    status = "status",
+    aliases = listOf(
+      Alias(
+        firstName = aliasFirstName,
+        middleNames = aliasMiddleNames,
+        lastName = aliasLastName,
+        dateOfBirth = dateOfBirth,
+        gender = "gender"
+      )
+    )
+  )
+
   private fun prisonerSearchRespondsWith(
     request: PrisonerMatchRequest,
     statusCode: HttpStatusCode
@@ -207,17 +181,6 @@ class PrisonerSearchIntegrationTest(
   private fun prisonerSearchRespondsWith(request: PrisonerMatchRequest, response: PrisonerMatches) {
     mockServerClient?.`when`(
       expectedPostRequest("/match-prisoners", request)
-    )?.respond(
-      response()
-        .withStatusCode(OK_200.code())
-        .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .withBody(objectMapper.writeValueAsString(response))
-    )
-  }
-
-  private fun probationSearchRespondsWith(request: OffenderMatchRequest, response: OffenderMatches) {
-    mockServerClient?.`when`(
-      expectedPostRequest("/match", request)
     )?.respond(
       response()
         .withStatusCode(OK_200.code())

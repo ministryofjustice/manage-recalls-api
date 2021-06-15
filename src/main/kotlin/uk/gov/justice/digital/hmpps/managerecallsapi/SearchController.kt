@@ -12,15 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.ProbationOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchRequest
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
 class SearchController(
-  @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
-  @Autowired private val probationOffenderSearchClient: ProbationOffenderSearchClient
+  @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient
 ) {
   companion object {
     val log: Logger = LoggerFactory.getLogger(this::class.java)
@@ -30,6 +28,6 @@ class SearchController(
   @ResponseBody
   fun prisonerSearch(@RequestBody searchRequest: SearchRequest) =
     ResponseEntity.ok(
-      prisonerOffenderSearchClient.search(searchRequest) + probationOffenderSearchClient.search(searchRequest)
+      prisonerOffenderSearchClient.search(searchRequest)
     )
 }
