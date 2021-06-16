@@ -23,12 +23,10 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Alias
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatch
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatches
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchAlias
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchResult
 import java.time.LocalDate
@@ -58,9 +56,6 @@ class PrisonerSearchIntegrationTest(
   private val lastName = "Smith"
   private val dateOfBirth = LocalDate.of(1990, Month.FEBRUARY, 12)
   private val nomisNumber = "123456"
-  private val aliasFirstName = "Bertie"
-  private val aliasMiddleNames = "Jim"
-  private val aliasLastName = "Badger"
   private val apiSearchRequest = SearchRequest(lastName)
   private val prisonerMatchRequest = PrisonerMatchRequest(null, lastName)
 
@@ -132,14 +127,12 @@ class PrisonerSearchIntegrationTest(
             lastName,
             nomisNumber,
             dateOfBirth,
-            listOf(SearchAlias(aliasFirstName, aliasMiddleNames, aliasLastName, dateOfBirth))
           ),
           SearchResult(
             firstName,
             lastName,
             null,
             dateOfBirth,
-            listOf(SearchAlias(aliasFirstName, aliasMiddleNames, aliasLastName, dateOfBirth))
           )
         )
       )
@@ -156,15 +149,6 @@ class PrisonerSearchIntegrationTest(
     dateOfBirth = dateOfBirth,
     gender = "gender",
     status = "status",
-    aliases = listOf(
-      Alias(
-        firstName = aliasFirstName,
-        middleNames = aliasMiddleNames,
-        lastName = aliasLastName,
-        dateOfBirth = dateOfBirth,
-        gender = "gender"
-      )
-    )
   )
 
   private fun prisonerSearchRespondsWith(

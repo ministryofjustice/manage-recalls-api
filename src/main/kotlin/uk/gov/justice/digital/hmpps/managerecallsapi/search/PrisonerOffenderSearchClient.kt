@@ -34,9 +34,7 @@ fun PrisonerMatches?.toSearchResults() =
   this?.let {
     matches.map {
       with(it.prisoner) {
-        val searchAliases =
-          aliases?.map { SearchAlias(it.firstName, it.middleNames, it.lastName, it.dateOfBirth) }.orEmpty()
-        SearchResult(firstName!!, lastName!!, prisonerNumber, dateOfBirth, searchAliases)
+        SearchResult(firstName!!, lastName!!, prisonerNumber, dateOfBirth)
       }
     }
   }.orEmpty()
@@ -60,15 +58,6 @@ data class Prisoner(
   val dateOfBirth: LocalDate? = null,
   val gender: String? = null,
   val status: String? = null,
-  val aliases: List<Alias>? = null
-)
-
-data class Alias(
-  val firstName: String? = null,
-  val middleNames: String? = null,
-  val lastName: String? = null,
-  val dateOfBirth: LocalDate? = null,
-  val gender: String? = null
 )
 
 @Suppress("unused")
@@ -86,17 +75,10 @@ enum class MatchedBy {
 data class PrisonerMatchRequest(val firstName: String?, val lastName: String)
 
 data class SearchRequest(val name: String)
+
 data class SearchResult(
   val firstName: String?,
   val lastName: String?,
   val nomisNumber: String?,
   val dateOfBirth: LocalDate? = null,
-  val aliases: List<SearchAlias> = emptyList()
-)
-
-data class SearchAlias(
-  val firstName: String? = null,
-  val middleNames: String? = null,
-  val lastName: String? = null,
-  val dateOfBirth: LocalDate? = null
 )
