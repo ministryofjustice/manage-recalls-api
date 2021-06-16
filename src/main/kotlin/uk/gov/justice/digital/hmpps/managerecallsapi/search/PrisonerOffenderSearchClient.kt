@@ -71,6 +71,7 @@ data class Alias(
   val gender: String? = null
 )
 
+@Suppress("unused")
 enum class MatchedBy {
   ALL_SUPPLIED,
   ALL_SUPPLIED_ALIAS,

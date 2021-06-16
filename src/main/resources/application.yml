@@ -70,7 +70,3 @@ management:
 prisonerSearch:
   endpoint:
     url: http://localhost:9999
-
-probationSearch:
-  endpoint:
-    url: http://localhost:9999
