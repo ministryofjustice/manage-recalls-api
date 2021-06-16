@@ -22,7 +22,7 @@ class PrisonerOffenderSearchClient {
     log.info("Sending prisoner search request: $searchRequest")
 
     return webClient
-      .post("/match-prisoners", PrisonerMatchRequest(null, searchRequest.name))
+      .post("/match-prisoners", PrisonerMatchRequest(searchRequest.nomsNumber))
       .retrieve()
       .bodyToMono(PrisonerMatches::class.java)
       .block()!!
@@ -34,7 +34,7 @@ fun PrisonerMatches?.toSearchResults() =
   this?.let {
     matches.map {
       with(it.prisoner) {
-        SearchResult(firstName!!, lastName!!, prisonerNumber, dateOfBirth)
+        SearchResult(firstName, lastName, prisonerNumber, dateOfBirth)
       }
     }
   }.orEmpty()
@@ -72,13 +72,13 @@ enum class MatchedBy {
   NOTHING
 }
 
-data class PrisonerMatchRequest(val firstName: String?, val lastName: String)
+data class PrisonerMatchRequest(val nomsNumber: String)
 
-data class SearchRequest(val name: String)
+data class SearchRequest(val nomsNumber: String)
 
 data class SearchResult(
   val firstName: String?,
   val lastName: String?,
-  val nomisNumber: String?,
+  val nomsNumber: String?,
   val dateOfBirth: LocalDate? = null,
 )

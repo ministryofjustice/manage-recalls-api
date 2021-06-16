@@ -55,9 +55,9 @@ class PrisonerSearchIntegrationTest(
   private val middleNames = "Geoff"
   private val lastName = "Smith"
   private val dateOfBirth = LocalDate.of(1990, Month.FEBRUARY, 12)
-  private val nomisNumber = "123456"
-  private val apiSearchRequest = SearchRequest(lastName)
-  private val prisonerMatchRequest = PrisonerMatchRequest(null, lastName)
+  private val nomsNumber = "123456"
+  private val apiSearchRequest = SearchRequest(nomsNumber)
+  private val prisonerMatchRequest = PrisonerMatchRequest(nomsNumber)
 
   @BeforeEach
   fun stubJwt() {
@@ -108,12 +108,15 @@ class PrisonerSearchIntegrationTest(
 
   @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
-    val prisoner1 = prisoner(nomisNumber)
-    val prisoner2 = prisoner(null)
 
     prisonerSearchRespondsWith(
       prisonerMatchRequest,
-      PrisonerMatches(listOf(PrisonerMatch(prisoner1), PrisonerMatch(prisoner2)))
+      PrisonerMatches(
+        listOf(
+          PrisonerMatch(testPrisoner(nomsNumber, firstName, lastName)),
+          PrisonerMatch(testPrisoner(null, firstName, lastName))
+        )
+      )
     )
 
     val response = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
@@ -125,7 +128,7 @@ class PrisonerSearchIntegrationTest(
           SearchResult(
             firstName,
             lastName,
-            nomisNumber,
+            nomsNumber,
             dateOfBirth,
           ),
           SearchResult(
@@ -139,8 +142,28 @@ class PrisonerSearchIntegrationTest(
     )
   }
 
-  private fun prisoner(nomisNumber: String?) = Prisoner(
-    prisonerNumber = nomisNumber,
+  @Test
+  fun `can accept null name fields in results from prisoner search api`() {
+
+    prisonerSearchRespondsWith(
+      prisonerMatchRequest,
+      PrisonerMatches(listOf(PrisonerMatch(testPrisoner(nomsNumber, null, null))))
+    )
+
+    val response = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
+
+    assertThat(
+      response,
+      equalTo(
+        listOf(
+          SearchResult(null, null, nomsNumber, dateOfBirth)
+        )
+      )
+    )
+  }
+
+  private fun testPrisoner(nomsNumber: String?, firstName: String?, lastName: String?) = Prisoner(
+    prisonerNumber = nomsNumber,
     firstName = firstName,
     middleNames = middleNames,
     lastName = lastName,
