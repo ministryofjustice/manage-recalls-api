@@ -3,7 +3,8 @@ services:
   manage-recalls-api:
     build:
       context: .
-    network_mode: "host"
+    networks:
+      hmpps:
     container_name: manage-recalls-api
     ports:
       - "8081:8080"
