@@ -10,5 +10,5 @@ logging:
     uk.gov: DEBUG
 
 server:
-  port: 9091
+  port: 8080
   shutdown: immediate
