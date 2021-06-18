@@ -24,7 +24,7 @@ class Generator {
     val bodyBuilder = MultipartBodyBuilder()
 
     bodyBuilder.part("files", ClassPathResource("/document/template/revocation-order/index.html").file.readBytes())
-    bodyBuilder.part("files", ClassPathResource("/document/template/revocation-order/index.html").file.readBytes())
+    bodyBuilder.part("files", ClassPathResource("/document/template/revocation-order/logo.png").file.readBytes())
 
     return webClient
       .post()
@@ -33,3 +33,4 @@ class Generator {
       .bodyValue(BodyInserters.fromMultipartData(bodyBuilder.build()))
 
   }
+}
