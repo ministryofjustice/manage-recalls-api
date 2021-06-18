@@ -26,6 +26,9 @@ class WebClientConfig {
   @Value("\${prisonerSearch.endpoint.url}")
   private lateinit var prisonerOffenderSearchBaseUrl: String
 
+  @Value("\${gotenberg.base-url}")
+  private lateinit var gotenbergBaseUrl: String
+
   @Bean
   fun prisonerOffenderSearchWebClient(authorizedClientManager: OAuth2AuthorizedClientManager): AuthenticatingRestClient {
     return AuthenticatingRestClient(
@@ -37,6 +40,14 @@ class WebClientConfig {
   @Bean
   fun webClient(): WebClient {
     return WebClient.builder().build()
+  }
+
+  @Bean
+  fun gotenbergWebClient(): WebClient {
+    return WebClient
+      .builder()
+      .baseUrl(gotenbergBaseUrl)
+      .build()
   }
 
   private fun webClientFactory(
