@@ -1,34 +1,68 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.health
 
-import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.function.Consumer
 
 class HealthCheckTest : IntegrationTestBase() {
 
+  companion object {
+    private val prisonerOffenderSearchMockServer = PrisonerOffenderSearchMockServer()
+
+    @BeforeAll
+    @JvmStatic
+    fun startMocks() {
+      prisonerOffenderSearchMockServer.start()
+    }
+
+    @AfterAll
+    @JvmStatic
+    fun stopMocks() {
+      prisonerOffenderSearchMockServer.stop()
+    }
+  }
+
   @Test
-  fun `Health page reports ok`() {
+  fun `service is healthy`() {
+    prisonerOffenderSearchMockServer.isHealthy()
+
     webTestClient.get()
       .uri("/health")
       .exchange()
-      .expectStatus()
-      .isOk
+      .expectStatus().isOk
       .expectBody()
+      .jsonPath("components.prisonerOffenderSearchHealth.details.HttpStatus").isEqualTo(HttpStatus.OK.name)
       .jsonPath("status").isEqualTo("UP")
   }
 
   @Test
+  fun `service is unhealthy`() {
+    prisonerOffenderSearchMockServer.isUnhealthy()
+
+    webTestClient.get()
+      .uri("/health")
+      .exchange()
+      .expectStatus().is5xxServerError
+      .expectBody()
+      .jsonPath("components.prisonerOffenderSearchHealth.details.HttpStatus").isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.name)
+      .jsonPath("status").isEqualTo("DOWN")
+  }
+
+  @Test
   fun `Health info reports version`() {
+    prisonerOffenderSearchMockServer.isHealthy()
+
     webTestClient.get().uri("/health")
       .exchange()
       .expectStatus().isOk
       .expectBody().jsonPath("components.healthInfo.details.version").value(
-        Consumer<String> {
-          assertThat(it).startsWith(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
-        }
+        Matchers.startsWith(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE))
       )
   }
 

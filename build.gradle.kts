@@ -25,6 +25,7 @@ dependencies {
 
   testImplementation("io.mockk:mockk:1.10.0")
   testImplementation("com.natpryce:hamkrest:1.7.0.3")
+  testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.mock-server:mockserver-spring-test-listener:5.11.2")
   testImplementation("org.mock-server:mockserver-junit-jupiter:5.11.2")
 }

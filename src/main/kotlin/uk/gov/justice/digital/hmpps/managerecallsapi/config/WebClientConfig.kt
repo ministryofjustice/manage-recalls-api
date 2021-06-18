@@ -34,6 +34,11 @@ class WebClientConfig {
     )
   }
 
+  @Bean
+  fun webClient(): WebClient {
+    return WebClient.builder().build()
+  }
+
   private fun webClientFactory(
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,
