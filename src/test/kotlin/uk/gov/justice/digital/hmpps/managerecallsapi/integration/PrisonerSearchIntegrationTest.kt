@@ -1,27 +1,12 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isEmpty
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockserver.client.MockServerClient
-import org.mockserver.model.Header.header
-import org.mockserver.model.HttpRequest
-import org.mockserver.model.HttpRequest.request
-import org.mockserver.model.HttpResponse.response
-import org.mockserver.model.HttpStatusCode
-import org.mockserver.model.HttpStatusCode.OK_200
-import org.mockserver.model.HttpStatusCode.UNAUTHORIZED_401
-import org.mockserver.springtest.MockServerTest
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpHeaders.ACCEPT
 import org.springframework.http.HttpHeaders.AUTHORIZATION
-import org.springframework.http.HttpHeaders.CONTENT_TYPE
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.SearchResult
@@ -29,25 +14,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 import java.time.Month
-import java.util.Base64
 
-@MockServerTest(
-  "prisonerSearch.endpoint.url=http://localhost:\${mockServerPort}",
-  "oauth.endpoint.url=http://localhost:\${mockServerPort}"
-)
-class PrisonerSearchIntegrationTest(
-  @Autowired private val jwtAuthenticationHelper: JwtAuthenticationHelper,
-  @Autowired private val objectMapper: ObjectMapper,
-  @Value("\${spring.security.oauth2.client.registration.offender-search-client.client-id}") private val apiClientId: String,
-  @Value("\${spring.security.oauth2.client.registration.offender-search-client.client-secret}") private val apiClientSecret: String
-) :
-  IntegrationTestBase() {
-
-  private var mockServerClient: MockServerClient? = null
-
-  private val apiClientJwt = jwtAuthenticationHelper.createTestJwt(subject = apiClientId)
-  private val invalidUserJwt = jwtTokenWithRole("ROLE_UNKNOWN")
-  private val validUserJwt = jwtTokenWithRole("ROLE_MANAGE_RECALLS")
+class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   private val firstName = "John"
   private val middleNames = "Geoff"
@@ -57,56 +25,41 @@ class PrisonerSearchIntegrationTest(
   private val apiSearchRequest = SearchRequest(nomsNumber)
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
 
-  @BeforeEach
-  fun stubJwt() {
-    val oauthClientToken = Base64.getEncoder().encodeToString("$apiClientId:$apiClientSecret".toByteArray())
-    mockServerClient?.`when`(
-      request()
-        .withMethod("POST")
-        .withPath("/oauth/token")
-        .withHeaders(
-          header(AUTHORIZATION, "Basic $oauthClientToken")
-        )
-    )?.respond(
-      response()
-        .withStatusCode(OK_200.code())
-        .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .withBody(
-          """{
-              "token_type": "bearer",
-              "access_token": "$apiClientJwt"
-          }
-          """.trimIndent()
-        )
-    )
-  }
-
   @Test
   fun `should respond with 401 if user does not have the MANAGE_RECALLS role`() {
+    val invalidUserJwt = jwtAuthenticationHelper.createTestJwt(role = "ROLE_UNKNOWN")
     sendAuthenticatedPostRequest("/search", apiSearchRequest, invalidUserJwt)
       .expectStatus().is4xxClientError
   }
 
   @Test
   fun `should handle unauthorized from prisoner search api`() {
-    prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED_401)
+    prisonerOffenderSearchApi.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
 
-    sendAuthenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
+    sendAuthenticatedPostRequest(
+      "/search",
+      apiSearchRequest,
+      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+    )
       .expectStatus().is5xxServerError
   }
 
   @Test
   fun `can send search request to prisoner search api and retrieve no matches`() {
-    prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
+    prisonerOffenderSearchApi.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
 
-    val result = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
+    val result = authenticatedPostRequest(
+      "/search",
+      apiSearchRequest,
+      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+    )
 
     assertThat(result, isEmpty)
   }
 
   @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
-    prisonerSearchRespondsWith(
+    prisonerOffenderSearchApi.prisonerSearchRespondsWith(
       prisonerSearchRequest,
       listOf(
         testPrisoner(nomsNumber, firstName, lastName),
@@ -114,7 +67,11 @@ class PrisonerSearchIntegrationTest(
       )
     )
 
-    val response = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
+    val response = authenticatedPostRequest(
+      "/search",
+      apiSearchRequest,
+      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+    )
 
     assertThat(
       response,
@@ -149,38 +106,6 @@ class PrisonerSearchIntegrationTest(
     status = "status",
   )
 
-  private fun prisonerSearchRespondsWith(
-    request: PrisonerSearchRequest,
-    statusCode: HttpStatusCode
-  ) {
-    mockServerClient?.`when`(
-      expectedPostRequest("/prisoner-search/match-prisoners", request)
-    )?.respond(
-      response().withStatusCode(statusCode.code())
-    )
-  }
-
-  private fun prisonerSearchRespondsWith(request: PrisonerSearchRequest, responseBody: List<Prisoner>?) {
-    mockServerClient?.`when`(
-      expectedPostRequest("/prisoner-search/match-prisoners", request)
-    )?.respond(
-      response()
-        .withStatusCode(OK_200.code())
-        .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .withBody(responseBody?.let { objectMapper.writeValueAsString(responseBody) })
-    )
-  }
-
-  private fun expectedPostRequest(path: String, request: Any): HttpRequest? = request()
-    .withMethod("POST")
-    .withPath(path)
-    .withHeaders(
-      header(AUTHORIZATION, "Bearer $apiClientJwt"),
-      header(CONTENT_TYPE, APPLICATION_JSON_VALUE),
-      header(ACCEPT, APPLICATION_JSON_VALUE)
-    )
-    .withBody(objectMapper.writeValueAsString(request))
-
   private fun authenticatedPostRequest(
     path: String,
     request: Any,
@@ -203,6 +128,4 @@ class PrisonerSearchIntegrationTest(
     .body(Mono.just(request), T::class.java)
     .headers { it.add(AUTHORIZATION, "Bearer $clientJwt") }
     .exchange()
-
-  private fun jwtTokenWithRole(role: String? = null) = jwtAuthenticationHelper.createTestJwt(role = role)
 }
