@@ -23,10 +23,10 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchResult
 import java.time.LocalDate
 import java.time.Month
 import java.util.Base64
@@ -160,14 +160,14 @@ class PrisonerSearchIntegrationTest(
     )
   }
 
-  private fun prisonerSearchRespondsWith(request: PrisonerSearchRequest, response: List<Prisoner>) {
+  private fun prisonerSearchRespondsWith(request: PrisonerSearchRequest, responseBody: List<Prisoner>?) {
     mockServerClient?.`when`(
       expectedPostRequest("/prisoner-search/match-prisoners", request)
     )?.respond(
       response()
         .withStatusCode(OK_200.code())
         .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .withBody(objectMapper.writeValueAsString(response))
+        .withBody(responseBody?.let { objectMapper.writeValueAsString(responseBody) })
     )
   }
 

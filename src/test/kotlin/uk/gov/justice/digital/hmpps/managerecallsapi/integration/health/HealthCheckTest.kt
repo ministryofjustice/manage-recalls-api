@@ -4,7 +4,8 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.OK
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import java.time.LocalDateTime
@@ -37,7 +38,7 @@ class HealthCheckTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectBody()
-      .jsonPath("components.prisonerOffenderSearchHealth.details.HttpStatus").isEqualTo(HttpStatus.OK.name)
+      .jsonPath("components.prisonerOffenderSearchHealth.details.HttpStatus").isEqualTo(OK.name)
       .jsonPath("status").isEqualTo("UP")
   }
 
@@ -50,7 +51,7 @@ class HealthCheckTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().is5xxServerError
       .expectBody()
-      .jsonPath("components.prisonerOffenderSearchHealth.details.HttpStatus").isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.name)
+      .jsonPath("components.prisonerOffenderSearchHealth.details.HttpStatus").isEqualTo(INTERNAL_SERVER_ERROR.name)
       .jsonPath("status").isEqualTo("DOWN")
   }
 

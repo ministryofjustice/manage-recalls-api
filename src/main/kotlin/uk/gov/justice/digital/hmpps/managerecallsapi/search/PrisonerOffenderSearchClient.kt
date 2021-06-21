@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
 import java.time.LocalDate
 
 @Component
@@ -19,47 +20,13 @@ class PrisonerOffenderSearchClient {
   @Qualifier("prisonerOffenderSearchWebClient")
   internal lateinit var webClient: AuthenticatingRestClient
 
-  fun prisonerSearch(searchRequest: SearchRequest): List<SearchResult> =
+  fun prisonerSearch(searchRequest: SearchRequest): List<Prisoner>? =
     webClient
       .post("/prisoner-search/match-prisoners", PrisonerSearchRequest(searchRequest.nomsNumber))
       .retrieve()
       .bodyToMono(object : ParameterizedTypeReference<List<Prisoner>>() {})
       .block()
-      .toSearchResults()
-
-  fun prisonerMatch(searchRequest: SearchRequest): List<SearchResult> =
-    webClient
-      .post("/match-prisoners", PrisonerMatchRequest(searchRequest.nomsNumber))
-      .retrieve()
-      .bodyToMono(PrisonerMatches::class.java)
-      .block()
-      .toSearchResults()
 }
-
-fun List<Prisoner>?.toSearchResults() =
-  this?.let {
-    this.map {
-      SearchResult(it.firstName, it.lastName, it.prisonerNumber, it.dateOfBirth)
-    }
-  }.orEmpty()
-
-fun PrisonerMatches?.toSearchResults() =
-  this?.let {
-    matches.map {
-      with(it.prisoner) {
-        SearchResult(firstName, lastName, prisonerNumber, dateOfBirth)
-      }
-    }
-  }.orEmpty()
-
-data class PrisonerMatches(
-  val matches: List<PrisonerMatch> = listOf(),
-  val matchedBy: MatchedBy = MatchedBy.NOTHING
-)
-
-data class PrisonerMatch(
-  val prisoner: Prisoner
-)
 
 data class Prisoner(
   val prisonerNumber: String? = null,
@@ -73,27 +40,4 @@ data class Prisoner(
   val status: String? = null,
 )
 
-@Suppress("unused")
-enum class MatchedBy {
-  ALL_SUPPLIED,
-  ALL_SUPPLIED_ALIAS,
-  HMPPS_KEY,
-  EXTERNAL_KEY,
-  NAME,
-  PARTIAL_NAME,
-  PARTIAL_NAME_DOB_LENIENT,
-  NOTHING
-}
-
 data class PrisonerSearchRequest(val prisonerIdentifier: String)
-
-data class PrisonerMatchRequest(val nomsNumber: String)
-
-data class SearchRequest(val nomsNumber: String)
-
-data class SearchResult(
-  val firstName: String?,
-  val lastName: String?,
-  val nomsNumber: String?,
-  val dateOfBirth: LocalDate? = null,
-)
