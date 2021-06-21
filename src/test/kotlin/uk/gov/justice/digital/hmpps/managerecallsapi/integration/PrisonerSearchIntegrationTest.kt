@@ -23,12 +23,10 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatch
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerMatches
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.SearchResult
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 import java.time.Month
 import java.util.Base64
@@ -57,7 +55,7 @@ class PrisonerSearchIntegrationTest(
   private val dateOfBirth = LocalDate.of(1990, Month.FEBRUARY, 12)
   private val nomsNumber = "123456"
   private val apiSearchRequest = SearchRequest(nomsNumber)
-  private val prisonerMatchRequest = PrisonerMatchRequest(nomsNumber)
+  private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
 
   @BeforeEach
   fun stubJwt() {
@@ -91,7 +89,7 @@ class PrisonerSearchIntegrationTest(
 
   @Test
   fun `should handle unauthorized from prisoner search api`() {
-    prisonerSearchRespondsWith(prisonerMatchRequest, UNAUTHORIZED_401)
+    prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED_401)
 
     sendAuthenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
       .expectStatus().is5xxServerError
@@ -99,7 +97,7 @@ class PrisonerSearchIntegrationTest(
 
   @Test
   fun `can send search request to prisoner search api and retrieve no matches`() {
-    prisonerSearchRespondsWith(prisonerMatchRequest, PrisonerMatches())
+    prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
 
     val result = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
 
@@ -108,14 +106,11 @@ class PrisonerSearchIntegrationTest(
 
   @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
-
     prisonerSearchRespondsWith(
-      prisonerMatchRequest,
-      PrisonerMatches(
-        listOf(
-          PrisonerMatch(testPrisoner(nomsNumber, firstName, lastName)),
-          PrisonerMatch(testPrisoner(null, firstName, lastName))
-        )
+      prisonerSearchRequest,
+      listOf(
+        testPrisoner(nomsNumber, firstName, lastName),
+        testPrisoner(null, firstName, lastName)
       )
     )
 
@@ -142,26 +137,6 @@ class PrisonerSearchIntegrationTest(
     )
   }
 
-  @Test
-  fun `can accept null name fields in results from prisoner search api`() {
-
-    prisonerSearchRespondsWith(
-      prisonerMatchRequest,
-      PrisonerMatches(listOf(PrisonerMatch(testPrisoner(nomsNumber, null, null))))
-    )
-
-    val response = authenticatedPostRequest("/search", apiSearchRequest, validUserJwt)
-
-    assertThat(
-      response,
-      equalTo(
-        listOf(
-          SearchResult(null, null, nomsNumber, dateOfBirth)
-        )
-      )
-    )
-  }
-
   private fun testPrisoner(nomsNumber: String?, firstName: String?, lastName: String?) = Prisoner(
     prisonerNumber = nomsNumber,
     firstName = firstName,
@@ -175,24 +150,24 @@ class PrisonerSearchIntegrationTest(
   )
 
   private fun prisonerSearchRespondsWith(
-    request: PrisonerMatchRequest,
+    request: PrisonerSearchRequest,
     statusCode: HttpStatusCode
   ) {
     mockServerClient?.`when`(
-      expectedPostRequest("/match-prisoners", request)
+      expectedPostRequest("/prisoner-search/match-prisoners", request)
     )?.respond(
       response().withStatusCode(statusCode.code())
     )
   }
 
-  private fun prisonerSearchRespondsWith(request: PrisonerMatchRequest, response: PrisonerMatches) {
+  private fun prisonerSearchRespondsWith(request: PrisonerSearchRequest, responseBody: List<Prisoner>?) {
     mockServerClient?.`when`(
-      expectedPostRequest("/match-prisoners", request)
+      expectedPostRequest("/prisoner-search/match-prisoners", request)
     )?.respond(
       response()
         .withStatusCode(OK_200.code())
         .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        .withBody(objectMapper.writeValueAsString(response))
+        .withBody(responseBody?.let { objectMapper.writeValueAsString(responseBody) })
     )
   }
 
