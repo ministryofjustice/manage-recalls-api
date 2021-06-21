@@ -18,8 +18,19 @@ class PrisonerOffenderSearchClient {
   @Qualifier("prisonerOffenderSearchWebClient")
   internal lateinit var webClient: AuthenticatingRestClient
 
-  fun search(searchRequest: SearchRequest): List<SearchResult> {
-    log.info("Sending prisoner search request: $searchRequest")
+  fun prisonerSearch(searchRequest: SearchRequest): List<SearchResult> {
+    log.info("Sending /prisoner-search/match-prisoners request: $searchRequest")
+
+    return webClient
+      .post("/prisoner-search/match-prisoners", PrisonerSearchRequest(searchRequest.nomsNumber))
+      .retrieve()
+      .bodyToMono(List::class.java)
+      .block()!!
+      .toSearchResults()
+  }
+
+  fun prisonerMatch(searchRequest: SearchRequest): List<SearchResult> {
+    log.info("Sending /match-prisoners request: $searchRequest")
 
     return webClient
       .post("/match-prisoners", PrisonerMatchRequest(searchRequest.nomsNumber))
@@ -28,7 +39,17 @@ class PrisonerOffenderSearchClient {
       .block()!!
       .toSearchResults()
   }
+
 }
+
+fun List<*>?.toSearchResults() =
+  this?.let {
+    this.map {
+      with(it.prisoner) {
+        SearchResult(firstName, lastName, prisonerNumber, dateOfBirth)
+      }
+    }
+  }.orEmpty()
 
 fun PrisonerMatches?.toSearchResults() =
   this?.let {
@@ -71,6 +92,8 @@ enum class MatchedBy {
   PARTIAL_NAME_DOB_LENIENT,
   NOTHING
 }
+
+data class PrisonerSearchRequest(val prisonerIdentifier: String)
 
 data class PrisonerMatchRequest(val nomsNumber: String)
 

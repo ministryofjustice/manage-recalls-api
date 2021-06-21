@@ -28,6 +28,6 @@ class SearchController(
   @ResponseBody
   fun prisonerSearch(@RequestBody searchRequest: SearchRequest) =
     ResponseEntity.ok(
-      prisonerOffenderSearchClient.search(searchRequest)
+      prisonerOffenderSearchClient.prisonerMatch(searchRequest)
     )
 }
