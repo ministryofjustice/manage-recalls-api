@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
@@ -18,36 +19,27 @@ class PrisonerOffenderSearchClient {
   @Qualifier("prisonerOffenderSearchWebClient")
   internal lateinit var webClient: AuthenticatingRestClient
 
-  fun prisonerSearch(searchRequest: SearchRequest): List<SearchResult> {
-    log.info("Sending /prisoner-search/match-prisoners request: $searchRequest")
-
-    return webClient
+  fun prisonerSearch(searchRequest: SearchRequest): List<SearchResult> =
+    webClient
       .post("/prisoner-search/match-prisoners", PrisonerSearchRequest(searchRequest.nomsNumber))
       .retrieve()
-      .bodyToMono(List::class.java)
-      .block()!!
+      .bodyToMono(object : ParameterizedTypeReference<List<Prisoner>>() {})
+      .block()
       .toSearchResults()
-  }
 
-  fun prisonerMatch(searchRequest: SearchRequest): List<SearchResult> {
-    log.info("Sending /match-prisoners request: $searchRequest")
-
-    return webClient
+  fun prisonerMatch(searchRequest: SearchRequest): List<SearchResult> =
+    webClient
       .post("/match-prisoners", PrisonerMatchRequest(searchRequest.nomsNumber))
       .retrieve()
       .bodyToMono(PrisonerMatches::class.java)
-      .block()!!
+      .block()
       .toSearchResults()
-  }
-
 }
 
-fun List<*>?.toSearchResults() =
+fun List<Prisoner>?.toSearchResults() =
   this?.let {
     this.map {
-      with(it.prisoner) {
-        SearchResult(firstName, lastName, prisonerNumber, dateOfBirth)
-      }
+      SearchResult(it.firstName, it.lastName, it.prisonerNumber, it.dateOfBirth)
     }
   }.orEmpty()
 
