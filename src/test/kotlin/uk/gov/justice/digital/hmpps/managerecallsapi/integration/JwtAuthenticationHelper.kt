@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
@@ -14,7 +15,9 @@ import java.util.Date
 import java.util.UUID
 
 @Component
-class JwtAuthenticationHelper {
+class JwtAuthenticationHelper(
+  @Value("\${spring.security.oauth2.client.registration.offender-search-client.client-id}") private val apiClientId: String
+) {
   private val keyPair: KeyPair
 
   init {
@@ -27,6 +30,9 @@ class JwtAuthenticationHelper {
   fun jwtDecoder(): JwtDecoder {
     return NimbusJwtDecoder.withPublicKey(keyPair.public as RSAPublicKey).build()
   }
+
+  @Bean("apiClientJwt")
+  fun apiClientJwt(): String = createTestJwt(subject = apiClientId)
 
   fun createTestJwt(
     subject: String = "Bertie",
