@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aMultipart
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.containing
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
@@ -22,7 +24,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Got
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class DocumentPdfDocumentGeneratorIntegrationTest {
+class PdfDocumentGeneratorIntegrationTest {
 
   @Autowired
   lateinit var gotenbergMockServer: GotenbergMockServer
@@ -45,10 +47,20 @@ class DocumentPdfDocumentGeneratorIntegrationTest {
 
     gotenbergMockServer
       .stubFor(
-        post(urlEqualTo("/convert/html")).withHeader(
-          HttpHeaders.CONTENT_TYPE,
-          containing(MediaType.MULTIPART_FORM_DATA_VALUE)
-        ).withMultipartRequestBody(aMultipart().withName("files"))
+        post(urlEqualTo("/convert/html"))
+          .withHeader(HttpHeaders.CONTENT_TYPE, containing(MediaType.MULTIPART_FORM_DATA_VALUE))
+          .withMultipartRequestBody(
+            aMultipart()
+              .withName("files")
+              .withHeader("Content-Disposition", WireMock.equalTo("form-data; name=index.html; filename=index.html"))
+              .withBody(WireMock.equalTo(ClassPathResource("/document/template/revocation-order/index.html").file.readText()))
+          )
+          .withMultipartRequestBody(
+            aMultipart()
+              .withName("files")
+              .withHeader("Content-Disposition", WireMock.equalTo("form-data; name=logo.png; filename=logo.png"))
+              .withBody(WireMock.equalTo(ClassPathResource("/document/template/revocation-order/logo.png").file.readText()))
+          )
           .willReturn(aResponse().withBody("test".toByteArray()))
       )
 

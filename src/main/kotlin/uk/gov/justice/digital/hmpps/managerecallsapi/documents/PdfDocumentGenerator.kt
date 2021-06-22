@@ -22,8 +22,12 @@ class PdfDocumentGenerator(
   fun makePdf(): ByteArray {
     val bodyBuilder = MultipartBodyBuilder()
 
-    bodyBuilder.part("files", ClassPathResource("/document/template/revocation-order/index.html").file.readBytes())
-    bodyBuilder.part("files", ClassPathResource("/document/template/revocation-order/logo.png").file.readBytes())
+    bodyBuilder
+      .part("index.html", ClassPathResource("/document/template/revocation-order/index.html").file.readText())
+      .header("Content-Disposition", "form-data; name=index.html; filename=index.html")
+    bodyBuilder
+      .part("logo.png", ClassPathResource("/document/template/revocation-order/logo.png").file.readBytes())
+      .header("Content-Disposition", "form-data; name=logo.png; filename=logo.png")
 
     return webClient
       .post()
