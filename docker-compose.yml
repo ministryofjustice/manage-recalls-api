@@ -14,5 +14,10 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
 
+  gotenberg:
+    image: thecodingmachine/gotenberg:6
+    ports:
+      - "9991:3000"
+
 networks:
   hmpps:
