@@ -72,4 +72,4 @@ prisonerSearch:
     url: http://localhost:9999
 
 gotenberg:
-  base-url: http://localhost:3000
+  base-url: http://localhost:9998

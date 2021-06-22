@@ -4,3 +4,6 @@ server:
 management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
+
+gotenberg:
+  base-url: http://localhost:9998
