@@ -42,14 +42,6 @@ class WebClientConfig {
     return WebClient.builder().build()
   }
 
-  @Bean
-  fun gotenbergWebClient(): WebClient {
-    return WebClient
-      .builder()
-      .baseUrl(gotenbergBaseUrl)
-      .build()
-  }
-
   private fun webClientFactory(
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,
