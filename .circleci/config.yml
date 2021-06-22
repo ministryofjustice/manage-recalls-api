@@ -1,7 +1,15 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@3.2
+  hmpps: ministryofjustice/hmpps@3.4
+
+parameters:
+  alerts-slack-channel:
+    type: string
+    default: ppud-replacement-devs
+  releases-slack-channel:
+    type: string
+    default: ppud-replacement-releases
 
 jobs:
   validate:
@@ -33,14 +41,38 @@ workflows:
           filters:
             tags:
               ignore: /.*/
+
       - hmpps/helm_lint:
           name: helm_lint
+
       - hmpps/build_docker:
           name: build_docker
+          publish: false
+          persist_container_image: true
+
+      - hmpps/trivy_pipeline_scan:
+          name: trivy_scan_low_medium_cves
+          fail_build: false
+          cve_severities_to_check: UNKNOWN,LOW,MEDIUM
+          requires:
+            - build_docker
+
+      - hmpps/trivy_pipeline_scan:
+          name: trivy_scan
+          requires:
+            - build_docker
+
+      - hmpps/publish_docker:
+          name: publish_docker
+          requires:
+            - validate
+            - helm_lint
+            - trivy_scan
           filters:
             branches:
               only:
                 - main
+
       - hmpps/deploy_env:
           name: deploy_dev
           env: dev
@@ -50,34 +82,36 @@ workflows:
               only:
                 - main
           requires:
-            - validate
-            - build_docker
-            - helm_lint
+            - publish_docker
+
       - request-preprod-approval:
           type: approval
           requires:
             - deploy_dev
       - hmpps/deploy_env:
           name: deploy_preprod
-          env: "preprod"
+          env: preprod
           context:
             - hmpps-common-vars
             - ppud-replacement-preprod
           requires:
             - request-preprod-approval
+
       - request-prod-approval:
           type: approval
           requires:
             - deploy_preprod
       - hmpps/deploy_env:
           name: deploy_prod
-          env: "prod"
-          slack_notification: true
+          env: prod
           context:
             - hmpps-common-vars
             - ppud-replacement-prod
           requires:
             - request-prod-approval
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+
 
   security:
     triggers:
@@ -91,8 +125,12 @@ workflows:
       - hmpps/gradle_owasp_dependency_check:
           context:
             - hmpps-common-vars
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
       - hmpps/veracode_policy_scan:
           context:
             - veracode-credentials
             - hmpps-common-vars
-
+      - hmpps/trivy_latest_scan:
+          context:
+            - hmpps-common-vars
+          slack_channel: << pipeline.parameters.alerts-slack-channel >>
