@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration
+package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.greaterThan
