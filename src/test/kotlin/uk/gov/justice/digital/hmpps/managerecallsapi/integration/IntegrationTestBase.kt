@@ -7,8 +7,10 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 
@@ -41,4 +43,22 @@ abstract class IntegrationTestBase {
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
   }
+
+  protected final fun sendAuthenticatedPostRequest(
+    path: String,
+    userJwt: String = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+  ) = webTestClient.post()
+    .uri(path)
+    .headers { it.add(HttpHeaders.AUTHORIZATION, "Bearer $userJwt") }
+    .exchange()
+
+  protected final inline fun <reified T> sendAuthenticatedPostRequestWithBody(
+    path: String,
+    request: T,
+    clientJwt: String
+  ) = webTestClient.post()
+    .uri(path)
+    .body(Mono.just(request), T::class.java)
+    .headers { it.add(HttpHeaders.AUTHORIZATION, "Bearer $clientJwt") }
+    .exchange()
 }

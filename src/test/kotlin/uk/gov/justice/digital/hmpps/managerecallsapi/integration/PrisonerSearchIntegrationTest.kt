@@ -5,9 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isEmpty
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpStatus.UNAUTHORIZED
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -28,15 +26,15 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   @Test
   fun `should respond with 401 if user does not have the MANAGE_RECALLS role`() {
     val invalidUserJwt = jwtAuthenticationHelper.createTestJwt(role = "ROLE_UNKNOWN")
-    sendAuthenticatedPostRequest("/search", apiSearchRequest, invalidUserJwt)
-      .expectStatus().is4xxClientError
+    sendAuthenticatedPostRequestWithBody("/search", apiSearchRequest, invalidUserJwt)
+      .expectStatus().isUnauthorized
   }
 
   @Test
   fun `should handle unauthorized from prisoner search api`() {
     prisonerOffenderSearchApi.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
 
-    sendAuthenticatedPostRequest(
+    sendAuthenticatedPostRequestWithBody(
       "/search",
       apiSearchRequest,
       jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
@@ -109,23 +107,13 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   private fun authenticatedPostRequest(
     path: String,
     request: Any,
-    clientJwt: String
+    userJwt: String
   ): List<SearchResult> {
     val responseType = object : ParameterizedTypeReference<List<SearchResult>>() {}
-    return sendAuthenticatedPostRequest(path, request, clientJwt)
+    return sendAuthenticatedPostRequestWithBody(path, request, userJwt)
       .expectStatus().isOk
       .expectBody(responseType)
       .returnResult()
       .responseBody!!
   }
-
-  private inline fun <reified T> sendAuthenticatedPostRequest(
-    path: String,
-    request: T,
-    clientJwt: String
-  ) = webTestClient.post()
-    .uri(path)
-    .body(Mono.just(request), T::class.java)
-    .headers { it.add(AUTHORIZATION, "Bearer $clientJwt") }
-    .exchange()
 }
