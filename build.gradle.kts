@@ -34,6 +34,18 @@ tasks {
       jvmTarget = "16"
     }
   }
+
+  test {
+    exclude("**/*RealPdfDocumentGeneratorTest*")
+  }
+}
+
+task<Test>("documentGenerationTest") {
+  description = "Runs the documetn generation tests against gotenberg"
+  group = "verification"
+  testClassesDirs = sourceSets["test"].output.classesDirs
+  classpath = sourceSets["test"].runtimeClasspath
+  include("**/*RealPdfDocumentGeneratorTest*")
 }
 
 java {
