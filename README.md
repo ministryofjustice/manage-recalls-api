@@ -21,8 +21,20 @@ SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 ```bash
 docker-compose pull && docker-compose up -d
 ```
-
 The service should start up using the dev profile running on port 8080
+
+### Run document generation test with gotenberg
+In order to run tests against gotenberg running in docker: 
+```bash
+./scripts/start-gotenburg.sh
+./gradlew documentGenerationTest
+./scripts/stop-gotenburg.sh
+```
+
+### Full local build
+Builds everything, runs the unit tests, integration tests, start gotenberg and document generation tests
+
+`./build.sh`
 
 # Swagger UI
 We are using springfox to autogenerate the swagger docs. Go to http://localhost:9091/swagger-ui/ locally to see what it generates.
