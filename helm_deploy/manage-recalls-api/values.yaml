@@ -20,6 +20,7 @@ generic-service:
     SERVER_PORT: "8080"
     SPRING_PROFILES_ACTIVE: "logstash"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
+    GOTENBERG_ENDPOINT_URL: http://manage-recalls-api-gotenberg
 
   namespace_secrets:
     manage-recalls-api:

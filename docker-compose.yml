@@ -4,7 +4,7 @@ services:
     build:
       context: .
     networks:
-      hmpps:
+      manage-recalls-api
     container_name: manage-recalls-api
     ports:
       - "8080:8080"
@@ -16,8 +16,10 @@ services:
 
   gotenberg:
     image: thecodingmachine/gotenberg:6
+    networks:
+      manage-recalls-api
     ports:
       - "9991:3000"
 
 networks:
-  hmpps:
+  manage-recalls-api

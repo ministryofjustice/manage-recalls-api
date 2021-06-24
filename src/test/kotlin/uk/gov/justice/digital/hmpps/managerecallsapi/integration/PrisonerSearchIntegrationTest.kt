@@ -32,7 +32,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `should handle unauthorized from prisoner search api`() {
-    prisonerOffenderSearchApi.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
+    prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
 
     sendAuthenticatedPostRequestWithBody(
       "/search",
@@ -44,7 +44,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `can send search request to prisoner search api and retrieve no matches`() {
-    prisonerOffenderSearchApi.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
+    prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
 
     val result = authenticatedPostRequest(
       "/search",
@@ -57,7 +57,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
-    prisonerOffenderSearchApi.prisonerSearchRespondsWith(
+    prisonerOffenderSearch.prisonerSearchRespondsWith(
       prisonerSearchRequest,
       listOf(
         testPrisoner(nomsNumber, firstName, lastName),

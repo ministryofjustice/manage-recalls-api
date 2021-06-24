@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
 @Component
-class PrisonerOffenderSearchHealth(
+class GotenbergHealth(
   webClient: WebClient,
-  @Value("\${prisonerSearch.endpoint.url}") prisonerSearchEndpointUrl: String
-) : PingHealthCheck(webClient, "$prisonerSearchEndpointUrl/health/ping")
+  @Value("\${gotenberg.endpoint.url}") gotenbergEndpointUrl: String
+) : PingHealthCheck(webClient, "$gotenbergEndpointUrl/ping")

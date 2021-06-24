@@ -11,13 +11,13 @@ import java.time.Duration
 
 abstract class PingHealthCheck(
   private val webClient: WebClient,
-  private val baseUri: String,
+  private val healthUrl: String,
   private val timeout: Duration = Duration.ofSeconds(2)
 ) : HealthIndicator {
 
   override fun health(): Health? {
     return webClient.get()
-      .uri("$baseUri/health/ping")
+      .uri(healthUrl)
       .retrieve()
       .toEntity(String::class.java)
       .flatMap { upWithStatus(it) }

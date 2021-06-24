@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient
 @Component
 class PdfDocumentGenerator(
   private val webClient: WebClient,
-  @Value("\${gotenberg.base-url}") private val gotenbergBaseUrl: String
+  @Value("\${gotenberg.endpoint.url}") private val gotenbergEndpointUrl: String
 ) {
 
   companion object {
@@ -31,7 +31,7 @@ class PdfDocumentGenerator(
 
     return webClient
       .post()
-      .uri("$gotenbergBaseUrl/convert/html")
+      .uri("$gotenbergEndpointUrl/convert/html")
       .contentType(MediaType.MULTIPART_FORM_DATA)
       .bodyValue(bodyBuilder.build())
       .retrieve()
