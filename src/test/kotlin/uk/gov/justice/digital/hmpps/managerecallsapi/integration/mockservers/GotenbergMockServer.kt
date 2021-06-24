@@ -16,7 +16,7 @@ import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.stereotype.Component
 
 @Component
-class GotenbergMockServer : WireMockServer(9998) {
+class GotenbergMockServer : WireMockServer(9093) {
   fun stubPdfGeneration(generatedPdf: ByteArray) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html"))

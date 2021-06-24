@@ -27,7 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchReques
 class PrisonerOffenderSearchMockServer(
   @Autowired @Qualifier("apiClientJwt") private val apiClientJwt: String,
   @Autowired private val objectMapper: ObjectMapper
-) : WireMockServer(9999) {
+) : WireMockServer(9092) {
   fun isHealthy() {
     healthCheck(OK)
   }

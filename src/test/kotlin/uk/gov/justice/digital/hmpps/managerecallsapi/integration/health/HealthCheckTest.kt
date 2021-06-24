@@ -35,8 +35,8 @@ class HealthCheckTest : IntegrationTestBase() {
     healthCheckIsUpWith(
       "/health",
       "status" to "UP",
-      "components.prisonerOffenderSearchHealth.details.HttpStatus" to OK.name,
-      "components.gotenbergHealth.details.HttpStatus" to OK.name,
+      "components.prisonerOffenderSearchHealth.details.status" to OK.name,
+      "components.gotenbergHealth.details.status" to OK.name,
       "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE)
     )
   }
@@ -45,14 +45,14 @@ class HealthCheckTest : IntegrationTestBase() {
   fun `service is unhealthy when prisonerOffenderSearch is unhealthy`() {
     prisonerOffenderSearch.isUnhealthy()
 
-    healthCheckIsDownWith("components.prisonerOffenderSearchHealth.details.HttpStatus" to INTERNAL_SERVER_ERROR.name)
+    healthCheckIsDownWith("components.prisonerOffenderSearchHealth.details.status" to INTERNAL_SERVER_ERROR.name)
   }
 
   @Test
   fun `service is unhealthy when gotenberg is unhealthy`() {
     gotenberg.isUnhealthy()
 
-    healthCheckIsDownWith("components.gotenbergHealth.details.HttpStatus" to INTERNAL_SERVER_ERROR.name)
+    healthCheckIsDownWith("components.gotenbergHealth.details.status" to INTERNAL_SERVER_ERROR.name)
   }
 
   @Test

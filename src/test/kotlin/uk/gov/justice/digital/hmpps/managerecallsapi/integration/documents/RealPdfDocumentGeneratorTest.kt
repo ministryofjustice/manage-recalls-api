@@ -10,7 +10,7 @@ class RealPdfDocumentGeneratorTest {
 
   private val pdfDocumentGenerator = PdfDocumentGenerator(
     WebClient.builder().build(),
-    "http://localhost:9991"
+    "http://localhost:9093"
   )
 
   @Test
