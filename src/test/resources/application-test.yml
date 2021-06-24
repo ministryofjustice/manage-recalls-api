@@ -6,4 +6,5 @@ management.endpoint:
   info.cache.time-to-live: 0
 
 gotenberg:
-  base-url: http://localhost:9998
+  endpoint:
+    url: http://localhost:9998

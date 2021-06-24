@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-./gradlew clean check
 ./gradlew ktlintFormat
+./gradlew clean check
 ./scripts/start-gotenburg.sh
 ./gradlew documentGenerationTest
 ./scripts/stop-gotenburg.sh

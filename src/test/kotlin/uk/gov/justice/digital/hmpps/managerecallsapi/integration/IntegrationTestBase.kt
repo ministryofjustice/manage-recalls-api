@@ -19,27 +19,30 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Pri
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
 
-  @Autowired lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
-  @Autowired lateinit var prisonerOffenderSearchApi: PrisonerOffenderSearchMockServer
-  @Autowired lateinit var hmppsAuthMockServer: HmppsAuthMockServer
+  @Autowired
+  lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
+  @Autowired
+  lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
+  @Autowired
+  lateinit var hmppsAuthMockServer: HmppsAuthMockServer
   @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired lateinit var webTestClient: WebTestClient
 
   @BeforeAll
   fun startMocks() {
-    prisonerOffenderSearchApi.start()
+    prisonerOffenderSearch.start()
     hmppsAuthMockServer.start()
   }
 
   @AfterAll
   fun stopMocks() {
-    prisonerOffenderSearchApi.stop()
+    prisonerOffenderSearch.stop()
     hmppsAuthMockServer.stop()
   }
 
   @BeforeEach
   fun resetMocksAndStubClientToken() {
-    prisonerOffenderSearchApi.resetAll()
+    prisonerOffenderSearch.resetAll()
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
   }
