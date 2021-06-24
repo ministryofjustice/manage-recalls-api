@@ -19,7 +19,7 @@ services:
     networks:
       manage-recalls-api
     ports:
-      - "9991:3000"
+      - "9093:3000"
 
 networks:
   manage-recalls-api

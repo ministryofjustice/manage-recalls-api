@@ -3,5 +3,5 @@ services:
   gotenberg:
     image: thecodingmachine/gotenberg:6
     ports:
-      - "9991:3000"
+      - "9093:3000"
 
