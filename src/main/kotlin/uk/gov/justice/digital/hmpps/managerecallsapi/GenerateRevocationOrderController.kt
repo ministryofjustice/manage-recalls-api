@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import java.util.Base64
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -26,8 +27,9 @@ class GenerateRevocationOrderController(
   @ResponseBody
   fun generateRevocationOrder(): ResponseEntity<Pdf> {
     log.info("Generating revocation order")
-    return ResponseEntity.ok(Pdf(pdfDocumentGenerator.makePdf()))
+    val pdfBase64Encoded = Base64.getEncoder().encodeToString(pdfDocumentGenerator.makePdf())
+    return ResponseEntity.ok(Pdf(pdfBase64Encoded))
   }
 }
 
-data class Pdf(val content: ByteArray)
+data class Pdf(val content: String)
