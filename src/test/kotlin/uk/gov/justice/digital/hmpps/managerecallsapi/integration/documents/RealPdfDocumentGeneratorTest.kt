@@ -5,12 +5,14 @@ import com.natpryce.hamkrest.greaterThan
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RevocationOrder
 
 class RealPdfDocumentGeneratorTest {
 
   private val pdfDocumentGenerator = PdfDocumentGenerator(
     WebClient.builder().build(),
-    "http://localhost:9093"
+    "http://localhost:9093",
+    RevocationOrder()
   )
 
   @Test
