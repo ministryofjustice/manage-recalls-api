@@ -4,22 +4,36 @@ services:
     build:
       context: .
     networks:
-      manage-recalls-api
+      - manage-recalls-api
     container_name: manage-recalls-api
     ports:
       - "8080:8080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
     environment:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
+      - PRISONERSEARCH_ENDPOINT_URL=http://fake-prisoner-offender-search-api:8080
+      - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
+
+  fake-prisoner-offender-search-api:
+    build: ./fake-prisoner-offender-search-api
+    networks:
+      - manage-recalls-api
+    container_name: fake-prisoner-offender-search-api_manage-recalls-api
+    ports:
+      - "9092:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
+    command: --verbose
 
   gotenberg:
     image: thecodingmachine/gotenberg:6
     networks:
-      manage-recalls-api
+      - manage-recalls-api
+    container_name: gotenberg_manage-recalls-api
     ports:
       - "9093:3000"
 
 networks:
-  manage-recalls-api
+  manage-recalls-api:
