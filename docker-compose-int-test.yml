@@ -1,5 +1,11 @@
-version: '3.1'
+version: "3"
 services:
+  gotenberg:
+    image: thecodingmachine/gotenberg:6
+    ports:
+      - "9093:3000"
+    networks:
+      - manage-recalls-api-int-tests
 
   manage-recalls-api-int-tests:
     build:
@@ -7,6 +13,9 @@ services:
       context: .
     user: circleci
     networks:
-      - manage-recalls-api
+      - manage-recalls-api-int-tests
     container_name: manage-recalls-api-int-tests
     depends_on: [ gotenberg ]
+
+networks:
+  manage-recalls-api-int-tests:
