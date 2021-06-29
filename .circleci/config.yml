@@ -32,6 +32,54 @@ jobs:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
+  end-to-end-tests:
+    executor:
+      name: hmpps/default_small
+    steps:
+      - run:
+          name: Run end-to-end tests
+          command: |
+            BUILD_RESPONSE=`curl -s -u $USER_TOKEN --request POST \
+                          --url https://circleci.com/api/v2/project/gh/ministryofjustice/manage-recalls-e2e-tests/pipeline \
+                          --header 'content-type: application/json' \
+                          --header 'x-attribution-actor-id: MANAGE_RECALLS_API' \
+                          --header 'x-attribution-login: MANAGE_RECALLS_API' \
+                          --data '{"branch":"main"}'`
+
+            echo $BUILD_RESPONSE
+
+            BUILD_ID=`echo $BUILD_RESPONSE | jq -r '.id'`
+
+            if [[ $BUILD_ID == null ]]
+            then
+              echo "Unable to start test job"
+              exit 1
+            fi
+
+            WAIT_LIMIT=500
+
+            echo "Waiting upto $WAIT_LIMIT seconds for job to complete"
+
+            TIMEOUT=`expr $SECONDS + $WAIT_LIMIT`
+
+            STOPPED_TIME=null
+
+            while [ $STOPPED_TIME == "null" ] && [ $SECONDS -le $TIMEOUT ]; do
+              STATUS_RESPONSE=`curl -s -u '$USER_TOKEN:' --request GET --url https://circleci.com/api/v2/pipeline/$BUILD_ID/workflow`
+              STOPPED_TIME=`echo $STATUS_RESPONSE | jq -r '.items[0].stopped_at'`
+              STATUS=`echo $STATUS_RESPONSE | jq -r '.items[0].status'`
+              sleep 15
+            done
+
+            echo "Exiting ($STATUS)..."
+
+            if [ $STATUS == "success" ]
+            then
+              exit 0
+            else
+              exit 1
+            fi
+
 
 workflows:
   version: 2
@@ -83,11 +131,17 @@ workflows:
                 - main
           requires:
             - publish_docker
-
+      - end-to-end-tests:
+          requires:
+            - deploy_dev
+          filters:
+            branches:
+              only:
+                - main
       - request-preprod-approval:
           type: approval
           requires:
-            - deploy_dev
+            - end-to-end-tests
       - hmpps/deploy_env:
           name: deploy_preprod
           env: preprod
