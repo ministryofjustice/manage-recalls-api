@@ -11,6 +11,12 @@ parameters:
     type: string
     default: ppud-replacement-releases
 
+executors:
+  local-docker:
+    docker:
+      - image: cimg/python:3.9
+    working_directory: ~/app
+
 jobs:
   validate:
     executor:
@@ -80,6 +86,29 @@ jobs:
               exit 1
             fi
 
+  document-generation-tests:
+    executor: local-docker
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and pull docker containers
+          command: |
+            docker-compose -f docker-compose-int-test.yml build
+            docker-compose -f docker-compose-int-test.yml pull
+      - run:
+          name: Start docker compose and run the document generation tests
+          command: |
+            set -x
+            docker-compose -f docker-compose-int-test.yml up --exit-code-from manage-recalls-api-int-tests
+            docker cp manage-recalls-api-int-tests:/home/circleci/project/build/reports/tests/test/ test-report
+      - store_artifacts:
+          path: test-report
+          destination: local-test-summary
+      - run:
+          name: Stop docker containers
+          command: docker-compose stop
 
 workflows:
   version: 2
@@ -89,6 +118,10 @@ workflows:
           filters:
             tags:
               ignore: /.*/
+
+      - document-generation-tests:
+          requires:
+            - validate
 
       - hmpps/helm_lint:
           name: helm_lint
