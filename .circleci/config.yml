@@ -102,7 +102,7 @@ jobs:
           command: |
             set -x
             docker-compose -f docker-compose-int-test.yml up --exit-code-from manage-recalls-api-int-tests
-            docker cp manage-recalls-api-int-tests:/home/circleci/project/build/reports/tests/test/ test-report
+            docker cp manage-recalls-api-int-tests:/home/circleci/project/build/reports/tests/documentGenerationTest/ test-report
       - store_artifacts:
           path: test-report
           destination: local-test-summary
