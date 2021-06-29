@@ -4,4 +4,8 @@ services:
     image: thecodingmachine/gotenberg:6
     ports:
       - "9093:3000"
+    networks:
+      - manage-recalls-api
 
+networks:
+  manage-recalls-api:

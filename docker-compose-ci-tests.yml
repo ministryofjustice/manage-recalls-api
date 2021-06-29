@@ -1,0 +1,12 @@
+version: '3.1'
+services:
+
+  manage-recalls-api-int-tests:
+    build:
+      dockerfile: ci-docker-tests/Dockerfile
+      context: .
+    user: circleci
+    networks:
+      - manage-recalls-api
+    container_name: manage-recalls-api-int-tests
+    depends_on: [ gotenberg ]

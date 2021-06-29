@@ -10,7 +10,4 @@ readonly DOCKER_COMPOSE_FILE="$PROJECT_DIR/docker-compose-test.yml"
 
 echo "Starting gotenburg"
 docker compose -f "${DOCKER_COMPOSE_FILE}" pull
-docker compose -f "${DOCKER_COMPOSE_FILE}" up -d
-
-#echo "Starting ${MANAGE_RECALLS_SERVICE_NAME}"
-#SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun >> "${LOG_FILE}" 2>&1 &
+docker compose -f "${DOCKER_COMPOSE_FILE}" up -d --remove-orphans

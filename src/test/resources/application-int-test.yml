@@ -1,0 +1,10 @@
+server:
+  shutdown: immediate
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+
+gotenberg:
+  endpoint:
+    url: http://gotenberg:3000
