@@ -14,9 +14,6 @@ services:
     user: circleci
     networks:
       - manage-recalls-api-int-tests
-    volumes:
-      - gradle-cache:/home/gradle/.gradle
-      - .:/home/gradle/project
     container_name: manage-recalls-api-int-tests
     depends_on: [ gotenberg ]
 #
@@ -33,10 +30,6 @@ services:
 #    depends_on: [ gotenberg ]
 #    environment:
 #      - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
-
-volumes:
-  gradle-cache:
-    external: true
 
 networks:
   manage-recalls-api-int-tests:
