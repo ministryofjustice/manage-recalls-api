@@ -3,6 +3,10 @@ plugins {
   kotlin("plugin.spring") version "1.5.10"
 }
 
+repositories {
+  mavenCentral()
+}
+
 configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
 }
@@ -14,6 +18,8 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-client")
 
   implementation("io.springfox:springfox-boot-starter:3.0.0")
+  implementation("org.flywaydb:flyway-core:7.10.0")
+  implementation("org.postgresql:postgresql:42.2.22")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 
@@ -26,6 +32,9 @@ dependencies {
   testImplementation("io.mockk:mockk:1.10.0")
   testImplementation("com.natpryce:hamkrest:1.7.0.3")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
+  testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
+  testImplementation("io.zonky.test:embedded-database-spring-test:2.0.1")
+  testImplementation("io.zonky.test:embedded-postgres:1.3.0")
 }
 
 tasks {
