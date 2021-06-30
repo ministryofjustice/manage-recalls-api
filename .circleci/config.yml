@@ -106,9 +106,6 @@ jobs:
       - store_artifacts:
           path: test-report
           destination: local-test-summary
-      - run:
-          name: Stop docker containers
-          command: docker-compose stop
 
 workflows:
   version: 2
