@@ -1,16 +1,17 @@
 FROM cimg/openjdk:16.0 AS GRADLE_BUILD_IMAGE
 USER circleci
 ENV APP_HOME=/home/circleci/project
+ENV GRADLE_USER_HOME=/home/circleci/gradle_cache
 WORKDIR $APP_HOME
-COPY --chown=circleci:circleci *.kts gradlew $APP_HOME/
+COPY --chown=circleci:circleci build.gradle.kts settings.gradle.kts gradlew $APP_HOME/
 COPY --chown=circleci:circleci gradle $APP_HOME/gradle
-RUN ./gradlew build -Dorg.gradle.daemon=false || true
+RUN ./gradlew build -i -Dorg.gradle.daemon=false || true
 
 FROM cimg/openjdk:16.0
 USER circleci
 ENV APP_HOME=/home/circleci/project
 WORKDIR $APP_HOME
-COPY --chown=circleci:circleci --from=GRADLE_BUILD_IMAGE /home/circleci/.gradle /home/circleci/.gradle
+COPY --chown=circleci:circleci --from=GRADLE_BUILD_IMAGE /home/circleci/gradle_cache /home/circleci/.gradle
 COPY --chown=circleci:circleci . .
 
 ENV GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
