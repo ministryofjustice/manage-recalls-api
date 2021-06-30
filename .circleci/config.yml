@@ -92,10 +92,6 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - restore_cache:
-          keys:
-            - gradle-{{ checksum "build.gradle.kts" }}
-            - gradle-
       - run:
           name: Build and pull docker containers
           command: |
@@ -105,9 +101,8 @@ jobs:
           name: Start docker compose and run the document generation tests
           command: |
             set -x
-            docker cp ~/.gradle manage-recalls-api-int-tests:/home/gradle/.gradle
             docker-compose -f docker-compose-int-test.yml up --exit-code-from manage-recalls-api-int-tests
-            docker cp manage-recalls-api-int-tests:/home/gradle/project/build/reports/tests/documentGenerationTest/ test-report
+            docker cp manage-recalls-api-int-tests:/home/circleci/project/build/reports/tests/documentGenerationTest/ test-report
       - store_artifacts:
           path: test-report
           destination: local-test-summary
