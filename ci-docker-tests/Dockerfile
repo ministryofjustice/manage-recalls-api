@@ -10,7 +10,7 @@ FROM cimg/openjdk:16.0
 USER circleci
 ENV APP_HOME=/home/circleci/project
 WORKDIR $APP_HOME
-COPY --from=GRADLE_BUILD_IMAGE /home/circleci/.gradle /home/circleci/.gradle
+COPY --chown=circleci:circleci --from=GRADLE_BUILD_IMAGE /home/circleci/.gradle /home/circleci/.gradle
 COPY --chown=circleci:circleci . .
 
 ENV GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
