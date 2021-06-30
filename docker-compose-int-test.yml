@@ -8,18 +8,31 @@ services:
       - manage-recalls-api-int-tests
 
   manage-recalls-api-int-tests:
-    image: gradle:7-jdk16
+    build:
+      dockerfile: ci-docker-tests/Dockerfile
+      context: .
+    user: circleci
     networks:
       - manage-recalls-api-int-tests
     volumes:
       - gradle-cache:/home/gradle/.gradle
       - .:/home/gradle/project
     container_name: manage-recalls-api-int-tests
-    working_dir: /home/gradle/project
-    entrypoint: [ "gradle", "documentGenerationTest", "--no-daemon" ]
     depends_on: [ gotenberg ]
-    environment:
-      - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
+#
+#  manage-recalls-api-int-tests:
+#    image: gradle:7-jdk16
+#    networks:
+#      - manage-recalls-api-int-tests
+#    volumes:
+#      - gradle-cache:/home/gradle/.gradle
+#      - .:/home/gradle/project
+#    container_name: manage-recalls-api-int-tests
+#    working_dir: /home/gradle/project
+##    entrypoint: [ "gradle", "documentGenerationTest", "--no-daemon" ]
+#    depends_on: [ gotenberg ]
+#    environment:
+#      - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
 
 volumes:
   gradle-cache:
