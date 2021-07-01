@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.LocalDate
@@ -27,15 +28,14 @@ class SearchController(
 
   @PostMapping("/search")
   @ResponseBody
-  fun prisonerSearch(@RequestBody searchRequest: SearchRequest) =
-    ResponseEntity.ok(
-      prisonerOffenderSearchClient.prisonerSearch(searchRequest).toSearchResults()
-    )
+  fun prisonerSearch(@RequestBody searchRequest: SearchRequest): Mono<ResponseEntity<List<SearchResult>>> =
+    prisonerOffenderSearchClient.prisonerSearch(searchRequest)
+      .map { ResponseEntity.ok(it.toSearchResults()) }
 }
 
 fun List<Prisoner>?.toSearchResults() =
-  this?.let {
-    this.map {
+  this?.let { prisoners ->
+    prisoners.map {
       SearchResult(it.firstName, it.lastName, it.prisonerNumber, it.dateOfBirth)
     }
   }.orEmpty()
