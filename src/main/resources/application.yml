@@ -30,6 +30,19 @@ spring:
         jwt:
           jwk-set-uri: ${oauth.endpoint.url:http://localhost:9090/auth}/.well-known/jwks.json
 
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  datasource:
+    url: jdbc:postgresql://${postgres.host:localhost:5432}/${postgres.dbname:manage_recalls}
+    username: ${postgres.username:ppud_user}
+    password: ${postgres.password:secret}
+    driver-class-name: org.postgresql.Driver
+
   profiles:
     group:
       test:
@@ -74,11 +87,3 @@ prisonerSearch:
 gotenberg:
   endpoint:
     url: http://localhost:9093
-
-spring.jpa.hibernate.ddl-auto: validate
-
-spring.datasource.url: jdbc:postgresql://${postgres.host:localhost:5432}/${postgres.dbname:manage_recalls}
-spring.datasource.username: ${postgres.username:ppud_user}
-spring.datasource.password: ${postgres.password:secret}
-spring.datasource.driver-class-name: org.postgresql.Driver
-spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
