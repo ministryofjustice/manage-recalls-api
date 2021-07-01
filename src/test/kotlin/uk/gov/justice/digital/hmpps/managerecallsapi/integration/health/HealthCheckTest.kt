@@ -37,7 +37,8 @@ class HealthCheckTest : IntegrationTestBase() {
       "status" to "UP",
       "components.prisonerOffenderSearchHealth.details.status" to OK.name,
       "components.gotenbergHealth.details.status" to OK.name,
-      "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE)
+      "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
+      "components.db.status" to "UP"
     )
   }
 
