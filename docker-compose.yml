@@ -6,6 +6,7 @@ services:
     networks:
       - manage-recalls-api
     container_name: manage-recalls-api
+    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg ]
     ports:
       - "8080:8080"
     healthcheck:
@@ -15,10 +16,22 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - PRISONERSEARCH_ENDPOINT_URL=http://fake-prisoner-offender-search-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
-      - POSTGRES_HOST=ppud_postgres:5432
+      - POSTGRES_HOST=postgres:5432
       - POSTGRES_DBNAME=manage_recalls
       - POSTGRES_USERNAME=ppud_user
       - POSTGRES_PASSWORD=secret
+
+  postgres:
+    image: postgres:13
+    container_name: postgres_manage-recalls-api
+    networks:
+      - manage-recalls-api
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=ppud_user
+      - POSTGRES_DB=manage_recalls
 
   fake-prisoner-offender-search-api:
     build: ./fake-prisoner-offender-search-api
@@ -41,4 +54,3 @@ services:
 
 networks:
   manage-recalls-api:
-    external: true
