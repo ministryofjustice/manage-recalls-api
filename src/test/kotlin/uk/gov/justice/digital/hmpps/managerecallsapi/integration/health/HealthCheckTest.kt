@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.health
 
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -12,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Got
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
 
+@AutoConfigureEmbeddedDatabase(provider = ZONKY)
 class HealthCheckTest : IntegrationTestBase() {
 
   @Autowired

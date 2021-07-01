@@ -4,4 +4,6 @@ set -euo pipefail
 
 ./gradlew ktlintFormat
 ./gradlew clean check
-./scripts/run-docker-integration-tests.sh
+./scripts/start-gotenburg.sh
+./gradlew documentGenerationTest
+./scripts/stop-gotenburg.sh

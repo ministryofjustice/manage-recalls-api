@@ -16,7 +16,7 @@ import java.util.UUID
 @ExtendWith(SpringExtension::class)
 @AutoConfigureEmbeddedDatabase(provider = ZONKY)
 @DataJpaTest
-@AutoConfigureTestDatabase()
+@AutoConfigureTestDatabase
 class RecallRepositoryIntegrationTest(
   @Autowired
   private val repository: RecallRepository
