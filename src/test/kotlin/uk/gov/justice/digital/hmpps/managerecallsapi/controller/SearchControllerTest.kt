@@ -6,9 +6,6 @@ import com.natpryce.hamkrest.isEmpty
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import uk.gov.justice.digital.hmpps.managerecallsapi.SearchController
-import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.LocalDate
