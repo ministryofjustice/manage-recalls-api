@@ -27,6 +27,11 @@ generic-service:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
       API_CLIENT_ID: "API_CLIENT_ID"
       API_CLIENT_SECRET: "API_CLIENT_SECRET"
+    manage-recalls-database:
+      POSTGRES_HOST: "host"
+      POSTGRES_DBNAME: "name"
+      POSTGRES_USERNAME: "username"
+      POSTGRES_PASSWORD: "password"
 
 generic-prometheus-alerts:
   targetApplication: manage-recalls-api

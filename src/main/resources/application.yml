@@ -77,8 +77,8 @@ gotenberg:
 
 spring.jpa.hibernate.ddl-auto: validate
 
-spring.datasource.url: jdbc:postgresql://localhost:5432/manage_recalls
-spring.datasource.username: ppud_user
-spring.datasource.password: secret
+spring.datasource.url: jdbc:postgresql://${postgres.host:localhost:5432}/${postgres.dbname:manage_recalls}
+spring.datasource.username: ${postgres.username:ppud_user}
+spring.datasource.password: ${postgres.password:secret}
 spring.datasource.driver-class-name: org.postgresql.Driver
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
