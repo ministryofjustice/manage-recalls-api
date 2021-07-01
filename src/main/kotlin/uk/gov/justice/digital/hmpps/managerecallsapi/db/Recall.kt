@@ -10,6 +10,6 @@ data class Recall(
   @Id
   val id: UUID,
 
-  @Column(name="user_id", nullable = false)
-  val userId: String
+  @Column(name="noms_number", nullable = false)
+  val nomsNumber: String
   )
