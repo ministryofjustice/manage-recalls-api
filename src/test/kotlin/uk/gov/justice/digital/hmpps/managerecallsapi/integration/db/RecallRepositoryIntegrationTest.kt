@@ -23,7 +23,7 @@ class RecallRepositoryIntegrationTest(
 ) {
 
   @Test
-  fun saveRecall() {
+  fun `saves and retrieves a recall`() {
     val randomUUID = UUID.randomUUID()
     val nomsNumber = "Random_name"
     val recall = Recall(randomUUID, nomsNumber)

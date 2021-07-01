@@ -5,11 +5,13 @@ management.endpoint:
   health.cache.time-to-live: 0
   info.cache.time-to-live: 0
 
-spring.flyway.enabled: false
-spring.jpa.hibernate.ddl-auto: none
-
 spring:
   datasource:
     url: NOT_USED
     username: NOT_USED
     password: NOT_USED
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: none
