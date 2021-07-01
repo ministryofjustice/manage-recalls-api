@@ -7,3 +7,9 @@ management.endpoint:
 
 spring.flyway.enabled: false
 spring.jpa.hibernate.ddl-auto: none
+
+spring:
+  datasource:
+    url: NOT_USED
+    username: NOT_USED
+    password: NOT_USED

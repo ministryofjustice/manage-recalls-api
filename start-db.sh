@@ -10,10 +10,10 @@ else
   isPostgresStopped=$?
   if [ $isPostgresStopped == 0 ]; then
     echo "Starting Postgres..."
-    docker start $POSTGRES_CONTAINER_NAME
+    docker start $POSTGRES_CONTAINER_NAME --network=manage-recalls-api
   else
     echo "Creating Postgres..."
     docker pull postgres:13
-    docker run --name $POSTGRES_CONTAINER_NAME --rm -d -e POSTGRES_PASSWORD=secret -e POSTGRES_USER=ppud_user -e POSTGRES_DB=manage_recalls -p 5432:5432 postgres:13
+    docker run --name $POSTGRES_CONTAINER_NAME --network=manage-recalls-api --rm -d -e POSTGRES_PASSWORD=secret -e POSTGRES_USER=ppud_user -e POSTGRES_DB=manage_recalls -p 5432:5432 postgres:13
   fi
 fi

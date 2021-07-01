@@ -15,6 +15,10 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - PRISONERSEARCH_ENDPOINT_URL=http://fake-prisoner-offender-search-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
+      - POSTGRES_HOST=ppud_postgres:5432
+      - POSTGRES_DBNAME=manage_recalls
+      - POSTGRES_USERNAME=ppud_user
+      - POSTGRES_PASSWORD=secret
 
   fake-prisoner-offender-search-api:
     build: ./fake-prisoner-offender-search-api
@@ -37,3 +41,4 @@ services:
 
 networks:
   manage-recalls-api:
+    external: true
