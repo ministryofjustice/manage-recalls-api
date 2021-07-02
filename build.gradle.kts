@@ -37,6 +37,7 @@ dependencies {
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
   testImplementation("io.zonky.test:embedded-database-spring-test:2.0.1")
   testImplementation("io.zonky.test:embedded-postgres:1.3.0")
+  testImplementation("io.projectreactor:reactor-test")
 }
 
 tasks {
