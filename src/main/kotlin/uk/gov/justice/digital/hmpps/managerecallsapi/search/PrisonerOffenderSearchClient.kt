@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import java.time.LocalDate
 
 @Component
