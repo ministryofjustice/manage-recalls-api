@@ -6,8 +6,8 @@ import com.natpryce.hamkrest.isEmpty
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus.UNAUTHORIZED
-import uk.gov.justice.digital.hmpps.managerecallsapi.SearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.SearchResult
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate

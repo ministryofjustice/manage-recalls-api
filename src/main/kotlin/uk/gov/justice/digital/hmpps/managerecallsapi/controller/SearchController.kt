@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi
+package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
