@@ -22,7 +22,7 @@ class RecallsControllerTest {
 
     val results = underTest.bookRecall(recallRequest)
 
-    assertThat(results.body, equalTo(BookRecallResponse(recall.id, nomsNumber)))
+    assertThat(results.body, equalTo(RecallResponse(recall.id, nomsNumber)))
   }
 
   @Test
@@ -32,6 +32,6 @@ class RecallsControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(recall)))
+    assertThat(results, equalTo(listOf(RecallResponse(recall.id, nomsNumber))))
   }
 }

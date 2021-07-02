@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import javax.sql.DataSource
 
 @AutoConfigureEmbeddedDatabase(provider = ZONKY)
@@ -53,8 +53,8 @@ class BookARecallIntegrationTest : IntegrationTestBase() {
     path: String,
     request: Any,
     userJwt: String
-  ): BookRecallResponse {
-    val responseType = object : ParameterizedTypeReference<BookRecallResponse>() {}
+  ): RecallResponse {
+    val responseType = object : ParameterizedTypeReference<RecallResponse>() {}
     return sendAuthenticatedPostRequestWithBody(path, request, userJwt)
       .expectStatus().isCreated
       .expectBody(responseType)

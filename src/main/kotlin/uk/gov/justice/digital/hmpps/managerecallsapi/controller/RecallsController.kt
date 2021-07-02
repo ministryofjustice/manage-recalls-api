@@ -28,13 +28,13 @@ class RecallsController(
     )
 
   @GetMapping("/recalls")
-  fun findAll(): MutableList<Recall> = recallRepository.findAll()
+  fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
 }
 
 fun BookRecallRequest.toRecall() = Recall(UUID.randomUUID(), this.nomsNumber)
 
-fun Recall.toResponse() = BookRecallResponse(this.id, this.nomsNumber)
+fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber)
 
 data class BookRecallRequest(val nomsNumber: String)
 
-data class BookRecallResponse(val id: UUID, val nomsNumber: String)
+data class RecallResponse(val id: UUID, val nomsNumber: String)
