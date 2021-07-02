@@ -38,6 +38,7 @@ dependencies {
   testImplementation("io.zonky.test:embedded-database-spring-test:2.0.1")
   testImplementation("io.zonky.test:embedded-postgres:1.3.0")
   testImplementation("io.projectreactor:reactor-test")
+  testImplementation("com.ninja-squad:springmockk:3.0.1")
 }
 
 tasks {

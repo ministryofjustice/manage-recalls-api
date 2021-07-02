@@ -24,4 +24,14 @@ class RecallsControllerTest {
 
     assertThat(results.body, equalTo(BookRecallResponse(recall.id, nomsNumber)))
   }
+
+  @Test
+  fun `gets all recalls`() {
+    val recall = recallRequest.toRecall()
+    every { recallRepository.findAll() } returns listOf(recall)
+
+    val results = underTest.findAll()
+
+    assertThat(results, equalTo(listOf(recall)))
+  }
 }

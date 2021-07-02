@@ -64,4 +64,6 @@ abstract class IntegrationTestBase {
     .body(Mono.just(request), T::class.java)
     .headers { it.add(HttpHeaders.AUTHORIZATION, "Bearer $clientJwt") }
     .exchange()
+
+  fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
 }
