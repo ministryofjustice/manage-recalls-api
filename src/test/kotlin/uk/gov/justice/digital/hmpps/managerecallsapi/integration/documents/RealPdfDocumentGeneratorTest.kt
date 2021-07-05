@@ -4,23 +4,32 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.greaterThan
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
+import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RevocationOrder
 
-class RealPdfDocumentGeneratorTest() {
+class RealPdfDocumentGeneratorTest {
 
   private val pdfDocumentGenerator = PdfDocumentGenerator(
     WebClient.builder().build(),
     System.getenv("GOTENBERG_ENDPOINT_URL") ?: "http://localhost:9093",
-    RevocationOrder()
   )
 
   @Test
   fun `should return byte array when requesting pdf`() {
-    val makePdfResult = pdfDocumentGenerator.makePdf()
+    val details = listOf(
+      HtmlDocumentDetail("index.html", "<html><body></body></html>"),
+      ClassPathDocumentDetail("logo.png", "/document/template/revocation-order/logo.png")
+    )
 
-    // TODO investigate better assertion
-    // Do not trying to test gotenberg, better assertion on further stories
-    assertThat(makePdfResult.size, greaterThan(0))
+    val makePdfResult = pdfDocumentGenerator.makePdf(details)
+
+    StepVerifier
+      .create(makePdfResult)
+      .assertNext {
+        assertThat(it.size, greaterThan(0))
+      }
+      .verifyComplete()
   }
 }

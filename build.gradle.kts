@@ -22,6 +22,7 @@ dependencies {
   implementation("org.flywaydb:flyway-core:7.10.0")
   implementation("org.postgresql:postgresql:42.2.22")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 
@@ -54,7 +55,7 @@ tasks {
 }
 
 task<Test>("documentGenerationTest") {
-  description = "Runs the documetn generation tests against gotenberg"
+  description = "Runs the document generation tests against gotenberg"
   group = "verification"
   testClassesDirs = sourceSets["test"].output.classesDirs
   classpath = sourceSets["test"].runtimeClasspath

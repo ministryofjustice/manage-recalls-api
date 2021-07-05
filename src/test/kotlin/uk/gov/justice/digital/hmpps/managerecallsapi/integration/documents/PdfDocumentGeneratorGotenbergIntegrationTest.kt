@@ -9,13 +9,16 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PdfDocumentGeneratorIntegrationTest {
+class PdfDocumentGeneratorGotenbergIntegrationTest {
 
   @Autowired
   lateinit var gotenbergMockServer: GotenbergMockServer
@@ -35,10 +38,20 @@ class PdfDocumentGeneratorIntegrationTest {
 
   @Test
   fun `should return byte array when requesting pdf`() {
-    gotenbergMockServer.stubPdfGeneration("test".toByteArray())
+    gotenbergMockServer.stubPdfGeneration("test".toByteArray(), "<<FIRST_NAMES>>")
 
-    val makePdfResult = pdfDocumentGenerator.makePdf()
+    val details = listOf(
+      HtmlDocumentDetail("index.html", "<body><span><<FIRST_NAMES>></span></body>"),
+      ClassPathDocumentDetail("logo.png", "/document/template/revocation-order/logo.png")
+    )
 
-    assertThat(String(makePdfResult), equalTo("test"))
+    val makePdfResult = pdfDocumentGenerator.makePdf(details)
+
+    StepVerifier
+      .create(makePdfResult)
+      .assertNext {
+        assertThat(String(it), equalTo("test"))
+      }
+      .verifyComplete()
   }
 }

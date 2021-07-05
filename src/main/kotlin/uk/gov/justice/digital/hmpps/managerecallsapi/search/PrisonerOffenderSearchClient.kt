@@ -27,11 +27,12 @@ data class Prisoner(
   val pncNumber: String? = null,
   val croNumber: String? = null,
   val firstName: String? = null,
-  val middleNames: String? = null,
+  val middleNames: String? = "",
   val lastName: String? = null,
   val dateOfBirth: LocalDate? = null,
   val gender: String? = null,
   val status: String? = null,
+  val bookNumber: String? = null
 )
 
 data class PrisonerSearchRequest(val prisonerIdentifier: String)

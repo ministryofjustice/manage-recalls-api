@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
-  fun stubPdfGeneration(generatedPdf: ByteArray) {
+  fun stubPdfGeneration(generatedPdf: ByteArray, firstName: String) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html"))
         .withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
@@ -25,7 +25,7 @@ class GotenbergMockServer : WireMockServer(9093) {
           aMultipart()
             .withName("files")
             .withHeader("Content-Disposition", equalTo("form-data; name=index.html; filename=index.html"))
-            .withBody(equalTo(ClassPathResource("/document/template/revocation-order/index.html").file.readText()))
+            .withBody(containing(firstName))
         )
         .withMultipartRequestBody(
           aMultipart()
