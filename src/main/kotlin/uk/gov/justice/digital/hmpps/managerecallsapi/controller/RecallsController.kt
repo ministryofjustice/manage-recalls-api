@@ -5,10 +5,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -22,16 +22,19 @@ class RecallsController(
 ) {
 
   @PostMapping("/recalls")
-  @ResponseBody
   fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest) =
     ResponseEntity(
       recallRepository.save(bookRecallRequest.toRecall()).toResponse(), HttpStatus.CREATED
     )
+
+  @GetMapping("/recalls")
+  fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
 }
 
 fun BookRecallRequest.toRecall() = Recall(UUID.randomUUID(), this.nomsNumber)
 
-fun Recall.toResponse() = BookRecallResponse(this.id, this.nomsNumber)
+fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber)
 
 data class BookRecallRequest(val nomsNumber: String)
-data class BookRecallResponse(val id: UUID, val nomsNumber: String)
+
+data class RecallResponse(val id: UUID, val nomsNumber: String)
