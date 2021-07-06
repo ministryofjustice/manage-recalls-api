@@ -9,16 +9,18 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.LocalDate
+import javax.validation.Valid
+import javax.validation.constraints.NotEmpty
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
+// @Validated
 class SearchController(
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient
 ) {
@@ -27,8 +29,7 @@ class SearchController(
   }
 
   @PostMapping("/search")
-  @ResponseBody
-  fun prisonerSearch(@RequestBody searchRequest: SearchRequest): Mono<ResponseEntity<List<SearchResult>>> =
+  fun prisonerSearch(@Valid @RequestBody searchRequest: SearchRequest): Mono<ResponseEntity<List<SearchResult>>> =
     prisonerOffenderSearchClient.prisonerSearch(searchRequest)
       .map { ResponseEntity.ok(it.toSearchResults()) }
 }
@@ -40,7 +41,7 @@ fun List<Prisoner>?.toSearchResults() =
     }
   }.orEmpty()
 
-data class SearchRequest(val nomsNumber: String)
+data class SearchRequest(@NotEmpty val nomsNumber: String)
 data class SearchResult(
   val firstName: String?,
   val lastName: String?,
