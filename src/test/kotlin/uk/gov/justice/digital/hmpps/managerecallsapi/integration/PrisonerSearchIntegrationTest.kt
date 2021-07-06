@@ -56,6 +56,15 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `search request with blank noms number returns 400`() {
+    sendAuthenticatedPostRequestWithBody(
+      "/search",
+      SearchRequest(""),
+      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+    ).expectStatus().isBadRequest
+  }
+
+  @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(
       prisonerSearchRequest,
