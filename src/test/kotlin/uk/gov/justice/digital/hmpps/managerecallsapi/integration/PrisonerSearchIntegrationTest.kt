@@ -27,7 +27,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `should respond with 401 if user does not have the MANAGE_RECALLS role`() {
-    val invalidUserJwt = jwtAuthenticationHelper.createTestJwt(role = "ROLE_UNKNOWN")
+    val invalidUserJwt = testJwt("ROLE_UNKNOWN")
     sendAuthenticatedPostRequestWithBody("/search", apiSearchRequest, invalidUserJwt)
       .expectStatus().isUnauthorized
   }
@@ -39,7 +39,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
     sendAuthenticatedPostRequestWithBody(
       "/search",
       apiSearchRequest,
-      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+      testJwt("ROLE_MANAGE_RECALLS")
     )
       .expectStatus().is5xxServerError
   }
@@ -48,13 +48,9 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   fun `can send search request to prisoner search api and retrieve no matches`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
 
-    val result = authenticatedPostRequest(
-      "/search",
-      apiSearchRequest,
-      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
-    )
+    val responseBody = authenticatedPostRequest("/search", apiSearchRequest)
 
-    assertThat(result, isEmpty)
+    assertThat(responseBody, isEmpty)
   }
 
   @Test
@@ -62,7 +58,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
     val result = sendAuthenticatedPostRequestWithBody(
       "/search",
       SearchRequest(""),
-      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+      testJwt("ROLE_MANAGE_RECALLS")
     ).expectStatus().isBadRequest
       .expectBody(ErrorResponse::class.java)
       .returnResult()
@@ -83,28 +79,14 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
       )
     )
 
-    val response = authenticatedPostRequest(
-      "/search",
-      apiSearchRequest,
-      jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
-    )
+    val response = authenticatedPostRequest("/search", apiSearchRequest)
 
     assertThat(
       response,
       equalTo(
         listOf(
-          SearchResult(
-            firstName,
-            lastName,
-            nomsNumber,
-            dateOfBirth,
-          ),
-          SearchResult(
-            firstName,
-            lastName,
-            null,
-            dateOfBirth,
-          )
+          SearchResult(firstName, lastName, nomsNumber, dateOfBirth),
+          SearchResult(firstName, lastName, null, dateOfBirth)
         )
       )
     )
@@ -122,16 +104,10 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
     status = "status",
   )
 
-  private fun authenticatedPostRequest(
-    path: String,
-    request: Any,
-    userJwt: String
-  ): List<SearchResult> {
-    val responseType = object : ParameterizedTypeReference<List<SearchResult>>() {}
-    return sendAuthenticatedPostRequestWithBody(path, request, userJwt)
+  private fun authenticatedPostRequest(path: String, request: Any): List<SearchResult> =
+    sendAuthenticatedPostRequestWithBody(path, request, testJwt(role = "ROLE_MANAGE_RECALLS"))
       .expectStatus().isOk
-      .expectBody(responseType)
+      .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
       .returnResult()
       .responseBody!!
-  }
 }

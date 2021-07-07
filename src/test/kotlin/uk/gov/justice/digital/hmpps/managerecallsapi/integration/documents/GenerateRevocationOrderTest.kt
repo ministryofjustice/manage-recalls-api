@@ -28,7 +28,7 @@ class GenerateRevocationOrderTest : IntegrationTestBase() {
 
   @Test
   fun `should respond with 401 if user does not have the MANAGE_RECALLS role`() {
-    val invalidUserJwt = jwtAuthenticationHelper.createTestJwt(role = "ROLE_UNKNOWN")
+    val invalidUserJwt = testJwt("ROLE_UNKNOWN")
     sendAuthenticatedPostRequest("/generate-revocation-order", invalidUserJwt)
       .expectStatus().isUnauthorized
   }
@@ -49,5 +49,5 @@ class GenerateRevocationOrderTest : IntegrationTestBase() {
       .expectStatus().isOk
       .expectBody(Pdf::class.java)
       .returnResult()
-      .responseBody
+      .responseBody!!
 }
