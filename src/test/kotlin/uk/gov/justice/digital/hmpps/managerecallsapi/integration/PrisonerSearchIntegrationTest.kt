@@ -36,11 +36,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   fun `should handle unauthorized from prisoner search api`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
 
-    sendAuthenticatedPostRequestWithBody(
-      "/search",
-      apiSearchRequest,
-      testJwt("ROLE_MANAGE_RECALLS")
-    )
+    sendAuthenticatedPostRequestWithBody("/search", apiSearchRequest)
       .expectStatus().is5xxServerError
   }
 
@@ -55,11 +51,8 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `search request with blank noms number returns 400`() {
-    val result = sendAuthenticatedPostRequestWithBody(
-      "/search",
-      SearchRequest(""),
-      testJwt("ROLE_MANAGE_RECALLS")
-    ).expectStatus().isBadRequest
+    val result = sendAuthenticatedPostRequestWithBody("/search", SearchRequest(""))
+      .expectStatus().isBadRequest
       .expectBody(ErrorResponse::class.java)
       .returnResult()
 
@@ -81,9 +74,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPostRequest("/search", apiSearchRequest)
 
-    assertThat(
-      response,
-      equalTo(
+    assertThat(response, equalTo(
         listOf(
           SearchResult(firstName, lastName, nomsNumber, dateOfBirth),
           SearchResult(firstName, lastName, null, dateOfBirth)
@@ -105,7 +96,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   )
 
   private fun authenticatedPostRequest(path: String, request: Any): List<SearchResult> =
-    sendAuthenticatedPostRequestWithBody(path, request, testJwt(role = "ROLE_MANAGE_RECALLS"))
+    sendAuthenticatedPostRequestWithBody(path, request)
       .expectStatus().isOk
       .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
       .returnResult()
