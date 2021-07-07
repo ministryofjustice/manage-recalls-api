@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.validation.FieldError
+import org.springframework.validation.ObjectError
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import javax.validation.ValidationException
@@ -25,6 +28,23 @@ class ManageRecallsApiExceptionHandler {
           developerMessage = e.message
         )
       )
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException::class)
+  fun handleException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
+    log.info("MethodArgumentNotValidException {}", e)
+    return ResponseEntity
+      .status(BAD_REQUEST)
+      .body(ErrorResponse(status = BAD_REQUEST.value(), developerMessage = e.developerMessage()))
+  }
+
+  private fun MethodArgumentNotValidException.developerMessage(): String {
+    return this.bindingResult.allErrors.joinToString { error: ObjectError ->
+      when (error) {
+        is FieldError -> "${error.field}: ${error.defaultMessage}"
+        else -> error.defaultMessage ?: "unknown"
+      }
+    }
   }
 
   @ExceptionHandler(java.lang.Exception::class)
