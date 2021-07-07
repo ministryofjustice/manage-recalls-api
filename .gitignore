@@ -65,5 +65,4 @@ dist
 # AWS DOcker build
 ecr.repo
 /dps-gradle-spring-boot-suppressions.xml
-.editorconfig
 .DS_Store
