@@ -47,23 +47,27 @@ abstract class IntegrationTestBase {
     hmppsAuthMockServer.stubClientToken()
   }
 
+  protected fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
+
   protected final fun sendAuthenticatedPostRequest(
     path: String,
-    userJwt: String = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
-  ) = webTestClient.post()
-    .uri(path)
-    .headers { it.add(HttpHeaders.AUTHORIZATION, "Bearer $userJwt") }
-    .exchange()
+    userJwt: String = testJwt("ROLE_MANAGE_RECALLS")
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post()
+      .uri(path)
+      .headers { it.withBearerAuthToken(userJwt) }
+      .exchange()
 
   protected final inline fun <reified T> sendAuthenticatedPostRequestWithBody(
     path: String,
     request: T,
     clientJwt: String
-  ) = webTestClient.post()
-    .uri(path)
-    .body(Mono.just(request), T::class.java)
-    .headers { it.add(HttpHeaders.AUTHORIZATION, "Bearer $clientJwt") }
-    .exchange()
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post()
+      .uri(path)
+      .body(Mono.just(request), T::class.java)
+      .headers { it.withBearerAuthToken(clientJwt) }
+      .exchange()
 
   fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(HttpHeaders.AUTHORIZATION, "Bearer $jwt")
 }

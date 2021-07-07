@@ -28,7 +28,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @ParameterizedTest
   @MethodSource("requestBodySpecs")
   fun `unauthorized when MANAGE_RECALLS role is missing`(requestBodySpec: WebTestClient.RequestBodySpec) {
-    val invalidUserJwt = jwtAuthenticationHelper.createTestJwt(role = "ROLE_UNKNOWN")
+    val invalidUserJwt = testJwt("ROLE_UNKNOWN")
     requestBodySpec.headers { it.withBearerAuthToken(invalidUserJwt) }
       .exchange()
       .expectStatus().isUnauthorized
@@ -36,7 +36,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `books a recall`() {
-    val jwt = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+    val jwt = testJwt("ROLE_MANAGE_RECALLS")
     val aRecall = Recall(UUID.randomUUID(), nomsNumber)
 
     every { recallRepository.save(any()) } returns aRecall
@@ -51,7 +51,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `returns all recalls`() {
-    val jwt = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+    val jwt = testJwt("ROLE_MANAGE_RECALLS")
 
     every { recallRepository.findAll() } returns listOf(Recall(UUID.randomUUID(), nomsNumber))
 
