@@ -16,49 +16,39 @@ import javax.validation.ValidationException
 
 @RestControllerAdvice
 class ManageRecallsApiExceptionHandler {
+  private val log = LoggerFactory.getLogger(this::class.java)
+
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.message)
     return ResponseEntity
       .status(BAD_REQUEST)
-      .body(
-        ErrorResponse(
-          status = BAD_REQUEST,
-          userMessage = "Validation failure: ${e.message}",
-          developerMessage = e.message
-        )
-      )
+      .body(ErrorResponse(BAD_REQUEST, "Validation failure: ${e.message}"))
   }
 
   @ExceptionHandler(MethodArgumentNotValidException::class)
-  fun handleException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
-    log.info("MethodArgumentNotValidException {}", e)
-    return ResponseEntity
-      .status(BAD_REQUEST)
-      .body(ErrorResponse(status = BAD_REQUEST.value(), developerMessage = e.developerMessage()))
-  }
+  fun handleException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> =
+    with(e.errorMessage()) {
+      log.info("MethodArgumentNotValidException {}", this)
+      ResponseEntity
+        .status(BAD_REQUEST)
+        .body(ErrorResponse(BAD_REQUEST, this))
+    }
 
-  private fun MethodArgumentNotValidException.developerMessage(): String {
-    return this.bindingResult.allErrors.joinToString { error: ObjectError ->
+  private fun MethodArgumentNotValidException.errorMessage(): String =
+    this.bindingResult.allErrors.joinToString { error: ObjectError ->
       when (error) {
         is FieldError -> "${error.field}: ${error.defaultMessage}"
         else -> error.defaultMessage ?: "unknown"
       }
     }
-  }
 
   @ExceptionHandler(java.lang.Exception::class)
   fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
     log.error("Unexpected exception", e)
     return ResponseEntity
       .status(INTERNAL_SERVER_ERROR)
-      .body(
-        ErrorResponse(
-          status = INTERNAL_SERVER_ERROR,
-          userMessage = "Unexpected error: ${e.message}",
-          developerMessage = e.message
-        )
-      )
+      .body(ErrorResponse(INTERNAL_SERVER_ERROR, "Unexpected error: ${e.message}"))
   }
 
   @ExceptionHandler(AccessDeniedException::class)
@@ -66,33 +56,8 @@ class ManageRecallsApiExceptionHandler {
     log.error("Unexpected AccessDeniedException", e)
     return ResponseEntity
       .status(UNAUTHORIZED)
-      .body(
-        ErrorResponse(
-          status = UNAUTHORIZED,
-          userMessage = "Access Denied: ${e.message}",
-          developerMessage = e.message
-        )
-      )
-  }
-
-  companion object {
-    private val log = LoggerFactory.getLogger(this::class.java)
+      .body(ErrorResponse(UNAUTHORIZED, "Access Denied: ${e.message}"))
   }
 }
 
-data class ErrorResponse(
-  val status: Int,
-  val errorCode: Int? = null,
-  val userMessage: String? = null,
-  val developerMessage: String? = null,
-  val moreInfo: String? = null
-) {
-  constructor(
-    status: HttpStatus,
-    errorCode: Int? = null,
-    userMessage: String? = null,
-    developerMessage: String? = null,
-    moreInfo: String? = null
-  ) :
-    this(status.value(), errorCode, userMessage, developerMessage, moreInfo)
-}
+data class ErrorResponse(val status: HttpStatus, val message: String)
