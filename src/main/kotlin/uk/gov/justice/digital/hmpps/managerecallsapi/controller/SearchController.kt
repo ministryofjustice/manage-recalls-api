@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.LocalDate
 import javax.validation.Valid
-import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -35,7 +35,7 @@ fun List<Prisoner>?.toSearchResults() =
     }
   }.orEmpty()
 
-data class SearchRequest(@field:NotEmpty val nomsNumber: String)
+data class SearchRequest(@field:NotBlank val nomsNumber: String)
 data class SearchResult(
   val firstName: String?,
   val lastName: String?,
