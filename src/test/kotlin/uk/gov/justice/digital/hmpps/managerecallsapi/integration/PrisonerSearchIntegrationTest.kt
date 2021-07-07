@@ -5,7 +5,9 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isEmpty
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.UNAUTHORIZED
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -57,11 +59,20 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `search request with blank noms number returns 400`() {
-    sendAuthenticatedPostRequestWithBody(
+    val result = sendAuthenticatedPostRequestWithBody(
       "/search",
       SearchRequest(""),
       jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
     ).expectStatus().isBadRequest
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+
+    assertThat(
+      result.responseBody,
+      equalTo(
+        ErrorResponse(status = BAD_REQUEST, developerMessage = "nomsNumber: must not be empty")
+      )
+    )
   }
 
   @Test
