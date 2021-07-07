@@ -69,9 +69,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
     assertThat(
       result.responseBody,
-      equalTo(
-        ErrorResponse(status = BAD_REQUEST, developerMessage = "nomsNumber: must not be empty")
-      )
+      equalTo(ErrorResponse(BAD_REQUEST, "nomsNumber: must not be empty"))
     )
   }
 
