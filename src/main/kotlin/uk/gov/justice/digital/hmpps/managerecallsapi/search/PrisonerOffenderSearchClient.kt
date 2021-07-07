@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.search
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.core.ParameterizedTypeReference
@@ -12,10 +10,6 @@ import java.time.LocalDate
 
 @Component
 class PrisonerOffenderSearchClient {
-
-  companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
-  }
 
   @Autowired
   @Qualifier("prisonerOffenderSearchWebClient")

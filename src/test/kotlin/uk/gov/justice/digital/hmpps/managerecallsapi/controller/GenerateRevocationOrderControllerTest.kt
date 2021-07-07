@@ -1,7 +1,10 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi
+package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.has
+import com.natpryce.hamkrest.present
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -22,6 +25,14 @@ internal class GenerateRevocationOrderControllerTest {
 
     val result = underTest.generateRevocationOrder()
 
-    assertThat(result.body.content, equalTo(expectedBase64Pdf))
+    assertThat(
+      result.body,
+      allOf(
+        present(),
+        has(
+          "content", { it.content }, equalTo(expectedBase64Pdf)
+        )
+      )
+    )
   }
 }

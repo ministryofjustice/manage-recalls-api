@@ -20,7 +20,9 @@ class SearchRequestTest {
     val invalidSearchRequest = SearchRequest(" ")
     val violations = validator.validate(invalidSearchRequest)
 
-    assertThat(violations, isSingleItemMatching(
+    assertThat(
+      violations,
+      isSingleItemMatching(
         allOf(
           has("propertyPath", { it.propertyPath }, equalTo(PathImpl.createPathFromString("nomsNumber"))),
           has("message", { it.message }, equalTo("must not be blank"))
