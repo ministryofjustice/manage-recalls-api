@@ -75,12 +75,11 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
     val response = authenticatedPostRequest("/search", apiSearchRequest)
 
     assertThat(response, equalTo(
-        listOf(
-          SearchResult(firstName, lastName, nomsNumber, dateOfBirth),
-          SearchResult(firstName, lastName, null, dateOfBirth)
-        )
+      listOf(
+        SearchResult(firstName, lastName, nomsNumber, dateOfBirth),
+        SearchResult(firstName, lastName, null, dateOfBirth)
       )
-    )
+    ))
   }
 
   private fun testPrisoner(nomsNumber: String?, firstName: String?, lastName: String?) = Prisoner(

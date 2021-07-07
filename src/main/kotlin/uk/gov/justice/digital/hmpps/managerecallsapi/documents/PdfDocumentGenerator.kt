@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.InputStreamResource
@@ -19,10 +17,6 @@ class PdfDocumentGenerator(
   @Value("\${gotenberg.endpoint.url}") private val gotenbergEndpointUrl: String,
   private val revocationOrder: RevocationOrder
 ) {
-
-  companion object {
-    val log: Logger = LoggerFactory.getLogger(this::class.java)
-  }
 
   fun makePdf(): ByteArray {
     val documentBody = MultipartBodyBuilder().apply {
