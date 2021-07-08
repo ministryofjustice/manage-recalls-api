@@ -43,12 +43,8 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("com.ninja-squad:springmockk:3.0.1")
 
-  testImplementation("au.com.dius:pact-jvm-consumer-junit_2.11:3.5.24")
-  testImplementation("au.com.dius:pact-jvm-consumer-junit_2.11:3.5.24")
-
-  testImplementation("au.com.dius.pact.provider:junit5:4.1.4")
+  testImplementation("au.com.dius.pact.provider:junit5:4.2.7")
   testImplementation("au.com.dius.pact.provider:junit5spring:4.2.7")
-  testImplementation("au.com.dius:pact-jvm-provider-junit5:4.0.10")
 }
 
 tasks {
@@ -59,7 +55,10 @@ tasks {
   }
 
   test {
-    exclude("**/*RealPdfDocumentGeneratorTest*")
+    useJUnitPlatform {
+      exclude("**/*RealPdfDocumentGeneratorTest*")
+      exclude("**/*Pact*Test*")
+    }
   }
 }
 

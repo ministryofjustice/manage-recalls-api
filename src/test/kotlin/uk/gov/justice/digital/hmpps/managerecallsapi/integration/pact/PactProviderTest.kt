@@ -1,13 +1,15 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.pact
 
-import au.com.dius.pact.provider.junit.VerificationReports
 import au.com.dius.pact.provider.junit5.HttpTestTarget
 import au.com.dius.pact.provider.junit5.PactVerificationContext
-import au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider
+import au.com.dius.pact.provider.junitsupport.Consumer
 import au.com.dius.pact.provider.junitsupport.Provider
 import au.com.dius.pact.provider.junitsupport.State
+import au.com.dius.pact.provider.junitsupport.VerificationReports
+import au.com.dius.pact.provider.junitsupport.loader.PactBroker
+import au.com.dius.pact.provider.junitsupport.loader.PactBrokerAuth
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
-import au.com.dius.pact.provider.junitsupport.loader.PactFolder
+import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import org.apache.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestTemplate
@@ -27,7 +29,7 @@ class PactProviderAuthorizedTest : PactProviderTestBase() {
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
 
   @TestTemplate
-  @ExtendWith(PactVerificationInvocationContextProvider::class)
+  @ExtendWith(PactVerificationSpringProvider::class)
   fun pactVerificationTest(pactContext: PactVerificationContext, request: HttpRequest) {
     request.removeHeaders(AUTHORIZATION)
     request.addHeader(AUTHORIZATION, "Bearer ${validJwt()}")
@@ -60,7 +62,7 @@ class PactProviderAuthorizedTest : PactProviderTestBase() {
 @PactFilter(value = [".*unauthorized.*"])
 class PactProviderUnauthorizedTest : PactProviderTestBase() {
   @TestTemplate
-  @ExtendWith(PactVerificationInvocationContextProvider::class)
+  @ExtendWith(PactVerificationSpringProvider::class)
   fun pactVerificationTest(pactContext: PactVerificationContext, request: HttpRequest) {
     pactContext.verifyInteraction()
   }
@@ -71,9 +73,15 @@ class PactProviderUnauthorizedTest : PactProviderTestBase() {
 }
 
 @ExtendWith(SpringExtension::class)
+@VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
-@PactFolder("pacts")
-@VerificationReports(value = ["console", "markdown"])
+@Consumer("manage-recalls-ui")
+@PactBroker(
+  tags = ["\${pactbroker.tags}"],
+  host = "\${pactbroker.hostname}",
+  port = "\${pactbroker.port}",
+  authentication = PactBrokerAuth(username = "\${pactbroker.auth.username}", password = "\${pactbroker.auth.password}")
+)
 abstract class PactProviderTestBase : IntegrationTestBase() {
   @LocalServerPort
   private val port = 0

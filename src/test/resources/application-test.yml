@@ -15,3 +15,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+
+pactbroker:
+  hostname: localhost
+  port: 9292
+  tags: test
+  auth:
+    username: manage_recalls
+    password: manage_recalls
+
+pact:
+  verifier:
+    publishResults: false
