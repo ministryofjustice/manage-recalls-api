@@ -1,0 +1,89 @@
+{
+  "consumer": {
+    "name": "manage-recalls-ui"
+  },
+  "provider": {
+    "name": "manage-recalls-api"
+  },
+  "interactions": [
+    {
+      "description": "a search request by NOMS number",
+      "providerState": "prisoner exists for NOMS number",
+      "request": {
+        "method": "POST",
+        "path": "/search",
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer token-1"
+        },
+        "body": {
+          "nomsNumber": "A1234AA"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": [
+          {
+            "firstName": "Bertie",
+            "lastName": "Badger",
+            "nomsNumber": "A1234AA",
+            "dateOfBirth": "1990-10-30"
+          }
+        ]
+      }
+    },
+    {
+      "description": "a search request with blank NOMS number",
+      "providerState": "search by blank NOMS number",
+      "request": {
+        "method": "POST",
+        "path": "/search",
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer token-1"
+        },
+        "body": {
+          "nomsNumber": ""
+        }
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "status": "BAD_REQUEST",
+          "message": "nomsNumber: must not be blank"
+        }
+      }
+    },
+    {
+      "description": "an unauthorized search request",
+      "providerState": "unauthorized user token",
+      "request": {
+        "method": "POST",
+        "path": "/search",
+        "headers": {
+          "Accept": "application/json",
+          "Authorization": "Bearer token-1"
+        },
+        "body": {
+          "nomsNumber": "A1234AA"
+        }
+      },
+      "response": {
+        "status": 401,
+        "headers": {
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
