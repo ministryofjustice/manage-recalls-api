@@ -12,6 +12,7 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.LocalDate
+import java.util.UUID
 
 class SearchControllerTest {
 
@@ -36,8 +37,10 @@ class SearchControllerTest {
 
   @Test
   fun `prisonerSearch returns prisoner results`() {
-    val prisoner1 = prisoner("A1234AA", "Jim", "Smith", LocalDate.of(1994, 10, 15))
-    val prisoner2 = prisoner("A1234ZZ", "Bob", "Smith", LocalDate.of(1994, 10, 16))
+    val prisoner1 = prisoner("A1234AA", "Jim", "Smith", "Norman", LocalDate.of(1994, 10, 15))
+    val prisoner2 = prisoner(
+      "A1234ZZ", "Bob", "Smith", "Norman Stanley", LocalDate.of(1994, 10, 16),
+    )
     every { prisonerOffenderSearchClient.prisonerSearch(searchRequest) } returns Mono.just(listOf(prisoner1, prisoner2))
 
     val results = underTest.prisonerSearch(searchRequest)
@@ -50,8 +53,8 @@ class SearchControllerTest {
           present(
             equalTo(
               listOf(
-                SearchResult(prisoner1.firstName, prisoner1.lastName, prisoner1.prisonerNumber, prisoner1.dateOfBirth),
-                SearchResult(prisoner2.firstName, prisoner2.lastName, prisoner2.prisonerNumber, prisoner2.dateOfBirth)
+                searchResult(prisoner1),
+                searchResult(prisoner2)
               )
             )
           )
@@ -60,10 +63,32 @@ class SearchControllerTest {
       .verifyComplete()
   }
 
-  private fun prisoner(nomsNumber: String?, firstName: String?, lastName: String?, dateOfBirth: LocalDate?) = Prisoner(
+  private fun searchResult(p: Prisoner) =
+    SearchResult(
+      p.firstName,
+      p.middleNames,
+      p.lastName,
+      p.dateOfBirth,
+      p.gender,
+      p.prisonerNumber,
+      p.pncNumber,
+      p.croNumber
+    )
+
+  private fun prisoner(
+    nomsNumber: String?,
+    firstName: String?,
+    lastName: String?,
+    middleNames: String?,
+    dateOfBirth: LocalDate?
+  ) = Prisoner(
     prisonerNumber = nomsNumber,
     firstName = firstName,
     lastName = lastName,
+    middleNames = middleNames,
     dateOfBirth = dateOfBirth,
+    gender = UUID.randomUUID().toString(),
+    croNumber = UUID.randomUUID().toString(),
+    pncNumber = UUID.randomUUID().toString(),
   )
 }

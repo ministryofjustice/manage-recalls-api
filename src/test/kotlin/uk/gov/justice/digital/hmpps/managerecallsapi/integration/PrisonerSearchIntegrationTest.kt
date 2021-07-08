@@ -12,15 +12,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
-import java.time.LocalDate
-import java.time.Month
 
 class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   private val firstName = "John"
   private val middleNames = "Geoff"
   private val lastName = "Smith"
-  private val dateOfBirth = LocalDate.of(1990, Month.FEBRUARY, 12)
+
   private val nomsNumber = "123456"
   private val apiSearchRequest = SearchRequest(nomsNumber)
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
@@ -64,11 +62,13 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
+    val prisoner1 = testPrisoner(nomsNumber, firstName, lastName)
+    val prisoner2 = testPrisoner(null, firstName, lastName)
     prisonerOffenderSearch.prisonerSearchRespondsWith(
       prisonerSearchRequest,
       listOf(
-        testPrisoner(nomsNumber, firstName, lastName),
-        testPrisoner(null, firstName, lastName)
+        prisoner1,
+        prisoner2
       )
     )
 
@@ -78,23 +78,33 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
       response,
       equalTo(
         listOf(
-          SearchResult(firstName, lastName, nomsNumber, dateOfBirth),
-          SearchResult(firstName, lastName, null, dateOfBirth)
+          searchResult(prisoner1),
+          searchResult(prisoner2),
         )
       )
     )
   }
 
+  private fun searchResult(p: Prisoner): SearchResult = SearchResult(
+    p.firstName,
+    p.middleNames,
+    p.lastName,
+    p.dateOfBirth,
+    p.gender,
+    p.prisonerNumber,
+    p.pncNumber,
+    p.croNumber,
+  )
+
   private fun testPrisoner(nomsNumber: String?, firstName: String?, lastName: String?) = Prisoner(
-    prisonerNumber = nomsNumber,
     firstName = firstName,
     middleNames = middleNames,
     lastName = lastName,
-    pncNumber = "pncNumber",
-    croNumber = "croNumber",
-    dateOfBirth = dateOfBirth,
-    gender = "gender",
-    status = "status",
+    dateOfBirth = randomAdultDateOfBirth(),
+    gender = randomString(),
+    prisonerNumber = nomsNumber,
+    pncNumber = randomString(),
+    croNumber = randomString(),
   )
 
   private fun authenticatedPostRequest(path: String, request: Any): List<SearchResult> =
