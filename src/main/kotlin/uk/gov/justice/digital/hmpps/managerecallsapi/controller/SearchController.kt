@@ -31,14 +31,27 @@ class SearchController(@Autowired private val prisonerOffenderSearchClient: Pris
 fun List<Prisoner>?.toSearchResults() =
   this?.let { prisoners ->
     prisoners.map {
-      SearchResult(it.firstName, it.lastName, it.prisonerNumber, it.dateOfBirth)
+      SearchResult(
+        it.firstName,
+        it.middleNames,
+        it.lastName,
+        it.dateOfBirth,
+        it.gender,
+        it.prisonerNumber,
+        it.pncNumber,
+        it.croNumber
+      )
     }
   }.orEmpty()
 
 data class SearchRequest(@field:NotBlank val nomsNumber: String)
 data class SearchResult(
   val firstName: String?,
+  val middleNames: String?,
   val lastName: String?,
+  val dateOfBirth: LocalDate?,
+  val gender: String?,
   val nomsNumber: String?,
-  val dateOfBirth: LocalDate? = null,
+  val pncNumber: String?,
+  val croNumber: String?,
 )
