@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +21,6 @@ import java.util.concurrent.ThreadLocalRandom
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureEmbeddedDatabase(provider = ZONKY)
 abstract class IntegrationTestBase {
 
   @Autowired
