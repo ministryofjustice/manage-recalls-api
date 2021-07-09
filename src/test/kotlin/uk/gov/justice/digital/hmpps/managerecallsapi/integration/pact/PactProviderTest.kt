@@ -7,7 +7,6 @@ import au.com.dius.pact.provider.junitsupport.Provider
 import au.com.dius.pact.provider.junitsupport.State
 import au.com.dius.pact.provider.junitsupport.VerificationReports
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker
-import au.com.dius.pact.provider.junitsupport.loader.PactBrokerAuth
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import org.apache.http.HttpRequest
@@ -39,7 +38,8 @@ class PactProviderAuthorizedTest : PactProviderTestBase() {
   @State("prisoner exists for NOMS number")
   fun `prisoner exists for NOMS number`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(
-      prisonerSearchRequest, listOf(
+      prisonerSearchRequest,
+      listOf(
         Prisoner(
           prisonerNumber = nomsNumber,
           firstName = "Bertie",
@@ -53,10 +53,6 @@ class PactProviderAuthorizedTest : PactProviderTestBase() {
   @State("search by blank NOMS number")
   fun `search by blank NOMS number`() {
   }
-
-  @State("unauthorized user token")
-  fun `unauthorized user token`() {
-  }
 }
 
 @PactFilter(value = [".*unauthorized.*"])
@@ -67,8 +63,8 @@ class PactProviderUnauthorizedTest : PactProviderTestBase() {
     pactContext.verifyInteraction()
   }
 
-  @State("unauthorized user token")
-  fun `unauthorized user token`() {
+  @State("unauthorized user accessToken")
+  fun `unauthorized user accessToken`() {
   }
 }
 
@@ -76,12 +72,7 @@ class PactProviderUnauthorizedTest : PactProviderTestBase() {
 @VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
 @Consumer("manage-recalls-ui")
-@PactBroker(
-  tags = ["\${pactbroker.tags}"],
-  host = "\${pactbroker.hostname}",
-  port = "\${pactbroker.port}",
-  authentication = PactBrokerAuth(username = "\${pactbroker.auth.username}", password = "\${pactbroker.auth.password}")
-)
+@PactBroker
 abstract class PactProviderTestBase : IntegrationTestBase() {
   @LocalServerPort
   private val port = 0

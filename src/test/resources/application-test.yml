@@ -17,12 +17,10 @@ spring:
       ddl-auto: none
 
 pactbroker:
-  hostname: localhost
-  port: 9292
-  tags: test
-  auth:
-    username: manage_recalls
-    password: manage_recalls
+  host: pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
+  scheme: https
+  consumerversionselectors:
+    tags: main
 
 pact:
   verifier:
