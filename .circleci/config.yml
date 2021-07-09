@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   hmpps: ministryofjustice/hmpps@3.8
+  gradle: circleci/gradle@2.2.0
 
 parameters:
   alerts-slack-channel:
@@ -10,6 +11,9 @@ parameters:
   releases-slack-channel:
     type: string
     default: ppud-replacement-releases
+  pact_consumer_tags:
+    type: string
+    default: main
 
 executors:
   local-docker:
@@ -24,16 +28,10 @@ jobs:
       tag: "16.0"
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - gradle-{{ checksum "build.gradle.kts" }}
-            - gradle-
-      - run:
-          command: ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
-      - save_cache:
-          paths:
-            - ~/.gradle
-          key: gradle-{{ checksum "build.gradle.kts" }}
+      - gradle/with_cache:
+          cache_checksum_file: "build.gradle.kts"
+          steps:
+            - run: ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
       - store_test_results:
           path: build/test-results
       - store_artifacts:
@@ -106,6 +104,30 @@ jobs:
       - store_artifacts:
           path: test-report
           destination: local-test-summary
+
+  verify_pact_and_publish:
+    parameters:
+      consumer_tags:
+        type: string
+    environment:
+      PACTBROKER_HOST: "pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk"
+    executor: hmpps/java
+    steps:
+      - checkout
+      - gradle/with_cache:
+          cache_checksum_file: "build.gradle.kts"
+          steps:
+            - run:
+                command: |
+                  PACT_PROVIDER_VERSION="$CIRCLE_SHA1" \
+                    PACT_PROVIDER_TAG="$CIRCLE_BRANCH" \
+                    PACTBROKER_CONSUMERVERSIONSELECTORS_TAGS="<< parameters.consumer_tags >>" \
+                    PACT_PUBLISH_RESULTS="true" \
+                    ./gradlew verifyPactAndPublish
+      - store_test_results:
+          path: build/test-results
+      - store_artifacts:
+          path: build/reports/tests
 
 workflows:
   version: 2
@@ -196,7 +218,6 @@ workflows:
           slack_notification: true
           slack_channel_name: << pipeline.parameters.releases-slack-channel >>
 
-
   security:
     triggers:
       - schedule:
@@ -218,3 +239,8 @@ workflows:
           context:
             - hmpps-common-vars
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
+
+  pact:
+    jobs:
+      - verify_pact_and_publish:
+          consumer_tags: << pipeline.parameters.pact_consumer_tags >>
