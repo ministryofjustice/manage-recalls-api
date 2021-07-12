@@ -53,15 +53,6 @@ abstract class IntegrationTestBase {
 
   protected fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
 
-  protected final fun sendAuthenticatedPostRequest(
-    path: String,
-    userJwt: String = testJwt("ROLE_MANAGE_RECALLS")
-  ): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri(path)
-      .headers { it.withBearerAuthToken(userJwt) }
-      .exchange()
-
   protected final inline fun <reified T> sendAuthenticatedPostRequestWithBody(
     path: String,
     request: T,

@@ -25,6 +25,8 @@ dependencies {
   implementation("io.springfox:springfox-boot-starter:3.0.0")
   implementation("org.flywaydb:flyway-core:7.10.0")
   implementation("org.postgresql:postgresql:42.2.22")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 
