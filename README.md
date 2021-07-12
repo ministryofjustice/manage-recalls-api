@@ -58,5 +58,6 @@ Links to Swagger for them can be found via e.g. https://structurizr.com/share/56
 An example is at: https://prisoner-offender-search-dev.prison.service.justice.gov.uk/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config#/prisoner-search-resource/findByCriteria_1
 
 Those APIs can be tried out from a Dev laptop using e.g. Postman, curl etc. 
-The script `./scripts/getAccessToken.sh` can be used to output an authorisation Bearer Token 
-to give access to those end-points, i.e. using `--header 'Authorization: Bearer <token>'` with curl.
+The script `./scripts/getAccessToken.sh <env>` can be used to output an authorisation Bearer Token 
+to give access to those end-points, i.e. using `--header 'Authorization: Bearer <token>'` with curl. 
+Use lowercase env, defaults to `dev` with no argument.
