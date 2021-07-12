@@ -11,6 +11,9 @@ parameters:
   releases-slack-channel:
     type: string
     default: ppud-replacement-releases
+  only_run_pact_workflow:
+    type: boolean
+    default: false
   pact_consumer_tags:
     type: string
     default: main
@@ -132,6 +135,7 @@ jobs:
 workflows:
   version: 2
   build-test-and-deploy:
+    unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:
       - validate:
           filters:
