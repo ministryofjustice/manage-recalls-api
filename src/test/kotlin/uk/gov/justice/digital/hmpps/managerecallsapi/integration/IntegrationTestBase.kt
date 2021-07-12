@@ -14,6 +14,9 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
+import java.time.LocalDate
+import java.util.UUID
+import java.util.concurrent.ThreadLocalRandom
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -62,4 +65,14 @@ abstract class IntegrationTestBase {
       .exchange()
 
   fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")
+
+  protected fun randomString() = UUID.randomUUID().toString()
+
+  protected fun randomAdultDateOfBirth(): LocalDate? {
+    val age18 = LocalDate.now().minusYears(18)
+    val endEpochDay = age18.toEpochDay()
+    val startEpochDay = age18.minusYears(80).toEpochDay()
+    val randomDay = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay)
+    return LocalDate.ofEpochDay(randomDay)
+  }
 }

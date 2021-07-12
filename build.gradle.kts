@@ -9,13 +9,17 @@ repositories {
 }
 
 configurations {
-  testImplementation { exclude(group = "org.junit.vintage") }
+  testImplementation {
+    exclude(group = "org.junit.vintage")
+    exclude(group = "com.vaadin.external.google", module = "android-json")
+  }
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-webflux")
-  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.security:spring-security-oauth2-client")
 
   implementation("io.springfox:springfox-boot-starter:3.0.0")
@@ -40,6 +44,9 @@ dependencies {
   testImplementation("io.zonky.test:embedded-postgres:1.3.0")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("com.ninja-squad:springmockk:3.0.1")
+
+  testImplementation("au.com.dius.pact.provider:junit5:4.2.7")
+  testImplementation("au.com.dius.pact.provider:junit5spring:4.2.7")
 }
 
 tasks {
@@ -50,7 +57,22 @@ tasks {
   }
 
   test {
-    exclude("**/*RealPdfDocumentGeneratorTest*")
+    useJUnitPlatform {
+      exclude("**/*RealPdfDocumentGeneratorTest*")
+    }
+  }
+
+  register<Test>("verifyPactAndPublish") {
+    description = "Run and publish Pact provider tests"
+    group = "verification"
+
+    systemProperty("pact.provider.tag", System.getenv("PACT_PROVIDER_TAG"))
+    systemProperty("pact.provider.version", System.getenv("PACT_PROVIDER_VERSION"))
+    systemProperty("pact.verifier.publishResults", System.getenv("PACT_PUBLISH_RESULTS") ?: "false")
+
+    useJUnitPlatform {
+      include("**/*PactProviderTest*")
+    }
   }
 }
 
