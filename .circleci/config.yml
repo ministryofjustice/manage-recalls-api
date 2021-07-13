@@ -147,6 +147,7 @@ workflows:
           name: end-to-end-tests
           repository: manage-recalls-e2e-tests
           token: $CIRCLECI_AUTH_TOKEN
+          build_parameters: '{ "only_run_dev_check": true }'
           requires:
             - deploy_dev
           filters:
