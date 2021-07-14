@@ -5,12 +5,17 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
+import java.util.Base64
 
 class RecallsControllerTest {
   private val recallRepository = mockk<RecallRepository>()
+  private val revocationOrderService = mockk<RevocationOrderService>()
 
-  private val underTest = RecallsController(recallRepository)
+  private val underTest = RecallsController(recallRepository, revocationOrderService)
 
   private val nomsNumber = "A1234AA"
   private val recallRequest = BookRecallRequest(nomsNumber)
@@ -33,5 +38,23 @@ class RecallsControllerTest {
     val results = underTest.findAll()
 
     assertThat(results, equalTo(listOf(RecallResponse(recall.id, nomsNumber))))
+  }
+
+  @Test
+  fun `book a recall`() {
+    val recall = recallRequest.toRecall()
+    val expectedPdf = "Some pdf".toByteArray()
+    val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+
+    every { revocationOrderService.getRevocationOrder(recall.id) } returns Mono.just(expectedPdf)
+
+    val result = underTest.getRevocationOrder(recall.id)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
+      }
+      .verifyComplete()
   }
 }

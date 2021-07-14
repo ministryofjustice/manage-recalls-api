@@ -17,6 +17,7 @@ import java.util.Base64
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
+@Deprecated(message = "Do not use - this will be removed shortly")
 class GenerateRevocationOrderController(
   @Autowired private val revocationOrderService: RevocationOrderService
 ) {
@@ -25,7 +26,7 @@ class GenerateRevocationOrderController(
   @PostMapping("/generate-revocation-order")
   @ResponseBody
   fun generateRevocationOrder(@RequestBody request: RevocationOrderRequest): Mono<ResponseEntity<Pdf>> {
-    return revocationOrderService.generateRevocationOrder(request.nomsNumber)
+    return revocationOrderService.getRevocationOrder(request.nomsNumber)
       .map {
         log.info("Generating revocation order")
         val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)

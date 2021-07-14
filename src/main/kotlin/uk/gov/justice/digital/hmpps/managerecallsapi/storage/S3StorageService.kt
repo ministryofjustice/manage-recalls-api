@@ -22,25 +22,23 @@ class S3StorageService(var s3Client: S3Client) : S3Service {
   override fun uploadFile(bucketName: String, fileBytes: ByteArray, fileName: String?): S3BulkResponseEntity {
     logger.info("Uploading $fileName to $bucketName ")
     val result: S3BulkResponseEntity
-    run {
-      val originFileName: String? = fileName
-      val uuid = UUID.randomUUID()
-      s3Client.putObject(
-        PutObjectRequest.builder().bucket(bucketName).key(uuid.toString()).build(),
-        RequestBody.fromBytes(fileBytes)
-      )
-        .sdkHttpResponse()
-        .also { x -> logger.info("AWS S3 uploadFile $originFileName as $uuid to $bucketName code ${x.statusCode()}") }
-        .let { response ->
-          result = S3BulkResponseEntity(
-            bucket = bucketName,
-            fileKey = uuid,
-            originFileName = originFileName ?: "no name",
-            successful = response.isSuccessful,
-            statusCode = response.statusCode()
-          )
-        }
-    }
+    val originFileName: String? = fileName
+    val uuid = UUID.randomUUID()
+    s3Client.putObject(
+      PutObjectRequest.builder().bucket(bucketName).key(uuid.toString()).build(),
+      RequestBody.fromBytes(fileBytes)
+    )
+      .sdkHttpResponse()
+      .also { x -> logger.info("AWS S3 uploadFile $originFileName as $uuid to $bucketName code ${x.statusCode()}") }
+      .let { response ->
+        result = S3BulkResponseEntity(
+          bucket = bucketName,
+          fileKey = uuid,
+          originFileName = originFileName ?: "no name",
+          successful = response.isSuccessful,
+          statusCode = response.statusCode()
+        )
+      }
     return result
   }
 }

@@ -21,7 +21,7 @@ internal class GenerateRevocationOrderControllerTest {
     val expectedPdf = "Some pdf".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    every { revocationOrderService.generateRevocationOrder(any()) } returns Mono.just(expectedPdf)
+    every { revocationOrderService.getRevocationOrder(any<String>()) } returns Mono.just(expectedPdf)
 
     val result = underTest.generateRevocationOrder(RevocationOrderRequest("My Noms Number"))
 
