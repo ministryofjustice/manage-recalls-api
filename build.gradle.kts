@@ -59,6 +59,7 @@ tasks {
   test {
     useJUnitPlatform {
       exclude("**/*RealPdfDocumentGeneratorTest*")
+      exclude("**/*PactTest*")
     }
   }
 
