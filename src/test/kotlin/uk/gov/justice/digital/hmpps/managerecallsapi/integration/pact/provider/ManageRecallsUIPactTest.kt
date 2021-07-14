@@ -22,7 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchReques
 import java.time.LocalDate
 
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
-class PactProviderAuthorizedTest : PactProviderTestBase() {
+class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val nomsNumber = "A1234AA"
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
@@ -35,45 +35,59 @@ class PactProviderAuthorizedTest : PactProviderTestBase() {
     pactContext.verifyInteraction()
   }
 
-  @State("prisoner exists for NOMS number")
-  fun `prisoner exists for NOMS number`() {
+  @State("a prisoner exists for NOMS number")
+  fun `a prisoner exists for NOMS number`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(
       prisonerSearchRequest,
       listOf(
         Prisoner(
           prisonerNumber = nomsNumber,
           firstName = "Bertie",
+          middleNames = "Barry",
           lastName = "Badger",
-          dateOfBirth = LocalDate.of(1990, 10, 30)
+          dateOfBirth = LocalDate.of(1990, 10, 30),
+          gender = "Male",
+          croNumber = "1234/56A",
+          pncNumber = "98/7654Z"
         )
       )
     )
   }
 
-  @State("search by blank NOMS number")
-  fun `search by blank NOMS number`() {
+  @State("a search by blank NOMS number")
+  fun `no state required`() {
   }
 }
 
 @PactFilter(value = [".*unauthorized.*"])
-class PactProviderUnauthorizedTest : PactProviderTestBase() {
+class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @TestTemplate
   @ExtendWith(PactVerificationSpringProvider::class)
   fun pactVerificationTest(pactContext: PactVerificationContext, request: HttpRequest) {
     pactContext.verifyInteraction()
   }
 
-  @State("unauthorized user accessToken")
-  fun `unauthorized user accessToken`() {
+  @State("an unauthorized user accessToken")
+  fun `an unauthorized user accessToken`() {
   }
 }
 
+/**
+ * This test is used to verify the contract between manage-recalls-api and manage-recalls-ui.
+ * It defaults to verify the pact published with the 'main' tag.
+ * To override this for verifying a different pact you can either specify the tag of a published pact file:
+ * @PactBroker(
+ *   consumerVersionSelectors = [ VersionSelector(tag = "pact") ]
+ * )
+ * Or specify a local pact file by removing @PactBroker and replacing with:
+ * e.g. @PactFolder("../manage-recalls-ui/pact/pacts")
+ */
 @ExtendWith(SpringExtension::class)
 @VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
 @Consumer("manage-recalls-ui")
 @PactBroker
-abstract class PactProviderTestBase : IntegrationTestBase() {
+abstract class ManagerRecallsUiPactTestBase : IntegrationTestBase() {
   @LocalServerPort
   private val port = 0
 
