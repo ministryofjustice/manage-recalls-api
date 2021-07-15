@@ -6,11 +6,9 @@ import io.mockk.every
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RevocationOrderRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
@@ -19,9 +17,6 @@ import java.util.Base64
 import java.util.UUID
 
 class GenerateRevocationOrderIntegrationTest : IntegrationTestBase() {
-
-  @Autowired
-  lateinit var gotenbergMockServer: GotenbergMockServer
 
   @BeforeAll
   fun startGotenberg() {

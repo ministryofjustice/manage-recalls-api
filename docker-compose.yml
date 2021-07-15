@@ -52,5 +52,17 @@ services:
     ports:
       - "9093:3000"
 
+  localstack:
+   image: localstack/localstack
+   ports:
+       - "4566:4566"
+       - "4571:4571"
+   environment:
+       - SERVICES=s3
+       - DOCKER_HOST=unix:///var/run/docker.sock
+       - DATA_DIR=/tmp/localstack/data
+   volumes:
+     - ./stubs/s3:/tmp/localstack
+
 networks:
   manage-recalls-api:

@@ -37,6 +37,10 @@ class RecallsController(
   @GetMapping("/recalls")
   fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
 
+  @GetMapping("/recalls/{recallId}")
+  fun getRecall(@PathVariable("recallId") recallId: UUID): RecallResponse =
+    recallRepository.getById(recallId).toResponse()
+
   @GetMapping("/recalls/{recallId}/revocationOrder")
   fun getRevocationOrder(@PathVariable("recallId") recallId: UUID): Mono<ResponseEntity<Pdf>> =
     revocationOrderService.getRevocationOrder(recallId)
@@ -48,8 +52,8 @@ class RecallsController(
 
 fun BookRecallRequest.toRecall() = Recall(UUID.randomUUID(), this.nomsNumber)
 
-fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber)
+fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber, this.revocationOrderDocS3Key)
 
 data class BookRecallRequest(@field:NotBlank val nomsNumber: String)
 
-data class RecallResponse(val id: UUID, val nomsNumber: String)
+data class RecallResponse(val id: UUID, val nomsNumber: String, val revocationOrderId: UUID?)

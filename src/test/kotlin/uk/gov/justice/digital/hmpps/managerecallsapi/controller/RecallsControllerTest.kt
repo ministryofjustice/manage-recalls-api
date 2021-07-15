@@ -27,7 +27,7 @@ class RecallsControllerTest {
 
     val results = underTest.bookRecall(recallRequest)
 
-    assertThat(results.body, equalTo(RecallResponse(recall.id, nomsNumber)))
+    assertThat(results.body, equalTo(RecallResponse(recall.id, nomsNumber, null)))
   }
 
   @Test
@@ -37,7 +37,17 @@ class RecallsControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recall.id, nomsNumber))))
+    assertThat(results, equalTo(listOf(RecallResponse(recall.id, nomsNumber, null))))
+  }
+
+  @Test
+  fun `gets a recall`() {
+    val recall = recallRequest.toRecall()
+    every { recallRepository.getById(recall.id) } returns recall
+
+    val results = underTest.getRecall(recall.id)
+
+    assertThat(results, equalTo(RecallResponse(recall.id, nomsNumber, recall.revocationOrderDocS3Key)))
   }
 
   @Test
