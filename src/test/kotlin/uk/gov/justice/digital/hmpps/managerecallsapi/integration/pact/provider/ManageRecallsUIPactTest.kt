@@ -86,6 +86,14 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
     every { recallRepository.save(any()) } returns aRecall
   }
+
+  @State("a list of recalls exists")
+  fun `a list of recalls exists`() {
+    every { recallRepository.findAll() } returns listOf(
+      Recall(UUID.randomUUID(), nomsNumber),
+      Recall(UUID.randomUUID(), "Z9876ZZ")
+    )
+  }
 }
 
 @PactFilter(value = [".*unauthorized.*"])
