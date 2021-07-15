@@ -13,6 +13,9 @@ API service for managing recalls
 will apply ktlint styles to intellij and also add a pre-commit hook to format all changed kotlin files.
 
 ### Run locally on the command line
+Requires postgres:
+```docker compose up postgres -d```
+
 ```bash
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 ```
