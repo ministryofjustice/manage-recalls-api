@@ -28,9 +28,11 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
+  implementation("software.amazon.awssdk:s3:2.16.101")
+
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 
-  "5.6.3".let { junitVersion ->
+  "5.7.0".let { junitVersion ->
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")

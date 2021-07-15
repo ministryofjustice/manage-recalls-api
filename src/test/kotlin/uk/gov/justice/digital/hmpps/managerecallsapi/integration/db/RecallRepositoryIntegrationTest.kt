@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,5 +31,18 @@ class RecallRepositoryIntegrationTest(
     repository.save(recall)
 
     assertEquals(nomsNumber, repository.getById(randomUUID).nomsNumber)
+    assertNull(repository.getById(randomUUID).revocationOrderDocS3Key)
+  }
+
+  @Test
+  fun `updates a recall with a revocation order doc s3 key`() {
+    val randomUUID = UUID.randomUUID()
+    val nomsNumber = "Random_name"
+    val revocationOrderDocS3Key = UUID.randomUUID()
+    val recall = Recall(randomUUID, nomsNumber, revocationOrderDocS3Key)
+    repository.save(recall)
+
+    assertEquals(nomsNumber, repository.getById(randomUUID).nomsNumber)
+    assertEquals(revocationOrderDocS3Key, repository.getById(randomUUID).revocationOrderDocS3Key)
   }
 }

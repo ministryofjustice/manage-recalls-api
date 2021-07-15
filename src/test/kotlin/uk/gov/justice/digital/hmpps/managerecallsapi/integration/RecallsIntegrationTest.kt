@@ -20,6 +20,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   private val nomsNumber = "123456"
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
 
+  @Suppress("unused")
   private fun requestBodySpecs() = Stream.of(
     webTestClient.get().uri("/recalls"),
     webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest)

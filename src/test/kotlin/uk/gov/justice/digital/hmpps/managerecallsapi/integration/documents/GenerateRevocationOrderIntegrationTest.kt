@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.mockk.every
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -12,8 +13,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTest
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
 import java.time.LocalDate
 import java.util.Base64
+import java.util.UUID
 
 class GenerateRevocationOrderIntegrationTest : IntegrationTestBase() {
 
@@ -43,6 +46,14 @@ class GenerateRevocationOrderIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `generate revocation order endpoint should return generated pdf`() {
+    every { s3Service.uploadFile(any(), any(), any()) } returns S3BulkResponseEntity(
+      "bucket-name",
+      UUID.randomUUID(),
+      "myFile.pdf",
+      true,
+      200
+    )
+
     val firstName = "Natalia"
     val nomsNumber = "A Noms Number"
     val expectedPdf = "Expected Generated PDF".toByteArray()

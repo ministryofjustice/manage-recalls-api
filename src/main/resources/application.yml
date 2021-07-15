@@ -87,3 +87,10 @@ prisonerSearch:
 gotenberg:
   endpoint:
     url: http://localhost:9093
+
+aws:
+  region: eu-west-2
+  credentials:
+    accessKey: ${s3-access-key}
+    secretKey: ${s3-secret-key}
+  s3.bucketName: ${s3-bucket-name}

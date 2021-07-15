@@ -11,5 +11,8 @@ data class Recall(
   val id: UUID,
 
   @Column(name = "noms_number", nullable = false)
-  val nomsNumber: String
+  val nomsNumber: String,
+
+  @Column(name = "revocation_order_doc_s3_key")
+  val revocationOrderDocS3Key: UUID? = null
 )
