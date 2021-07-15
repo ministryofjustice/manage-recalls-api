@@ -5,13 +5,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
-import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
-import java.time.Duration
+import java.net.URI
 
 @Configuration
-class S3Config {
+class S3Config(@Value("\${aws.local.endpoint:#{null}}") val endpointUrl: String?) {
 
   @Value("\${aws.region}")
   lateinit var awsRegion: String
@@ -22,11 +21,14 @@ class S3Config {
 
   @Bean(destroyMethod = "close")
   fun s3Client(): S3Client {
-    return S3Client
+    val builder = S3Client
       .builder()
-      .overrideConfiguration(ClientOverrideConfiguration.builder().apiCallTimeout(Duration.ofSeconds(10)).build())
       .region(Region.regions().find { region -> region.toString() == awsRegion })
       .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
-      .build()
+
+    if (!endpointUrl.isNullOrBlank()) {
+      builder.endpointOverride(URI(endpointUrl))
+    }
+    return builder.build()
   }
 }
