@@ -17,6 +17,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.util.Base64
 import java.util.UUID
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -27,7 +29,7 @@ class RecallsController(
 ) {
 
   @PostMapping("/recalls")
-  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest) =
+  fun bookRecall(@Valid @RequestBody bookRecallRequest: BookRecallRequest) =
     ResponseEntity(
       recallRepository.save(bookRecallRequest.toRecall()).toResponse(), HttpStatus.CREATED
     )
@@ -48,6 +50,6 @@ fun BookRecallRequest.toRecall() = Recall(UUID.randomUUID(), this.nomsNumber)
 
 fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber)
 
-data class BookRecallRequest(val nomsNumber: String)
+data class BookRecallRequest(@field:NotBlank val nomsNumber: String)
 
 data class RecallResponse(val id: UUID, val nomsNumber: String)

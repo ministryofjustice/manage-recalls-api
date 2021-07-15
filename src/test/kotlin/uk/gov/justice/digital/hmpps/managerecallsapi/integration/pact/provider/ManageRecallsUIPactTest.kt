@@ -9,6 +9,8 @@ import au.com.dius.pact.provider.junitsupport.VerificationReports
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.apache.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestTemplate
@@ -16,16 +18,23 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
+import java.util.UUID
 
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val nomsNumber = "A1234AA"
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
+
+  // TODO: Use a real database in service level integration tests
+  @MockkBean
+  private lateinit var recallRepository: RecallRepository
 
   @TestTemplate
   @ExtendWith(PactVerificationSpringProvider::class)
@@ -42,6 +51,16 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       listOf(
         Prisoner(
           prisonerNumber = nomsNumber,
+          firstName = "Bobby",
+          middleNames = "John",
+          lastName = "Badger",
+          dateOfBirth = LocalDate.of(1999, 5, 28),
+          gender = "Male",
+          croNumber = "1234/56A",
+          pncNumber = "98/7654Z"
+        ),
+        Prisoner(
+          prisonerNumber = nomsNumber,
           firstName = "Bertie",
           middleNames = "Barry",
           lastName = "Badger",
@@ -54,8 +73,18 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     )
   }
 
-  @State("a search by blank NOMS number")
+  @State(
+    "a search by blank NOMS number",
+    "a create recall request with blank nomsNumber"
+  )
   fun `no state required`() {
+  }
+
+  @State("a recall can be created")
+  fun `a recall can be created`() {
+    val aRecall = Recall(UUID.randomUUID(), nomsNumber)
+
+    every { recallRepository.save(any()) } returns aRecall
   }
 }
 
