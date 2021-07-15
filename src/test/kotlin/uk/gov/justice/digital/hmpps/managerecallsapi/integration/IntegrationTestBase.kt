@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
@@ -33,6 +34,9 @@ abstract class IntegrationTestBase {
 
   @Autowired
   lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
+
+  @Autowired
+  lateinit var gotenbergMockServer: GotenbergMockServer
 
   @Autowired
   lateinit var hmppsAuthMockServer: HmppsAuthMockServer
