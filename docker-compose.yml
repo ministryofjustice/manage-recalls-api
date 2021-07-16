@@ -57,6 +57,8 @@ services:
    ports:
        - "4566:4566"
        - "4571:4571"
+   networks:
+     - manage-recalls-api
    environment:
        - SERVICES=s3
        - DOCKER_HOST=unix:///var/run/docker.sock
