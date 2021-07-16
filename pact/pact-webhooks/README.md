@@ -22,3 +22,11 @@ You will need to create a CircleCI access token, and a Github access token with 
 * Head to https://login.cloud-platform.service.justice.gov.uk/ to get a new `~/.kube/config` 
 * Retrieve the username and password using:
   `cloud-platform decode-secret -n  pact-broker-prod -s basic-auth`
+
+### Viewing the existing broker webhooks 
+
+You can view all webhooks on the broker by going to https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk/webhooks
+
+Or by running:
+
+```curl https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk/webhooks | jq``` 
