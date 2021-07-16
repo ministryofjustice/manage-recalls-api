@@ -57,3 +57,5 @@ fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber, this.revocati
 data class BookRecallRequest(@field:NotBlank val nomsNumber: String)
 
 data class RecallResponse(val id: UUID, val nomsNumber: String, val revocationOrderId: UUID?)
+
+data class Pdf(val content: String)

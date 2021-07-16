@@ -36,26 +36,6 @@ internal class RevocationOrderServiceTest {
   )
 
   @Test
-  fun `generates a revocation order for a Noms number`() {
-    val expectedPdf = "Some pdf".toByteArray()
-
-    underTest.bucketName = "a-bucket"
-
-    every { prisonerOffenderSearchClient.prisonerSearch(any()) } returns Mono.just(listOf(Prisoner()))
-    every { pdfDocumentGenerator.makePdf(any()) } returns Mono.just(expectedPdf)
-    every { thymeleafConfig.process("revocation-order", any()) } returns "Some html, honest"
-
-    val result = underTest.getRevocationOrder("My Noms Number")
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it, equalTo(expectedPdf))
-      }
-      .verifyComplete()
-  }
-
-  @Test
   fun `generates a revocation order for a recall without an existing revocation order`() {
     val recallId = UUID.randomUUID()
     val expectedBytes = "Some pdf".toByteArray()

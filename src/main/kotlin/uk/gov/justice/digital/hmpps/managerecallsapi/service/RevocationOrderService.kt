@@ -30,29 +30,6 @@ class RevocationOrderService(
   @Value("\${aws.s3.bucketName}")
   lateinit var bucketName: String
 
-  @Deprecated(message = "Do not use - this will be removed shortly")
-  fun getRevocationOrder(nomsNumber: String): Mono<ByteArray> {
-    return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber))
-      .flatMap { prisoners ->
-        val firstPrisoner = prisoners.first()
-        val ctx = Context()
-
-        val firstAndMiddleNames = String.format("%s %s", firstPrisoner.firstName, firstPrisoner.middleNames).trim()
-        ctx.setVariable("firstNames", firstAndMiddleNames)
-        ctx.setVariable("lastName", firstPrisoner.lastName)
-        ctx.setVariable("dateOfBirth", firstPrisoner.dateOfBirth)
-        ctx.setVariable("prisonNumber", firstPrisoner.bookNumber)
-        ctx.setVariable("croNumber", firstPrisoner.croNumber)
-        val populatedHtml = templateEngine.process("revocation-order", ctx)
-
-        val details = listOf(
-          HtmlDocumentDetail("index.html", populatedHtml),
-          ClassPathDocumentDetail("logo.png", "/document/template/revocation-order/logo.png")
-        )
-        pdfDocumentGenerator.makePdf(details)
-      }
-  }
-
   fun getRevocationOrder(recallId: UUID): Mono<ByteArray> {
     val recall = recallRepository.getById(recallId)
     if (recall.revocationOrderDocS3Key == null) {
