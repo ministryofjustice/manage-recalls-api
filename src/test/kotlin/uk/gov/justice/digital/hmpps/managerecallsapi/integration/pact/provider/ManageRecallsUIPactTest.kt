@@ -18,11 +18,13 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
 import java.util.UUID
 
@@ -32,9 +34,11 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
 
-  // TODO: Use a real database in service level integration tests
+  // TODO: Use a real database in service level integration tests (possibly not here though??)
   @MockkBean
   private lateinit var recallRepository: RecallRepository
+  @MockkBean
+  private lateinit var revocationOrderService: RevocationOrderService
 
   @TestTemplate
   @ExtendWith(PactVerificationSpringProvider::class)
@@ -93,6 +97,11 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       Recall(UUID.randomUUID(), nomsNumber),
       Recall(UUID.randomUUID(), "Z9876ZZ")
     )
+  }
+
+  @State("a revocation order can be downloaded")
+  fun `a revocation order can be downloaded`() {
+    every { revocationOrderService.getRevocationOrder(any<UUID>()) } returns Mono.just("some pdf contents".toByteArray())
   }
 }
 
