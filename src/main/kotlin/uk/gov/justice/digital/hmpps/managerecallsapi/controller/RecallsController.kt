@@ -55,7 +55,7 @@ fun BookRecallRequest.toRecall() = Recall(UUID.randomUUID(), this.nomsNumber)
 
 fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber, this.revocationOrderDocS3Key)
 
-data class BookRecallRequest(val nomsNumber: NomsNumber)
+data class BookRecallRequest(@field:Valid val nomsNumber: NomsNumber)
 
 data class RecallResponse(val id: UUID, val nomsNumber: NomsNumber, val revocationOrderId: UUID?)
 
