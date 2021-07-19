@@ -6,7 +6,6 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.isEmpty
 import org.hibernate.validator.internal.engine.path.PathImpl
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.params.ParameterizedTest
@@ -24,28 +23,14 @@ class NomsNumberRequestTest {
 
   @Suppress("unused")
   private fun invalidNomsNumberRequests() = Stream.of(
-    SearchRequest(" ")
+    SearchRequest(NomsNumber(" ")),
+    BookRecallRequest(NomsNumber(" "))
   )
 
   @ParameterizedTest
   @MethodSource("invalidNomsNumberRequests")
   fun `request is invalid if it has a blank nomsNumber`(invalidRequest: Any) {
     val violations = validator.validate(invalidRequest)
-
-    assertThat(
-      violations,
-      isSingleItemMatching(
-        allOf(
-          has("propertyPath", { it.propertyPath }, equalTo(PathImpl.createPathFromString("nomsNumber"))),
-          has("message", { it.message }, equalTo("must not be blank"))
-        )
-      )
-    )
-  }
-
-  @Test
-  fun `BookRecallRequest is invalid if it has a blank nomsNumber`() {
-    val violations = validator.validate(BookRecallRequest(NomsNumber(" ")))
 
     assertThat(
       violations,
@@ -60,7 +45,7 @@ class NomsNumberRequestTest {
 
   @Suppress("unused")
   private fun validNomsNumberRequests() = Stream.of(
-    SearchRequest("noms"),
+    SearchRequest(NomsNumber("noms")),
     BookRecallRequest(NomsNumber("noms")),
   )
 

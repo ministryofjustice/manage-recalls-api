@@ -31,9 +31,8 @@ import java.util.UUID
 
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
-  private val nomsNumberValue = "A1234AA"
   private val nomsNumber = NomsNumber("A1234AA")
-  private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumberValue)
+  private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
 
   // TODO: Use a real database in service level integration tests (possibly not here though??)
@@ -56,7 +55,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       prisonerSearchRequest,
       listOf(
         Prisoner(
-          prisonerNumber = nomsNumberValue,
+          prisonerNumber = nomsNumber.value,
           firstName = "Bobby",
           middleNames = "John",
           lastName = "Badger",
@@ -66,7 +65,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
           pncNumber = "98/7654Z"
         ),
         Prisoner(
-          prisonerNumber = nomsNumberValue,
+          prisonerNumber = nomsNumber.value,
           firstName = "Bertie",
           middleNames = "Barry",
           lastName = "Badger",

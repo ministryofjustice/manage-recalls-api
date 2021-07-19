@@ -118,7 +118,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     val firstName = "Natalia"
     prisonerOffenderSearch.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNumber.value),
+      PrisonerSearchRequest(nomsNumber),
       listOf(
         Prisoner(
           prisonerNumber = nomsNumber.value,

@@ -6,6 +6,7 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import java.time.LocalDate
 
 @Component
@@ -35,4 +36,4 @@ data class Prisoner(
   val bookNumber: String? = null
 )
 
-data class PrisonerSearchRequest(val prisonerIdentifier: String)
+data class PrisonerSearchRequest(val prisonerIdentifier: NomsNumber)
