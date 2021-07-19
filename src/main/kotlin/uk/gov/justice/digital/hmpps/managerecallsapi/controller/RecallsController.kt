@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.util.Base64
 import java.util.UUID
 import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -55,8 +55,8 @@ fun BookRecallRequest.toRecall() = Recall(UUID.randomUUID(), this.nomsNumber)
 
 fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber, this.revocationOrderDocS3Key)
 
-data class BookRecallRequest(@field:NotBlank val nomsNumber: String)
+data class BookRecallRequest(val nomsNumber: NomsNumber)
 
-data class RecallResponse(val id: UUID, val nomsNumber: String, val revocationOrderId: UUID?)
+data class RecallResponse(val id: UUID, val nomsNumber: NomsNumber, val revocationOrderId: UUID?)
 
 data class Pdf(val content: String)

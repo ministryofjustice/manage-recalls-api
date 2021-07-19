@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.isSingleItemMatching
 import java.util.stream.Stream
 import javax.validation.Validation
@@ -23,7 +24,7 @@ class NomsNumberRequestTest {
   @Suppress("unused")
   private fun invalidNomsNumberRequests() = Stream.of(
     SearchRequest(" "),
-    BookRecallRequest(" "),
+    BookRecallRequest(NomsNumber(" ")),
   )
 
   @ParameterizedTest
@@ -45,7 +46,7 @@ class NomsNumberRequestTest {
   @Suppress("unused")
   private fun validNomsNumberRequests() = Stream.of(
     SearchRequest("noms"),
-    BookRecallRequest("noms"),
+    BookRecallRequest(NomsNumber("noms")),
   )
 
   @ParameterizedTest

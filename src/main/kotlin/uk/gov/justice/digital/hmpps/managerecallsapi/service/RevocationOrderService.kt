@@ -35,7 +35,7 @@ class RevocationOrderService(
   fun getRevocationOrder(recallId: UUID): Mono<ByteArray> {
     val recall = recallRepository.getById(recallId)
     if (recall.revocationOrderDocS3Key == null) {
-      return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
+      return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber.value))
         .flatMap { prisoners ->
           val firstPrisoner = prisoners.first()
           val ctx = Context()

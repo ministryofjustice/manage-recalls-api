@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
@@ -30,8 +31,9 @@ import java.util.UUID
 
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
-  private val nomsNumber = "A1234AA"
-  private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
+  private val nomsNumberValue = "A1234AA"
+  private val nomsNumber = NomsNumber("A1234AA")
+  private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumberValue)
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
 
   // TODO: Use a real database in service level integration tests (possibly not here though??)
@@ -54,7 +56,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       prisonerSearchRequest,
       listOf(
         Prisoner(
-          prisonerNumber = nomsNumber,
+          prisonerNumber = nomsNumberValue,
           firstName = "Bobby",
           middleNames = "John",
           lastName = "Badger",
@@ -64,7 +66,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
           pncNumber = "98/7654Z"
         ),
         Prisoner(
-          prisonerNumber = nomsNumber,
+          prisonerNumber = nomsNumberValue,
           firstName = "Bertie",
           middleNames = "Barry",
           lastName = "Badger",
@@ -95,7 +97,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a list of recalls exists`() {
     every { recallRepository.findAll() } returns listOf(
       Recall(UUID.randomUUID(), nomsNumber),
-      Recall(UUID.randomUUID(), "Z9876ZZ")
+      Recall(UUID.randomUUID(), NomsNumber("Z9876ZZ"))
     )
   }
 
