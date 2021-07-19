@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.util.Base64
 
@@ -17,7 +18,7 @@ class RecallsControllerTest {
 
   private val underTest = RecallsController(recallRepository, revocationOrderService)
 
-  private val nomsNumber = "A1234AA"
+  private val nomsNumber = NomsNumber("A1234AA")
   private val recallRequest = BookRecallRequest(nomsNumber)
 
   @Test

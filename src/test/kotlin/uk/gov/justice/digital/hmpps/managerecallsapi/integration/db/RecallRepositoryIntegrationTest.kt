@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
@@ -27,7 +28,7 @@ class RecallRepositoryIntegrationTest(
   private val repository: RecallRepository
 ) {
 
-  val nomsNumber = "A12345F"
+  private val nomsNumber = NomsNumber("A12345F")
 
   @Test
   fun `saves and retrieves a recall`() {

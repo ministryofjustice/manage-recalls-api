@@ -9,11 +9,12 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
@@ -37,7 +38,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @MockkBean
   private lateinit var recallRepository: RecallRepository
 
-  private val nomsNumber = "123456"
+  private val nomsNumber = NomsNumber("123456")
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
 
   @Suppress("unused")
@@ -48,7 +49,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   @ParameterizedTest
   @MethodSource("requestBodySpecs")
-  fun `unauthorized when MANAGE_RECALLS role is missing`(requestBodySpec: WebTestClient.RequestBodySpec) {
+  fun `unauthorized when MANAGE_RECALLS role is missing`(requestBodySpec: RequestBodySpec) {
     val invalidUserJwt = testJwt("ROLE_UNKNOWN")
     requestBodySpec.headers { it.withBearerAuthToken(invalidUserJwt) }
       .exchange()
@@ -106,10 +107,10 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     val firstName = "Natalia"
     prisonerOffenderSearch.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNumber),
+      PrisonerSearchRequest(nomsNumber.value),
       listOf(
         Prisoner(
-          prisonerNumber = nomsNumber,
+          prisonerNumber = nomsNumber.value,
           firstName = firstName,
           lastName = "Oskina",
           dateOfBirth = LocalDate.of(2000, 1, 31),
