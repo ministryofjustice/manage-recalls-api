@@ -72,7 +72,7 @@ internal class RevocationOrderServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-        assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))))
+        assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
         verify { recallRepository.save(aRecallWithRevocationOrder) }
         verify { s3Service.uploadFile(s3Bucket, expectedBytes, "$recallId-revocation-order.pdf") }
       }
