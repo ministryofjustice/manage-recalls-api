@@ -10,9 +10,10 @@ import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.util.UUID
 
 @Repository("jpaRecallRepository")
-interface JpaRecallRepository : JpaRepository<Recall, RecallKey>
+interface JpaRecallRepository : JpaRepository<Recall, UUID>
 
 @NoRepositoryBean
 interface ExtendedRecallRepository : JpaRecallRepository {
@@ -24,5 +25,5 @@ class RecallRepository(
   @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
 ) : JpaRecallRepository by jpaRepository, ExtendedRecallRepository {
   @Transactional
-  override fun getByRecallId(recallId: RecallId): Recall = getById(recallId.toRecallKey())
+  override fun getByRecallId(recallId: RecallId): Recall = getById(recallId.value)
 }

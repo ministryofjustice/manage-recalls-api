@@ -39,7 +39,7 @@ class RecallsControllerTest {
 
   @Test
   fun `gets all recalls`() {
-    val recall = Recall(recallId, nomsNumber, null, emptySet())
+    val recall = Recall(recallId, nomsNumber)
     every { recallRepository.findAll() } returns listOf(recall)
 
     val results = underTest.findAll()
@@ -49,7 +49,7 @@ class RecallsControllerTest {
 
   @Test
   fun `gets a recall`() {
-    val recall = Recall(recallId, nomsNumber, revocationOrderDocS3Key, emptySet())
+    val recall = Recall(recallId, nomsNumber, revocationOrderDocS3Key)
     every { recallRepository.getByRecallId(recallId) } returns recall
 
     val results = underTest.getRecall(recallId)

@@ -88,7 +88,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a recall can be created")
   fun `a recall can be created`() {
-    val aRecall = Recall(::RecallId.random(), nomsNumber, null, emptySet())
+    val aRecall = Recall(::RecallId.random(), nomsNumber)
 
     every { recallRepository.save(any()) } returns aRecall
   }
@@ -96,8 +96,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @State("a list of recalls exists")
   fun `a list of recalls exists`() {
     every { recallRepository.findAll() } returns listOf(
-      Recall(::RecallId.random(), nomsNumber, null, emptySet()),
-      Recall(::RecallId.random(), NomsNumber("Z9876ZZ"), null, emptySet())
+      Recall(::RecallId.random(), nomsNumber),
+      Recall(::RecallId.random(), NomsNumber("Z9876ZZ"))
     )
   }
 

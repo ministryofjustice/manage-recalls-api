@@ -43,7 +43,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val recallId = ::RecallId.random()
-  private val aRecall = Recall(recallId, nomsNumber, null, emptySet())
+  private val aRecall = Recall(recallId, nomsNumber)
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
 
   @Suppress("unused")
@@ -145,7 +145,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
         200
       )
 
-    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, revocationOrderS3Key, emptySet())
+    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, revocationOrderS3Key)
 
     val response = webTestClient.get().uri("/recalls/$recallId/revocationOrder").headers { it.withBearerAuthToken(jwt) }
       .exchange()
