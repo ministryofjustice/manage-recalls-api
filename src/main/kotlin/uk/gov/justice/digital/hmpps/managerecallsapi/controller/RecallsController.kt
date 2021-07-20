@@ -53,7 +53,7 @@ class RecallsController(
       }
 }
 
-fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber, null, emptySet())
+fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
 
 fun Recall.toResponse() = RecallResponse(this.recallId(), this.nomsNumber, this.revocationOrderDocS3Key)
 

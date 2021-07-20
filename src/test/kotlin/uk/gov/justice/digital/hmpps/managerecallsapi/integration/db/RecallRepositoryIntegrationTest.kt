@@ -35,21 +35,21 @@ class RecallRepositoryIntegrationTest(
 
   @Test
   fun `saves and retrieves a recall`() {
-    val recall = Recall(recallId, nomsNumber, null, emptySet())
+    val recall = Recall(recallId, nomsNumber)
     repository.save(recall)
 
     val retrieved = repository.getByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber, null, emptySet())))
+    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber)))
   }
 
   @Test
   fun `updates a recall with a revocation order doc s3 key`() {
-    val recall = Recall(recallId, nomsNumber, null, emptySet())
+    val recall = Recall(recallId, nomsNumber)
     repository.save(recall)
 
     val revocationOrderDocS3Key = UUID.randomUUID()
-    val recallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key, emptySet())
+    val recallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key)
     repository.save(recallWithRevocationOrder)
 
     val actualRecall = repository.getByRecallId(recallId)
@@ -59,7 +59,7 @@ class RecallRepositoryIntegrationTest(
 
   @Test
   fun `updates a recall with a document`() {
-    val originalRecall = Recall(recallId, nomsNumber, null, emptySet())
+    val originalRecall = Recall(recallId, nomsNumber)
     repository.save(originalRecall)
 
     assertThat(repository.getByRecallId(recallId), equalTo(originalRecall))

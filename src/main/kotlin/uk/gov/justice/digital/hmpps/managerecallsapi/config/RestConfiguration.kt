@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.config
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -33,6 +34,7 @@ class RestConfiguration {
     ObjectMapper()
       .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
       .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .setSerializationInclusion(NON_NULL)
       .registerModules(Jdk8Module(), JavaTimeModule(), KotlinModule())
       .registerModule(
         SimpleModule().apply {
