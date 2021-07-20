@@ -16,6 +16,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
@@ -40,8 +42,8 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   private lateinit var recallRepository: RecallRepository
 
   private val nomsNumber = NomsNumber("123456")
-  private val recallId = UUID.randomUUID()
-  private val aRecall = Recall(recallId, nomsNumber)
+  private val recallId = ::RecallId.random()
+  private val aRecall = Recall(recallId, nomsNumber, null, emptySet())
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
 
   @Suppress("unused")
@@ -74,7 +76,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     assertThat(
       response.responseBody,
-      equalTo(RecallResponse(aRecall.id, aRecall.nomsNumber, null))
+      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, null))
     )
   }
 
@@ -97,9 +99,9 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   fun `gets a recall`() {
     val jwt = testJwt("ROLE_MANAGE_RECALLS")
 
-    every { recallRepository.getById(recallId) } returns aRecall
+    every { recallRepository.getById(recallId.value) } returns aRecall
 
-    webTestClient.get().uri("/recalls/" + recallId).headers { it.withBearerAuthToken(jwt) }
+    webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwt) }
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -114,7 +116,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     val expectedPdf = "Expected Generated PDF".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    every { recallRepository.getById(recallId) } returns aRecall
+    every { recallRepository.getById(recallId.value) } returns aRecall
 
     val firstName = "Natalia"
     prisonerOffenderSearch.prisonerSearchRespondsWith(
@@ -143,7 +145,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
         200
       )
 
-    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, revocationOrderS3Key)
+    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, revocationOrderS3Key, emptySet())
 
     val response = webTestClient.get().uri("/recalls/$recallId/revocationOrder").headers { it.withBearerAuthToken(jwt) }
       .exchange()

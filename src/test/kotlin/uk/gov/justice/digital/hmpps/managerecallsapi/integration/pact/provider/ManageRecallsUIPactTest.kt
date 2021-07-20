@@ -22,12 +22,13 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
-import java.util.UUID
 
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
@@ -87,7 +88,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a recall can be created")
   fun `a recall can be created`() {
-    val aRecall = Recall(UUID.randomUUID(), nomsNumber)
+    val aRecall = Recall(::RecallId.random(), nomsNumber, null, emptySet())
 
     every { recallRepository.save(any()) } returns aRecall
   }
@@ -95,14 +96,14 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @State("a list of recalls exists")
   fun `a list of recalls exists`() {
     every { recallRepository.findAll() } returns listOf(
-      Recall(UUID.randomUUID(), nomsNumber),
-      Recall(UUID.randomUUID(), NomsNumber("Z9876ZZ"))
+      Recall(::RecallId.random(), nomsNumber, null, emptySet()),
+      Recall(::RecallId.random(), NomsNumber("Z9876ZZ"), null, emptySet())
     )
   }
 
   @State("a revocation order can be downloaded")
   fun `a revocation order can be downloaded`() {
-    every { revocationOrderService.getRevocationOrder(any<UUID>()) } returns Mono.just("some pdf contents".toByteArray())
+    every { revocationOrderService.getRevocationOrder(any()) } returns Mono.just("some pdf contents".toByteArray())
   }
 }
 

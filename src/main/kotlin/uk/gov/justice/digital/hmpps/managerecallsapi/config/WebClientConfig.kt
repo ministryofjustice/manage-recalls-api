@@ -26,7 +26,6 @@ import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.AuthenticatingRestClient
 import java.util.concurrent.TimeUnit
 
-
 @Configuration
 class WebClientConfig {
 

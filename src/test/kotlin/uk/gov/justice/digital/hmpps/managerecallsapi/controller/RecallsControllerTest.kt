@@ -28,7 +28,7 @@ class RecallsControllerTest {
 
     val results = underTest.bookRecall(recallRequest)
 
-    assertThat(results.body, equalTo(RecallResponse(recall.id, nomsNumber, null)))
+    assertThat(results.body, equalTo(RecallResponse(recall.recallId(), nomsNumber, null)))
   }
 
   @Test
@@ -38,7 +38,7 @@ class RecallsControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recall.id, nomsNumber, null))))
+    assertThat(results, equalTo(listOf(RecallResponse(recall.recallId(), nomsNumber, null))))
   }
 
   @Test
@@ -46,9 +46,9 @@ class RecallsControllerTest {
     val recall = recallRequest.toRecall()
     every { recallRepository.getById(recall.id) } returns recall
 
-    val results = underTest.getRecall(recall.id)
+    val results = underTest.getRecall(recall.recallId())
 
-    assertThat(results, equalTo(RecallResponse(recall.id, nomsNumber, recall.revocationOrderDocS3Key)))
+    assertThat(results, equalTo(RecallResponse(recall.recallId(), nomsNumber, recall.revocationOrderDocS3Key)))
   }
 
   @Test
@@ -57,9 +57,9 @@ class RecallsControllerTest {
     val expectedPdf = "Some pdf".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    every { revocationOrderService.getRevocationOrder(recall.id) } returns Mono.just(expectedPdf)
+    every { revocationOrderService.getRevocationOrder(recall.recallId()) } returns Mono.just(expectedPdf)
 
-    val result = underTest.getRevocationOrder(recall.id)
+    val result = underTest.getRevocationOrder(recall.recallId())
 
     StepVerifier
       .create(result)

@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.util.UUID
 
 @Configuration
 class RestConfiguration {
@@ -33,17 +35,41 @@ class RestConfiguration {
       .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
       .registerModules(Jdk8Module(), JavaTimeModule(), KotlinModule())
       .registerModule(
-        SimpleModule()
-          .addSerializer(NomsNumber::class.java, nomsNumberSerializer())
-          .addDeserializer(NomsNumber::class.java, nomsNumberDeserializer())
+        SimpleModule().apply {
+          NomsNumberSerializers(this)
+          RecallIdSerializors(this)
+        }
       )
 
-  private fun nomsNumberDeserializer() = object : JsonDeserializer<NomsNumber>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext) = NomsNumber(p.text)
+  object NomsNumberSerializers {
+    operator fun invoke(simpleModule: SimpleModule) {
+      simpleModule.addSerializer(NomsNumber::class.java, nomsNumberSerializer())
+      simpleModule.addDeserializer(NomsNumber::class.java, nomsNumberDeserializer())
+    }
+
+    private fun nomsNumberDeserializer() = object : JsonDeserializer<NomsNumber>() {
+      override fun deserialize(p: JsonParser, ctxt: DeserializationContext) = NomsNumber(p.text)
+    }
+
+    private fun nomsNumberSerializer() = object : JsonSerializer<NomsNumber>() {
+      override fun serialize(value: NomsNumber, gen: JsonGenerator, serializers: SerializerProvider) =
+        gen.writeString(value.value)
+    }
   }
 
-  private fun nomsNumberSerializer() = object : JsonSerializer<NomsNumber>() {
-    override fun serialize(value: NomsNumber, gen: JsonGenerator, serializers: SerializerProvider) =
-      gen.writeString(value.value)
+  object RecallIdSerializors {
+    operator fun invoke(simpleModule: SimpleModule) {
+      simpleModule.addSerializer(RecallId::class.java, nomsNumberSerializer())
+      simpleModule.addDeserializer(RecallId::class.java, nomsNumberDeserializer())
+    }
+
+    private fun nomsNumberDeserializer() = object : JsonDeserializer<RecallId>() {
+      override fun deserialize(p: JsonParser, ctxt: DeserializationContext) = RecallId(UUID.fromString(p.text))
+    }
+
+    private fun nomsNumberSerializer() = object : JsonSerializer<RecallId>() {
+      override fun serialize(value: RecallId, gen: JsonGenerator, serializers: SerializerProvider) =
+        gen.writeString(value.value.toString())
+    }
   }
 }

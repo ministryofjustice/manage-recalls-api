@@ -12,11 +12,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 
 @Service
 class RevocationOrderService(
@@ -32,8 +32,8 @@ class RevocationOrderService(
   @Value("\${aws.s3.bucketName}")
   lateinit var bucketName: String
 
-  fun getRevocationOrder(recallId: UUID): Mono<ByteArray> {
-    val recall = recallRepository.getById(recallId)
+  fun getRevocationOrder(recallId: RecallId): Mono<ByteArray> {
+    val recall = recallRepository.getById(recallId.value)
     if (recall.revocationOrderDocS3Key == null) {
       return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
         .flatMap { prisoners ->
