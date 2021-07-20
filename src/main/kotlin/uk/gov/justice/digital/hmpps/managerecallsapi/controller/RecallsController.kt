@@ -31,7 +31,8 @@ class RecallsController(
   @PostMapping("/recalls")
   fun bookRecall(@Valid @RequestBody bookRecallRequest: BookRecallRequest) =
     ResponseEntity(
-      recallRepository.save(bookRecallRequest.toRecall()).toResponse(), HttpStatus.CREATED
+      recallRepository.save(bookRecallRequest.toRecall()).toResponse(),
+      HttpStatus.CREATED
     )
 
   @GetMapping("/recalls")
