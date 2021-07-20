@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetai
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
@@ -44,6 +46,7 @@ class RevocationOrderService(
           ctx.setVariable("dateOfBirth", firstPrisoner.dateOfBirth)
           ctx.setVariable("prisonNumber", firstPrisoner.bookNumber)
           ctx.setVariable("croNumber", firstPrisoner.croNumber)
+          ctx.setVariable("licenseRevocationDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
           val populatedHtml = templateEngine.process("revocation-order", ctx)
 
           val details = listOf(
