@@ -5,8 +5,10 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -17,6 +19,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 internal class RevocationOrderServiceTest {
@@ -41,11 +45,13 @@ internal class RevocationOrderServiceTest {
     val expectedBytes = "Some pdf".toByteArray()
     val s3Bucket = "a-bucket"
 
+    val contextSlot = slot<IContext>()
+
     underTest.bucketName = s3Bucket
 
     every { prisonerOffenderSearchClient.prisonerSearch(any()) } returns Mono.just(listOf(Prisoner()))
     every { pdfDocumentGenerator.makePdf(any()) } returns Mono.just(expectedBytes)
-    every { thymeleafConfig.process("revocation-order", any()) } returns "Some html, honest"
+    every { thymeleafConfig.process("revocation-order", capture(contextSlot)) } returns "Some html, honest"
     val aRecall = Recall(recallId, nomsNumber = "aNumber")
     val revocationOrderDocS3Key = UUID.randomUUID()
     val aRecallWithRevocationOrder =
@@ -66,6 +72,7 @@ internal class RevocationOrderServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
+        assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
         verify { recallRepository.save(aRecallWithRevocationOrder) }
         verify { s3Service.uploadFile(s3Bucket, expectedBytes, "$recallId-revocation-order.pdf") }
       }
