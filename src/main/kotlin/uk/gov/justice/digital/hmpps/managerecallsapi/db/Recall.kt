@@ -20,7 +20,7 @@ data class Recall(
   val id: UUID,
 
   @Column(name = "noms_number", nullable = false)
-  @Convert(converter = NomsNumberConverter::class)
+  @Convert(converter = NomsNumberJpaConverter::class)
   val nomsNumber: NomsNumber,
 
   @Column(name = "revocation_order_doc_s3_key")
@@ -36,8 +36,8 @@ data class Recall(
   fun recallId() = RecallId(id)
 }
 
-class NomsNumberConverter : CustomJpaConverter<NomsNumber, String>({ it.value }, ::NomsNumber)
-class RecallIdConverter : CustomJpaConverter<RecallId, UUID>({ it.value }, ::RecallId)
+class NomsNumberJpaConverter : CustomJpaConverter<NomsNumber, String>({ it.value }, ::NomsNumber)
+class RecallIdJpaConverter : CustomJpaConverter<RecallId, UUID>({ it.value }, ::RecallId)
 
 abstract class CustomJpaConverter<IN, OUT>(private val toDbFn: (IN) -> OUT, private val toTypeFn: (OUT) -> IN) :
   AttributeConverter<IN, OUT> {
