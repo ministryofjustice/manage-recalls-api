@@ -7,10 +7,14 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.util.Base64
+import java.util.UUID
 
 class RecallsControllerTest {
   private val recallRepository = mockk<RecallRepository>()
@@ -18,7 +22,9 @@ class RecallsControllerTest {
 
   private val underTest = RecallsController(recallRepository, revocationOrderService)
 
+  private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
+  private val revocationOrderDocS3Key = UUID.randomUUID()
   private val recallRequest = BookRecallRequest(nomsNumber)
 
   @Test
@@ -33,22 +39,22 @@ class RecallsControllerTest {
 
   @Test
   fun `gets all recalls`() {
-    val recall = recallRequest.toRecall()
+    val recall = Recall(recallId, nomsNumber, null, emptySet())
     every { recallRepository.findAll() } returns listOf(recall)
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recall.recallId(), nomsNumber, null))))
+    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, null))))
   }
 
   @Test
   fun `gets a recall`() {
-    val recall = recallRequest.toRecall()
-    every { recallRepository.getById(recall.id) } returns recall
+    val recall = Recall(recallId, nomsNumber, revocationOrderDocS3Key, emptySet())
+    every { recallRepository.getByRecallId(recallId) } returns recall
 
-    val results = underTest.getRecall(recall.recallId())
+    val results = underTest.getRecall(recallId)
 
-    assertThat(results, equalTo(RecallResponse(recall.recallId(), nomsNumber, recall.revocationOrderDocS3Key)))
+    assertThat(results, equalTo(RecallResponse(recallId, nomsNumber, revocationOrderDocS3Key)))
   }
 
   @Test

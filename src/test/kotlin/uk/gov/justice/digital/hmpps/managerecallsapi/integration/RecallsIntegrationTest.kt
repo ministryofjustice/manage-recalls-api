@@ -99,7 +99,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   fun `gets a recall`() {
     val jwt = testJwt("ROLE_MANAGE_RECALLS")
 
-    every { recallRepository.getById(recallId.value) } returns aRecall
+    every { recallRepository.getByRecallId(recallId) } returns aRecall
 
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwt) }
       .exchange()
@@ -116,7 +116,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     val expectedPdf = "Expected Generated PDF".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    every { recallRepository.getById(recallId.value) } returns aRecall
+    every { recallRepository.getByRecallId(recallId) } returns aRecall
 
     val firstName = "Natalia"
     prisonerOffenderSearch.prisonerSearchRespondsWith(
