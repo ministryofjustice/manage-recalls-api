@@ -46,7 +46,7 @@ class RevocationOrderService(
           ctx.setVariable("dateOfBirth", firstPrisoner.dateOfBirth)
           ctx.setVariable("prisonNumber", firstPrisoner.bookNumber)
           ctx.setVariable("croNumber", firstPrisoner.croNumber)
-          ctx.setVariable("licenseRevocationDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMMM yyyy")))
+          ctx.setVariable("licenseRevocationDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
           val populatedHtml = templateEngine.process("revocation-order", ctx)
 
           val details = listOf(
