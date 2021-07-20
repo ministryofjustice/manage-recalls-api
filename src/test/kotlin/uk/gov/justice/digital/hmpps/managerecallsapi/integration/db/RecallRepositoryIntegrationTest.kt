@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.hasSize
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 import org.junit.jupiter.api.Test
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -24,6 +24,7 @@ import java.util.UUID
 @AutoConfigureEmbeddedDatabase(provider = ZONKY)
 @DataJpaTest
 @AutoConfigureTestDatabase
+@Import(RecallRepository::class)
 class RecallRepositoryIntegrationTest(
   @Autowired
   private val repository: RecallRepository
@@ -37,9 +38,9 @@ class RecallRepositoryIntegrationTest(
     val recall = Recall(recallId, nomsNumber, null, emptySet())
     repository.save(recall)
 
-    val actualRecall = repository.getById(recallId.value)
+    val retrieved = repository.getByRecallId(recallId)
 
-    assertThat(actualRecall, equalTo(recall))
+    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber, null, emptySet())))
   }
 
   @Test
@@ -51,31 +52,26 @@ class RecallRepositoryIntegrationTest(
     val recallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key, emptySet())
     repository.save(recallWithRevocationOrder)
 
-    val actualRecall = repository.getById(recallId.value)
+    val actualRecall = repository.getByRecallId(recallId)
 
     assertThat(actualRecall, equalTo(recallWithRevocationOrder))
   }
 
   @Test
   fun `updates a recall with a document`() {
-    val recall = Recall(recallId, nomsNumber, null, emptySet())
-    repository.save(recall)
+    val originalRecall = Recall(recallId, nomsNumber, null, emptySet())
+    repository.save(originalRecall)
+
+    assertThat(repository.getByRecallId(recallId), equalTo(originalRecall))
 
     val recallDocumentId = UUID.randomUUID()
     val document = RecallDocument(recallDocumentId, recallId.value, PART_A_RECALL_REPORT)
 
-    repository.save(
-      Recall(
-        recallId,
-        nomsNumber,
-        null,
-        setOf(document)
-      )
-    )
+    val recallWithDocument = Recall(recallId, nomsNumber, null, setOf(document))
+    repository.save(recallWithDocument)
 
-    val actualRecall = repository.getById(recallId.value)
+    val actualRecall = repository.getByRecallId(recallId)
 
-    assertThat(actualRecall.documents, hasSize(equalTo(1)))
-    assertThat(actualRecall.documents.first(), equalTo(document))
+    assertThat(actualRecall, equalTo(recallWithDocument))
   }
 }

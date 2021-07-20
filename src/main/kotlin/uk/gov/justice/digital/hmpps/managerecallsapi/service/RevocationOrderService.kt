@@ -33,7 +33,7 @@ class RevocationOrderService(
   lateinit var bucketName: String
 
   fun getRevocationOrder(recallId: RecallId): Mono<ByteArray> {
-    val recall = recallRepository.getById(recallId.value)
+    val recall = recallRepository.getByRecallId(recallId)
     if (recall.revocationOrderDocS3Key == null) {
       return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
         .flatMap { prisoners ->
