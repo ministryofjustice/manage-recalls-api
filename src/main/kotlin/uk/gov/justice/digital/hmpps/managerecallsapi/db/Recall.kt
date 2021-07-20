@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.util.UUID
 import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType
@@ -28,11 +29,18 @@ data class Recall(
   @OneToMany(cascade = [CascadeType.ALL])
   @JoinColumn(name = "recall_id")
   val documents: Set<RecallDocument> = emptySet()
-)
+) {
+  constructor(recallId: RecallId, nomsNumber: NomsNumber, revocationOrderDocS3Key: UUID?, documents: Set<RecallDocument>) :
+    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents)
+
+  fun recallId() = RecallId(id)
+}
 
 class NomsNumberConverter : CustomJpaConverter<NomsNumber, String>({ it.value }, ::NomsNumber)
+class RecallIdConverter : CustomJpaConverter<RecallId, UUID>({ it.value }, ::RecallId)
 
-abstract class CustomJpaConverter<IN, OUT>(private val toDbFn: (IN) -> OUT, private val toTypeFn: (OUT) -> IN) : AttributeConverter<IN, OUT> {
+abstract class CustomJpaConverter<IN, OUT>(private val toDbFn: (IN) -> OUT, private val toTypeFn: (OUT) -> IN) :
+  AttributeConverter<IN, OUT> {
   override fun convertToDatabaseColumn(value: IN): OUT = toDbFn(value)
 
   override fun convertToEntityAttribute(value: OUT): IN = toTypeFn(value)

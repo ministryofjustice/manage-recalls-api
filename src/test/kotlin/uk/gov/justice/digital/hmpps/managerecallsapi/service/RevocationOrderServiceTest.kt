@@ -16,6 +16,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
@@ -40,14 +42,14 @@ internal class RevocationOrderServiceTest {
     recallRepository
   )
 
+  private val recallId = ::RecallId.random()
+  private val expectedBytes = "Some pdf".toByteArray()
+  private val s3Bucket = "a-bucket"
   private val nomsNumber = NomsNumber("123456")
+  private val revocationOrderDocS3Key = UUID.randomUUID()
 
   @Test
   fun `generates a revocation order for a recall without an existing revocation order`() {
-    val recallId = UUID.randomUUID()
-    val expectedBytes = "Some pdf".toByteArray()
-    val s3Bucket = "a-bucket"
-
     val contextSlot = slot<IContext>()
 
     underTest.bucketName = s3Bucket
@@ -55,10 +57,12 @@ internal class RevocationOrderServiceTest {
     every { prisonerOffenderSearchClient.prisonerSearch(any()) } returns Mono.just(listOf(Prisoner()))
     every { pdfDocumentGenerator.makePdf(any()) } returns Mono.just(expectedBytes)
     every { thymeleafConfig.process("revocation-order", capture(contextSlot)) } returns "Some html, honest"
-    val aRecall = Recall(recallId, nomsNumber)
+
+    val aRecall = Recall(recallId, nomsNumber, null, emptySet())
     val revocationOrderDocS3Key = UUID.randomUUID()
-    val aRecallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key)
-    every { recallRepository.getById(recallId) } returns aRecall
+    val aRecallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key, emptySet())
+
+    every { recallRepository.getById(recallId.value) } returns aRecall
     every { recallRepository.save(aRecallWithRevocationOrder) } returns aRecallWithRevocationOrder
     every { s3Service.uploadFile(any(), any(), any()) } returns S3BulkResponseEntity(
       s3Bucket,
@@ -83,16 +87,11 @@ internal class RevocationOrderServiceTest {
 
   @Test
   fun `gets existing revocation order for a recall when one exists`() {
-    val recallId = UUID.randomUUID()
-    val revocationOrderDocS3Key = UUID.randomUUID()
-    val expectedBytes = "Some pdf".toByteArray()
-    val s3Bucket = "a-bucket"
-
     underTest.bucketName = s3Bucket
 
-    val aRecall = Recall(recallId, nomsNumber, revocationOrderDocS3Key)
-    val aRecallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key)
-    every { recallRepository.getById(recallId) } returns aRecall
+    val aRecall = Recall(recallId, nomsNumber, revocationOrderDocS3Key, emptySet())
+    val aRecallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key, emptySet())
+    every { recallRepository.getById(recallId.value) } returns aRecall
     every { recallRepository.save(aRecallWithRevocationOrder) } returns aRecallWithRevocationOrder
     every { s3Service.downloadFile(s3Bucket, revocationOrderDocS3Key) } returns expectedBytes
 
@@ -107,7 +106,7 @@ internal class RevocationOrderServiceTest {
         verify { thymeleafConfig wasNot Called }
         verify(exactly = 0) { recallRepository.save(aRecallWithRevocationOrder) }
         verify(exactly = 0) { s3Service.uploadFile(s3Bucket, expectedBytes, "$recallId-revocation-order.pdf") }
-        verify { recallRepository.getById(recallId) }
+        verify { recallRepository.getById(recallId.value) }
         verify { s3Service.downloadFile(s3Bucket, revocationOrderDocS3Key) }
       }
       .verifyComplete()
