@@ -19,7 +19,7 @@ import javax.validation.ValidationException
 class ManageRecallsApiExceptionHandler {
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  //TODO:  Is this needed?
+  // TODO:  Is this needed?
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.message)
@@ -28,7 +28,7 @@ class ManageRecallsApiExceptionHandler {
       .body(ErrorResponse(BAD_REQUEST, "Validation failure: ${e.message}"))
   }
 
-  //TODO:  Is this needed?
+  // TODO:  Is this needed?
   @ExceptionHandler(MethodArgumentNotValidException::class)
   fun handleException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> =
     with(e.errorMessage()) {
