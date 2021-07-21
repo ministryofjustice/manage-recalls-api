@@ -15,7 +15,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.util.UUID
 import javax.persistence.EntityNotFoundException
@@ -49,9 +48,8 @@ internal class RecallDocumentServiceTest {
 
     every { recallRepository.getByRecallId(recallId) } returns aRecall
 
-    val fileKey = UUID.randomUUID()
-    every { s3Service.uploadFile(documentBytes) } returns
-      S3BulkResponseEntity("bucket", fileKey, true, 200)
+    val fileS3Key = UUID.randomUUID()
+    every { s3Service.uploadFile(documentBytes) } returns fileS3Key
 
     every { recallRepository.save(any()) } returns Recall(recallId.value, NomsNumber("A12345B"))
 
@@ -62,7 +60,7 @@ internal class RecallDocumentServiceTest {
     verify {
       recallRepository.save(
         withArg { recall ->
-          assertThat(recall.documents, allElements(equalTo(RecallDocument(fileKey, recallId.value, documentCategory))))
+          assertThat(recall.documents, allElements(equalTo(RecallDocument(fileS3Key, recallId.value, documentCategory))))
         }
       )
     }

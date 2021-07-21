@@ -6,5 +6,5 @@ interface S3Service {
 
   fun downloadFile(fileKey: UUID): ByteArray
 
-  fun uploadFile(fileBytes: ByteArray): S3BulkResponseEntity
+  fun uploadFile(fileBytes: ByteArray): UUID
 }

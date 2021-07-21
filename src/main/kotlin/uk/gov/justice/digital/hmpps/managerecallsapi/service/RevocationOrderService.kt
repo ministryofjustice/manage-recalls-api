@@ -51,8 +51,8 @@ class RevocationOrderService(
           )
 
           pdfDocumentGenerator.makePdf(details).map { bytes ->
-            val uploadedFile = s3Service.uploadFile(bytes)
-            recallRepository.save(recall.copy(revocationOrderDocS3Key = uploadedFile.fileKey))
+            val fileS3Key = s3Service.uploadFile(bytes)
+            recallRepository.save(recall.copy(revocationOrderDocS3Key = fileS3Key))
             bytes
           }
         }

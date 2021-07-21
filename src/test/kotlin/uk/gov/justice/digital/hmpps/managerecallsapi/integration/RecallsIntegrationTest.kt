@@ -20,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
 import java.time.LocalDate
 import java.util.Base64
 import java.util.UUID
@@ -135,16 +134,10 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName)
 
-    val revocationOrderS3Key = UUID.randomUUID()
-    every { s3Service.uploadFile(any()) } returns
-      S3BulkResponseEntity(
-        "bucket-name",
-        revocationOrderS3Key,
-        true,
-        200
-      )
+    val fileS3Key = UUID.randomUUID()
+    every { s3Service.uploadFile(any()) } returns fileS3Key
 
-    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, revocationOrderS3Key)
+    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, fileS3Key)
 
     val response = webTestClient.get().uri("/recalls/$recallId/revocationOrder").headers { it.withBearerAuthToken(jwt) }
       .exchange()

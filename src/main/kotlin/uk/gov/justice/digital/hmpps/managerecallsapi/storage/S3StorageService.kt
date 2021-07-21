@@ -18,30 +18,18 @@ class S3StorageService(
 
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  override fun downloadFile(fileKey: UUID): ByteArray {
-    return s3Client.getObject(
-      GetObjectRequest.builder().bucket(bucketName).key(fileKey.toString()).build()
-    ).readAllBytes()
+  override fun downloadFile(fileS3Key: UUID): ByteArray {
+    log.debug("downloading file to s3://$bucketName/$fileS3Key")
+    val request = GetObjectRequest.builder().bucket(bucketName).key(fileS3Key.toString()).build()
+    return s3Client.getObject(request).readAllBytes()
   }
 
-  override fun uploadFile(fileBytes: ByteArray): S3BulkResponseEntity {
-    log.debug("Uploading file to s3://$bucketName")
-    val result: S3BulkResponseEntity
-    val uuid = UUID.randomUUID()
-    s3Client.putObject(
-      PutObjectRequest.builder().bucket(bucketName).key(uuid.toString()).build(),
-      RequestBody.fromBytes(fileBytes)
-    )
-      .sdkHttpResponse()
-      .also { log.info("uploaded $uuid to $bucketName: ${it.statusCode()}") }
-      .let { response ->
-        result = S3BulkResponseEntity(
-          bucket = bucketName,
-          fileKey = uuid,
-          successful = response.isSuccessful,
-          statusCode = response.statusCode()
-        )
-      }
-    return result
+  override fun uploadFile(fileBytes: ByteArray): UUID {
+    val fileS3Key = UUID.randomUUID()
+    log.debug("Uploading file to s3://$bucketName/$fileS3Key")
+    val request = PutObjectRequest.builder().bucket(bucketName).key(fileS3Key.toString()).build()
+    val body = RequestBody.fromBytes(fileBytes)
+    s3Client.putObject(request, body)
+    return fileS3Key
   }
 }
