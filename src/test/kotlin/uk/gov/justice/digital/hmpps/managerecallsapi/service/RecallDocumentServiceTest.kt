@@ -1,8 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import com.natpryce.hamkrest.allElements
+import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.hasSize
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -59,8 +60,7 @@ internal class RecallDocumentServiceTest {
     verify {
       recallRepository.save(
         withArg { recall ->
-          assertThat(recall.documents, hasSize(equalTo(1)))
-          assertThat(recall.documents.first(), equalTo(RecallDocument(fileKey, recallId, documentCategory)))
+          assertThat(recall.documents, allElements(equalTo(RecallDocument(fileKey, recallId, documentCategory))))
         }
       )
     }

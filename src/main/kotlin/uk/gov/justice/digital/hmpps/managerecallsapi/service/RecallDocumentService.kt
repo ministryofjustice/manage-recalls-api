@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -15,8 +14,6 @@ class RecallDocumentService(
   @Autowired private val s3Service: S3Service,
   @Autowired private val recallRepository: RecallRepository
 ) {
-
-  private val log = LoggerFactory.getLogger(this::class.java)
 
   fun addDocumentToRecall(recallId: UUID, documentBytes: ByteArray, documentCategory: RecallDocumentCategory) {
     val recall = try {
