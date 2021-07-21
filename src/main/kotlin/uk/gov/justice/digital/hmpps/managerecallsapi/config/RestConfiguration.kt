@@ -11,13 +11,14 @@ import org.http4k.format.ConfigurableJackson
 import org.http4k.format.asConfigurable
 import org.http4k.format.withStandardMappings
 import org.http4k.lens.BiDiMapping
+import org.http4k.lens.StringBiDiMappings
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
 
 @Configuration
 class RestConfiguration {
@@ -44,6 +45,11 @@ object ManageRecallsApiJackson : ConfigurableJackson(
 )
 
 private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply {
-  text(BiDiMapping(::NomsNumber, NomsNumber::toString))
-  text(BiDiMapping({ RecallId(UUID.fromString(it)) }, RecallId::toString))
+  text(::NomsNumber)
+  text(StringBiDiMappings.uuid().map(::RecallId, RecallId::value))
 }
+
+inline fun <reified T : Validated<*>> AutoMappingConfiguration<ObjectMapper>.text(
+  crossinline read: (String) -> T,
+  crossinline write: (T) -> String = { it.value.toString() }
+) = text(BiDiMapping({ read(it) }, { write(it) }))
