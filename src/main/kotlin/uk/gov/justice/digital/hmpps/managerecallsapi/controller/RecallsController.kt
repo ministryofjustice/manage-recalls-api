@@ -20,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.util.Base64
 import java.util.UUID
-import javax.validation.Valid
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -31,7 +30,7 @@ class RecallsController(
 ) {
 
   @PostMapping("/recalls")
-  fun bookRecall(@Valid @RequestBody bookRecallRequest: BookRecallRequest) =
+  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest) =
     ResponseEntity(
       recallRepository.save(bookRecallRequest.toRecall()).toResponse(),
       HttpStatus.CREATED
@@ -40,8 +39,8 @@ class RecallsController(
   @GetMapping("/recalls")
   fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
 
-  @GetMapping("/recalls/{value}")
-  fun getRecall(@PathVariable("value") recallId: RecallId): RecallResponse =
+  @GetMapping("/recalls/{recallId}")
+  fun getRecall(@PathVariable("recallId") recallId: RecallId): RecallResponse =
     recallRepository.getByRecallId(recallId).toResponse()
 
   @GetMapping("/recalls/{recallId}/revocationOrder")
@@ -57,7 +56,7 @@ fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
 
 fun Recall.toResponse() = RecallResponse(this.recallId(), this.nomsNumber, this.revocationOrderDocS3Key)
 
-data class BookRecallRequest(@field:Valid val nomsNumber: NomsNumber)
+data class BookRecallRequest(val nomsNumber: NomsNumber)
 
 // TODO:  Remove id field
 data class RecallResponse(val id: UUID, val recallId: RecallId, val nomsNumber: NomsNumber, val revocationOrderId: UUID?) {
