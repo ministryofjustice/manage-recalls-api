@@ -1,8 +1,12 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
+import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.isEmpty
+import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -50,14 +54,22 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `search request with blank noms number returns 400`() {
-    val result = sendAuthenticatedPostRequestWithBody("/search", SearchRequest(NomsNumber("")))
+    val result = sendAuthenticatedPostRequestWithBody("/search", "{\"nomsNumber\":\"\"}")
       .expectStatus().isBadRequest
       .expectBody(ErrorResponse::class.java)
       .returnResult()
 
     assertThat(
       result.responseBody,
-      equalTo(ErrorResponse(BAD_REQUEST, "nomsNumber.value: must not be blank"))
+      present(
+        allOf(
+          has(ErrorResponse::status, equalTo(BAD_REQUEST)),
+          has(
+            ErrorResponse::message,
+            present(containsSubstring("'' violated uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber rule"))
+          )
+        )
+      )
     )
   }
 
