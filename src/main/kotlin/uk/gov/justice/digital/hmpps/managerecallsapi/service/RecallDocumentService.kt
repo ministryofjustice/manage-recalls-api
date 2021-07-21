@@ -25,9 +25,9 @@ class RecallDocumentService(
       throw RecallNotFoundError("No recall found with ID '$recallId'", e)
     }
 
-    s3Service.uploadFile(documentBytes)
+    val uploadedDocument = s3Service.uploadFile(documentBytes)
     val document = RecallDocument(
-      id = UUID.randomUUID(),
+      id = uploadedDocument.fileKey,
       recallId = recallId,
       category = documentCategory
     )

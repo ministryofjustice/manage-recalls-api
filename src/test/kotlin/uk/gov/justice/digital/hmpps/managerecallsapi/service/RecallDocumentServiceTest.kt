@@ -9,6 +9,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
@@ -44,8 +45,11 @@ internal class RecallDocumentServiceTest {
     )
 
     every { recallRepository.getById(recallId) } returns aRecall
+
+    val fileKey = UUID.randomUUID()
     every { s3Service.uploadFile(documentBytes) } returns
-      S3BulkResponseEntity("bucket", UUID.randomUUID(), true, 200)
+      S3BulkResponseEntity("bucket", fileKey, true, 200)
+
     every { recallRepository.save(any()) } returns Recall(recallId, "")
 
     underTest.addDocumentToRecall(recallId, documentBytes, documentCategory)
@@ -56,9 +60,7 @@ internal class RecallDocumentServiceTest {
       recallRepository.save(
         withArg { recall ->
           assertThat(recall.documents, hasSize(equalTo(1)))
-          val firstDoc = recall.documents.first()
-          assertThat(firstDoc.category, equalTo(documentCategory))
-          assertThat(firstDoc.recallId, equalTo(recallId))
+          assertThat(recall.documents.first(), equalTo(RecallDocument(fileKey, recallId, documentCategory)))
         }
       )
     }
