@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
@@ -29,9 +28,6 @@ class RevocationOrderService(
 
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  @Value("\${aws.s3.bucketName}")
-  lateinit var bucketName: String
-
   fun getRevocationOrder(recallId: RecallId): Mono<ByteArray> {
     val recall = recallRepository.getByRecallId(recallId)
     if (recall.revocationOrderDocS3Key == null) {
@@ -55,14 +51,13 @@ class RevocationOrderService(
           )
 
           pdfDocumentGenerator.makePdf(details).map { bytes ->
-            log.info("Uploading file to s3... $bucketName")
-            val uploadedFile = s3Service.uploadFile(bucketName, bytes, "$recallId-revocation-order.pdf")
+            val uploadedFile = s3Service.uploadFile(bytes)
             recallRepository.save(recall.copy(revocationOrderDocS3Key = uploadedFile.fileKey))
             bytes
           }
         }
     } else {
-      return Mono.just(s3Service.downloadFile(bucketName, recall.revocationOrderDocS3Key))
+      return Mono.just(s3Service.downloadFile(recall.revocationOrderDocS3Key))
     }
   }
 }

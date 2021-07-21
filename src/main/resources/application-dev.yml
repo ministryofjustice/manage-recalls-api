@@ -18,6 +18,7 @@ aws:
   credentials:
     accessKey: ANYTHING_GOES
     secretKey: ANYTHING_GOES
-  s3.bucketName: test-manage-recalls-api
+  s3:
+    bucketName: test-manage-recalls-api
   local:
     endpoint: http://localhost:4566

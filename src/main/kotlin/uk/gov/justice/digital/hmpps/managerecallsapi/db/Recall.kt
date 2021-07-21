@@ -24,7 +24,7 @@ data class Recall(
   val nomsNumber: NomsNumber,
 
   @Column(name = "revocation_order_doc_s3_key")
-  val revocationOrderDocS3Key: UUID?,
+  val revocationOrderDocS3Key: UUID? = null,
 
   @OneToMany(cascade = [CascadeType.ALL])
   @JoinColumn(name = "recall_id")

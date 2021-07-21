@@ -136,11 +136,10 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName)
 
     val revocationOrderS3Key = UUID.randomUUID()
-    every { s3Service.uploadFile(any(), any(), any()) } returns
+    every { s3Service.uploadFile(any()) } returns
       S3BulkResponseEntity(
         "bucket-name",
         revocationOrderS3Key,
-        "myFile.pdf",
         true,
         200
       )

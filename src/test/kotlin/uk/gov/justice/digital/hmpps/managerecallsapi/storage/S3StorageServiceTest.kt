@@ -17,9 +17,9 @@ import java.util.UUID
 
 class S3StorageServiceTest {
 
-  val s3Client = mockk<S3Client>()
-
-  val underTest: S3StorageService = S3StorageService(s3Client)
+  private val bucketName = "bucket-name"
+  private val s3Client = mockk<S3Client>()
+  private val underTest: S3StorageService = S3StorageService(s3Client, bucketName)
 
   @Test
   fun `can store file in s3`() {
@@ -34,9 +34,9 @@ class S3StorageServiceTest {
       )
     } returns putObjectResponseBuilder.build()
 
-    val result = underTest.uploadFile("bucket-name", "blah".toByteArray(), "file-a.pdf")
+    val result = underTest.uploadFile("blah".toByteArray())
 
-    assertThat(result, equalTo(S3BulkResponseEntity("bucket-name", result.fileKey, "file-a.pdf", true, 200)))
+    assertThat(result, equalTo(S3BulkResponseEntity(bucketName, result.fileKey, true, 200)))
   }
 
   @Test
@@ -47,7 +47,7 @@ class S3StorageServiceTest {
     every { responseInputStream.readAllBytes() } returns fileContent
     every { s3Client.getObject(any<GetObjectRequest>()) } returns responseInputStream
 
-    val response = underTest.downloadFile("bucket-name", UUID.randomUUID())
+    val response = underTest.downloadFile(UUID.randomUUID())
 
     assertThat(response, equalTo(fileContent))
   }
