@@ -14,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.util.Base64
 import java.util.UUID
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -29,7 +30,7 @@ class RecallsController(
 ) {
 
   @PostMapping("/recalls")
-  fun bookRecall(@Valid @RequestBody bookRecallRequest: BookRecallRequest) =
+  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest) =
     ResponseEntity(
       recallRepository.save(bookRecallRequest.toRecall()).toResponse(),
       HttpStatus.CREATED
@@ -39,11 +40,11 @@ class RecallsController(
   fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
 
   @GetMapping("/recalls/{recallId}")
-  fun getRecall(@PathVariable("recallId") recallId: UUID): RecallResponse =
-    recallRepository.getById(recallId).toResponse()
+  fun getRecall(@PathVariable("recallId") recallId: RecallId): RecallResponse =
+    recallRepository.getByRecallId(recallId).toResponse()
 
   @GetMapping("/recalls/{recallId}/revocationOrder")
-  fun getRevocationOrder(@PathVariable("recallId") recallId: UUID): Mono<ResponseEntity<Pdf>> =
+  fun getRevocationOrder(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
     revocationOrderService.getRevocationOrder(recallId)
       .map {
         val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)
@@ -51,12 +52,15 @@ class RecallsController(
       }
 }
 
-fun BookRecallRequest.toRecall() = Recall(UUID.randomUUID(), this.nomsNumber)
+fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
 
-fun Recall.toResponse() = RecallResponse(this.id, this.nomsNumber, this.revocationOrderDocS3Key)
+fun Recall.toResponse() = RecallResponse(this.recallId(), this.nomsNumber, this.revocationOrderDocS3Key)
 
-data class BookRecallRequest(@field:NotBlank val nomsNumber: String)
+data class BookRecallRequest(val nomsNumber: NomsNumber)
 
-data class RecallResponse(val id: UUID, val nomsNumber: String, val revocationOrderId: UUID?)
+// TODO:  Remove id field
+data class RecallResponse(val id: UUID, val recallId: RecallId, val nomsNumber: NomsNumber, val revocationOrderId: UUID?) {
+  constructor(recallId: RecallId, nomsNumber: NomsNumber, revocationOrderId: UUID?) : this(recallId.value, recallId, nomsNumber, revocationOrderId)
+}
 
 data class Pdf(val content: String)

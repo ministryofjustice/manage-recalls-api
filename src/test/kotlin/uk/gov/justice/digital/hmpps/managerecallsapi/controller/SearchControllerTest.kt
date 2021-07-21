@@ -9,6 +9,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.LocalDate
@@ -20,7 +21,7 @@ class SearchControllerTest {
 
   private val underTest = SearchController(prisonerOffenderSearchClient)
 
-  private val nomsNumber = "A1234AA"
+  private val nomsNumber = NomsNumber("A1234AA")
   private val searchRequest = SearchRequest(nomsNumber)
 
   @Test

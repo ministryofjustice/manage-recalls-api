@@ -1,8 +1,12 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
+import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.isEmpty
+import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -10,6 +14,7 @@ import org.springframework.http.HttpStatus.UNAUTHORIZED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 
@@ -19,7 +24,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   private val middleNames = "Geoff"
   private val lastName = "Smith"
 
-  private val nomsNumber = "123456"
+  private val nomsNumber = NomsNumber("123456")
   private val apiSearchRequest = SearchRequest(nomsNumber)
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
 
@@ -49,14 +54,22 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `search request with blank noms number returns 400`() {
-    val result = sendAuthenticatedPostRequestWithBody("/search", SearchRequest(""))
+    val result = sendAuthenticatedPostRequestWithBody("/search", "{\"nomsNumber\":\"\"}")
       .expectStatus().isBadRequest
       .expectBody(ErrorResponse::class.java)
       .returnResult()
 
     assertThat(
       result.responseBody,
-      equalTo(ErrorResponse(BAD_REQUEST, "nomsNumber: must not be blank"))
+      present(
+        allOf(
+          has(ErrorResponse::status, equalTo(BAD_REQUEST)),
+          has(
+            ErrorResponse::message,
+            present(containsSubstring("'' violated uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber rule"))
+          )
+        )
+      )
     )
   }
 
@@ -96,13 +109,13 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
     p.croNumber,
   )
 
-  private fun testPrisoner(nomsNumber: String?, firstName: String?, lastName: String?) = Prisoner(
+  private fun testPrisoner(nomsNumber: NomsNumber?, firstName: String?, lastName: String?) = Prisoner(
     firstName = firstName,
     middleNames = middleNames,
     lastName = lastName,
     dateOfBirth = randomAdultDateOfBirth(),
     gender = randomString(),
-    prisonerNumber = nomsNumber,
+    prisonerNumber = nomsNumber?.value,
     pncNumber = randomString(),
     croNumber = randomString(),
   )

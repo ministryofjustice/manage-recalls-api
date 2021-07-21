@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration.pact
+package uk.gov.justice.digital.hmpps.managerecallsapi.integration.pact.provider
 
 import au.com.dius.pact.provider.junit5.HttpTestTarget
 import au.com.dius.pact.provider.junit5.PactVerificationContext
@@ -21,16 +21,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
-import java.util.UUID
 
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
-  private val nomsNumber = "A1234AA"
+  private val nomsNumber = NomsNumber("A1234AA")
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
 
@@ -54,7 +56,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       prisonerSearchRequest,
       listOf(
         Prisoner(
-          prisonerNumber = nomsNumber,
+          prisonerNumber = nomsNumber.value,
           firstName = "Bobby",
           middleNames = "John",
           lastName = "Badger",
@@ -64,7 +66,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
           pncNumber = "98/7654Z"
         ),
         Prisoner(
-          prisonerNumber = nomsNumber,
+          prisonerNumber = nomsNumber.value,
           firstName = "Bertie",
           middleNames = "Barry",
           lastName = "Badger",
@@ -86,7 +88,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a recall can be created")
   fun `a recall can be created`() {
-    val aRecall = Recall(UUID.randomUUID(), nomsNumber)
+    val aRecall = Recall(::RecallId.random(), nomsNumber)
 
     every { recallRepository.save(any()) } returns aRecall
   }
@@ -94,14 +96,14 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @State("a list of recalls exists")
   fun `a list of recalls exists`() {
     every { recallRepository.findAll() } returns listOf(
-      Recall(UUID.randomUUID(), nomsNumber),
-      Recall(UUID.randomUUID(), "Z9876ZZ")
+      Recall(::RecallId.random(), nomsNumber),
+      Recall(::RecallId.random(), NomsNumber("Z9876ZZ"))
     )
   }
 
   @State("a revocation order can be downloaded")
   fun `a revocation order can be downloaded`() {
-    every { revocationOrderService.getRevocationOrder(any<UUID>()) } returns Mono.just("some pdf contents".toByteArray())
+    every { revocationOrderService.getRevocationOrder(any()) } returns Mono.just("some pdf contents".toByteArray())
   }
 }
 

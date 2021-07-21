@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.LocalDate
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -23,7 +22,7 @@ import javax.validation.constraints.NotBlank
 class SearchController(@Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient) {
 
   @PostMapping("/search")
-  fun prisonerSearch(@Valid @RequestBody searchRequest: SearchRequest): Mono<ResponseEntity<List<SearchResult>>> =
+  fun prisonerSearch(@RequestBody searchRequest: SearchRequest): Mono<ResponseEntity<List<SearchResult>>> =
     prisonerOffenderSearchClient.prisonerSearch(searchRequest)
       .map { ResponseEntity.ok(it.toSearchResults()) }
 }
@@ -44,7 +43,7 @@ fun List<Prisoner>?.toSearchResults() =
     }
   }.orEmpty()
 
-data class SearchRequest(@field:NotBlank val nomsNumber: String)
+data class SearchRequest(val nomsNumber: NomsNumber)
 data class SearchResult(
   val firstName: String?,
   val middleNames: String?,

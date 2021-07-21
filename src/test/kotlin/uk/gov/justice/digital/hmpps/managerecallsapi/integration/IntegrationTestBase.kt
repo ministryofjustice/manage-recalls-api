@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.AUTHORIZATION
+import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
@@ -74,7 +76,10 @@ abstract class IntegrationTestBase {
     webTestClient.post()
       .uri(path)
       .body(Mono.just(request), T::class.java)
-      .headers { it.withBearerAuthToken(userJwt) }
+      .headers {
+        it.add(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        it.withBearerAuthToken(userJwt)
+      }
       .exchange()
 
   fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")

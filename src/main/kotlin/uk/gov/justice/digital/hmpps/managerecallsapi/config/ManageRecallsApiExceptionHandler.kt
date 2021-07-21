@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.validation.FieldError
 import org.springframework.validation.ObjectError
@@ -18,6 +19,7 @@ import javax.validation.ValidationException
 class ManageRecallsApiExceptionHandler {
   private val log = LoggerFactory.getLogger(this::class.java)
 
+  // TODO:  Is this needed?
   @ExceptionHandler(ValidationException::class)
   fun handleValidationException(e: Exception): ResponseEntity<ErrorResponse> {
     log.info("Validation exception: {}", e.message)
@@ -26,6 +28,7 @@ class ManageRecallsApiExceptionHandler {
       .body(ErrorResponse(BAD_REQUEST, "Validation failure: ${e.message}"))
   }
 
+  // TODO:  Is this needed?
   @ExceptionHandler(MethodArgumentNotValidException::class)
   fun handleException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> =
     with(e.errorMessage()) {
@@ -41,6 +44,15 @@ class ManageRecallsApiExceptionHandler {
         is FieldError -> "${error.field}: ${error.defaultMessage}"
         else -> error.defaultMessage ?: "unknown"
       }
+    }
+
+  @ExceptionHandler(HttpMessageNotReadableException::class)
+  fun handleException(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> =
+    with(e.message) {
+      log.info("HttpMessageNotReadableException {}", this)
+      ResponseEntity
+        .status(BAD_REQUEST)
+        .body(ErrorResponse(BAD_REQUEST, this))
     }
 
   @ExceptionHandler(java.lang.Exception::class)
@@ -60,4 +72,4 @@ class ManageRecallsApiExceptionHandler {
   }
 }
 
-data class ErrorResponse(val status: HttpStatus, val message: String)
+data class ErrorResponse(val status: HttpStatus, val message: String?)

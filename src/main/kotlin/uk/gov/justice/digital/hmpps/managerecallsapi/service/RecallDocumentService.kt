@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
-import java.util.UUID
 import javax.persistence.EntityNotFoundException
 
 @Service
@@ -15,9 +15,9 @@ class RecallDocumentService(
   @Autowired private val recallRepository: RecallRepository
 ) {
 
-  fun addDocumentToRecall(recallId: UUID, documentBytes: ByteArray, documentCategory: RecallDocumentCategory) {
+  fun addDocumentToRecall(recallId: RecallId, documentBytes: ByteArray, documentCategory: RecallDocumentCategory) {
     val recall = try {
-      recallRepository.getById(recallId)
+      recallRepository.getByRecallId(recallId)
     } catch (e: EntityNotFoundException) {
       throw RecallNotFoundError("No recall found with ID '$recallId'", e)
     }
@@ -25,7 +25,7 @@ class RecallDocumentService(
     val uploadedDocument = s3Service.uploadFile(documentBytes)
     val document = RecallDocument(
       id = uploadedDocument.fileKey,
-      recallId = recallId,
+      recallId = recallId.value,
       category = documentCategory
     )
     recallRepository.save(recall.copy(documents = recall.documents.plus(document)))
