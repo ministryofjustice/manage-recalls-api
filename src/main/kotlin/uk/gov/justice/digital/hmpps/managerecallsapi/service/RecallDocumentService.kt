@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import java.util.UUID
 import javax.persistence.EntityNotFoundException
 
 @Service
@@ -15,7 +16,7 @@ class RecallDocumentService(
   @Autowired private val recallRepository: RecallRepository
 ) {
 
-  fun addDocumentToRecall(recallId: RecallId, documentBytes: ByteArray, documentCategory: RecallDocumentCategory) {
+  fun addDocumentToRecall(recallId: RecallId, documentBytes: ByteArray, documentCategory: RecallDocumentCategory): UUID {
     val recall = try {
       recallRepository.getByRecallId(recallId)
     } catch (e: EntityNotFoundException) {
@@ -29,5 +30,6 @@ class RecallDocumentService(
       category = documentCategory
     )
     recallRepository.save(recall.copy(documents = recall.documents.plus(document)))
+    return fileS3key
   }
 }

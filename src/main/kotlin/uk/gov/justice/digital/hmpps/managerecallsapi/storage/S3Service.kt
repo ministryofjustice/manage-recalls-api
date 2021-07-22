@@ -4,7 +4,7 @@ import java.util.UUID
 
 interface S3Service {
 
-  fun downloadFile(fileKey: UUID): ByteArray
+  fun downloadFile(fileS3Key: UUID): ByteArray
 
   fun uploadFile(fileBytes: ByteArray): UUID
 }
