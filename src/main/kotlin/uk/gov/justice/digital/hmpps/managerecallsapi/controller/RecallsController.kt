@@ -34,7 +34,7 @@ class RecallsController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val recallDocumentService: RecallDocumentService,
-  @Value("\${aws.s3.bucketName}") private val advertisedBaseUri: String
+  @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
 ) {
 
   @PostMapping("/recalls")
@@ -75,7 +75,7 @@ class RecallsController(
     }
 
     return ResponseEntity
-      .created(URI.create("$advertisedBaseUri/recalls/$recallId/documents/$fileS3Key"))
+      .created(URI.create("$baseUri/recalls/$recallId/documents/$fileS3Key"))
       .body(AddDocumentResponse(id = fileS3Key))
   }
 }
