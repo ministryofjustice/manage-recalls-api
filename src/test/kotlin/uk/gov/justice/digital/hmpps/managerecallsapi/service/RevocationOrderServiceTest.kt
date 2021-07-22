@@ -20,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3BulkResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -62,12 +61,7 @@ internal class RevocationOrderServiceTest {
 
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { recallRepository.save(aRecallWithRevocationOrder) } returns aRecallWithRevocationOrder
-    every { s3Service.uploadFile(any()) } returns S3BulkResponseEntity(
-      s3Bucket,
-      revocationOrderDocS3Key,
-      true,
-      200
-    )
+    every { s3Service.uploadFile(any()) } returns revocationOrderDocS3Key
 
     val result = underTest.getRevocationOrder(recallId)
 
