@@ -10,16 +10,19 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import java.time.LocalDate
 import java.util.Base64
 import java.util.UUID
@@ -40,15 +43,27 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @MockkBean
   private lateinit var recallRepository: RecallRepository
 
+  @MockkBean
+  private lateinit var recallDocumentService: RecallDocumentService
+
   private val nomsNumber = NomsNumber("123456")
   private val recallId = ::RecallId.random()
   private val aRecall = Recall(recallId, nomsNumber)
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
+  private val fileBytes = "content".toByteArray()
+  private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
+  private val addDocumentRequest = AddDocumentRequest(
+    category = category.toString(),
+    fileContent = Base64.getEncoder().encodeToString(fileBytes)
+  )
 
   @Suppress("unused")
   private fun requestBodySpecs() = Stream.of(
+    webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest),
+    webTestClient.get().uri("/recalls/${UUID.randomUUID()}"),
+    webTestClient.get().uri("/recalls/${UUID.randomUUID()}/revocationOrder"),
     webTestClient.get().uri("/recalls"),
-    webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest)
+    webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents").bodyValue(addDocumentRequest)
   )
 
   @ParameterizedTest
@@ -110,7 +125,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `get a revocation order`() {
+  fun `gets a revocation order`() {
     val jwt = testJwt("ROLE_MANAGE_RECALLS")
     val expectedPdf = "Expected Generated PDF".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
@@ -147,5 +162,23 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .responseBody!!
 
     assertThat(response.content, equalTo(expectedBase64Pdf))
+  }
+
+  @Test
+  fun `adds a recall document`() {
+    val jwt = testJwt("ROLE_MANAGE_RECALLS")
+    val recallId = UUID.randomUUID()
+    val documentId = UUID.randomUUID()
+
+    every { recallDocumentService.addDocumentToRecall(RecallId(recallId), fileBytes, category) } returns documentId
+
+    webTestClient
+      .post()
+      .uri("/recalls/$recallId/documents")
+      .bodyValue(addDocumentRequest)
+      .headers { it.withBearerAuthToken(jwt) }
+      .exchange()
+      .expectStatus().isCreated
+      .expectBody().jsonPath("$.id", equalTo(documentId))
   }
 }

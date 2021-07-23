@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -11,13 +12,18 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundError
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
+import java.net.URI
 import java.util.Base64
 import java.util.UUID
 
@@ -26,7 +32,9 @@ import java.util.UUID
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
 class RecallsController(
   @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val revocationOrderService: RevocationOrderService
+  @Autowired private val revocationOrderService: RevocationOrderService,
+  @Autowired private val recallDocumentService: RecallDocumentService,
+  @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
 ) {
 
   @PostMapping("/recalls")
@@ -50,6 +58,26 @@ class RecallsController(
         val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)
         ResponseEntity.ok(Pdf(pdfBase64Encoded))
       }
+
+  @PostMapping("/recalls/{recallId}/documents")
+  fun addDocument(
+    @PathVariable("recallId") recallId: RecallId,
+    @RequestBody body: AddDocumentRequest
+  ): ResponseEntity<AddDocumentResponse> {
+    val fileS3Key = try {
+      recallDocumentService.addDocumentToRecall(
+        recallId = recallId,
+        documentBytes = Base64.getDecoder().decode(body.fileContent),
+        documentCategory = RecallDocumentCategory.valueOf(body.category)
+      )
+    } catch (e: RecallNotFoundError) {
+      throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+    }
+
+    return ResponseEntity
+      .created(URI.create("$baseUri/recalls/$recallId/documents/$fileS3Key"))
+      .body(AddDocumentResponse(id = fileS3Key))
+  }
 }
 
 fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
@@ -59,8 +87,22 @@ fun Recall.toResponse() = RecallResponse(this.recallId(), this.nomsNumber, this.
 data class BookRecallRequest(val nomsNumber: NomsNumber)
 
 // TODO:  Remove id field
-data class RecallResponse(val id: UUID, val recallId: RecallId, val nomsNumber: NomsNumber, val revocationOrderId: UUID?) {
-  constructor(recallId: RecallId, nomsNumber: NomsNumber, revocationOrderId: UUID?) : this(recallId.value, recallId, nomsNumber, revocationOrderId)
+data class RecallResponse(
+  val id: UUID,
+  val recallId: RecallId,
+  val nomsNumber: NomsNumber,
+  val revocationOrderId: UUID?
+) {
+  constructor(recallId: RecallId, nomsNumber: NomsNumber, revocationOrderId: UUID?) : this(
+    recallId.value,
+    recallId,
+    nomsNumber,
+    revocationOrderId
+  )
 }
 
 data class Pdf(val content: String)
+
+data class AddDocumentRequest(val category: String, val fileContent: String)
+
+data class AddDocumentResponse(val id: UUID)
