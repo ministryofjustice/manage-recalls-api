@@ -13,7 +13,7 @@ import java.util.UUID
 @Service
 class S3StorageService(
   @Autowired val s3Client: S3Client,
-  @Value("\${aws.s3.bucketName}") val bucketName: String
+  @Value("\${aws.s3.bucket-name}") val bucketName: String
 ) : S3Service {
 
   private val log = LoggerFactory.getLogger(this::class.java)

@@ -16,10 +16,10 @@ server:
 aws:
   region: eu-west-2
   credentials:
-    accessKey: ANYTHING_GOES
-    secretKey: ANYTHING_GOES
+    access-key: ANYTHING_GOES
+    secret-key: ANYTHING_GOES
   s3:
-    bucketName: test-manage-recalls-api
+    bucket-name: test-manage-recalls-api
   local:
     endpoint: http://localhost:4566
 
