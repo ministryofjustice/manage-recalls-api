@@ -95,3 +95,6 @@ aws:
     secret-key: secret-key
   s3:
     bucket-name: bucket-name
+
+manage-recalls-api:
+  base-uri: http://localhost:8080

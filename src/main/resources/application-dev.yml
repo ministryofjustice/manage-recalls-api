@@ -22,3 +22,6 @@ aws:
     bucket-name: test-manage-recalls-api
   local:
     endpoint: http://localhost:4566
+
+manage-recalls-api:
+  base-uri: http://localhost:8080

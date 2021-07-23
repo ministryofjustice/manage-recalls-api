@@ -19,7 +19,7 @@ class S3StorageService(
   private val log = LoggerFactory.getLogger(this::class.java)
 
   override fun downloadFile(fileS3Key: UUID): ByteArray {
-    log.debug("downloading file to s3://$bucketName/$fileS3Key")
+    log.debug("downloading file s3://$bucketName/$fileS3Key")
     val request = GetObjectRequest.builder().bucket(bucketName).key(fileS3Key.toString()).build()
     return s3Client.getObject(request).readAllBytes()
   }

@@ -53,7 +53,9 @@ internal class RecallDocumentServiceTest {
 
     every { recallRepository.save(any()) } returns Recall(recallId.value, NomsNumber("A12345B"))
 
-    underTest.addDocumentToRecall(recallId, documentBytes, documentCategory)
+    val actualFileS3KeyFilter = underTest.addDocumentToRecall(recallId, documentBytes, documentCategory)
+
+    assertThat(actualFileS3KeyFilter, equalTo(fileS3Key))
 
     verify { s3Service.uploadFile(documentBytes) }
 
