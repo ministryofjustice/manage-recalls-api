@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -42,31 +43,60 @@ class RecallsControllerTest {
   @Test
   fun `book recall returns request with id`() {
     val recall = recallRequest.toRecall()
+
     every { recallRepository.save(any()) } returns recall
 
     val results = underTest.bookRecall(recallRequest)
 
-    assertThat(results.body, equalTo(RecallResponse(recall.recallId(), nomsNumber, null)))
+    val expected = RecallResponse(
+      recallId = recall.recallId(),
+      nomsNumber = nomsNumber,
+      revocationOrderId = null,
+      documents = emptyList()
+    )
+    assertThat(results.body, equalTo(expected))
   }
 
   @Test
   fun `gets all recalls`() {
     val recall = Recall(recallId, nomsNumber)
+
     every { recallRepository.findAll() } returns listOf(recall)
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, null))))
+    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, null, emptyList()))))
   }
 
   @Test
   fun `gets a recall`() {
-    val recall = Recall(recallId, nomsNumber, revocationOrderDocS3Key)
+    val document = RecallDocument(
+      id = UUID.randomUUID(),
+      recallId = UUID.randomUUID(),
+      category = RecallDocumentCategory.PART_A_RECALL_REPORT
+    )
+    val recall = Recall(
+      recallId = recallId,
+      nomsNumber = nomsNumber,
+      revocationOrderDocS3Key = revocationOrderDocS3Key,
+      documents = setOf(document)
+    )
     every { recallRepository.getByRecallId(recallId) } returns recall
 
     val results = underTest.getRecall(recallId)
 
-    assertThat(results, equalTo(RecallResponse(recallId, nomsNumber, revocationOrderDocS3Key)))
+    val expected = RecallResponse(
+      recallId = recallId,
+      nomsNumber = nomsNumber,
+      revocationOrderId = revocationOrderDocS3Key,
+      documents = listOf(
+        ApiRecallDocument(
+          documentId = document.id,
+          category = document.category
+        )
+      )
+    )
+    assertThat(results, equalTo(expected))
   }
 
   @Test

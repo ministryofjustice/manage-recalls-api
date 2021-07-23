@@ -90,7 +90,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     assertThat(
       response.responseBody,
-      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, null))
+      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, null, emptyList()))
     )
   }
 
@@ -104,7 +104,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectBody()
-      .jsonPath("$[:1].id").isEqualTo(recallId.toString())
+      .jsonPath("$[:1].recallId").isEqualTo(recallId.toString())
       .jsonPath("$[:1].nomsNumber").isEqualTo(nomsNumber.value)
       .jsonPath("$.revocationOrderId").doesNotExist()
   }
@@ -119,7 +119,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .exchange()
       .expectStatus().isOk
       .expectBody()
-      .jsonPath("$.id").isEqualTo(recallId.toString())
+      .jsonPath("$.recallId").isEqualTo(recallId.toString())
       .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)
       .jsonPath("$.revocationOrderId").doesNotExist()
   }

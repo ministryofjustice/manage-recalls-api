@@ -82,24 +82,26 @@ class RecallsController(
 
 fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
 
-fun Recall.toResponse() = RecallResponse(this.recallId(), this.nomsNumber, this.revocationOrderDocS3Key)
+fun Recall.toResponse() = RecallResponse(
+  recallId = this.recallId(),
+  nomsNumber = this.nomsNumber,
+  revocationOrderId = this.revocationOrderDocS3Key,
+  documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category) }
+)
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
 
-// TODO:  Remove id field
 data class RecallResponse(
-  val id: UUID,
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
-  val revocationOrderId: UUID?
-) {
-  constructor(recallId: RecallId, nomsNumber: NomsNumber, revocationOrderId: UUID?) : this(
-    recallId.value,
-    recallId,
-    nomsNumber,
-    revocationOrderId
-  )
-}
+  val revocationOrderId: UUID?,
+  val documents: List<ApiRecallDocument>
+)
+
+data class ApiRecallDocument(
+  val documentId: UUID,
+  val category: RecallDocumentCategory
+)
 
 data class Pdf(val content: String)
 
