@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundError
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundError
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
@@ -143,15 +144,14 @@ class RecallsControllerTest {
   }
 
   @Test
-  fun `responds with 400 if target recall for document addition does not exist`() {
+  fun `'add document' responds with BAD_REQUEST if target recall is not found`() {
     val document = "a document"
     val documentBytes = document.toByteArray()
     val category = RecallDocumentCategory.PART_A_RECALL_REPORT
     val cause = Throwable()
     val recallNotFoundError = RecallNotFoundError("boom!", cause)
 
-    every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category) } throws
-      recallNotFoundError
+    every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category) } throws recallNotFoundError
 
     val request = AddDocumentRequest(
       category = category.toString(),
@@ -163,5 +163,61 @@ class RecallsControllerTest {
     assertThat(exception.status, equalTo(HttpStatus.BAD_REQUEST))
     assertThat(exception.reason, equalTo(recallNotFoundError.message))
     assertThat(exception.cause, equalTo(recallNotFoundError))
+  }
+
+  @Test
+  fun `'get document' responds with NOT_FOUND if recall is not found`() {
+    val cause = Throwable()
+    val recallNotFoundError = RecallNotFoundError("boom!", cause)
+
+    every { recallDocumentService.getDocument(any(), any()) } throws recallNotFoundError
+
+    val exception = assertThrows<ResponseStatusException> {
+      underTest.getRecallDocument(::RecallId.random(), UUID.randomUUID())
+    }
+
+    assertThat(exception.status, equalTo(HttpStatus.NOT_FOUND))
+    assertThat(exception.reason, equalTo(recallNotFoundError.message))
+    assertThat(exception.cause, equalTo(recallNotFoundError))
+  }
+
+  @Test
+  fun `'get document' responds with NOT_FOUND if document is not found`() {
+    val cause = Throwable()
+    val recallDocumentNotFoundError = RecallDocumentNotFoundError("boom!", cause)
+
+    every { recallDocumentService.getDocument(any(), any()) } throws recallDocumentNotFoundError
+
+    val exception = assertThrows<ResponseStatusException> {
+      underTest.getRecallDocument(::RecallId.random(), UUID.randomUUID())
+    }
+
+    assertThat(exception.status, equalTo(HttpStatus.NOT_FOUND))
+    assertThat(exception.reason, equalTo(recallDocumentNotFoundError.message))
+    assertThat(exception.cause, equalTo(recallDocumentNotFoundError))
+  }
+
+  @Test
+  fun `gets a document`() {
+    val recallId1 = ::RecallId.random()
+    val documentId = UUID.randomUUID()
+    val aRecallDocument = RecallDocument(
+      documentId,
+      recallId1.value,
+      RecallDocumentCategory.PART_A_RECALL_REPORT
+    )
+    val bytes = "Hello".toByteArray()
+
+    every { recallDocumentService.getDocument(recallId1, documentId) } returns Pair(aRecallDocument, bytes)
+
+    val response = underTest.getRecallDocument(recallId1, documentId)
+
+    assertThat(response.statusCode, equalTo(HttpStatus.OK))
+    val expected = GetDocumentResponse(
+      documentId,
+      aRecallDocument.category,
+      content = Base64.getEncoder().encodeToString(bytes)
+    )
+    assertThat(response.body, equalTo(expected))
   }
 }

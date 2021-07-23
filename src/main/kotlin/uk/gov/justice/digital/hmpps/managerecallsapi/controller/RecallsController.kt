@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundError
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundError
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
@@ -78,6 +79,29 @@ class RecallsController(
       .created(URI.create("$baseUri/recalls/$recallId/documents/$fileS3Key"))
       .body(AddDocumentResponse(id = fileS3Key))
   }
+
+  @GetMapping("/recalls/{recallId}/documents/{documentId}")
+  fun getRecallDocument(
+    @PathVariable("recallId") recallId: RecallId,
+    @PathVariable("documentId") documentId: UUID
+  ): ResponseEntity<GetDocumentResponse> {
+    try {
+      val (document, bytes) = recallDocumentService.getDocument(recallId, documentId)
+      return ResponseEntity.ok(
+        GetDocumentResponse(
+          documentId = documentId,
+          category = document.category,
+          content = Base64.getEncoder().encodeToString(bytes)
+        )
+      )
+    } catch (e: Throwable) {
+      when (e) {
+        is RecallNotFoundError,
+        is RecallDocumentNotFoundError -> throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message, e)
+        else -> throw e
+      }
+    }
+  }
 }
 
 fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
@@ -111,3 +135,9 @@ data class Pdf(val content: String)
 data class AddDocumentRequest(val category: String, val fileContent: String)
 
 data class AddDocumentResponse(val id: UUID)
+
+data class GetDocumentResponse(
+  val documentId: UUID,
+  val category: RecallDocumentCategory,
+  val content: String
+)
