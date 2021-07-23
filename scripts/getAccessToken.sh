@@ -7,6 +7,7 @@ echo "Env set as $ENV"
 
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly PROJECT_DIR="${SCRIPT_DIR}/.."
+readonly SECRET_NAME=manage-recalls-api
 readonly NAMESPACE=ppud-replacement-$ENV
 readonly HMPPS_AUTH_URL=https://sign-in-$ENV.hmpps.service.justice.gov.uk
 

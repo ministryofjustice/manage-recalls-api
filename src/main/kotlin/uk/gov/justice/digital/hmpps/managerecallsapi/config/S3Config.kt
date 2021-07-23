@@ -14,9 +14,9 @@ class S3Config(@Value("\${aws.local.endpoint:#{null}}") val endpointUrl: String?
 
   @Value("\${aws.region}")
   lateinit var awsRegion: String
-  @Value("\${aws.credentials.access-key}")
+  @Value("\${aws.credentials.accessKey}")
   lateinit var accessKey: String
-  @Value("\${aws.credentials.secret-key}")
+  @Value("\${aws.credentials.secretKey}")
   lateinit var secretKey: String
 
   @Bean(destroyMethod = "close")

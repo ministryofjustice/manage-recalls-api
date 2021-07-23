@@ -33,9 +33,9 @@ generic-service:
       POSTGRES_USERNAME: "username"
       POSTGRES_PASSWORD: "password"
     manage-recalls-s3-bucket:
-      AWS_CREDENTIALS_ACCESSKEY: "access_key_id"
-      AWS_CREDENTIALS_SECRETKEY: "secret_access_key"
-      AWS_CREDENTIALS_S3_BUCKETNAME: "bucket_name"
+      S3_ACCESS_KEY: "access_key_id"
+      S3_SECRET_KEY: "secret_access_key"
+      S3_BUCKET_NAME: "bucket_name"
 
 generic-prometheus-alerts:
   targetApplication: manage-recalls-api

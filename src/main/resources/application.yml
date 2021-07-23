@@ -91,10 +91,10 @@ gotenberg:
 aws:
   region: eu-west-2
   credentials:
-    access-key: access-key
-    secret-key: secret-key
+    accessKey: ${s3.access.key}
+    secretKey: ${s3.secret.key}
   s3:
-    bucket-name: bucket-name
+    bucketName: ${s3.bucket.name}
 
 manage-recalls-api:
   base-uri: http://localhost:8080
