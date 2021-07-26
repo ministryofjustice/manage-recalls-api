@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -63,12 +64,13 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     webTestClient.get().uri("/recalls/${UUID.randomUUID()}"),
     webTestClient.get().uri("/recalls/${UUID.randomUUID()}/revocationOrder"),
     webTestClient.get().uri("/recalls"),
-    webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents").bodyValue(addDocumentRequest)
+    webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents").bodyValue(addDocumentRequest),
+    webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents/${UUID.randomUUID()}")
   )
 
   @ParameterizedTest
   @MethodSource("requestBodySpecs")
-  fun `unauthorized when MANAGE_RECALLS role is missing`(requestBodySpec: RequestBodySpec) {
+  fun `unauthorized when ROLE_MANAGE_RECALLS role is missing`(requestBodySpec: RequestBodySpec) {
     val invalidUserJwt = testJwt("ROLE_UNKNOWN")
     requestBodySpec.headers { it.withBearerAuthToken(invalidUserJwt) }
       .exchange()
@@ -179,6 +181,32 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .headers { it.withBearerAuthToken(jwt) }
       .exchange()
       .expectStatus().isCreated
-      .expectBody().jsonPath("$.id", equalTo(documentId))
+      .expectBody().jsonPath("$.documentId").isEqualTo(documentId.toString())
+  }
+
+  @Test
+  fun `gets a recall document`() {
+    val jwt = testJwt("ROLE_MANAGE_RECALLS")
+    val recallId = UUID.randomUUID()
+    val documentId = UUID.randomUUID()
+    val document = RecallDocument(
+      id = documentId,
+      recallId = recallId,
+      category = RecallDocumentCategory.PART_A_RECALL_REPORT
+    )
+    val bytes = "Hello".toByteArray()
+
+    every { recallDocumentService.getDocument(RecallId(recallId), documentId) } returns Pair(document, bytes)
+
+    webTestClient
+      .get()
+      .uri("/recalls/$recallId/documents/$documentId")
+      .headers { it.withBearerAuthToken(jwt) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.documentId").isEqualTo(documentId.toString())
+      .jsonPath("$.category").isEqualTo(RecallDocumentCategory.PART_A_RECALL_REPORT.toString())
+      .jsonPath("$.content").isEqualTo(Base64.getEncoder().encodeToString(bytes))
   }
 }
