@@ -77,7 +77,7 @@ class RecallsController(
 
     return ResponseEntity
       .created(URI.create("$baseUri/recalls/$recallId/documents/$fileS3Key"))
-      .body(AddDocumentResponse(id = fileS3Key))
+      .body(AddDocumentResponse(documentId = fileS3Key))
   }
 
   @GetMapping("/recalls/{recallId}/documents/{documentId}")
@@ -134,7 +134,7 @@ data class Pdf(val content: String)
 
 data class AddDocumentRequest(val category: String, val fileContent: String)
 
-data class AddDocumentResponse(val id: UUID)
+data class AddDocumentResponse(val documentId: UUID)
 
 data class GetDocumentResponse(
   val documentId: UUID,

@@ -181,7 +181,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .headers { it.withBearerAuthToken(jwt) }
       .exchange()
       .expectStatus().isCreated
-      .expectBody().jsonPath("$.id").isEqualTo(documentId.toString())
+      .expectBody().jsonPath("$.documentId").isEqualTo(documentId.toString())
   }
 
   @Test
