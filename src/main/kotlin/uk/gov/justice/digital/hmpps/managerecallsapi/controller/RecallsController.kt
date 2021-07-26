@@ -20,9 +20,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundError
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundError
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.net.URI
 import java.util.Base64
@@ -71,7 +71,7 @@ class RecallsController(
         documentBytes = Base64.getDecoder().decode(body.fileContent),
         documentCategory = RecallDocumentCategory.valueOf(body.category)
       )
-    } catch (e: RecallNotFoundError) {
+    } catch (e: RecallNotFoundException) {
       throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
     }
 
@@ -94,12 +94,8 @@ class RecallsController(
           content = Base64.getEncoder().encodeToString(bytes)
         )
       )
-    } catch (e: Throwable) {
-      when (e) {
-        is RecallNotFoundError,
-        is RecallDocumentNotFoundError -> throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message, e)
-        else -> throw e
-      }
+    } catch (e: NotFoundException) {
+      throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message, e)
     }
   }
 }

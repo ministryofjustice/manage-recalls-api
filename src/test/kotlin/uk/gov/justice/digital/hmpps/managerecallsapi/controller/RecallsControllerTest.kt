@@ -19,9 +19,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundError
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundError
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.util.Base64
 import java.util.UUID
@@ -149,7 +149,7 @@ class RecallsControllerTest {
     val documentBytes = document.toByteArray()
     val category = RecallDocumentCategory.PART_A_RECALL_REPORT
     val cause = Throwable()
-    val recallNotFoundError = RecallNotFoundError("boom!", cause)
+    val recallNotFoundError = RecallNotFoundException("boom!", cause)
 
     every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category) } throws recallNotFoundError
 
@@ -168,7 +168,7 @@ class RecallsControllerTest {
   @Test
   fun `'get document' responds with NOT_FOUND if recall is not found`() {
     val cause = Throwable()
-    val recallNotFoundError = RecallNotFoundError("boom!", cause)
+    val recallNotFoundError = RecallNotFoundException("boom!", cause)
 
     every { recallDocumentService.getDocument(any(), any()) } throws recallNotFoundError
 
@@ -184,7 +184,7 @@ class RecallsControllerTest {
   @Test
   fun `'get document' responds with NOT_FOUND if document is not found`() {
     val cause = Throwable()
-    val recallDocumentNotFoundError = RecallDocumentNotFoundError("boom!", cause)
+    val recallDocumentNotFoundError = RecallDocumentNotFoundException("boom!", cause)
 
     every { recallDocumentService.getDocument(any(), any()) } throws recallDocumentNotFoundError
 

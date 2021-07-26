@@ -35,7 +35,7 @@ class RecallDocumentService(
 
   fun getDocument(recallId: RecallId, documentId: UUID): Pair<RecallDocument, ByteArray> {
     val document = recallById(recallId).documents.firstOrNull { it.id == documentId }
-      ?: throw RecallDocumentNotFoundError("Document not found: '$documentId' (for recall '$recallId')")
+      ?: throw RecallDocumentNotFoundException("Document not found: '$documentId' (for recall '$recallId')")
     val bytes = s3Service.downloadFile(documentId)
     return Pair(document, bytes)
   }
@@ -43,10 +43,12 @@ class RecallDocumentService(
   private fun recallById(recallId: RecallId) = try {
     recallRepository.getByRecallId(recallId)
   } catch (e: EntityNotFoundException) {
-    throw RecallNotFoundError("Recall not found: '$recallId'", e)
+    throw RecallNotFoundException("Recall not found: '$recallId'", e)
   }
 }
 
-class RecallNotFoundError(message: String, e: Throwable) : Throwable(message, e)
+class RecallNotFoundException(message: String, e: Throwable) : NotFoundException(message, e)
 
-class RecallDocumentNotFoundError(message: String, e: Throwable? = null) : Throwable(message, e)
+class RecallDocumentNotFoundException(message: String, e: Throwable? = null) : NotFoundException(message, e)
+
+open class NotFoundException(message: String, e: Throwable? = null) : Exception(message, e)

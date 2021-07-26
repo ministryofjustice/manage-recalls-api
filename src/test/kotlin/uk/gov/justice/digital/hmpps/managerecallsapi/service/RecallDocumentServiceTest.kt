@@ -37,7 +37,7 @@ internal class RecallDocumentServiceTest {
   fun `adding document throws 'recall not found' error if recall is missing`() {
     every { recallRepository.getByRecallId(recallId) } throws EntityNotFoundException("boom!")
 
-    assertThrows<RecallNotFoundError> {
+    assertThrows<RecallNotFoundException> {
       underTest.addDocumentToRecall(recallId, documentBytes, RecallDocumentCategory.PART_A_RECALL_REPORT)
     }
   }
@@ -46,7 +46,7 @@ internal class RecallDocumentServiceTest {
   fun `getting a document throws 'recall not found' error if recall is missing`() {
     every { recallRepository.getByRecallId(recallId) } throws EntityNotFoundException("boom!")
 
-    assertThrows<RecallNotFoundError> {
+    assertThrows<RecallNotFoundException> {
       underTest.getDocument(recallId, UUID.randomUUID())
     }
   }
@@ -56,7 +56,7 @@ internal class RecallDocumentServiceTest {
     val aRecallWithoutDocuments = aRecall.copy(documents = emptySet())
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
 
-    assertThrows<RecallDocumentNotFoundError> {
+    assertThrows<RecallDocumentNotFoundException> {
       underTest.getDocument(recallId, UUID.randomUUID())
     }
   }
