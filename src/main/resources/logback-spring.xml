@@ -6,10 +6,9 @@
 
     <springProperty scope="context" name="app" source="spring.application.name"/>
 
-
     <springProfile name="dev || stdout">
-        <appender name="consoleAppender" class="ch.qos.logback.core.helpers.NOPAppender"/>
-        <appender name="logAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <appender name="appender1" class="ch.qos.logback.core.helpers.NOPAppender"/>
+        <appender name="appender2" class="ch.qos.logback.core.ConsoleAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <Pattern>${LOG_PATTERN}</Pattern>
             </layout>
@@ -17,49 +16,31 @@
     </springProfile>
 
     <springProfile name="!(dev || stdout)">
-        <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <appender name="appender1" class="ch.qos.logback.core.ConsoleAppender">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <Pattern>${LOG_PATTERN}</Pattern>
             </layout>
         </appender>
-        <appender name="logAppender" class="com.microsoft.applicationinsights.logback.ApplicationInsightsAppender"/>
+        <appender name="appender2" class="com.microsoft.applicationinsights.logback.ApplicationInsightsAppender"/>
     </springProfile>
 
-    <logger name="uk.gov.justice.digital.hmpps.managerecallsapi.ManageRecallsApiKt" additivity="false"
-            level="DEBUG">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
+    <logger name="uk.gov.justice.digital.hmpps.managerecallsapi" level="DEBUG"/>
 
-    <logger name="uk.gov.justice.digital.hmpps" additivity="false" level="DEBUG">
-        <appender-ref ref="logAppender"/>
-    </logger>
+    <logger name="uk.gov.justice.digital.hmpps" level="DEBUG"/>
 
-    <logger name="org.springframework" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-    </logger>
+    <logger name="org.springframework" level="INFO"/>
+
+    <logger name="org.apache.catalina" level="INFO"/>
+
+    <logger name="springfox" level="INFO"/>
 
     <logger name="com.microsoft.applicationinsights" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-    </logger>
-
-    <logger name="org.apache.catalina" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-
-    <logger name="springfox" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
-    </logger>
-
-    <logger name="org.springframework.boot" additivity="false" level="INFO">
-        <appender-ref ref="logAppender"/>
-        <appender-ref ref="consoleAppender"/>
+        <appender-ref ref="appender2"/>
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="logAppender"/>
+        <appender-ref ref="appender1"/>
+        <appender-ref ref="appender2"/>
     </root>
 
 </configuration>
