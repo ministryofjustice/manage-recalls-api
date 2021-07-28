@@ -103,7 +103,6 @@ class RecallsController(
 fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
 
 fun Recall.toResponse() = RecallResponse(
-  id = this.recallId(),
   recallId = this.recallId(),
   nomsNumber = this.nomsNumber,
   revocationOrderId = this.revocationOrderDocS3Key,
@@ -113,8 +112,6 @@ fun Recall.toResponse() = RecallResponse(
 data class BookRecallRequest(val nomsNumber: NomsNumber)
 
 data class RecallResponse(
-  @Deprecated(message = "'id' deprecated in favour of 'recallId'", replaceWith = ReplaceWith("recallId"))
-  val id: RecallId,
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
   val revocationOrderId: UUID?,
