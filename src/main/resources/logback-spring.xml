@@ -16,7 +16,7 @@
     </springProfile>
 
     <springProfile name="!(dev || stdout)">
-        <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <appender name="appender1" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
         </appender>
         <appender name="appender2" class="com.microsoft.applicationinsights.logback.ApplicationInsightsAppender"/>
