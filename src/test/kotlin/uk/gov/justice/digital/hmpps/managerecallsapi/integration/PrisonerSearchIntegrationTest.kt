@@ -29,13 +29,6 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
 
   @Test
-  fun `should respond with 401 if user does not have the MANAGE_RECALLS role`() {
-    val invalidUserJwt = testJwt("ROLE_UNKNOWN")
-    sendAuthenticatedPostRequestWithBody("/search", apiSearchRequest, invalidUserJwt)
-      .expectStatus().isUnauthorized
-  }
-
-  @Test
   fun `should handle unauthorized from prisoner search api`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
 
