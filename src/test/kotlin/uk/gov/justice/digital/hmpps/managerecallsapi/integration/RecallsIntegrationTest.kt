@@ -7,9 +7,6 @@ import io.mockk.every
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
-import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
@@ -27,7 +24,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentServi
 import java.time.LocalDate
 import java.util.Base64
 import java.util.UUID
-import java.util.stream.Stream
 
 class RecallsIntegrationTest : IntegrationTestBase() {
 
@@ -57,25 +53,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     category = category.toString(),
     fileContent = Base64.getEncoder().encodeToString(fileBytes)
   )
-
-  @Suppress("unused")
-  private fun requestBodySpecs() = Stream.of(
-    webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest),
-    webTestClient.get().uri("/recalls/${UUID.randomUUID()}"),
-    webTestClient.get().uri("/recalls/${UUID.randomUUID()}/revocationOrder"),
-    webTestClient.get().uri("/recalls"),
-    webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents").bodyValue(addDocumentRequest),
-    webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents/${UUID.randomUUID()}")
-  )
-
-  @ParameterizedTest
-  @MethodSource("requestBodySpecs")
-  fun `unauthorized when ROLE_MANAGE_RECALLS role is missing`(requestBodySpec: RequestBodySpec) {
-    val invalidUserJwt = testJwt("ROLE_UNKNOWN")
-    requestBodySpec.headers { it.withBearerAuthToken(invalidUserJwt) }
-      .exchange()
-      .expectStatus().isUnauthorized
-  }
 
   @Test
   fun `books a recall`() {
