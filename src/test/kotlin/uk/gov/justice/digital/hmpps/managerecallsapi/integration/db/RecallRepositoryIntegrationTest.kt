@@ -5,12 +5,15 @@ import com.natpryce.hamkrest.equalTo
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
@@ -18,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
@@ -44,34 +48,29 @@ class RecallRepositoryIntegrationTest(
   }
 
   @Test
-  fun `updates a recall with a revocation order doc s3 key`() {
-    val recall = Recall(recallId, nomsNumber)
-    repository.save(recall)
-
-    val revocationOrderDocS3Key = UUID.randomUUID()
-    val recallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderDocS3Key)
-    repository.save(recallWithRevocationOrder)
-
-    val actualRecall = repository.getByRecallId(recallId)
-
-    assertThat(actualRecall, equalTo(recallWithRevocationOrder))
-  }
-
-  @Test
-  fun `updates a recall with a document`() {
+  fun `can update an existing recall`() {
     val originalRecall = Recall(recallId, nomsNumber)
     repository.save(originalRecall)
 
     assertThat(repository.getByRecallId(recallId), equalTo(originalRecall))
 
-    val recallDocumentId = UUID.randomUUID()
-    val document = RecallDocument(recallDocumentId, recallId.value, PART_A_RECALL_REPORT)
+    val recallToUpdate = originalRecall.copy(
+      revocationOrderDocS3Key = UUID.randomUUID(),
+      documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT)),
+      recallType = FIXED,
+      recallLength = TWENTY_EIGHT_DAYS
+    )
+    repository.save(recallToUpdate)
 
-    val recallWithDocument = Recall(recallId, nomsNumber, null, setOf(document))
-    repository.save(recallWithDocument)
+    val updatedRecall = repository.getByRecallId(recallId)
 
-    val actualRecall = repository.getByRecallId(recallId)
+    assertThat(updatedRecall, equalTo(recallToUpdate))
+  }
 
-    assertThat(actualRecall, equalTo(recallWithDocument))
+  @Test
+  fun `get by recallId throws RecallNotFoundException if a recall does not exist`() {
+    assertThrows<RecallNotFoundException> {
+      repository.getByRecallId(recallId)
+    }
   }
 }

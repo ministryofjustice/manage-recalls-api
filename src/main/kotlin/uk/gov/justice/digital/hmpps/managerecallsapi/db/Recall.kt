@@ -10,6 +10,8 @@ import javax.persistence.CascadeType.ALL
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
+import javax.persistence.EnumType.STRING
+import javax.persistence.Enumerated
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.OneToMany
@@ -32,8 +34,12 @@ data class Recall(
   @JoinColumn(name = "recall_id")
   val documents: Set<RecallDocument> = emptySet(),
 
+  @Enumerated(STRING)
+  @Column(name = "recall_type")
   val recallType: RecallType? = null,
 
+  @Enumerated(STRING)
+  @Column(name = "recall_length")
   val recallLength: RecallLength? = null
 ) {
   constructor(
