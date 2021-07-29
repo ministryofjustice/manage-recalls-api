@@ -70,11 +70,22 @@ abstract class IntegrationTestBase {
 
   protected final inline fun <reified T> sendAuthenticatedPostRequestWithBody(
     path: String,
+    request: T
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post().sendAuthenticatedRequestWithBody(path, request)
+
+  protected final inline fun <reified T> sendAuthenticatedPatchRequestWithBody(
+    path: String,
+    request: T
+  ): WebTestClient.ResponseSpec =
+    webTestClient.patch().sendAuthenticatedRequestWithBody(path, request)
+
+  protected final inline fun <reified T> WebTestClient.RequestBodyUriSpec.sendAuthenticatedRequestWithBody(
+    path: String,
     request: T,
     userJwt: String = testJwt("ROLE_MANAGE_RECALLS")
   ): WebTestClient.ResponseSpec =
-    webTestClient.post()
-      .uri(path)
+    this.uri(path)
       .body(Mono.just(request), T::class.java)
       .headers {
         it.add(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
