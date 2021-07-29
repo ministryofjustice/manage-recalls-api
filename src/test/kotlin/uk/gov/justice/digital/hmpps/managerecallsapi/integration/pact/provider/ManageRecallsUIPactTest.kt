@@ -19,6 +19,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -30,10 +31,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTest
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
 import java.util.Base64
 import java.util.UUID
+import javax.persistence.EntityNotFoundException
 
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
@@ -108,6 +111,17 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       Recall(::RecallId.random(), nomsNumber),
       Recall(::RecallId.random(), NomsNumber("Z9876ZZ"))
     )
+  }
+
+  @State("a recall exists and can be updated")
+  fun `a recall exists`() {
+    every { recallRepository.getByRecallId(any()) } returns Recall(::RecallId.random(), nomsNumber)
+    every { recallRepository.save(any()) } returns Recall(::RecallId.random(), nomsNumber, recallLength = FOURTEEN_DAYS)
+  }
+
+  @State("a recall does not exist")
+  fun `a recall does not exist`() {
+    every { recallRepository.getByRecallId(any()) } throws RecallNotFoundException("not found", EntityNotFoundException())
   }
 
   @State("a revocation order can be downloaded")

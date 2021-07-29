@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -13,6 +14,7 @@ import org.springframework.validation.ObjectError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import javax.validation.ValidationException
 
 @RestControllerAdvice
@@ -53,6 +55,15 @@ class ManageRecallsApiExceptionHandler {
       ResponseEntity
         .status(BAD_REQUEST)
         .body(ErrorResponse(BAD_REQUEST, this))
+    }
+
+  @ExceptionHandler(NotFoundException::class)
+  fun handleException(e: NotFoundException): ResponseEntity<ErrorResponse> =
+    with(e.message) {
+      log.info(e.toString())
+      ResponseEntity
+        .status(NOT_FOUND)
+        .body(ErrorResponse(NOT_FOUND, this))
     }
 
   @ExceptionHandler(java.lang.Exception::class)
