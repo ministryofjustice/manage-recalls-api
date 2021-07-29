@@ -28,7 +28,7 @@ class EndpointSecurityIntegrationTest : IntegrationTestBase() {
   private val updateRecallRequest = UpdateRecallRequest(TWENTY_EIGHT_DAYS)
   private val apiSearchRequest = SearchRequest(nomsNumber)
 
-  //TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
+  // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
   @Suppress("unused")
   private fun requestBodySpecs(): Stream<WebTestClient.RequestHeadersSpec<*>>? {
