@@ -9,7 +9,6 @@ import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.util.UUID
@@ -26,7 +25,6 @@ interface ExtendedRecallRepository : JpaRecallRepository {
 class RecallRepository(
   @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
 ) : JpaRecallRepository by jpaRepository, ExtendedRecallRepository {
-  @Transactional
   override fun getByRecallId(recallId: RecallId): Recall =
     try {
       getById(recallId.value)
