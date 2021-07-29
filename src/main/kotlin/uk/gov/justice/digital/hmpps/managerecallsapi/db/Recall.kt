@@ -1,10 +1,12 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.util.UUID
 import javax.persistence.AttributeConverter
-import javax.persistence.CascadeType
+import javax.persistence.CascadeType.ALL
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
@@ -26,12 +28,23 @@ data class Recall(
   @Column(name = "revocation_order_doc_s3_key")
   val revocationOrderDocS3Key: UUID? = null,
 
-  @OneToMany(cascade = [CascadeType.ALL])
+  @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
-  val documents: Set<RecallDocument> = emptySet()
+  val documents: Set<RecallDocument> = emptySet(),
+
+  val recallType: RecallType? = null,
+
+  val recallLength: RecallLength? = null
 ) {
-  constructor(recallId: RecallId, nomsNumber: NomsNumber, revocationOrderDocS3Key: UUID? = null, documents: Set<RecallDocument> = emptySet()) :
-    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents)
+  constructor(
+    recallId: RecallId,
+    nomsNumber: NomsNumber,
+    revocationOrderDocS3Key: UUID? = null,
+    documents: Set<RecallDocument> = emptySet(),
+    recallType: RecallType? = null,
+    recallLength: RecallLength? = null
+  ) :
+    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, recallLength)
 
   fun recallId() = RecallId(id)
 }

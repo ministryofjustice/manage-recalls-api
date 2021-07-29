@@ -50,7 +50,7 @@ class RecallsControllerTest {
     val results = underTest.bookRecall(recallRequest)
 
     val expected = RecallResponse(
-        recallId = recall.recallId(),
+      recallId = recall.recallId(),
       nomsNumber = nomsNumber,
       revocationOrderId = null,
       documents = emptyList()
@@ -87,7 +87,7 @@ class RecallsControllerTest {
     val results = underTest.getRecall(recallId)
 
     val expected = RecallResponse(
-        recallId = recallId,
+      recallId = recallId,
       nomsNumber = nomsNumber,
       revocationOrderId = revocationOrderDocS3Key,
       documents = listOf(
