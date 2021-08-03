@@ -1,0 +1,1 @@
+ALTER TABLE recall_document ALTER COLUMN category SET DATA TYPE varchar(32);
