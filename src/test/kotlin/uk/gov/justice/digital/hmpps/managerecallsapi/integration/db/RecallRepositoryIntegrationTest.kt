@@ -33,6 +33,7 @@ class RecallRepositoryIntegrationTest(
   @Autowired
   private val repository: RecallRepository
 ) {
+  // TODO: Avoid bugs such as PUD-329 by use of a real database for integration tests such as this, i.e. PUD-330.
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A12345F")

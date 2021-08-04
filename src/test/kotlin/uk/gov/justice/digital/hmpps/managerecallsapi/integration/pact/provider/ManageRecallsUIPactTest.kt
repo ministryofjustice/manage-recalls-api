@@ -20,6 +20,8 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -44,7 +46,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
 
-  // TODO: Use a real database in service level integration tests (possibly not here though??)
+  // TODO: Use a real database in service level integration tests (possibly not here though??), e.g. PUD-330
   @MockkBean
   private lateinit var recallRepository: RecallRepository
 
@@ -105,6 +107,15 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     every { recallRepository.save(any()) } returns aRecall
   }
 
+  @State("a recall exists")
+  fun `a recall exists`() {
+    val recallId = ::RecallId.random()
+    val document1 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.PART_A_RECALL_REPORT)
+    val document2 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.LICENCE)
+    every { recallRepository.getByRecallId(any()) } returns
+      Recall(::RecallId.random(), nomsNumber, recallLength = TWENTY_EIGHT_DAYS, recallType = RecallType.FIXED, documents = setOf(document1, document2))
+  }
+
   @State("a list of recalls exists")
   fun `a list of recalls exists`() {
     every { recallRepository.findAll() } returns listOf(
@@ -114,7 +125,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State("a recall exists and can be updated")
-  fun `a recall exists`() {
+  fun `a recall exists and can be updated`() {
     every { recallRepository.getByRecallId(any()) } returns Recall(::RecallId.random(), nomsNumber)
     every { recallRepository.save(any()) } returns Recall(::RecallId.random(), nomsNumber, recallLength = FOURTEEN_DAYS)
   }
@@ -167,6 +178,7 @@ class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
 /**
  * This test is used to verify the contract between manage-recalls-api and manage-recalls-ui.
+ * Verification of PACTs in this project can be run by e.g.: `./gradlew verifyPactAndPublish`
  * It defaults to verify the pact published with the 'main' tag.
  * To override this for verifying a different pact you can either specify the tag of a published pact file:
  * @PactBroker(
