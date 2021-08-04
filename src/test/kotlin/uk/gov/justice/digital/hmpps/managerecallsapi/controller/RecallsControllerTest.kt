@@ -53,6 +53,7 @@ class RecallsControllerTest {
       recallId = recall.recallId(),
       nomsNumber = nomsNumber,
       revocationOrderId = null,
+      agreeWithRecallRecommendation = true,
       documents = emptyList()
     )
     assertThat(results.body, equalTo(expected))
@@ -66,7 +67,7 @@ class RecallsControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, null, emptyList()))))
+    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, null, emptyList(), null))))
   }
 
   @Test
@@ -90,6 +91,7 @@ class RecallsControllerTest {
       recallId = recallId,
       nomsNumber = nomsNumber,
       revocationOrderId = revocationOrderDocS3Key,
+      agreeWithRecallRecommendation = true,
       documents = listOf(
         ApiRecallDocument(
           documentId = document.id,

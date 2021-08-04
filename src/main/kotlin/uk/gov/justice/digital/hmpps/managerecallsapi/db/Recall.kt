@@ -38,6 +38,9 @@ data class Recall(
   @Column(name = "recall_type")
   val recallType: RecallType? = null,
 
+  @Column(name = "recall_agree_recommendation")
+  val agreeWithRecallRecommendation: Boolean? = null,
+
   @Enumerated(STRING)
   @Column(name = "recall_length")
   val recallLength: RecallLength? = null
@@ -48,9 +51,10 @@ data class Recall(
     revocationOrderDocS3Key: UUID? = null,
     documents: Set<RecallDocument> = emptySet(),
     recallType: RecallType? = null,
+    agreeWithRecallRecommendation: Boolean? = null,
     recallLength: RecallLength? = null
   ) :
-    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, recallLength)
+    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength)
 
   fun recallId() = RecallId(id)
 }
