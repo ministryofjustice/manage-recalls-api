@@ -8,7 +8,6 @@ import au.com.dius.pact.provider.junitsupport.State
 import au.com.dius.pact.provider.junitsupport.VerificationReports
 import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
-import au.com.dius.pact.provider.junitsupport.loader.PactFolder
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -114,7 +113,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val document1 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.PART_A_RECALL_REPORT)
     val document2 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.LICENCE)
     every { recallRepository.getByRecallId(any()) } returns
-      Recall(::RecallId.random(), nomsNumber, recallLength = TWENTY_EIGHT_DAYS, recallType = RecallType.FIXED,  documents = setOf(document1, document2))
+      Recall(::RecallId.random(), nomsNumber, recallLength = TWENTY_EIGHT_DAYS, recallType = RecallType.FIXED, documents = setOf(document1, document2))
   }
 
   @State("a list of recalls exists")
