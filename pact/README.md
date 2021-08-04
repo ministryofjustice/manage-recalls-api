@@ -11,5 +11,23 @@ Broker, it will trigger a CI build in `manage-recalls-api` to verify it can stil
 The pact provider tests can be found in `src/test/kotlin/uk/gov/justice/digital/hmpps/managerecallsapi/integration/pact/provider` 
 and are of the format `*PactTest`, they are run as part of the CircleCI `pact` workflow in the `verify_pact_and_publish` job.
 
-When running locally the Pact tests will verify the latest published contracts with the `main` tag.  You can override
-this by specifying a different tag or pact file in the individual test.
+When running locally the Pact tests will verify the latest published contracts with 
+the `main` tag.  You can override this by specifying a different tag or pact 
+file in the individual test, as below.
+
+## Verification/maintenance locally
+
+See comments in e.g. `ManageRecallsUIPactTest` to configure the source for
+the Consumer contract specification to verify, i.e. annotations like one of:
+```
+@PactFolder("../manage-recalls-ui/pact/pacts")
+@PactBroker(
+  consumerVersionSelectors = [ VersionSelector(tag = "pact") ]
+)
+```
+etc.
+
+Then API PACT verification alone can be executed with: 
+```
+./gradlew verifyPactAndPublish
+```
