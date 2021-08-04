@@ -107,6 +107,7 @@ fun Recall.toResponse() = RecallResponse(
   nomsNumber = this.nomsNumber,
   revocationOrderId = this.revocationOrderDocS3Key,
   documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category) },
+  agreeWithRecallRecommendation = this.agreeWithRecallRecommendation,
   recallLength = this.recallLength
 )
 
@@ -117,6 +118,7 @@ data class RecallResponse(
   val nomsNumber: NomsNumber,
   val revocationOrderId: UUID?,
   val documents: List<ApiRecallDocument>,
+  val agreeWithRecallRecommendation: Boolean?,
   val recallLength: RecallLength? = null
 )
 

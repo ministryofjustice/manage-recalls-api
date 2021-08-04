@@ -36,7 +36,7 @@ class UpdateRecallController(
     )
 }
 
-data class UpdateRecallRequest(val recallLength: RecallLength)
+data class UpdateRecallRequest(val recallLength: RecallLength? = null, val agreeWithRecallRecommendation: Boolean? = null)
 
 enum class RecallLength {
   FOURTEEN_DAYS,
