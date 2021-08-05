@@ -38,7 +38,7 @@ data class Recall(
   @Column(name = "recall_type")
   val recallType: RecallType? = null,
 
-  @Column(name = "recall_agree_recommendation")
+  @Column(name = "agree_with_recall_recommendation")
   val agreeWithRecallRecommendation: Boolean? = null,
 
   @Enumerated(STRING)

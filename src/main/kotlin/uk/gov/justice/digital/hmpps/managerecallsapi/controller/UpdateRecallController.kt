@@ -29,6 +29,7 @@ class UpdateRecallController(
       recallRepository.getByRecallId(recallId)
         .copy(
           recallType = FIXED,
+          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation,
           recallLength = updateRecallRequest.recallLength
         ).let { recall ->
           recallRepository.save(recall)

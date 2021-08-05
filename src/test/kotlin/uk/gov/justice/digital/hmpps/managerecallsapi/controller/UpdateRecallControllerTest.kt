@@ -21,7 +21,6 @@ class UpdateRecallControllerTest {
 
   private val nomsNumber = NomsNumber("A9876ZZ")
   private val recallLength = FOURTEEN_DAYS
-  private val agreeWithRecallRecommendation = true
 
   @Test
   fun `can update recall with recall type and length`() {
@@ -37,7 +36,7 @@ class UpdateRecallControllerTest {
       response,
       equalTo(
         ResponseEntity.ok(
-          RecallResponse(recallId, nomsNumber, null, emptyList(), agreeWithRecallRecommendation, recallLength)
+          RecallResponse(recallId, nomsNumber, null, emptyList(), null, recallLength)
         )
       )
     )
@@ -47,9 +46,10 @@ class UpdateRecallControllerTest {
   fun `no recall length property leaves recall length unchanged`() {
     val recallId = ::RecallId.random()
     val persistedRecall = Recall(recallId, nomsNumber, recallType = FIXED, recallLength = recallLength)
+    val noLengthRecall = Recall(recallId, nomsNumber, recallType = FIXED)
     every { recallRepository.getByRecallId(recallId) } returns persistedRecall
     val updateRecallRequest = UpdateRecallRequest()
-    every { recallRepository.save(persistedRecall) } returns persistedRecall
+    every { recallRepository.save(noLengthRecall) } returns persistedRecall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
@@ -57,7 +57,27 @@ class UpdateRecallControllerTest {
       response,
       equalTo(
         ResponseEntity.ok(
-          RecallResponse(recallId, nomsNumber, null, emptyList(), agreeWithRecallRecommendation, recallLength)
+          RecallResponse(recallId, nomsNumber, null, emptyList(), null, recallLength)
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `can update recall with agreeWithRecallRecommendation`() {
+    val updateRecallRequest = UpdateRecallRequest(null, true)
+    val recallId = ::RecallId.random()
+    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber)
+    val updatedRecall = Recall(recallId, nomsNumber, recallType = FIXED, agreeWithRecallRecommendation = true)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = underTest.updateRecall(recallId, updateRecallRequest)
+
+    assertThat(
+      response,
+      equalTo(
+        ResponseEntity.ok(
+          RecallResponse(recallId, nomsNumber, null, emptyList(), true, null)
         )
       )
     )
