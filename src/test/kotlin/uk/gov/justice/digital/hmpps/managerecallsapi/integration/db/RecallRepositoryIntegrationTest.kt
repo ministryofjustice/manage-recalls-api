@@ -59,6 +59,7 @@ class RecallRepositoryIntegrationTest(
       revocationOrderDocS3Key = UUID.randomUUID(),
       documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT)),
       recallType = FIXED,
+      agreeWithRecallRecommendation = true,
       recallLength = TWENTY_EIGHT_DAYS
     )
     repository.save(recallToUpdate)

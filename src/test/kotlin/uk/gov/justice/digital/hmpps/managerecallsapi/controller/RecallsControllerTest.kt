@@ -81,6 +81,7 @@ class RecallsControllerTest {
       recallId = recallId,
       nomsNumber = nomsNumber,
       revocationOrderDocS3Key = revocationOrderDocS3Key,
+      agreeWithRecallRecommendation = true,
       documents = setOf(document)
     )
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -91,7 +92,7 @@ class RecallsControllerTest {
       recallId = recallId,
       nomsNumber = nomsNumber,
       revocationOrderId = revocationOrderDocS3Key,
-      agreeWithRecallRecommendation = null,
+      agreeWithRecallRecommendation = true,
       documents = listOf(
         ApiRecallDocument(
           documentId = document.id,
