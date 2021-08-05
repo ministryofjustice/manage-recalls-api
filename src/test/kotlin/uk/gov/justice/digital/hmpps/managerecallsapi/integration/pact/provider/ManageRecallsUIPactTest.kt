@@ -19,6 +19,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
@@ -112,8 +113,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recallId = ::RecallId.random()
     val document1 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.PART_A_RECALL_REPORT)
     val document2 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.LICENCE)
+    val documents = setOf(document1, document2)
     every { recallRepository.getByRecallId(any()) } returns
-      Recall(::RecallId.random(), nomsNumber, recallLength = TWENTY_EIGHT_DAYS, recallType = RecallType.FIXED, documents = setOf(document1, document2))
+      maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, documents)
   }
 
   @State("a list of recalls exists")
@@ -126,8 +128,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a recall exists and can be updated")
   fun `a recall exists and can be updated`() {
-    every { recallRepository.getByRecallId(any()) } returns Recall(::RecallId.random(), nomsNumber)
-    every { recallRepository.save(any()) } returns Recall(::RecallId.random(), nomsNumber, recallLength = FOURTEEN_DAYS)
+    val recallId = ::RecallId.random()
+    val priorRecall = maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, setOf())
+    every { recallRepository.getByRecallId(any()) } returns priorRecall
+    every { recallRepository.save(any()) } returns priorRecall.copy(recallLength = FOURTEEN_DAYS)
   }
 
   @State("a recall does not exist")
@@ -161,6 +165,20 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         documentBytes
       )
   }
+
+  private fun maximalRecall(
+    recallId: RecallId,
+    nomsNumber: NomsNumber,
+    recallLength: RecallLength,
+    documents: Set<RecallDocument>
+  ) = Recall(
+    recallId, nomsNumber,
+    recallLength = recallLength,
+    recallType = RecallType.FIXED,
+    documents = documents,
+    agreeWithRecallRecommendation = false,
+    revocationOrderDocS3Key = UUID.randomUUID()
+  )
 }
 
 @PactFilter(value = [".*unauthorized.*"])
