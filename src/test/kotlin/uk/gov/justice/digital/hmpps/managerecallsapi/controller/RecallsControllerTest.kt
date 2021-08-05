@@ -53,7 +53,7 @@ class RecallsControllerTest {
       recallId = recall.recallId(),
       nomsNumber = nomsNumber,
       revocationOrderId = null,
-      agreeWithRecallRecommendation = true,
+      agreeWithRecallRecommendation = null,
       documents = emptyList()
     )
     assertThat(results.body, equalTo(expected))
@@ -91,7 +91,7 @@ class RecallsControllerTest {
       recallId = recallId,
       nomsNumber = nomsNumber,
       revocationOrderId = revocationOrderDocS3Key,
-      agreeWithRecallRecommendation = true,
+      agreeWithRecallRecommendation = null,
       documents = listOf(
         ApiRecallDocument(
           documentId = document.id,

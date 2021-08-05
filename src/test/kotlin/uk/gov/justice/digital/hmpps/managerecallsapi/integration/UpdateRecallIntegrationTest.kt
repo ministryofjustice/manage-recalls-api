@@ -35,7 +35,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     assertThat(
       response,
-      equalTo(RecallResponse(recallId, nomsNumber, null, emptyList(), recallLength))
+      equalTo(RecallResponse(recallId, nomsNumber, null, emptyList(), null))
     )
   }
 
