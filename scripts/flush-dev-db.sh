@@ -10,7 +10,6 @@ sleep 5
 # db connection details
 ENVIRONMENT="ppud-replacement-dev"
 SECRET=manage-recalls-database
-DB_HOST=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.host | @base64d')
 DB_NAME=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.name | @base64d')
 DB_USER=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.username | @base64d')
 DB_PASS=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.password | @base64d')
@@ -21,7 +20,7 @@ export PGPASSWORD=${DB_PASS}
 function run_psql_cmd() {
   psql \
     --username "${DB_USER}" \
-    --host "${DB_HOST}" \
+    --host 127.0.0.1 \
     --port "${DB_PORT}" \
     --dbname "${DB_NAME}" \
     --command "${1}"
