@@ -118,7 +118,7 @@ data class RecallResponse(
   val nomsNumber: NomsNumber,
   val revocationOrderId: UUID?,
   val documents: List<ApiRecallDocument>,
-  val agreeWithRecallRecommendation: Boolean?,
+  val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null
 )
 
