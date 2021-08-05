@@ -24,10 +24,11 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can update recall with recall type and length`() {
-    val updateRecallRequest = UpdateRecallRequest(recallLength, true)
+    val updateRecallRequest = UpdateRecallRequest(recallLength = recallLength)
     val recallId = ::RecallId.random()
-    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber)
-    val updatedRecall = Recall(recallId, nomsNumber, recallType = FIXED, recallLength = recallLength)
+    val priorRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+    val updatedRecall = priorRecall.copy(recallType = FIXED, recallLength = recallLength)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
@@ -36,7 +37,7 @@ class UpdateRecallControllerTest {
       response,
       equalTo(
         ResponseEntity.ok(
-          RecallResponse(recallId, nomsNumber, null, emptyList(), null, recallLength)
+          RecallResponse(recallId, nomsNumber, documents = emptyList(), recallLength = recallLength)
         )
       )
     )
