@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-ENVIRONMENT="ppud-replacement-${ENV:-preprod}"
-PFP_NAME="manage-recalls-api-port-forward-$(whoami)"
+ENVIRONMENT="ppud-replacement-${ENV:-dev}"
+PFP_NAME="manage-recalls-api-port-forward-$(whoami | tr ._ -)"
 SECRET=manage-recalls-database
 
 DB_HOST=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.host | @base64d')
