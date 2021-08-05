@@ -116,7 +116,7 @@ data class BookRecallRequest(val nomsNumber: NomsNumber)
 data class RecallResponse(
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
-  val revocationOrderId: UUID?,
+  val revocationOrderId: UUID? = null,
   val documents: List<ApiRecallDocument>,
   val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null

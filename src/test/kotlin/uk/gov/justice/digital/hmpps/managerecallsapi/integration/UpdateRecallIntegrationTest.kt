@@ -7,7 +7,7 @@ import io.mockk.every
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -26,16 +26,18 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
   private val recallLength = TWENTY_EIGHT_DAYS
 
   @Test
-  fun `update a recall returns updated recall`() {
-    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber)
-    val expectedRecall = Recall(recallId, nomsNumber, recallType = FIXED, recallLength = recallLength)
+  fun `update a recall returns updated recall including with recallType of FIXED`() {
+    val priorRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+    // We're persisting recallType with value FIXED but we're not yet returning it in the response
+    val expectedRecall = priorRecall.copy(recallLength = recallLength, recallType = RecallType.FIXED)
     every { recallRepository.save(expectedRecall) } returns expectedRecall
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(recallLength))
 
     assertThat(
       response,
-      equalTo(RecallResponse(recallId, nomsNumber, null, emptyList(), null))
+      equalTo(RecallResponse(recallId, nomsNumber, documents = emptyList(), recallLength = recallLength))
     )
   }
 

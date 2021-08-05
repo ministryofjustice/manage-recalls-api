@@ -48,10 +48,11 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   private val aRecall = Recall(recallId, nomsNumber)
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val fileBytes = "content".toByteArray()
+  private val fileContent = Base64.getEncoder().encodeToString(fileBytes)
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
   private val addDocumentRequest = AddDocumentRequest(
     category = category.toString(),
-    fileContent = Base64.getEncoder().encodeToString(fileBytes)
+    fileContent = fileContent
   )
 
   @Test
@@ -89,7 +90,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `gets a recall`() {
+  fun `gets a minimal recall`() {
     val jwt = testJwt("ROLE_MANAGE_RECALLS")
 
     every { recallRepository.getByRecallId(recallId) } returns aRecall
