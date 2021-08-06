@@ -111,11 +111,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @State("a recall exists")
   fun `a recall exists`() {
     val recallId = ::RecallId.random()
-    val document1 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.PART_A_RECALL_REPORT)
-    val document2 = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.LICENCE)
-    val documents = setOf(document1, document2)
     every { recallRepository.getByRecallId(any()) } returns
-      maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, documents)
+      maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, false, documents(recallId))
   }
 
   @State("a list of recalls exists")
@@ -126,12 +123,15 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     )
   }
 
-  @State("a recall exists and can be updated")
+  @State(
+    "a recall exists and can be updated",
+    "a recall exists and can be updated with length",
+    "a recall exists and can be updated with agreement"
+  )
   fun `a recall exists and can be updated`() {
     val recallId = ::RecallId.random()
-    val priorRecall = maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, setOf())
-    every { recallRepository.getByRecallId(any()) } returns priorRecall
-    every { recallRepository.save(any()) } returns priorRecall.copy(recallLength = FOURTEEN_DAYS)
+    every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
+    every { recallRepository.save(any()) } returns maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, true, documents(recallId))
   }
 
   @State("a recall does not exist")
@@ -166,19 +166,33 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       )
   }
 
+  private fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId, nomsNumber)
+
   private fun maximalRecall(
     recallId: RecallId,
     nomsNumber: NomsNumber,
-    recallLength: RecallLength,
+    recallLength: RecallLength = FOURTEEN_DAYS,
+    agreeWithRecallRecommendation: Boolean = false,
     documents: Set<RecallDocument>
   ) = Recall(
     recallId, nomsNumber,
-    recallLength = recallLength,
     recallType = RecallType.FIXED,
     documents = documents,
-    agreeWithRecallRecommendation = false,
+    recallLength = recallLength,
+    agreeWithRecallRecommendation = agreeWithRecallRecommendation,
     revocationOrderDocS3Key = UUID.randomUUID()
   )
+
+  private fun documents(recallId: RecallId): Set<RecallDocument> {
+    val partA = RecallDocument(
+      id = UUID.randomUUID(),
+      recallId = recallId.value,
+      category = RecallDocumentCategory.PART_A_RECALL_REPORT
+    )
+    val license =
+      RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.LICENCE)
+    return setOf(partA, license)
+  }
 }
 
 @PactFilter(value = [".*unauthorized.*"])
