@@ -2,8 +2,10 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
@@ -25,13 +27,13 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can update recall with recall type and length`() {
-    val updateRecallRequest = UpdateRecallRequest(recallLength = recallLength)
     val recallId = ::RecallId.random()
     val priorRecall = Recall(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns priorRecall
     val updatedRecall = priorRecall.copy(recallType = FIXED, recallLength = recallLength)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
+    val updateRecallRequest = UpdateRecallRequest(recallLength = recallLength)
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
     assertThat(
@@ -45,35 +47,17 @@ class UpdateRecallControllerTest {
   }
 
   @Test
-  fun `no recall length property leaves recall length unchanged`() {
-    val recallId = ::RecallId.random()
-    val persistedRecall = Recall(recallId, nomsNumber, recallType = FIXED, recallLength = recallLength)
-    val noLengthRecall = Recall(recallId, nomsNumber, recallType = FIXED)
-    every { recallRepository.getByRecallId(recallId) } returns persistedRecall
-    val updateRecallRequest = UpdateRecallRequest()
-    every { recallRepository.save(noLengthRecall) } returns persistedRecall
-
-    val response = underTest.updateRecall(recallId, updateRecallRequest)
-
-    assertThat(
-      response,
-      equalTo(
-        ResponseEntity.ok(
-          RecallResponse(recallId, nomsNumber, null, emptyList(), null, recallLength)
-        )
-      )
-    )
-  }
-
-  @Test
   fun `can update recall with agreeWithRecallRecommendation without changing recallLength`() {
-    val updateRecallRequest = UpdateRecallRequest(null, true)
     val recallId = ::RecallId.random()
     val priorRecall = Recall(recallId, nomsNumber, recallLength = TWENTY_EIGHT_DAYS)
     every { recallRepository.getByRecallId(recallId) } returns priorRecall
     val updatedRecall = priorRecall.copy(recallType = FIXED, agreeWithRecallRecommendation = true)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
+    val noLengthRecall = updatedRecall.copy(recallLength = null)
+    verify { recallRepository.save(noLengthRecall) wasNot Called }
+
+    val updateRecallRequest = UpdateRecallRequest(null, true)
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
     assertThat(
