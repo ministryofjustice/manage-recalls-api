@@ -26,14 +26,13 @@ class UpdateRecallController(
     @RequestBody updateRecallRequest: UpdateRecallRequest
   ): ResponseEntity<RecallResponse> =
     ResponseEntity.ok(
-      recallRepository.getByRecallId(recallId)
-        .copy(
+      recallRepository.getByRecallId(recallId).let {
+        it.copy(
           recallType = FIXED,
-          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation,
-          recallLength = updateRecallRequest.recallLength
-        ).let { recall ->
-          recallRepository.save(recall)
-        }.toResponse()
+          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation ?: it.agreeWithRecallRecommendation,
+          recallLength = updateRecallRequest.recallLength ?: it.recallLength
+        )
+      }.let(recallRepository::save).toResponse()
     )
 }
 
