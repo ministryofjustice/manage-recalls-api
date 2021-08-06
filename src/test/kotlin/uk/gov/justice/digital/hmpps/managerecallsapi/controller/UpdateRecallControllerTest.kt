@@ -7,6 +7,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -65,11 +66,12 @@ class UpdateRecallControllerTest {
   }
 
   @Test
-  fun `can update recall with agreeWithRecallRecommendation`() {
+  fun `can update recall with agreeWithRecallRecommendation without changing recallLength`() {
     val updateRecallRequest = UpdateRecallRequest(null, true)
     val recallId = ::RecallId.random()
-    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber)
-    val updatedRecall = Recall(recallId, nomsNumber, recallType = FIXED, agreeWithRecallRecommendation = true)
+    val priorRecall = Recall(recallId, nomsNumber, recallLength = TWENTY_EIGHT_DAYS)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+    val updatedRecall = priorRecall.copy(recallType = FIXED, agreeWithRecallRecommendation = true)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
@@ -78,7 +80,7 @@ class UpdateRecallControllerTest {
       response,
       equalTo(
         ResponseEntity.ok(
-          RecallResponse(recallId, nomsNumber, null, emptyList(), true, null)
+          RecallResponse(recallId, nomsNumber, null, emptyList(), true, TWENTY_EIGHT_DAYS)
         )
       )
     )

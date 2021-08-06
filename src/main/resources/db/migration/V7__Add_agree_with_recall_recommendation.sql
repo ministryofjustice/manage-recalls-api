@@ -1,1 +1,1 @@
-ALTER TABLE recall ADD COLUMN agree_with_recall_recommendation boolean;
+ALTER TABLE recall ADD COLUMN agree_with_recall_recommendation BOOLEAN;
