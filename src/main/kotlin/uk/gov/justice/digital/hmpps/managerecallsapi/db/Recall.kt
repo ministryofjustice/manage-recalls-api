@@ -53,8 +53,7 @@ data class Recall(
   val lastReleaseDateTime: ZonedDateTime? = null,
 
   @Column(name = "recall_email_received_datetime")
-  val recallEmailReceivedDateTime: ZonedDateTime? = null
-
+  val recallEmailReceivedDateTime: ZonedDateTime? = null,
 ) {
   constructor(
     recallId: RecallId,
