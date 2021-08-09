@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.ZonedDateTime
 
 class UpdateRecallControllerTest {
   // TODO:  MD Investigate using in memory RecallRepository, might be much cleaner throughout
@@ -64,9 +65,107 @@ class UpdateRecallControllerTest {
       response,
       equalTo(
         ResponseEntity.ok(
-          RecallResponse(recallId, nomsNumber, null, emptyList(), true, TWENTY_EIGHT_DAYS)
+          RecallResponse(recallId, nomsNumber, emptyList(), agreeWithRecallRecommendation = true, recallLength = TWENTY_EIGHT_DAYS)
         )
       )
     )
+  }
+
+  @Test
+  fun `can update recall with recallEmailReceivedDateTime without changing other properties`() {
+    val recallId = ::RecallId.random()
+    val priorRecall = Recall(recallId, nomsNumber, recallLength = FOURTEEN_DAYS, agreeWithRecallRecommendation = false)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+    val recallEmailReceivedDateTime = ZonedDateTime.now()
+    val updatedRecall = priorRecall.copy(recallType = FIXED, recallEmailReceivedDateTime = recallEmailReceivedDateTime)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = underTest.updateRecall(recallId, UpdateRecallRequest(recallEmailReceivedDateTime = recallEmailReceivedDateTime))
+
+    assertThat(
+      response,
+      equalTo(
+        ResponseEntity.ok(
+          RecallResponse(
+            recallId, nomsNumber, emptyList(),
+            agreeWithRecallRecommendation = false,
+            recallLength = FOURTEEN_DAYS,
+            recallEmailReceivedDateTime = recallEmailReceivedDateTime
+          ),
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `can update recall with all update payload properties simultaneously`() {
+    val recallId = ::RecallId.random()
+    val priorRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+
+    val newRecallEmailReceivedDateTime = ZonedDateTime.now()
+    val newRecallLength = TWENTY_EIGHT_DAYS
+    val newAgreeWithRecallRecommendation = true
+
+    val updatedRecall = priorRecall.copy(
+      recallType = FIXED,
+      recallLength = newRecallLength,
+      agreeWithRecallRecommendation = newAgreeWithRecallRecommendation,
+      recallEmailReceivedDateTime = newRecallEmailReceivedDateTime
+    )
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = underTest.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        agreeWithRecallRecommendation = newAgreeWithRecallRecommendation,
+        recallLength = newRecallLength,
+        recallEmailReceivedDateTime = newRecallEmailReceivedDateTime
+      )
+    )
+
+    assertThat(
+      response,
+      equalTo(
+        ResponseEntity.ok(
+          RecallResponse(
+            recallId, nomsNumber, emptyList(),
+            agreeWithRecallRecommendation = newAgreeWithRecallRecommendation,
+            recallLength = newRecallLength,
+            recallEmailReceivedDateTime = newRecallEmailReceivedDateTime
+          ),
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `cannot reset recall properties to null with update recall`() {
+    val recallId = ::RecallId.random()
+    val priorRecallEmailReceivedDateTime = ZonedDateTime.now()
+    val priorRecallLength = TWENTY_EIGHT_DAYS
+    val priorAgreeWithRecallRecommendation = true
+
+    val priorRecall = Recall(
+      recallId, nomsNumber,
+      recallLength = priorRecallLength,
+      agreeWithRecallRecommendation = priorAgreeWithRecallRecommendation,
+      recallEmailReceivedDateTime = priorRecallEmailReceivedDateTime
+    )
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+
+    val updatedRecall = priorRecall.copy(recallType = FIXED)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = underTest.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        agreeWithRecallRecommendation = null,
+        recallLength = null,
+        recallEmailReceivedDateTime = null
+      )
+    )
+
+    assertThat(response, equalTo(ResponseEntity.ok(updatedRecall.toResponse())))
   }
 }

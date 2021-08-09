@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.ZonedDateTime
 import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
@@ -35,11 +36,11 @@ class RecallRepositoryIntegrationTest(
 ) {
   // TODO: Avoid bugs such as PUD-329 by use of a real database for integration tests such as this, i.e. PUD-330.
 
-  private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A12345F")
 
   @Test
   fun `saves and retrieves a recall`() {
+    val recallId = ::RecallId.random()
     val recall = Recall(recallId, nomsNumber)
     repository.save(recall)
 
@@ -50,17 +51,19 @@ class RecallRepositoryIntegrationTest(
 
   @Test
   fun `can update an existing recall`() {
+    val recallId = ::RecallId.random()
     val originalRecall = Recall(recallId, nomsNumber)
     repository.save(originalRecall)
 
     assertThat(repository.getByRecallId(recallId), equalTo(originalRecall))
 
     val recallToUpdate = originalRecall.copy(
+      recallType = FIXED,
       revocationOrderDocS3Key = UUID.randomUUID(),
       documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT)),
-      recallType = FIXED,
+      recallLength = TWENTY_EIGHT_DAYS,
       agreeWithRecallRecommendation = true,
-      recallLength = TWENTY_EIGHT_DAYS
+      recallEmailReceivedDateTime = ZonedDateTime.now()
     )
     repository.save(recallToUpdate)
 
@@ -72,7 +75,7 @@ class RecallRepositoryIntegrationTest(
   @Test
   fun `get by recallId throws RecallNotFoundException if a recall does not exist`() {
     assertThrows<RecallNotFoundException> {
-      repository.getByRecallId(recallId)
+      repository.getByRecallId(::RecallId.random())
     }
   }
 }

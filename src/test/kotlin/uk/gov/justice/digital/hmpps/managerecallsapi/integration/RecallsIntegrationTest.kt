@@ -57,12 +57,13 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `books a recall`() {
-    val jwt = testJwt("ROLE_MANAGE_RECALLS")
 
     every { recallRepository.save(any()) } returns aRecall
 
     val response =
-      webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest).headers { it.withBearerAuthToken(jwt) }
+      webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest).headers {
+        it.withBearerAuthToken(jwtWithRoleManageRecalls())
+      }
         .exchange()
         .expectStatus().isCreated
         .expectBody(RecallResponse::class.java)
@@ -70,17 +71,16 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     assertThat(
       response.responseBody,
-      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, null, emptyList(), null))
+      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, emptyList()))
     )
   }
 
   @Test
   fun `returns all recalls`() {
-    val jwt = testJwt("ROLE_MANAGE_RECALLS")
 
     every { recallRepository.findAll() } returns listOf(aRecall)
 
-    webTestClient.get().uri("/recalls").headers { it.withBearerAuthToken(jwt) }
+    webTestClient.get().uri("/recalls").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -91,11 +91,10 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `gets a minimal recall`() {
-    val jwt = testJwt("ROLE_MANAGE_RECALLS")
 
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
+    every { recallRepository.getByRecallId(recallId) } returns minimalRecall(recallId, nomsNumber)
 
-    webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwt) }
+    webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -105,8 +104,28 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `gets a maximal recall`() {
+
+    every { recallRepository.getByRecallId(recallId) } returns maximalRecall(recallId, nomsNumber, documents = exampleDocuments(recallId))
+
+    webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
+      .exchange()
+      .expectStatus().isOk
+      .expectBody()
+      .jsonPath("$.recallId").isEqualTo(recallId.toString())
+      .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)
+      .jsonPath("$.documents.length()").isEqualTo(2)
+      .jsonPath("$.documents[0].category").isEqualTo("PART_A_RECALL_REPORT")
+      .jsonPath("$.documents[0].documentId").isNotEmpty()
+      .jsonPath("$.recallType").doesNotExist() // persisted on updated but not yet returned
+      .jsonPath("$.revocationOrderId").isNotEmpty()
+      .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
+      .jsonPath("$.agreeWithRecallRecommendation").isEqualTo("false")
+      .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty()
+  }
+
+  @Test
   fun `gets a revocation order`() {
-    val jwt = testJwt("ROLE_MANAGE_RECALLS")
     val expectedPdf = "Expected Generated PDF".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
@@ -134,7 +153,9 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, fileS3Key)
 
-    val response = webTestClient.get().uri("/recalls/$recallId/revocationOrder").headers { it.withBearerAuthToken(jwt) }
+    val response = webTestClient.get().uri("/recalls/$recallId/revocationOrder").headers {
+      it.withBearerAuthToken(jwtWithRoleManageRecalls())
+    }
       .exchange()
       .expectStatus().isOk
       .expectBody(Pdf::class.java)
@@ -146,7 +167,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `adds a recall document`() {
-    val jwt = testJwt("ROLE_MANAGE_RECALLS")
     val recallId = UUID.randomUUID()
     val documentId = UUID.randomUUID()
 
@@ -156,7 +176,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .post()
       .uri("/recalls/$recallId/documents")
       .bodyValue(addDocumentRequest)
-      .headers { it.withBearerAuthToken(jwt) }
+      .headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
       .expectStatus().isCreated
       .expectBody().jsonPath("$.documentId").isEqualTo(documentId.toString())
@@ -164,7 +184,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `gets a recall document`() {
-    val jwt = testJwt("ROLE_MANAGE_RECALLS")
     val recallId = UUID.randomUUID()
     val documentId = UUID.randomUUID()
     val document = RecallDocument(
@@ -179,7 +198,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     webTestClient
       .get()
       .uri("/recalls/$recallId/documents/$documentId")
-      .headers { it.withBearerAuthToken(jwt) }
+      .headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
       .expectStatus().isOk
       .expectBody()
@@ -187,4 +206,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.category").isEqualTo(RecallDocumentCategory.PART_A_RECALL_REPORT.toString())
       .jsonPath("$.content").isEqualTo(Base64.getEncoder().encodeToString(bytes))
   }
+
+  private fun jwtWithRoleManageRecalls() = testJwt("ROLE_MANAGE_RECALLS")
 }
