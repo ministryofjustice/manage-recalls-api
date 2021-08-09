@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentServi
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.net.URI
+import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
 
@@ -108,7 +109,9 @@ fun Recall.toResponse() = RecallResponse(
   revocationOrderId = this.revocationOrderDocS3Key,
   documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category) },
   agreeWithRecallRecommendation = this.agreeWithRecallRecommendation,
-  recallLength = this.recallLength
+  recallLength = this.recallLength,
+  lastReleasePrison = this.lastReleasePrison,
+  lastReleaseDateTime = this.lastReleaseDateTime
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -119,7 +122,9 @@ data class RecallResponse(
   val revocationOrderId: UUID? = null,
   val documents: List<ApiRecallDocument>,
   val agreeWithRecallRecommendation: Boolean? = null,
-  val recallLength: RecallLength? = null
+  val recallLength: RecallLength? = null,
+  val lastReleasePrison: String? = null,
+  val lastReleaseDateTime: ZonedDateTime? = null
 )
 
 data class ApiRecallDocument(

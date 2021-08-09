@@ -4,6 +4,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType.ALL
@@ -43,7 +44,13 @@ data class Recall(
 
   @Enumerated(STRING)
   @Column(name = "recall_length")
-  val recallLength: RecallLength? = null
+  val recallLength: RecallLength? = null,
+
+  @Column(name = "last_release_prison")
+  val lastReleasePrison: String? = null,
+
+  @Column(name = "last_release_date_time")
+  val lastReleaseDateTime: ZonedDateTime? = null
 ) {
   constructor(
     recallId: RecallId,
@@ -52,9 +59,11 @@ data class Recall(
     documents: Set<RecallDocument> = emptySet(),
     recallType: RecallType? = null,
     agreeWithRecallRecommendation: Boolean? = null,
-    recallLength: RecallLength? = null
+    recallLength: RecallLength? = null,
+    lastReleasePrison: String? = null,
+    lastReleaseDateTime: ZonedDateTime? = null
   ) :
-    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength)
+    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength, lastReleasePrison, lastReleaseDateTime)
 
   fun recallId() = RecallId(id)
 }
