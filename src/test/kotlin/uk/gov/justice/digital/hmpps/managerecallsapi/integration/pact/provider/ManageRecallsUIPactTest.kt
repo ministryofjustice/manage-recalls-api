@@ -19,10 +19,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -112,7 +109,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
-      maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, false, documents(recallId))
+      maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, false, exampleDocuments(recallId))
   }
 
   @State("a list of recalls exists")
@@ -131,7 +128,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists and can be updated`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
-    every { recallRepository.save(any()) } returns maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, true, documents(recallId))
+    every { recallRepository.save(any()) } returns maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, true, exampleDocuments(recallId))
   }
 
   @State("a recall does not exist")
@@ -164,34 +161,6 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         RecallDocument(documentId, recallId.value, RecallDocumentCategory.PART_A_RECALL_REPORT),
         documentBytes
       )
-  }
-
-  private fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId, nomsNumber)
-
-  private fun maximalRecall(
-    recallId: RecallId,
-    nomsNumber: NomsNumber,
-    recallLength: RecallLength = FOURTEEN_DAYS,
-    agreeWithRecallRecommendation: Boolean = false,
-    documents: Set<RecallDocument>
-  ) = Recall(
-    recallId, nomsNumber,
-    recallType = RecallType.FIXED,
-    documents = documents,
-    recallLength = recallLength,
-    agreeWithRecallRecommendation = agreeWithRecallRecommendation,
-    revocationOrderDocS3Key = UUID.randomUUID()
-  )
-
-  private fun documents(recallId: RecallId): Set<RecallDocument> {
-    val partA = RecallDocument(
-      id = UUID.randomUUID(),
-      recallId = recallId.value,
-      category = RecallDocumentCategory.PART_A_RECALL_REPORT
-    )
-    val license =
-      RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.LICENCE)
-    return setOf(partA, license)
   }
 }
 

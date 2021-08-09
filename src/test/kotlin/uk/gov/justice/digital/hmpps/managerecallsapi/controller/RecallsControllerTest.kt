@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFo
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
+import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
 
@@ -52,8 +53,6 @@ class RecallsControllerTest {
     val expected = RecallResponse(
       recallId = recall.recallId(),
       nomsNumber = nomsNumber,
-      revocationOrderId = null,
-      agreeWithRecallRecommendation = null,
       documents = emptyList()
     )
     assertThat(results.body, equalTo(expected))
@@ -67,7 +66,7 @@ class RecallsControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, null, emptyList(), null))))
+    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, emptyList()))))
   }
 
   @Test
@@ -77,30 +76,33 @@ class RecallsControllerTest {
       recallId = UUID.randomUUID(),
       category = RecallDocumentCategory.PART_A_RECALL_REPORT
     )
+    val recallEmailReceivedDateTime = ZonedDateTime.now()
     val recall = Recall(
       recallId = recallId,
       nomsNumber = nomsNumber,
       revocationOrderDocS3Key = revocationOrderDocS3Key,
+      documents = setOf(document),
       agreeWithRecallRecommendation = true,
-      documents = setOf(document)
+      recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
     every { recallRepository.getByRecallId(recallId) } returns recall
 
-    val results = underTest.getRecall(recallId)
+    val result = underTest.getRecall(recallId)
 
     val expected = RecallResponse(
       recallId = recallId,
       nomsNumber = nomsNumber,
-      revocationOrderId = revocationOrderDocS3Key,
-      agreeWithRecallRecommendation = true,
       documents = listOf(
         ApiRecallDocument(
           documentId = document.id,
           category = document.category
         )
-      )
+      ),
+      revocationOrderId = revocationOrderDocS3Key,
+      agreeWithRecallRecommendation = true,
+      recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
-    assertThat(results, equalTo(expected))
+    assertThat(result, equalTo(expected))
   }
 
   @Test

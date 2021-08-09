@@ -106,12 +106,13 @@ fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
 fun Recall.toResponse() = RecallResponse(
   recallId = this.recallId(),
   nomsNumber = this.nomsNumber,
-  revocationOrderId = this.revocationOrderDocS3Key,
   documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category) },
+  revocationOrderId = this.revocationOrderDocS3Key,
   agreeWithRecallRecommendation = this.agreeWithRecallRecommendation,
   recallLength = this.recallLength,
   lastReleasePrison = this.lastReleasePrison,
-  lastReleaseDateTime = this.lastReleaseDateTime
+  lastReleaseDateTime = this.lastReleaseDateTime,
+  recallEmailReceivedDateTime = this.recallEmailReceivedDateTime
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -119,10 +120,11 @@ data class BookRecallRequest(val nomsNumber: NomsNumber)
 data class RecallResponse(
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
-  val revocationOrderId: UUID? = null,
   val documents: List<ApiRecallDocument>,
+  val revocationOrderId: UUID? = null,
   val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null,
+  val recallEmailReceivedDateTime: ZonedDateTime? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDateTime: ZonedDateTime? = null
 )
