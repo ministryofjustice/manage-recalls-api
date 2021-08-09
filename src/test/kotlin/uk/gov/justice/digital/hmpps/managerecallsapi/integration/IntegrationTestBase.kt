@@ -15,11 +15,19 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 
@@ -103,5 +111,34 @@ abstract class IntegrationTestBase {
     val startEpochDay = age18.minusYears(80).toEpochDay()
     val randomDay = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay)
     return LocalDate.ofEpochDay(randomDay)
+  }
+
+  fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId, nomsNumber)
+
+  fun maximalRecall(
+    recallId: RecallId,
+    nomsNumber: NomsNumber,
+    recallLength: RecallLength = RecallLength.FOURTEEN_DAYS,
+    agreeWithRecallRecommendation: Boolean = false,
+    documents: Set<RecallDocument>
+  ) = Recall(
+    recallId, nomsNumber,
+    revocationOrderDocS3Key = UUID.randomUUID(),
+    documents = documents,
+    recallType = RecallType.FIXED,
+    agreeWithRecallRecommendation = agreeWithRecallRecommendation,
+    recallLength = recallLength,
+    recallEmailReceivedDateTime = ZonedDateTime.now()
+  )
+
+  fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
+    val partA = RecallDocument(
+      id = UUID.randomUUID(),
+      recallId = recallId.value,
+      category = RecallDocumentCategory.PART_A_RECALL_REPORT
+    )
+    val license =
+      RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = RecallDocumentCategory.LICENCE)
+    return setOf(partA, license)
   }
 }

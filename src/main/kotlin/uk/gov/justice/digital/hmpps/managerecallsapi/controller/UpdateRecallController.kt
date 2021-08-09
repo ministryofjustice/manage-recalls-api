@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.time.ZonedDateTime
 
 @RestController
 @RequestMapping(produces = [APPLICATION_JSON_VALUE])
@@ -30,13 +31,18 @@ class UpdateRecallController(
         it.copy(
           recallType = FIXED,
           agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation ?: it.agreeWithRecallRecommendation,
-          recallLength = updateRecallRequest.recallLength ?: it.recallLength
+          recallLength = updateRecallRequest.recallLength ?: it.recallLength,
+          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime
         )
       }.let(recallRepository::save).toResponse()
     )
 }
 
-data class UpdateRecallRequest(val recallLength: RecallLength? = null, val agreeWithRecallRecommendation: Boolean? = null)
+data class UpdateRecallRequest(
+  val recallLength: RecallLength? = null,
+  val agreeWithRecallRecommendation: Boolean? = null,
+  val recallEmailReceivedDateTime: ZonedDateTime? = null
+)
 
 enum class RecallLength {
   FOURTEEN_DAYS,
