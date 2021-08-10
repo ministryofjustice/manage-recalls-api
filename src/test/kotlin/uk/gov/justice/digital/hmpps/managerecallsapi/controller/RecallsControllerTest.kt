@@ -77,12 +77,15 @@ class RecallsControllerTest {
       category = RecallDocumentCategory.PART_A_RECALL_REPORT
     )
     val recallEmailReceivedDateTime = ZonedDateTime.now()
+    val lastReleaseDateTime = ZonedDateTime.now()
     val recall = Recall(
       recallId = recallId,
       nomsNumber = nomsNumber,
       revocationOrderDocS3Key = revocationOrderDocS3Key,
       documents = setOf(document),
       agreeWithRecallRecommendation = true,
+      lastReleasePrison = "prison",
+      lastReleaseDateTime = lastReleaseDateTime,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -100,6 +103,8 @@ class RecallsControllerTest {
       ),
       revocationOrderId = revocationOrderDocS3Key,
       agreeWithRecallRecommendation = true,
+      lastReleasePrison = "prison",
+      lastReleaseDateTime = lastReleaseDateTime,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
     assertThat(result, equalTo(expected))
