@@ -63,7 +63,8 @@ class RecallRepositoryIntegrationTest(
       documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT)),
       recallLength = TWENTY_EIGHT_DAYS,
       agreeWithRecallRecommendation = true,
-      recallEmailReceivedDateTime = ZonedDateTime.now()
+      recallEmailReceivedDateTime = ZonedDateTime.now(),
+      localPoliceService = "London"
     )
     repository.save(recallToUpdate)
 

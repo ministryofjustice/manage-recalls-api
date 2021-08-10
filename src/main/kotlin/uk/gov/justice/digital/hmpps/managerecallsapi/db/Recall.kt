@@ -54,6 +54,10 @@ data class Recall(
 
   @Column(name = "recall_email_received_datetime")
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
+
+  @Column(name = "local_police_service")
+  val localPoliceService: String? = null
+
 ) {
   constructor(
     recallId: RecallId,
@@ -65,9 +69,10 @@ data class Recall(
     recallLength: RecallLength? = null,
     lastReleasePrison: String? = null,
     lastReleaseDateTime: ZonedDateTime? = null,
-    recallEmailReceivedDateTime: ZonedDateTime? = null
+    recallEmailReceivedDateTime: ZonedDateTime? = null,
+    localPoliceService: String? = null
   ) :
-    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength, lastReleasePrison, lastReleaseDateTime, recallEmailReceivedDateTime)
+    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength, lastReleasePrison, lastReleaseDateTime, recallEmailReceivedDateTime, localPoliceService)
 
   fun recallId() = RecallId(id)
 }

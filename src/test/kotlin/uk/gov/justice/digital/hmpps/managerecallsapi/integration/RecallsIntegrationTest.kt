@@ -133,6 +133,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(agree)
       .jsonPath("$.lastReleasePrison").isEqualTo(prison)
       .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty()
+      .jsonPath("$.localPoliceService").isEqualTo("London")
   }
 
   @Test
