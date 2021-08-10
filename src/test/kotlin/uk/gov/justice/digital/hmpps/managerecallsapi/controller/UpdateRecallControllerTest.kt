@@ -168,4 +168,31 @@ class UpdateRecallControllerTest {
 
     assertThat(response, equalTo(ResponseEntity.ok(updatedRecall.toResponse())))
   }
+
+  @Test
+  fun `can update recall with lastReleaseDateTime and lastReleasePrison without changing other properties`() {
+    val recallId = ::RecallId.random()
+    val priorRecall = Recall(recallId, nomsNumber, recallLength = FOURTEEN_DAYS, agreeWithRecallRecommendation = false)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+    val lastReleaseDateTime = ZonedDateTime.now()
+    val updatedRecall = priorRecall.copy(recallType = FIXED, lastReleasePrison = "prison", lastReleaseDateTime = lastReleaseDateTime)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = underTest.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = "prison", lastReleaseDateTime = lastReleaseDateTime))
+
+    assertThat(
+      response,
+      equalTo(
+        ResponseEntity.ok(
+          RecallResponse(
+            recallId, nomsNumber, emptyList(),
+            agreeWithRecallRecommendation = false,
+            recallLength = FOURTEEN_DAYS,
+            lastReleasePrison = "prison",
+            lastReleaseDateTime = lastReleaseDateTime
+          ),
+        )
+      )
+    )
+  }
 }
