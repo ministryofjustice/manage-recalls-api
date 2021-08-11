@@ -124,9 +124,9 @@ data class RecallResponse(
   val revocationOrderId: UUID? = null,
   val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null,
-  val recallEmailReceivedDateTime: ZonedDateTime? = null,
   val lastReleasePrison: String? = null,
-  val lastReleaseDateTime: ZonedDateTime? = null
+  val lastReleaseDateTime: ZonedDateTime? = null,
+  val recallEmailReceivedDateTime: ZonedDateTime? = null
 )
 
 data class ApiRecallDocument(
