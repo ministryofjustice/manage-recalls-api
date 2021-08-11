@@ -32,7 +32,9 @@ class UpdateRecallController(
           recallType = FIXED,
           agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation ?: it.agreeWithRecallRecommendation,
           recallLength = updateRecallRequest.recallLength ?: it.recallLength,
-          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime
+          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime,
+          lastReleasePrison = updateRecallRequest.lastReleasePrison ?: it.lastReleasePrison,
+          lastReleaseDateTime = updateRecallRequest.lastReleaseDateTime ?: it.lastReleaseDateTime
         )
       }.let(recallRepository::save).toResponse()
     )
@@ -41,6 +43,8 @@ class UpdateRecallController(
 data class UpdateRecallRequest(
   val recallLength: RecallLength? = null,
   val agreeWithRecallRecommendation: Boolean? = null,
+  val lastReleasePrison: String? = null,
+  val lastReleaseDateTime: ZonedDateTime? = null,
   val recallEmailReceivedDateTime: ZonedDateTime? = null
 )
 

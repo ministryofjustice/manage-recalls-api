@@ -46,9 +46,14 @@ data class Recall(
   @Column(name = "recall_length")
   val recallLength: RecallLength? = null,
 
-  @Column(name = "recall_email_received_datetime")
-  val recallEmailReceivedDateTime: ZonedDateTime? = null
+  @Column(name = "last_release_prison")
+  val lastReleasePrison: String? = null,
 
+  @Column(name = "last_release_date_time")
+  val lastReleaseDateTime: ZonedDateTime? = null,
+
+  @Column(name = "recall_email_received_datetime")
+  val recallEmailReceivedDateTime: ZonedDateTime? = null,
 ) {
   constructor(
     recallId: RecallId,
@@ -58,9 +63,11 @@ data class Recall(
     recallType: RecallType? = null,
     agreeWithRecallRecommendation: Boolean? = null,
     recallLength: RecallLength? = null,
+    lastReleasePrison: String? = null,
+    lastReleaseDateTime: ZonedDateTime? = null,
     recallEmailReceivedDateTime: ZonedDateTime? = null
   ) :
-    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength, recallEmailReceivedDateTime)
+    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength, lastReleasePrison, lastReleaseDateTime, recallEmailReceivedDateTime)
 
   fun recallId() = RecallId(id)
 }

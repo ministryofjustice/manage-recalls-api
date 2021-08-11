@@ -110,6 +110,8 @@ fun Recall.toResponse() = RecallResponse(
   revocationOrderId = this.revocationOrderDocS3Key,
   agreeWithRecallRecommendation = this.agreeWithRecallRecommendation,
   recallLength = this.recallLength,
+  lastReleasePrison = this.lastReleasePrison,
+  lastReleaseDateTime = this.lastReleaseDateTime,
   recallEmailReceivedDateTime = this.recallEmailReceivedDateTime
 )
 
@@ -122,6 +124,8 @@ data class RecallResponse(
   val revocationOrderId: UUID? = null,
   val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null,
+  val lastReleasePrison: String? = null,
+  val lastReleaseDateTime: ZonedDateTime? = null,
   val recallEmailReceivedDateTime: ZonedDateTime? = null
 )
 

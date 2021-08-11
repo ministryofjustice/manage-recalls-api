@@ -109,7 +109,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
-      maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, false, exampleDocuments(recallId))
+      maximalRecall(
+        recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
+      )
   }
 
   @State("a list of recalls exists")
@@ -128,7 +130,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists and can be updated`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
-    every { recallRepository.save(any()) } returns maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, true, exampleDocuments(recallId))
+    every { recallRepository.save(any()) } returns maximalRecall(
+      recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
+    )
   }
 
   @State("a recall does not exist")

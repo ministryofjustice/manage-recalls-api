@@ -30,6 +30,7 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.random.Random
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -105,6 +106,10 @@ abstract class IntegrationTestBase {
 
   protected fun randomString() = UUID.randomUUID().toString()
 
+  protected fun randomBoolean() = Random.nextBoolean()
+
+  protected fun dateTimeNow() = ZonedDateTime.now()
+
   protected fun randomAdultDateOfBirth(): LocalDate? {
     val age18 = LocalDate.now().minusYears(18)
     val endEpochDay = age18.toEpochDay()
@@ -118,17 +123,18 @@ abstract class IntegrationTestBase {
   fun maximalRecall(
     recallId: RecallId,
     nomsNumber: NomsNumber,
-    recallLength: RecallLength = RecallLength.FOURTEEN_DAYS,
-    agreeWithRecallRecommendation: Boolean = false,
+    recallLength: RecallLength = RecallLength.FOURTEEN_DAYS, // TODO AN: intending to remove this parameter also - in favour of a non-null default set below
     documents: Set<RecallDocument>
   ) = Recall(
     recallId, nomsNumber,
     revocationOrderDocS3Key = UUID.randomUUID(),
     documents = documents,
     recallType = RecallType.FIXED,
-    agreeWithRecallRecommendation = agreeWithRecallRecommendation,
+    agreeWithRecallRecommendation = randomBoolean(),
     recallLength = recallLength,
-    recallEmailReceivedDateTime = ZonedDateTime.now()
+    lastReleasePrison = randomString(),
+    lastReleaseDateTime = dateTimeNow(),
+    recallEmailReceivedDateTime = dateTimeNow()
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

@@ -17,6 +17,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.ZonedDateTime
+import java.util.UUID
+import kotlin.random.Random
 
 class UpdateRecallControllerTest {
   // TODO:  MD Investigate using in memory RecallRepository, might be much cleaner throughout
@@ -167,5 +169,34 @@ class UpdateRecallControllerTest {
     )
 
     assertThat(response, equalTo(ResponseEntity.ok(updatedRecall.toResponse())))
+  }
+
+  @Test
+  fun `can update recall with lastReleaseDateTime and lastReleasePrison without changing other properties, for example agreeWithRecallRecommendation`() {
+    val recallId = ::RecallId.random()
+    val agreeWithRecallRecommendation = Random.nextBoolean()
+    val priorRecall = Recall(recallId, nomsNumber, recallLength = FOURTEEN_DAYS, agreeWithRecallRecommendation = agreeWithRecallRecommendation)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+    val lastReleaseDateTime = ZonedDateTime.now()
+    val lastReleasePrison = UUID.randomUUID().toString()
+    val updatedRecall = priorRecall.copy(recallType = FIXED, lastReleasePrison = lastReleasePrison, lastReleaseDateTime = lastReleaseDateTime)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = underTest.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = lastReleasePrison, lastReleaseDateTime = lastReleaseDateTime))
+
+    assertThat(
+      response,
+      equalTo(
+        ResponseEntity.ok(
+          RecallResponse(
+            recallId, nomsNumber, emptyList(),
+            agreeWithRecallRecommendation = agreeWithRecallRecommendation,
+            recallLength = FOURTEEN_DAYS,
+            lastReleasePrison = lastReleasePrison,
+            lastReleaseDateTime = lastReleaseDateTime
+          ),
+        )
+      )
+    )
   }
 }
