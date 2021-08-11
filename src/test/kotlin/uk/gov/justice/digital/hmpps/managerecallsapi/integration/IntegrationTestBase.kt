@@ -135,7 +135,7 @@ abstract class IntegrationTestBase {
     lastReleasePrison = randomString(),
     lastReleaseDateTime = dateTimeNow(),
     recallEmailReceivedDateTime = dateTimeNow(),
-    localPoliceService = "London"
+    localPoliceService = randomString()
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

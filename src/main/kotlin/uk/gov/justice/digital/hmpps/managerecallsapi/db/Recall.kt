@@ -72,7 +72,19 @@ data class Recall(
     recallEmailReceivedDateTime: ZonedDateTime? = null,
     localPoliceService: String? = null
   ) :
-    this(recallId.value, nomsNumber, revocationOrderDocS3Key, documents, recallType, agreeWithRecallRecommendation, recallLength, lastReleasePrison, lastReleaseDateTime, recallEmailReceivedDateTime, localPoliceService)
+    this(
+      recallId.value,
+      nomsNumber,
+      revocationOrderDocS3Key,
+      documents,
+      recallType,
+      agreeWithRecallRecommendation,
+      recallLength,
+      lastReleasePrison,
+      lastReleaseDateTime,
+      recallEmailReceivedDateTime,
+      localPoliceService
+    )
 
   fun recallId() = RecallId(id)
 }

@@ -64,6 +64,8 @@ class RecallRepositoryIntegrationTest(
       recallLength = TWENTY_EIGHT_DAYS,
       agreeWithRecallRecommendation = true,
       recallEmailReceivedDateTime = ZonedDateTime.now(),
+      lastReleasePrison = "A Prison",
+      lastReleaseDateTime = ZonedDateTime.now(),
       localPoliceService = "London"
     )
     repository.save(recallToUpdate)
