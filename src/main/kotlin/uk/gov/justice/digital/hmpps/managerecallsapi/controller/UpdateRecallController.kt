@@ -34,7 +34,8 @@ class UpdateRecallController(
           recallLength = updateRecallRequest.recallLength ?: it.recallLength,
           recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime,
           lastReleasePrison = updateRecallRequest.lastReleasePrison ?: it.lastReleasePrison,
-          lastReleaseDateTime = updateRecallRequest.lastReleaseDateTime ?: it.lastReleaseDateTime
+          lastReleaseDateTime = updateRecallRequest.lastReleaseDateTime ?: it.lastReleaseDateTime,
+          localPoliceService = updateRecallRequest.localPoliceService ?: it.localPoliceService
         )
       }.let(recallRepository::save).toResponse()
     )
@@ -45,7 +46,8 @@ data class UpdateRecallRequest(
   val agreeWithRecallRecommendation: Boolean? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDateTime: ZonedDateTime? = null,
-  val recallEmailReceivedDateTime: ZonedDateTime? = null
+  val recallEmailReceivedDateTime: ZonedDateTime? = null,
+  val localPoliceService: String? = null
 )
 
 enum class RecallLength {

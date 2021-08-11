@@ -112,7 +112,8 @@ fun Recall.toResponse() = RecallResponse(
   recallLength = this.recallLength,
   lastReleasePrison = this.lastReleasePrison,
   lastReleaseDateTime = this.lastReleaseDateTime,
-  recallEmailReceivedDateTime = this.recallEmailReceivedDateTime
+  recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
+  localPoliceService = this.localPoliceService
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -126,7 +127,8 @@ data class RecallResponse(
   val recallLength: RecallLength? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDateTime: ZonedDateTime? = null,
-  val recallEmailReceivedDateTime: ZonedDateTime? = null
+  val recallEmailReceivedDateTime: ZonedDateTime? = null,
+  val localPoliceService: String? = null
 )
 
 data class ApiRecallDocument(

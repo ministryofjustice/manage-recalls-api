@@ -100,6 +100,32 @@ class UpdateRecallControllerTest {
   }
 
   @Test
+  fun `can update recall with localPoliceService without changing other properties`() {
+    val recallId = ::RecallId.random()
+    val priorRecall = Recall(recallId, nomsNumber, recallLength = FOURTEEN_DAYS, agreeWithRecallRecommendation = false)
+    every { recallRepository.getByRecallId(recallId) } returns priorRecall
+    val localPoliceService = "London"
+    val updatedRecall = priorRecall.copy(recallType = FIXED, localPoliceService = localPoliceService)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = underTest.updateRecall(recallId, UpdateRecallRequest(localPoliceService = localPoliceService))
+
+    assertThat(
+      response,
+      equalTo(
+        ResponseEntity.ok(
+          RecallResponse(
+            recallId, nomsNumber, emptyList(),
+            agreeWithRecallRecommendation = false,
+            recallLength = FOURTEEN_DAYS,
+            localPoliceService = localPoliceService
+          ),
+        )
+      )
+    )
+  }
+
+  @Test
   fun `can update recall with all update payload properties simultaneously`() {
     val recallId = ::RecallId.random()
     val priorRecall = Recall(recallId, nomsNumber)
