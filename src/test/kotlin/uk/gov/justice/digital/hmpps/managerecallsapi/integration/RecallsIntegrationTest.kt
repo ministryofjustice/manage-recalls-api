@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
 
@@ -50,6 +51,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   private val fileBytes = "content".toByteArray()
   private val fileContent = Base64.getEncoder().encodeToString(fileBytes)
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
+  private val recallLastReleaseDateTime = ZonedDateTime.now()
   private val addDocumentRequest = AddDocumentRequest(
     category = category.toString(),
     fileContent = fileContent
@@ -106,7 +108,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `gets a maximal recall`() {
 
-    every { recallRepository.getByRecallId(recallId) } returns maximalRecall(recallId, nomsNumber, documents = exampleDocuments(recallId))
+    every { recallRepository.getByRecallId(recallId) } returns maximalRecall(recallId, nomsNumber, lastReleasePrison = "prison", lastReleaseDateTime = recallLastReleaseDateTime, documents = exampleDocuments(recallId))
 
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
@@ -121,6 +123,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.revocationOrderId").isNotEmpty()
       .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
       .jsonPath("$.agreeWithRecallRecommendation").isEqualTo("false")
+      .jsonPath("$.lastReleasePrison").isEqualTo("prison")
       .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty()
   }
 

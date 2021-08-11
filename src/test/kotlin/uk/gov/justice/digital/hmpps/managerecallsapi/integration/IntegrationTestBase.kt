@@ -120,6 +120,8 @@ abstract class IntegrationTestBase {
     nomsNumber: NomsNumber,
     recallLength: RecallLength = RecallLength.FOURTEEN_DAYS,
     agreeWithRecallRecommendation: Boolean = false,
+    lastReleasePrison: String,
+    lastReleaseDateTime: ZonedDateTime,
     documents: Set<RecallDocument>
   ) = Recall(
     recallId, nomsNumber,
@@ -128,6 +130,8 @@ abstract class IntegrationTestBase {
     recallType = RecallType.FIXED,
     agreeWithRecallRecommendation = agreeWithRecallRecommendation,
     recallLength = recallLength,
+    lastReleasePrison = "prison",
+    lastReleaseDateTime = ZonedDateTime.now(),
     recallEmailReceivedDateTime = ZonedDateTime.now()
   )
 

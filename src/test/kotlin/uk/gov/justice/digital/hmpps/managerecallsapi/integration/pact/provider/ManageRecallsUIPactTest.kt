@@ -34,6 +34,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentServi
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
 import javax.persistence.EntityNotFoundException
@@ -109,7 +110,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
-      maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, false, exampleDocuments(recallId))
+      maximalRecall(
+        recallId, nomsNumber, TWENTY_EIGHT_DAYS, false, "prison",
+        ZonedDateTime.now(), exampleDocuments(recallId)
+      )
   }
 
   @State("a list of recalls exists")
@@ -128,7 +132,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists and can be updated`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
-    every { recallRepository.save(any()) } returns maximalRecall(recallId, nomsNumber, TWENTY_EIGHT_DAYS, true, exampleDocuments(recallId))
+    every { recallRepository.save(any()) } returns maximalRecall(
+      recallId, nomsNumber, TWENTY_EIGHT_DAYS, true, "prison",
+      ZonedDateTime.now(), exampleDocuments(recallId)
+    )
   }
 
   @State("a recall does not exist")
