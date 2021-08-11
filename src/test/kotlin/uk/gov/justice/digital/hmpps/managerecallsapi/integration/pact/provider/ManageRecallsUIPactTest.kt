@@ -34,7 +34,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentServi
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
-import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
 import javax.persistence.EntityNotFoundException
@@ -111,8 +110,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
       maximalRecall(
-        recallId, nomsNumber, TWENTY_EIGHT_DAYS, false, "prison",
-        ZonedDateTime.now(), exampleDocuments(recallId)
+        recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
       )
   }
 
@@ -133,8 +131,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
     every { recallRepository.save(any()) } returns maximalRecall(
-      recallId, nomsNumber, TWENTY_EIGHT_DAYS, true, "prison",
-      ZonedDateTime.now(), exampleDocuments(recallId)
+      recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
     )
   }
 

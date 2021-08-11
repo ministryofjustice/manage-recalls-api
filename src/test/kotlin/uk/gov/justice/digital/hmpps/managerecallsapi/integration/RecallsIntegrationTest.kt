@@ -108,7 +108,15 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `gets a maximal recall`() {
 
-    every { recallRepository.getByRecallId(recallId) } returns maximalRecall(recallId, nomsNumber, lastReleasePrison = "prison", lastReleaseDateTime = recallLastReleaseDateTime, documents = exampleDocuments(recallId))
+    val recall = maximalRecall(
+      recallId,
+      nomsNumber,
+      documents = exampleDocuments(recallId)
+    )
+    every { recallRepository.getByRecallId(recallId) } returns recall
+
+    val prison = recall.lastReleasePrison
+    val agree = recall.agreeWithRecallRecommendation
 
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
@@ -122,8 +130,8 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.recallType").doesNotExist() // persisted on updated but not yet returned
       .jsonPath("$.revocationOrderId").isNotEmpty()
       .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
-      .jsonPath("$.agreeWithRecallRecommendation").isEqualTo("false")
-      .jsonPath("$.lastReleasePrison").isEqualTo("prison")
+      .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(agree)
+      .jsonPath("$.lastReleasePrison").isEqualTo(prison)
       .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty()
   }
 
