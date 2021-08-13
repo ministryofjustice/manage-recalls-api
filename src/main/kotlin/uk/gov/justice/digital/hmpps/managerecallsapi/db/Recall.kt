@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -56,7 +57,17 @@ data class Recall(
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
 
   @Column(name = "local_police_service")
-  val localPoliceService: String? = null
+  val localPoliceService: String? = null,
+
+  @Column(name = "contraband")
+  val contrabandDetail: String? = null,
+
+  @Column(name = "vulnerability_diversity")
+  val vulnerabilityDiversityDetail: String? = null,
+
+  @Enumerated(STRING)
+  @Column(name = "mappa_level")
+  val mappaLevel: MappaLevel? = null,
 
 ) {
   constructor(
@@ -70,7 +81,10 @@ data class Recall(
     lastReleasePrison: String? = null,
     lastReleaseDateTime: ZonedDateTime? = null,
     recallEmailReceivedDateTime: ZonedDateTime? = null,
-    localPoliceService: String? = null
+    localPoliceService: String? = null,
+    contraband: String? = null,
+    vulnerabilityDiversity: String? = null,
+    mappaLevel: MappaLevel? = null,
   ) :
     this(
       recallId.value,
@@ -83,7 +97,10 @@ data class Recall(
       lastReleasePrison,
       lastReleaseDateTime,
       recallEmailReceivedDateTime,
-      localPoliceService
+      localPoliceService,
+      contraband,
+      vulnerabilityDiversity,
+      mappaLevel
     )
 
   fun recallId() = RecallId(id)
