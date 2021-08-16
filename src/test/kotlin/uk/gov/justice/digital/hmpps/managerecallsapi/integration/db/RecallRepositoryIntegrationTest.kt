@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -66,7 +67,7 @@ class RecallRepositoryIntegrationTest(
       agreeWithRecallRecommendation = true,
       recallEmailReceivedDateTime = ZonedDateTime.now(),
       lastReleasePrison = "A Prison",
-      lastReleaseDateTime = ZonedDateTime.now(),
+      lastReleaseDate = LocalDate.now(),
       localPoliceService = "London",
       contrabandDetail = "i am worried...",
       vulnerabilityDiversityDetail = "has the following needs",

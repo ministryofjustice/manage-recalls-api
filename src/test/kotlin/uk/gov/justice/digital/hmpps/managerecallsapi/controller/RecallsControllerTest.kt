@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFo
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
@@ -77,7 +79,7 @@ class RecallsControllerTest {
       category = RecallDocumentCategory.PART_A_RECALL_REPORT
     )
     val recallEmailReceivedDateTime = ZonedDateTime.now()
-    val lastReleaseDateTime = ZonedDateTime.now()
+    val lastReleaseDate = LocalDate.now()
     val recall = Recall(
       recallId = recallId,
       nomsNumber = nomsNumber,
@@ -85,7 +87,7 @@ class RecallsControllerTest {
       documents = setOf(document),
       agreeWithRecallRecommendation = true,
       lastReleasePrison = "prison",
-      lastReleaseDateTime = lastReleaseDateTime,
+      lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -104,7 +106,8 @@ class RecallsControllerTest {
       revocationOrderId = revocationOrderDocS3Key,
       agreeWithRecallRecommendation = true,
       lastReleasePrison = "prison",
-      lastReleaseDateTime = lastReleaseDateTime,
+      lastReleaseDate = lastReleaseDate,
+      lastReleaseDateTime = lastReleaseDate.atStartOfDay(ZoneId.systemDefault()),
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
     assertThat(result, equalTo(expected))

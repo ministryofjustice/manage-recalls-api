@@ -134,7 +134,7 @@ abstract class IntegrationTestBase {
     agreeWithRecallRecommendation = randomBoolean(),
     recallLength = recallLength,
     lastReleasePrison = randomString(),
-    lastReleaseDateTime = dateTimeNow(),
+    lastReleaseDate = LocalDate.now(),
     recallEmailReceivedDateTime = dateTimeNow(),
     localPoliceService = randomString(),
     contraband = randomString(),
