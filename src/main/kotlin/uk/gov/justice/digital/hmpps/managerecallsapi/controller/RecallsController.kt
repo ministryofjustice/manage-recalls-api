@@ -25,6 +25,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentServi
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.net.URI
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
@@ -111,7 +113,8 @@ fun Recall.toResponse() = RecallResponse(
   agreeWithRecallRecommendation = this.agreeWithRecallRecommendation,
   recallLength = this.recallLength,
   lastReleasePrison = this.lastReleasePrison,
-  lastReleaseDateTime = this.lastReleaseDateTime,
+  lastReleaseDate = this.lastReleaseDate,
+  lastReleaseDateTime = this.lastReleaseDate?.atStartOfDay(ZoneId.systemDefault()),
   recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
   localPoliceService = this.localPoliceService,
   vulnerabilityDiversityDetail = this.vulnerabilityDiversityDetail,
@@ -129,6 +132,7 @@ data class RecallResponse(
   val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null,
   val lastReleasePrison: String? = null,
+  val lastReleaseDate: LocalDate? = null,
   val lastReleaseDateTime: ZonedDateTime? = null,
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
   val localPoliceService: String? = null,

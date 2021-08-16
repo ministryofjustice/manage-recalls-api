@@ -16,6 +16,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
 import kotlin.random.Random
@@ -198,17 +200,17 @@ class UpdateRecallControllerTest {
   }
 
   @Test
-  fun `can update recall with lastReleaseDateTime and lastReleasePrison without changing other properties, for example agreeWithRecallRecommendation`() {
+  fun `can update recall with lastReleaseDate and lastReleasePrison without changing other properties, for example agreeWithRecallRecommendation`() {
     val recallId = ::RecallId.random()
     val agreeWithRecallRecommendation = Random.nextBoolean()
     val priorRecall = Recall(recallId, nomsNumber, recallLength = FOURTEEN_DAYS, agreeWithRecallRecommendation = agreeWithRecallRecommendation)
     every { recallRepository.getByRecallId(recallId) } returns priorRecall
-    val lastReleaseDateTime = ZonedDateTime.now()
+    val lastReleaseDate = LocalDate.now()
     val lastReleasePrison = UUID.randomUUID().toString()
-    val updatedRecall = priorRecall.copy(recallType = FIXED, lastReleasePrison = lastReleasePrison, lastReleaseDateTime = lastReleaseDateTime)
+    val updatedRecall = priorRecall.copy(recallType = FIXED, lastReleasePrison = lastReleasePrison, lastReleaseDate = lastReleaseDate)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
-    val response = underTest.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = lastReleasePrison, lastReleaseDateTime = lastReleaseDateTime))
+    val response = underTest.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = lastReleasePrison, lastReleaseDate = lastReleaseDate))
 
     assertThat(
       response,
@@ -219,7 +221,8 @@ class UpdateRecallControllerTest {
             agreeWithRecallRecommendation = agreeWithRecallRecommendation,
             recallLength = FOURTEEN_DAYS,
             lastReleasePrison = lastReleasePrison,
-            lastReleaseDateTime = lastReleaseDateTime
+            lastReleaseDate = lastReleaseDate,
+            lastReleaseDateTime = lastReleaseDate.atStartOfDay(ZoneId.systemDefault())
           ),
         )
       )

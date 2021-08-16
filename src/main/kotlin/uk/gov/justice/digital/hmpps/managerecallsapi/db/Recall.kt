@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.persistence.AttributeConverter
@@ -50,10 +51,10 @@ data class Recall(
   @Column(name = "last_release_prison")
   val lastReleasePrison: String? = null,
 
-  @Column(name = "last_release_date_time")
-  val lastReleaseDateTime: ZonedDateTime? = null,
+  @Column(name = "last_release_date")
+  val lastReleaseDate: LocalDate? = null,
 
-  @Column(name = "recall_email_received_datetime")
+  @Column(name = "recall_email_received_date_time")
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
 
   @Column(name = "local_police_service")
@@ -79,7 +80,7 @@ data class Recall(
     agreeWithRecallRecommendation: Boolean? = null,
     recallLength: RecallLength? = null,
     lastReleasePrison: String? = null,
-    lastReleaseDateTime: ZonedDateTime? = null,
+    lastReleaseDate: LocalDate? = null,
     recallEmailReceivedDateTime: ZonedDateTime? = null,
     localPoliceService: String? = null,
     contraband: String? = null,
@@ -95,7 +96,7 @@ data class Recall(
       agreeWithRecallRecommendation,
       recallLength,
       lastReleasePrison,
-      lastReleaseDateTime,
+      lastReleaseDate,
       recallEmailReceivedDateTime,
       localPoliceService,
       contraband,
