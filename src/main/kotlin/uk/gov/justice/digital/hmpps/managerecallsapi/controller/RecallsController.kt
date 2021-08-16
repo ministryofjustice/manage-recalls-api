@@ -113,7 +113,10 @@ fun Recall.toResponse() = RecallResponse(
   lastReleasePrison = this.lastReleasePrison,
   lastReleaseDateTime = this.lastReleaseDateTime,
   recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
-  localPoliceService = this.localPoliceService
+  localPoliceService = this.localPoliceService,
+  vulnerabilityDiversityDetail = this.vulnerabilityDiversityDetail,
+  contrabandDetail = this.contrabandDetail,
+  mappaLevel = this.mappaLevel
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -128,7 +131,10 @@ data class RecallResponse(
   val lastReleasePrison: String? = null,
   val lastReleaseDateTime: ZonedDateTime? = null,
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
-  val localPoliceService: String? = null
+  val localPoliceService: String? = null,
+  val vulnerabilityDiversityDetail: String? = null,
+  val contrabandDetail: String? = null,
+  val mappaLevel: MappaLevel? = null
 )
 
 data class ApiRecallDocument(

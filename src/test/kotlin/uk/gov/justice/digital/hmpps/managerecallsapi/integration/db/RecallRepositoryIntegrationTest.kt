@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -66,7 +67,10 @@ class RecallRepositoryIntegrationTest(
       recallEmailReceivedDateTime = ZonedDateTime.now(),
       lastReleasePrison = "A Prison",
       lastReleaseDateTime = ZonedDateTime.now(),
-      localPoliceService = "London"
+      localPoliceService = "London",
+      contrabandDetail = "i am worried...",
+      vulnerabilityDiversityDetail = "has the following needs",
+      mappaLevel = MappaLevel.NOT_KNOWN
     )
     repository.save(recallToUpdate)
 

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -106,9 +107,9 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `gets a maximal recall`() {
+  fun `gets a fully populated recall`() {
 
-    val recall = maximalRecall(
+    val recall = recallWithPopulatedFields(
       recallId,
       nomsNumber,
       documents = exampleDocuments(recallId)
@@ -135,6 +136,9 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.lastReleasePrison").isEqualTo(prison)
       .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty()
       .jsonPath("$.localPoliceService").isEqualTo(policeService)
+      .jsonPath("$.contrabandDetail").isNotEmpty
+      .jsonPath("$.vulnerabilityDiversityDetail").isNotEmpty
+      .jsonPath("$.mappaLevel").isEqualTo(MappaLevel.NA.name)
   }
 
   @Test

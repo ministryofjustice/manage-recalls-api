@@ -35,7 +35,10 @@ class UpdateRecallController(
           recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime,
           lastReleasePrison = updateRecallRequest.lastReleasePrison ?: it.lastReleasePrison,
           lastReleaseDateTime = updateRecallRequest.lastReleaseDateTime ?: it.lastReleaseDateTime,
-          localPoliceService = updateRecallRequest.localPoliceService ?: it.localPoliceService
+          localPoliceService = updateRecallRequest.localPoliceService ?: it.localPoliceService,
+          contrabandDetail = updateRecallRequest.contrabandDetail ?: it.contrabandDetail,
+          vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: it.vulnerabilityDiversityDetail,
+          mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel
         )
       }.let(recallRepository::save).toResponse()
     )
@@ -47,12 +50,24 @@ data class UpdateRecallRequest(
   val lastReleasePrison: String? = null,
   val lastReleaseDateTime: ZonedDateTime? = null,
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
-  val localPoliceService: String? = null
+  val localPoliceService: String? = null,
+  val contrabandDetail: String? = null,
+  val vulnerabilityDiversityDetail: String? = null,
+  val mappaLevel: MappaLevel? = null
 )
 
 enum class RecallLength {
   FOURTEEN_DAYS,
   TWENTY_EIGHT_DAYS
+}
+
+enum class MappaLevel {
+  NA,
+  LEVEL_1,
+  LEVEL_2,
+  LEVEL_3,
+  NOT_KNOWN,
+  CONFIRMATION_REQUIRED
 }
 
 enum class RecallType {

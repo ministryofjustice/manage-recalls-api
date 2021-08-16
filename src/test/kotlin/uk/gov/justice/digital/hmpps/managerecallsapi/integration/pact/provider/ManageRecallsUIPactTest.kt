@@ -109,7 +109,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
-      maximalRecall(
+      recallWithPopulatedFields(
         recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
       )
   }
@@ -130,7 +130,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists and can be updated`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
-    every { recallRepository.save(any()) } returns maximalRecall(
+    every { recallRepository.save(any()) } returns recallWithPopulatedFields(
       recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
     )
   }

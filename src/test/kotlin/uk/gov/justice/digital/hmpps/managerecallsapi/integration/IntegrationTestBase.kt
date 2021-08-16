@@ -15,6 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -120,7 +121,7 @@ abstract class IntegrationTestBase {
 
   fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId, nomsNumber)
 
-  fun maximalRecall(
+  fun recallWithPopulatedFields(
     recallId: RecallId,
     nomsNumber: NomsNumber,
     recallLength: RecallLength = RecallLength.FOURTEEN_DAYS, // TODO AN: intending to remove this parameter also - in favour of a non-null default set below
@@ -135,7 +136,10 @@ abstract class IntegrationTestBase {
     lastReleasePrison = randomString(),
     lastReleaseDateTime = dateTimeNow(),
     recallEmailReceivedDateTime = dateTimeNow(),
-    localPoliceService = randomString()
+    localPoliceService = randomString(),
+    contraband = randomString(),
+    vulnerabilityDiversity = randomString(),
+    mappaLevel = MappaLevel.NA
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
