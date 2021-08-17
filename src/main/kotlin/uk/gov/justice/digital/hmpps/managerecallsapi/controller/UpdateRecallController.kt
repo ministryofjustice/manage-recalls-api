@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -32,33 +33,35 @@ class UpdateRecallController(
       recallRepository.getByRecallId(recallId).let {
         it.copy(
           recallType = FIXED,
-          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation
-            ?: it.agreeWithRecallRecommendation,
+          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation ?: it.agreeWithRecallRecommendation,
           recallLength = updateRecallRequest.recallLength ?: it.recallLength,
-          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime
-            ?: it.recallEmailReceivedDateTime,
+          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime,
           lastReleasePrison = updateRecallRequest.lastReleasePrison ?: it.lastReleasePrison,
-          lastReleaseDate = getLastReleaseDate(updateRecallRequest, it),
+          lastReleaseDate = updateRecallRequest.lastReleaseDate ?: it.lastReleaseDate,
           localPoliceService = updateRecallRequest.localPoliceService ?: it.localPoliceService,
           contrabandDetail = updateRecallRequest.contrabandDetail ?: it.contrabandDetail,
-          vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail
-            ?: it.vulnerabilityDiversityDetail,
-          mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel
+          vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: it.vulnerabilityDiversityDetail,
+          mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel,
+          sentencingInfo = updateRecallRequest.getSentencingInfo(it)
         )
       }.let(recallRepository::save).toResponse()
     )
 
-  private fun getLastReleaseDate(
-    updateRecallRequest: UpdateRecallRequest,
-    it: Recall
-  ): LocalDate? {
-    return updateRecallRequest.lastReleaseDate
-      ?: if (updateRecallRequest.lastReleaseDateTime != null) {
-        updateRecallRequest.lastReleaseDateTime.toLocalDate()
-      } else {
-        it.lastReleaseDate
-      }
-  }
+  private fun UpdateRecallRequest.getSentencingInfo(
+    existingRecall: Recall
+  ) = if (sentenceDate != null &&
+    licenceExpiryDate != null &&
+    sentenceExpiryDate != null &&
+    sentencingCourt != null &&
+    indexOffence != null
+  ) SentencingInfo(
+    sentenceDate,
+    licenceExpiryDate,
+    sentenceExpiryDate,
+    sentencingCourt,
+    indexOffence,
+    conditionalReleaseDate
+  ) else existingRecall.sentencingInfo
 }
 
 data class UpdateRecallRequest(
@@ -66,12 +69,18 @@ data class UpdateRecallRequest(
   val agreeWithRecallRecommendation: Boolean? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
-  val lastReleaseDateTime: ZonedDateTime? = null,
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
   val localPoliceService: String? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversityDetail: String? = null,
-  val mappaLevel: MappaLevel? = null
+  val mappaLevel: MappaLevel? = null,
+  // sentencing info
+  val sentenceDate: LocalDate? = null,
+  val licenceExpiryDate: LocalDate? = null,
+  val sentenceExpiryDate: LocalDate? = null,
+  val sentencingCourt: String? = null,
+  val indexOffence: String? = null,
+  val conditionalReleaseDate: LocalDate? = null,
 )
 
 enum class RecallLength {

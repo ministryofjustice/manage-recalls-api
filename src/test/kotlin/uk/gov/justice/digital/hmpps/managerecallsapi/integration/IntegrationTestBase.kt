@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
@@ -128,7 +129,7 @@ abstract class IntegrationTestBase {
     documents: Set<RecallDocument>
   ) = Recall(
     recallId, nomsNumber,
-    revocationOrderDocS3Key = UUID.randomUUID(),
+    revocationOrderId = UUID.randomUUID(),
     documents = documents,
     recallType = RecallType.FIXED,
     agreeWithRecallRecommendation = randomBoolean(),
@@ -139,7 +140,15 @@ abstract class IntegrationTestBase {
     localPoliceService = randomString(),
     contraband = randomString(),
     vulnerabilityDiversity = randomString(),
-    mappaLevel = MappaLevel.NA
+    mappaLevel = MappaLevel.NA,
+    sentencingInfo = SentencingInfo(
+      LocalDate.now(),
+      LocalDate.now(),
+      LocalDate.now(),
+      randomString(),
+      randomString(),
+      LocalDate.now()
+    )
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

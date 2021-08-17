@@ -15,7 +15,7 @@ class ThymeleafConfig {
     templateResolver.prefix = "templates/"
     templateResolver.isCacheable = false
     templateResolver.suffix = ".html"
-    templateResolver.setTemplateMode("HTML5")
+    templateResolver.setTemplateMode("HTML")
 
     templateEngine.setTemplateResolver(templateResolver)
     return templateEngine

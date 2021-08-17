@@ -12,6 +12,8 @@ import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType.ALL
 import javax.persistence.Column
 import javax.persistence.Convert
+import javax.persistence.Embeddable
+import javax.persistence.Embedded
 import javax.persistence.Entity
 import javax.persistence.EnumType.STRING
 import javax.persistence.Enumerated
@@ -26,55 +28,47 @@ data class Recall(
   @Id
   val id: UUID,
 
-  @Column(name = "noms_number", nullable = false)
+  @Column(nullable = false)
   @Convert(converter = NomsNumberJpaConverter::class)
   val nomsNumber: NomsNumber,
 
-  @Column(name = "revocation_order_doc_s3_key")
-  val revocationOrderDocS3Key: UUID? = null,
+  val revocationOrderId: UUID? = null,
 
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val documents: Set<RecallDocument> = emptySet(),
 
   @Enumerated(STRING)
-  @Column(name = "recall_type")
   val recallType: RecallType? = null,
 
-  @Column(name = "agree_with_recall_recommendation")
   val agreeWithRecallRecommendation: Boolean? = null,
 
   @Enumerated(STRING)
-  @Column(name = "recall_length")
   val recallLength: RecallLength? = null,
 
-  @Column(name = "last_release_prison")
   val lastReleasePrison: String? = null,
 
-  @Column(name = "last_release_date")
   val lastReleaseDate: LocalDate? = null,
 
-  @Column(name = "recall_email_received_date_time")
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
 
-  @Column(name = "local_police_service")
   val localPoliceService: String? = null,
 
-  @Column(name = "contraband")
   val contrabandDetail: String? = null,
 
-  @Column(name = "vulnerability_diversity")
   val vulnerabilityDiversityDetail: String? = null,
 
   @Enumerated(STRING)
-  @Column(name = "mappa_level")
   val mappaLevel: MappaLevel? = null,
+
+  @Embedded
+  val sentencingInfo: SentencingInfo? = null,
 
 ) {
   constructor(
     recallId: RecallId,
     nomsNumber: NomsNumber,
-    revocationOrderDocS3Key: UUID? = null,
+    revocationOrderId: UUID? = null,
     documents: Set<RecallDocument> = emptySet(),
     recallType: RecallType? = null,
     agreeWithRecallRecommendation: Boolean? = null,
@@ -86,11 +80,12 @@ data class Recall(
     contraband: String? = null,
     vulnerabilityDiversity: String? = null,
     mappaLevel: MappaLevel? = null,
+    sentencingInfo: SentencingInfo? = null,
   ) :
     this(
       recallId.value,
       nomsNumber,
-      revocationOrderDocS3Key,
+      revocationOrderId,
       documents,
       recallType,
       agreeWithRecallRecommendation,
@@ -101,7 +96,8 @@ data class Recall(
       localPoliceService,
       contraband,
       vulnerabilityDiversity,
-      mappaLevel
+      mappaLevel,
+      sentencingInfo
     )
 
   fun recallId() = RecallId(id)
@@ -115,3 +111,13 @@ abstract class CustomJpaConverter<IN, OUT>(private val toDbFn: (IN) -> OUT, priv
 
   override fun convertToEntityAttribute(value: OUT): IN = fromDbFn(value)
 }
+
+@Embeddable
+data class SentencingInfo(
+  val sentenceDate: LocalDate,
+  val licenceExpiryDate: LocalDate,
+  val sentenceExpiryDate: LocalDate,
+  val sentencingCourt: String,
+  val indexOffence: String,
+  val conditionalReleaseDate: LocalDate? = null,
+)

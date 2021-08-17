@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentServi
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
@@ -41,7 +40,7 @@ class RecallsControllerTest {
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
-  private val revocationOrderDocS3Key = UUID.randomUUID()
+  private val revocationOrderId = UUID.randomUUID()
   private val recallRequest = BookRecallRequest(nomsNumber)
 
   @Test
@@ -83,7 +82,7 @@ class RecallsControllerTest {
     val recall = Recall(
       recallId = recallId,
       nomsNumber = nomsNumber,
-      revocationOrderDocS3Key = revocationOrderDocS3Key,
+      revocationOrderId = revocationOrderId,
       documents = setOf(document),
       agreeWithRecallRecommendation = true,
       lastReleasePrison = "prison",
@@ -103,11 +102,10 @@ class RecallsControllerTest {
           category = document.category
         )
       ),
-      revocationOrderId = revocationOrderDocS3Key,
+      revocationOrderId = revocationOrderId,
       agreeWithRecallRecommendation = true,
       lastReleasePrison = "prison",
       lastReleaseDate = lastReleaseDate,
-      lastReleaseDateTime = lastReleaseDate.atStartOfDay(ZoneId.systemDefault()),
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
     assertThat(result, equalTo(expected))

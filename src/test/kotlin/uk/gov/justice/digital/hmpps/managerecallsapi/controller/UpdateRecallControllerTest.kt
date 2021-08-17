@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.UUID
 import kotlin.random.Random
@@ -222,7 +221,6 @@ class UpdateRecallControllerTest {
             recallLength = FOURTEEN_DAYS,
             lastReleasePrison = lastReleasePrison,
             lastReleaseDate = lastReleaseDate,
-            lastReleaseDateTime = lastReleaseDate.atStartOfDay(ZoneId.systemDefault())
           ),
         )
       )

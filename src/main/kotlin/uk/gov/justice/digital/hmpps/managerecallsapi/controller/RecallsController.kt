@@ -26,7 +26,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundExcep
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.net.URI
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
@@ -109,17 +108,22 @@ fun Recall.toResponse() = RecallResponse(
   recallId = this.recallId(),
   nomsNumber = this.nomsNumber,
   documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category) },
-  revocationOrderId = this.revocationOrderDocS3Key,
+  revocationOrderId = this.revocationOrderId,
   agreeWithRecallRecommendation = this.agreeWithRecallRecommendation,
   recallLength = this.recallLength,
   lastReleasePrison = this.lastReleasePrison,
   lastReleaseDate = this.lastReleaseDate,
-  lastReleaseDateTime = this.lastReleaseDate?.atStartOfDay(ZoneId.systemDefault()),
   recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
   localPoliceService = this.localPoliceService,
   vulnerabilityDiversityDetail = this.vulnerabilityDiversityDetail,
   contrabandDetail = this.contrabandDetail,
-  mappaLevel = this.mappaLevel
+  mappaLevel = this.mappaLevel,
+  sentenceDate = this.sentencingInfo?.sentenceDate,
+  licenceExpiryDate = this.sentencingInfo?.licenceExpiryDate,
+  sentenceExpiryDate = this.sentencingInfo?.sentenceExpiryDate,
+  sentencingCourt = this.sentencingInfo?.sentencingCourt,
+  indexOffence = this.sentencingInfo?.indexOffence,
+  conditionalReleaseDate = this.sentencingInfo?.conditionalReleaseDate,
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -133,12 +137,17 @@ data class RecallResponse(
   val recallLength: RecallLength? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
-  val lastReleaseDateTime: ZonedDateTime? = null,
   val recallEmailReceivedDateTime: ZonedDateTime? = null,
   val localPoliceService: String? = null,
   val vulnerabilityDiversityDetail: String? = null,
   val contrabandDetail: String? = null,
-  val mappaLevel: MappaLevel? = null
+  val mappaLevel: MappaLevel? = null,
+  val sentenceDate: LocalDate? = null,
+  val licenceExpiryDate: LocalDate? = null,
+  val sentenceExpiryDate: LocalDate? = null,
+  val sentencingCourt: String? = null,
+  val indexOffence: String? = null,
+  val conditionalReleaseDate: LocalDate? = null,
 )
 
 data class ApiRecallDocument(

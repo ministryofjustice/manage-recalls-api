@@ -30,7 +30,7 @@ class RevocationOrderService(
 
   fun getRevocationOrder(recallId: RecallId): Mono<ByteArray> {
     val recall = recallRepository.getByRecallId(recallId)
-    if (recall.revocationOrderDocS3Key == null) {
+    if (recall.revocationOrderId == null) {
       return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
         .flatMap { prisoners ->
           val firstPrisoner = prisoners.first()
@@ -52,12 +52,12 @@ class RevocationOrderService(
 
           pdfDocumentGenerator.makePdf(details).map { bytes ->
             val fileS3Key = s3Service.uploadFile(bytes)
-            recallRepository.save(recall.copy(revocationOrderDocS3Key = fileS3Key))
+            recallRepository.save(recall.copy(revocationOrderId = fileS3Key))
             bytes
           }
         }
     } else {
-      return Mono.just(s3Service.downloadFile(recall.revocationOrderDocS3Key))
+      return Mono.just(s3Service.downloadFile(recall.revocationOrderId))
     }
   }
 }

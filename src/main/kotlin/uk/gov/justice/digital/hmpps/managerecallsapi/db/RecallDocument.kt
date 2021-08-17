@@ -17,7 +17,7 @@ data class RecallDocument(
   @Column(name = "recall_id", nullable = false)
   val recallId: UUID,
 
-  @Column(name = "category", nullable = false)
+  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   val category: RecallDocumentCategory
 )
