@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -147,6 +148,7 @@ abstract class IntegrationTestBase {
       LocalDate.now(),
       randomString(),
       randomString(),
+      SentenceLength(1, 2, 3),
       LocalDate.now()
     )
   )
