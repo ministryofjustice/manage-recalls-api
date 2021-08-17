@@ -119,5 +119,10 @@ data class SentencingInfo(
   val sentenceExpiryDate: LocalDate,
   val sentencingCourt: String,
   val indexOffence: String,
-  val conditionalReleaseDate: LocalDate? = null,
+  @Embedded
+  val sentenceLength: SentenceLength,
+  val conditionalReleaseDate: LocalDate? = null
 )
+
+@Embeddable
+data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val sentenceDays: Int)

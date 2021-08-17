@@ -5,16 +5,20 @@ import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.LocalDate
 
 class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
@@ -29,8 +33,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
   fun `update a recall returns updated recall including with recallType of FIXED`() {
     val priorRecall = Recall(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns priorRecall
-    // We're persisting recallType with value FIXED but we're not yet returning it in the response
-    val expectedRecall = priorRecall.copy(recallLength = recallLength, recallType = RecallType.FIXED)
+    val expectedRecall = priorRecall.copy(recallLength = recallLength, recallType = FIXED)
     every { recallRepository.save(expectedRecall) } returns expectedRecall
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(recallLength))
@@ -53,6 +56,46 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", UpdateRecallRequest(recallLength))
       .expectStatus().isNotFound
+  }
+
+  @Test
+  fun `update a recall with sentence information`() {
+    val existingRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+
+    val sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), "court", "index offence", SentenceLength(2, 5, 31))
+    val updatedRecall = existingRecall.copy(sentencingInfo = sentencingInfo, recallType = FIXED)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = authenticatedPatchRequest(
+      "/recalls/$recallId",
+      UpdateRecallRequest(
+        sentenceDate = sentencingInfo.sentenceDate,
+        licenceExpiryDate = sentencingInfo.licenceExpiryDate,
+        sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
+        sentencingCourt = sentencingInfo.sentencingCourt,
+        indexOffence = sentencingInfo.indexOffence,
+        conditionalReleaseDate = sentencingInfo.conditionalReleaseDate,
+        sentenceLength = Api.SentenceLength(sentencingInfo.sentenceLength.sentenceYears, sentencingInfo.sentenceLength.sentenceMonths, sentencingInfo.sentenceLength.sentenceDays)
+      )
+    )
+
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          emptyList(),
+          sentenceDate = sentencingInfo.sentenceDate,
+          licenceExpiryDate = sentencingInfo.licenceExpiryDate,
+          sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
+          sentencingCourt = sentencingInfo.sentencingCourt,
+          indexOffence = sentencingInfo.indexOffence,
+          sentenceLength = Api.SentenceLength(2, 5, 31)
+        )
+      )
+    )
   }
 
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =

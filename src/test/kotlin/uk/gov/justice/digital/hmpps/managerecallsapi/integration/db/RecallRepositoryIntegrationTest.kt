@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -74,7 +75,7 @@ class RecallRepositoryIntegrationTest(
       contrabandDetail = "i am worried...",
       vulnerabilityDiversityDetail = "has the following needs",
       mappaLevel = MappaLevel.NOT_KNOWN,
-      sentencingInfo = SentencingInfo(localDate, localDate, localDate, "A Court", "Some Offence", localDate)
+      sentencingInfo = SentencingInfo(localDate, localDate, localDate, "A Court", "Some Offence", SentenceLength(2, 4, 6), localDate)
     )
     repository.save(recallToUpdate)
 

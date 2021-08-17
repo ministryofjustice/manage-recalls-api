@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.LocalDate
@@ -42,24 +43,26 @@ class UpdateRecallController(
           contrabandDetail = updateRecallRequest.contrabandDetail ?: it.contrabandDetail,
           vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: it.vulnerabilityDiversityDetail,
           mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel,
-          sentencingInfo = updateRecallRequest.getSentencingInfo(it)
+          sentencingInfo = updateRecallRequest.toSentencingInfo(it)
         )
       }.let(recallRepository::save).toResponse()
     )
 
-  private fun UpdateRecallRequest.getSentencingInfo(
+  private fun UpdateRecallRequest.toSentencingInfo(
     existingRecall: Recall
   ) = if (sentenceDate != null &&
     licenceExpiryDate != null &&
     sentenceExpiryDate != null &&
     sentencingCourt != null &&
-    indexOffence != null
+    indexOffence != null &&
+    sentenceLength != null
   ) SentencingInfo(
     sentenceDate,
     licenceExpiryDate,
     sentenceExpiryDate,
     sentencingCourt,
     indexOffence,
+    SentenceLength(sentenceLength.years, sentenceLength.months, sentenceLength.days),
     conditionalReleaseDate
   ) else existingRecall.sentencingInfo
 }
@@ -81,6 +84,7 @@ data class UpdateRecallRequest(
   val sentencingCourt: String? = null,
   val indexOffence: String? = null,
   val conditionalReleaseDate: LocalDate? = null,
+  val sentenceLength: Api.SentenceLength? = null
 )
 
 enum class RecallLength {
