@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -59,19 +60,21 @@ class RecallRepositoryIntegrationTest(
 
     assertThat(repository.getByRecallId(recallId), equalTo(originalRecall))
 
+    val localDate = LocalDate.now()
     val recallToUpdate = originalRecall.copy(
       recallType = FIXED,
-      revocationOrderDocS3Key = UUID.randomUUID(),
+      revocationOrderId = UUID.randomUUID(),
       documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT)),
       recallLength = TWENTY_EIGHT_DAYS,
       agreeWithRecallRecommendation = true,
       recallEmailReceivedDateTime = ZonedDateTime.now(),
       lastReleasePrison = "A Prison",
-      lastReleaseDate = LocalDate.now(),
+      lastReleaseDate = localDate,
       localPoliceService = "London",
       contrabandDetail = "i am worried...",
       vulnerabilityDiversityDetail = "has the following needs",
-      mappaLevel = MappaLevel.NOT_KNOWN
+      mappaLevel = MappaLevel.NOT_KNOWN,
+      sentencingInfo = SentencingInfo(localDate, localDate, localDate, "A Court", "Some Offence", localDate)
     )
     repository.save(recallToUpdate)
 

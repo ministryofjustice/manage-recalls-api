@@ -128,17 +128,23 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)
       .jsonPath("$.documents.length()").isEqualTo(2)
       .jsonPath("$.documents[0].category").isEqualTo("PART_A_RECALL_REPORT")
-      .jsonPath("$.documents[0].documentId").isNotEmpty()
+      .jsonPath("$.documents[0].documentId").isNotEmpty
       .jsonPath("$.recallType").doesNotExist() // persisted on updated but not yet returned
-      .jsonPath("$.revocationOrderId").isNotEmpty()
+      .jsonPath("$.revocationOrderId").isNotEmpty
       .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
       .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(agree)
       .jsonPath("$.lastReleasePrison").isEqualTo(prison)
-      .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty()
+      .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty
       .jsonPath("$.localPoliceService").isEqualTo(policeService)
       .jsonPath("$.contrabandDetail").isNotEmpty
       .jsonPath("$.vulnerabilityDiversityDetail").isNotEmpty
       .jsonPath("$.mappaLevel").isEqualTo(MappaLevel.NA.name)
+      .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())
+      .jsonPath("$.licenceExpiryDate").isEqualTo(LocalDate.now().toString())
+      .jsonPath("$.sentenceExpiryDate").isEqualTo(LocalDate.now().toString())
+      .jsonPath("$.sentencingCourt").isNotEmpty
+      .jsonPath("$.indexOffence").isNotEmpty
+      .jsonPath("$.conditionalReleaseDate").isEqualTo(LocalDate.now().toString())
   }
 
   @Test
