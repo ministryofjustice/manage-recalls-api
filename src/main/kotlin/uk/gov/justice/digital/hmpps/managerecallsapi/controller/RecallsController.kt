@@ -67,7 +67,7 @@ class RecallsController(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody body: AddDocumentRequest
   ): ResponseEntity<AddDocumentResponse> {
-    val fileS3Key = try {
+    val documentId = try {
       recallDocumentService.addDocumentToRecall(
         recallId = recallId,
         documentBytes = Base64.getDecoder().decode(body.fileContent),
@@ -78,8 +78,8 @@ class RecallsController(
     }
 
     return ResponseEntity
-      .created(URI.create("$baseUri/recalls/$recallId/documents/$fileS3Key"))
-      .body(AddDocumentResponse(documentId = fileS3Key))
+      .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
+      .body(AddDocumentResponse(documentId = documentId))
   }
 
   @GetMapping("/recalls/{recallId}/documents/{documentId}")
