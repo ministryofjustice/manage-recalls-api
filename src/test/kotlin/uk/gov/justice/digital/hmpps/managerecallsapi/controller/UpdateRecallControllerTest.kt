@@ -51,7 +51,8 @@ class UpdateRecallControllerTest {
     sentencingCourt = "court",
     indexOffence = "offence",
     conditionalReleaseDate = LocalDate.now(),
-    sentenceLength = Api.SentenceLength(10, 1, 1)
+    sentenceLength = Api.SentenceLength(10, 1, 1),
+    bookingNumber = "B12345"
   )
 
   private val fullyPopulatedRecall = existingRecall.copy(
@@ -77,7 +78,8 @@ class UpdateRecallControllerTest {
         fullyPopulatedUpdateRecallRequest.sentenceLength!!.days
       ),
       fullyPopulatedUpdateRecallRequest.conditionalReleaseDate
-    )
+    ),
+    bookingNumber = fullyPopulatedUpdateRecallRequest.bookingNumber
   )
 
   private val fullyPopulatedRecallResponse = existingRecallResponse.copy(
@@ -100,7 +102,8 @@ class UpdateRecallControllerTest {
       fullyPopulatedUpdateRecallRequest.sentenceLength!!.months,
       fullyPopulatedUpdateRecallRequest.sentenceLength!!.days
     ),
-    conditionalReleaseDate = fullyPopulatedUpdateRecallRequest.conditionalReleaseDate
+    conditionalReleaseDate = fullyPopulatedUpdateRecallRequest.conditionalReleaseDate,
+    bookingNumber = fullyPopulatedUpdateRecallRequest.bookingNumber
   )
 
   @Test

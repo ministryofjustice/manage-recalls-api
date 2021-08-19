@@ -150,7 +150,8 @@ abstract class IntegrationTestBase {
       randomString(),
       SentenceLength(1, 2, 3),
       LocalDate.now()
-    )
+    ),
+    bookingNumber = randomString()
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

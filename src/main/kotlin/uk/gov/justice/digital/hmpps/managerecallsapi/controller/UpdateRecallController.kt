@@ -43,7 +43,8 @@ class UpdateRecallController(
           contrabandDetail = updateRecallRequest.contrabandDetail ?: it.contrabandDetail,
           vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: it.vulnerabilityDiversityDetail,
           mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel,
-          sentencingInfo = updateRecallRequest.toSentencingInfo(it)
+          sentencingInfo = updateRecallRequest.toSentencingInfo(it),
+          bookingNumber = updateRecallRequest.bookingNumber ?: it.bookingNumber
         )
       }.let(recallRepository::save).toResponse()
     )
@@ -84,7 +85,9 @@ data class UpdateRecallRequest(
   val sentencingCourt: String? = null,
   val indexOffence: String? = null,
   val conditionalReleaseDate: LocalDate? = null,
-  val sentenceLength: Api.SentenceLength? = null
+  val sentenceLength: Api.SentenceLength? = null,
+  //
+  val bookingNumber: String? = null
 )
 
 enum class RecallLength {

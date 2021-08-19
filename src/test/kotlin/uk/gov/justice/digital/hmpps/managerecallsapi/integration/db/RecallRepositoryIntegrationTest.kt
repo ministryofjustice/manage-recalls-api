@@ -75,7 +75,8 @@ class RecallRepositoryIntegrationTest(
       contrabandDetail = "i am worried...",
       vulnerabilityDiversityDetail = "has the following needs",
       mappaLevel = MappaLevel.NOT_KNOWN,
-      sentencingInfo = SentencingInfo(localDate, localDate, localDate, "A Court", "Some Offence", SentenceLength(2, 4, 6), localDate)
+      sentencingInfo = SentencingInfo(localDate, localDate, localDate, "A Court", "Some Offence", SentenceLength(2, 4, 6), localDate),
+      bookingNumber = "BN12345"
     )
     repository.save(recallToUpdate)
 
