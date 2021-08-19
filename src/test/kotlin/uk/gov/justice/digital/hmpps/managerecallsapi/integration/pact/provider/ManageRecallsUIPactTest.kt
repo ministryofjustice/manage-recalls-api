@@ -6,8 +6,8 @@ import au.com.dius.pact.provider.junitsupport.Consumer
 import au.com.dius.pact.provider.junitsupport.Provider
 import au.com.dius.pact.provider.junitsupport.State
 import au.com.dius.pact.provider.junitsupport.VerificationReports
+import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
-import au.com.dius.pact.provider.junitsupport.loader.PactFolder
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -159,7 +159,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a recall does not exist")
   fun `a recall does not exist`() {
-    every { recallRepository.getByRecallId(any()) } throws RecallNotFoundException("not found", EntityNotFoundException())
+    every { recallRepository.getByRecallId(any()) } throws RecallNotFoundException(
+      "not found",
+      EntityNotFoundException()
+    )
   }
 
   @State("a revocation order can be downloaded")
@@ -218,7 +221,7 @@ class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
 @VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
 @Consumer("manage-recalls-ui")
-@PactFolder("../manage-recalls-ui/pact/pacts")
+@PactBroker
 abstract class ManagerRecallsUiPactTestBase : IntegrationTestBase() {
   @LocalServerPort
   private val port = 0

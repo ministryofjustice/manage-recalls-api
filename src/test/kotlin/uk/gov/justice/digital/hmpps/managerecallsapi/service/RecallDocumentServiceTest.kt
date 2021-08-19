@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.util.UUID
-import javax.persistence.EntityNotFoundException
 
 internal class RecallDocumentServiceTest {
 
@@ -32,24 +31,6 @@ internal class RecallDocumentServiceTest {
     id = recallId.value,
     nomsNumber = NomsNumber("A1235B")
   )
-
-  @Test
-  fun `adding document throws 'recall not found' error if recall is missing`() {
-    every { recallRepository.getByRecallId(recallId) } throws EntityNotFoundException("boom!")
-
-    assertThrows<RecallNotFoundException> {
-      underTest.addDocumentToRecall(recallId, documentBytes, RecallDocumentCategory.PART_A_RECALL_REPORT)
-    }
-  }
-
-  @Test
-  fun `getting a document throws 'recall not found' error if recall is missing`() {
-    every { recallRepository.getByRecallId(recallId) } throws EntityNotFoundException("boom!")
-
-    assertThrows<RecallNotFoundException> {
-      underTest.getDocument(recallId, UUID.randomUUID())
-    }
-  }
 
   @Test
   fun `throws 'document not found' error if document is not found in recall`() {
@@ -67,14 +48,14 @@ internal class RecallDocumentServiceTest {
 
     every { recallRepository.getByRecallId(recallId) } returns aRecall
 
-    val fileS3Key = UUID.randomUUID()
-    every { s3Service.uploadFile(documentBytes) } returns fileS3Key
+    val documentId = UUID.randomUUID()
+    every { s3Service.uploadFile(documentBytes) } returns documentId
 
     every { recallRepository.save(any()) } returns Recall(recallId.value, NomsNumber("A12345B"))
 
-    val actualFileS3KeyFilter = underTest.addDocumentToRecall(recallId, documentBytes, documentCategory)
+    val actualDocumentId = underTest.addDocumentToRecall(recallId, documentBytes, documentCategory)
 
-    assertThat(actualFileS3KeyFilter, equalTo(fileS3Key))
+    assertThat(actualDocumentId, equalTo(documentId))
 
     verify { s3Service.uploadFile(documentBytes) }
 
@@ -83,7 +64,7 @@ internal class RecallDocumentServiceTest {
         withArg { recall ->
           assertThat(
             recall.documents,
-            allElements(equalTo(RecallDocument(fileS3Key, recallId.value, documentCategory)))
+            allElements(equalTo(RecallDocument(documentId, recallId.value, documentCategory)))
           )
         }
       )

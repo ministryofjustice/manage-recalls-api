@@ -23,7 +23,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import java.time.LocalDate
-import java.time.ZonedDateTime
 import java.util.Base64
 import java.util.UUID
 
@@ -52,7 +51,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   private val fileBytes = "content".toByteArray()
   private val fileContent = Base64.getEncoder().encodeToString(fileBytes)
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
-  private val recallLastReleaseDateTime = ZonedDateTime.now()
   private val addDocumentRequest = AddDocumentRequest(
     category = category.toString(),
     fileContent = fileContent
@@ -129,7 +127,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.documents.length()").isEqualTo(2)
       .jsonPath("$.documents[0].category").isEqualTo("PART_A_RECALL_REPORT")
       .jsonPath("$.documents[0].documentId").isNotEmpty
-      .jsonPath("$.recallType").doesNotExist() // persisted on updated but not yet returned
       .jsonPath("$.revocationOrderId").isNotEmpty
       .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
       .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(agree)
@@ -171,10 +168,10 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName)
 
-    val fileS3Key = UUID.randomUUID()
-    every { s3Service.uploadFile(any()) } returns fileS3Key
+    val documentId = UUID.randomUUID()
+    every { s3Service.uploadFile(any()) } returns documentId
 
-    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, fileS3Key)
+    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, documentId)
 
     val response = webTestClient.get().uri("/recalls/$recallId/revocationOrder").headers {
       it.withBearerAuthToken(jwtWithRoleManageRecalls())
