@@ -6,8 +6,8 @@ import au.com.dius.pact.provider.junitsupport.Consumer
 import au.com.dius.pact.provider.junitsupport.Provider
 import au.com.dius.pact.provider.junitsupport.State
 import au.com.dius.pact.provider.junitsupport.VerificationReports
-import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
+import au.com.dius.pact.provider.junitsupport.loader.PactFolder
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -122,16 +124,36 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     )
   }
 
-  @State(
-    "a recall exists and can be updated",
-    "a recall exists and can be updated with length",
-    "a recall exists and can be updated with agreement"
-  )
+  @State("a recall exists and can be updated")
   fun `a recall exists and can be updated`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
     every { recallRepository.save(any()) } returns recallWithPopulatedFields(
       recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
+    )
+  }
+
+  @State("an empty recall exists and will not be updated")
+  fun `an empty recall exists and will not be updated`() {
+    val recallId = ::RecallId.random()
+    every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
+    every { recallRepository.save(any()) } returns minimalRecall(recallId, nomsNumber)
+  }
+
+  @State("an empty recall exists and can be updated with sentencing info")
+  fun `an empty recall exists and can be updated with sentencing info`() {
+    val recallId = ::RecallId.random()
+    every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
+    every { recallRepository.save(any()) } returns minimalRecall(recallId, nomsNumber).copy(
+      sentencingInfo = SentencingInfo(
+        LocalDate.now(),
+        LocalDate.now(),
+        LocalDate.now(),
+        randomString(),
+        randomString(),
+        SentenceLength(1, 2, 3),
+        LocalDate.now()
+      )
     )
   }
 
@@ -196,7 +218,7 @@ class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
 @VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
 @Consumer("manage-recalls-ui")
-@PactBroker
+@PactFolder("../manage-recalls-ui/pact/pacts")
 abstract class ManagerRecallsUiPactTestBase : IntegrationTestBase() {
   @LocalServerPort
   private val port = 0
