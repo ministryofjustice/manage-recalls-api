@@ -125,7 +125,12 @@ fun Recall.toResponse() = RecallResponse(
   indexOffence = this.sentencingInfo?.indexOffence,
   conditionalReleaseDate = this.sentencingInfo?.conditionalReleaseDate,
   sentenceLength = this.sentencingInfo?.sentenceLength?.let { Api.SentenceLength(it.sentenceYears, it.sentenceMonths, it.sentenceDays) },
-  bookingNumber = this.bookingNumber
+  bookingNumber = this.bookingNumber,
+  probationOfficerName = this.probationInfo?.probationOfficerName,
+  probationOfficerPhoneNumber = this.probationInfo?.probationOfficerPhoneNumber,
+  probationOfficerEmail = this.probationInfo?.probationOfficerEmail,
+  probationDivision = this.probationInfo?.probationDivision,
+  authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -152,6 +157,11 @@ data class RecallResponse(
   val conditionalReleaseDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,
   val bookingNumber: String? = null,
+  val probationOfficerName: String? = null,
+  val probationOfficerPhoneNumber: String? = null,
+  val probationOfficerEmail: String? = null,
+  val probationDivision: ProbationDivision? = null,
+  val authorisingAssistantChiefOfficer: String? = null,
 )
 
 class Api {
