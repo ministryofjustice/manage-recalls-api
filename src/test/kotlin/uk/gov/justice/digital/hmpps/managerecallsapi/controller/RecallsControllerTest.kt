@@ -24,7 +24,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentServi
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.Base64
 import java.util.UUID
 
@@ -77,7 +77,7 @@ class RecallsControllerTest {
       recallId = UUID.randomUUID(),
       category = RecallDocumentCategory.PART_A_RECALL_REPORT
     )
-    val recallEmailReceivedDateTime = ZonedDateTime.now()
+    val recallEmailReceivedDateTime = OffsetDateTime.now()
     val lastReleaseDate = LocalDate.now()
     val recall = Recall(
       recallId = recallId,
