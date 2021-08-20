@@ -16,8 +16,10 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -151,7 +153,14 @@ abstract class IntegrationTestBase {
       SentenceLength(1, 2, 3),
       LocalDate.now()
     ),
-    bookingNumber = randomString()
+    bookingNumber = randomString(),
+    probationInfo = ProbationInfo(
+      randomString(),
+      randomString(),
+      randomString(),
+      ProbationDivision.NORTH_EAST,
+      randomString()
+    ),
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
