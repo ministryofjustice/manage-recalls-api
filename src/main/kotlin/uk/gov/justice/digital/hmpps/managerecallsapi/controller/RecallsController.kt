@@ -26,7 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundExcep
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.net.URI
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.Base64
 import java.util.UUID
 
@@ -144,7 +144,7 @@ data class RecallResponse(
   val recallLength: RecallLength? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
-  val recallEmailReceivedDateTime: ZonedDateTime? = null,
+  val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceService: String? = null,
   val vulnerabilityDiversityDetail: String? = null,
   val contrabandDetail: String? = null,

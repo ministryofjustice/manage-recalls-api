@@ -7,7 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType.ALL
@@ -51,7 +51,7 @@ data class Recall(
 
   val lastReleaseDate: LocalDate? = null,
 
-  val recallEmailReceivedDateTime: ZonedDateTime? = null,
+  val recallEmailReceivedDateTime: OffsetDateTime? = null,
 
   val localPoliceService: String? = null,
 
@@ -79,7 +79,7 @@ data class Recall(
     recallLength: RecallLength? = null,
     lastReleasePrison: String? = null,
     lastReleaseDate: LocalDate? = null,
-    recallEmailReceivedDateTime: ZonedDateTime? = null,
+    recallEmailReceivedDateTime: OffsetDateTime? = null,
     localPoliceService: String? = null,
     contraband: String? = null,
     vulnerabilityDiversity: String? = null,

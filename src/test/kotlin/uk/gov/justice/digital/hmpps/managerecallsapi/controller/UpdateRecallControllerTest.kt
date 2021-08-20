@@ -21,7 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)
@@ -39,7 +39,7 @@ class UpdateRecallControllerTest {
   private val fullyPopulatedUpdateRecallRequest = UpdateRecallRequest(
     agreeWithRecallRecommendation = true,
     recallLength = FOURTEEN_DAYS,
-    recallEmailReceivedDateTime = ZonedDateTime.now(),
+    recallEmailReceivedDateTime = OffsetDateTime.now(),
     lastReleasePrison = "Andys house",
     lastReleaseDate = LocalDate.now(),
     localPoliceService = "Oxford",
