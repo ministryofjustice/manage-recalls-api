@@ -64,6 +64,8 @@ data class Recall(
   @Embedded
   val sentencingInfo: SentencingInfo? = null,
 
+  val bookingNumber: String? = null,
+
 ) {
   constructor(
     recallId: RecallId,
@@ -81,6 +83,7 @@ data class Recall(
     vulnerabilityDiversity: String? = null,
     mappaLevel: MappaLevel? = null,
     sentencingInfo: SentencingInfo? = null,
+    bookingNumber: String? = null,
   ) :
     this(
       recallId.value,
@@ -97,7 +100,8 @@ data class Recall(
       contraband,
       vulnerabilityDiversity,
       mappaLevel,
-      sentencingInfo
+      sentencingInfo,
+      bookingNumber
     )
 
   fun recallId() = RecallId(id)

@@ -76,7 +76,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
         sentencingCourt = sentencingInfo.sentencingCourt,
         indexOffence = sentencingInfo.indexOffence,
         conditionalReleaseDate = sentencingInfo.conditionalReleaseDate,
-        sentenceLength = Api.SentenceLength(sentencingInfo.sentenceLength.sentenceYears, sentencingInfo.sentenceLength.sentenceMonths, sentencingInfo.sentenceLength.sentenceDays)
+        sentenceLength = Api.SentenceLength(sentencingInfo.sentenceLength.sentenceYears, sentencingInfo.sentenceLength.sentenceMonths, sentencingInfo.sentenceLength.sentenceDays),
       )
     )
 
@@ -96,6 +96,19 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
         )
       )
     )
+  }
+
+  @Test
+  fun `update a recall with booking number`() {
+    val existingRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+
+    val updatedRecall = existingRecall.copy(bookingNumber = "BN12345", recallType = FIXED)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(bookingNumber = "BN12345"))
+
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), bookingNumber = "BN12345")))
   }
 
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =

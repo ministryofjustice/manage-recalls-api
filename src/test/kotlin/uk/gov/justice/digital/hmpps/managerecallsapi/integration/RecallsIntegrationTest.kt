@@ -117,6 +117,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     val prison = recall.lastReleasePrison
     val policeService = recall.localPoliceService
     val agree = recall.agreeWithRecallRecommendation
+    val bookingNumber = recall.bookingNumber
 
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
@@ -142,6 +143,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.sentencingCourt").isNotEmpty
       .jsonPath("$.indexOffence").isNotEmpty
       .jsonPath("$.conditionalReleaseDate").isEqualTo(LocalDate.now().toString())
+      .jsonPath("$.bookingNumber").isEqualTo(bookingNumber)
   }
 
   @Test
