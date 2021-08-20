@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -44,6 +45,7 @@ class UpdateRecallController(
           vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: it.vulnerabilityDiversityDetail,
           mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel,
           sentencingInfo = updateRecallRequest.toSentencingInfo(it),
+          probationInfo = updateRecallRequest.toProbationInfo(it),
           bookingNumber = updateRecallRequest.bookingNumber ?: it.bookingNumber
         )
       }.let(recallRepository::save).toResponse()
@@ -66,6 +68,23 @@ class UpdateRecallController(
     SentenceLength(sentenceLength.years, sentenceLength.months, sentenceLength.days),
     conditionalReleaseDate
   ) else existingRecall.sentencingInfo
+
+  private fun UpdateRecallRequest.toProbationInfo(
+    existingRecall: Recall
+  ) = if (
+    probationOfficerName != null &&
+    probationOfficerPhoneNumber != null &&
+    probationOfficerEmail != null &&
+    probationDivision != null &&
+    authorisingAssistantChiefOfficer != null
+
+  ) ProbationInfo(
+    probationOfficerName,
+    probationOfficerPhoneNumber,
+    probationOfficerEmail,
+    probationDivision,
+    authorisingAssistantChiefOfficer,
+  ) else existingRecall.probationInfo
 }
 
 data class UpdateRecallRequest(
@@ -87,7 +106,12 @@ data class UpdateRecallRequest(
   val conditionalReleaseDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,
   //
-  val bookingNumber: String? = null
+  val bookingNumber: String? = null,
+  val probationOfficerName: String? = null,
+  val probationOfficerPhoneNumber: String? = null,
+  val probationOfficerEmail: String? = null,
+  val probationDivision: ProbationDivision? = null,
+  val authorisingAssistantChiefOfficer: String? = null
 )
 
 enum class RecallLength {
@@ -106,4 +130,15 @@ enum class MappaLevel {
 
 enum class RecallType {
   FIXED
+}
+
+enum class ProbationDivision {
+  LONDON,
+  MIDLANDS,
+  NORTH_EAST,
+  NORTH_WEST,
+  SOUTH_EAST,
+  SOUTH_WEST,
+  SOUTH_WEST_AND_SOUTH_CENTRAL,
+  WALES
 }

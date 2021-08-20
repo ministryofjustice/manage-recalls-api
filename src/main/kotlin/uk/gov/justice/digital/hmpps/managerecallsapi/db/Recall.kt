@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -61,10 +62,11 @@ data class Recall(
   @Enumerated(STRING)
   val mappaLevel: MappaLevel? = null,
 
-  @Embedded
   val sentencingInfo: SentencingInfo? = null,
 
   val bookingNumber: String? = null,
+
+  val probationInfo: ProbationInfo? = null,
 
 ) {
   constructor(
@@ -84,6 +86,8 @@ data class Recall(
     mappaLevel: MappaLevel? = null,
     sentencingInfo: SentencingInfo? = null,
     bookingNumber: String? = null,
+    probationInfo: ProbationInfo? = null
+
   ) :
     this(
       recallId.value,
@@ -101,7 +105,8 @@ data class Recall(
       vulnerabilityDiversity,
       mappaLevel,
       sentencingInfo,
-      bookingNumber
+      bookingNumber,
+      probationInfo
     )
 
   fun recallId() = RecallId(id)
@@ -130,3 +135,13 @@ data class SentencingInfo(
 
 @Embeddable
 data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val sentenceDays: Int)
+
+@Embeddable
+data class ProbationInfo(
+  val probationOfficerName: String,
+  val probationOfficerPhoneNumber: String,
+  val probationOfficerEmail: String,
+  @Enumerated(STRING)
+  val probationDivision: ProbationDivision,
+  val authorisingAssistantChiefOfficer: String
+)

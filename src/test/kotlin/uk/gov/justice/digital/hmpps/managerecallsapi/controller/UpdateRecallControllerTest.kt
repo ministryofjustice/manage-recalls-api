@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -52,7 +53,12 @@ class UpdateRecallControllerTest {
     indexOffence = "offence",
     conditionalReleaseDate = LocalDate.now(),
     sentenceLength = Api.SentenceLength(10, 1, 1),
-    bookingNumber = "B12345"
+    bookingNumber = "B12345",
+    probationOfficerName = "Probation officer name",
+    probationOfficerPhoneNumber = "+44(0)111111111",
+    probationOfficerEmail = "probationOfficer@email.com",
+    probationDivision = ProbationDivision.LONDON,
+    authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer"
   )
 
   private val fullyPopulatedRecall = existingRecall.copy(
@@ -79,7 +85,14 @@ class UpdateRecallControllerTest {
       ),
       fullyPopulatedUpdateRecallRequest.conditionalReleaseDate
     ),
-    bookingNumber = fullyPopulatedUpdateRecallRequest.bookingNumber
+    bookingNumber = fullyPopulatedUpdateRecallRequest.bookingNumber,
+    probationInfo = ProbationInfo(
+      fullyPopulatedUpdateRecallRequest.probationOfficerName!!,
+      fullyPopulatedUpdateRecallRequest.probationOfficerPhoneNumber!!,
+      fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
+      fullyPopulatedUpdateRecallRequest.probationDivision!!,
+      fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
+    )
   )
 
   private val fullyPopulatedRecallResponse = existingRecallResponse.copy(
@@ -103,7 +116,12 @@ class UpdateRecallControllerTest {
       fullyPopulatedUpdateRecallRequest.sentenceLength!!.days
     ),
     conditionalReleaseDate = fullyPopulatedUpdateRecallRequest.conditionalReleaseDate,
-    bookingNumber = fullyPopulatedUpdateRecallRequest.bookingNumber
+    bookingNumber = fullyPopulatedUpdateRecallRequest.bookingNumber,
+    probationOfficerName = fullyPopulatedUpdateRecallRequest.probationOfficerName!!,
+    probationOfficerPhoneNumber = fullyPopulatedUpdateRecallRequest.probationOfficerPhoneNumber!!,
+    probationOfficerEmail = fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
+    probationDivision = fullyPopulatedUpdateRecallRequest.probationDivision!!,
+    authorisingAssistantChiefOfficer = fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
   )
 
   @Test
@@ -128,7 +146,7 @@ class UpdateRecallControllerTest {
   }
 
   @Suppress("unused")
-  private fun requestWithMissingSentencingInfo(): Stream<UpdateRecallRequest>? {
+  private fun requestWithMissingMandatorySentencingInfo(): Stream<UpdateRecallRequest>? {
     return Stream.of(
       recallRequestWithMandatorySentencingInfo(sentenceDate = null),
       recallRequestWithMandatorySentencingInfo(licenceExpiryDate = null),
@@ -140,8 +158,12 @@ class UpdateRecallControllerTest {
   }
 
   @ParameterizedTest
-  @MethodSource("requestWithMissingSentencingInfo")
-  fun `should not update recall with sentencing information if a mandatory field is not populated`(request: UpdateRecallRequest) {
+  @MethodSource("requestWithMissingMandatorySentencingInfo")
+  fun `should not update recall if a mandatory field is not populated`(request: UpdateRecallRequest) {
+    assertUpdateRecallDoesNotUpdate(request)
+  }
+
+  private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     // TODO: don't set the recallType unless we need to
     val recallWithType = existingRecall.copy(recallType = FIXED)
@@ -166,5 +188,36 @@ class UpdateRecallControllerTest {
     sentencingCourt = sentencingCourt,
     indexOffence = indexOffence,
     sentenceLength = sentenceLength
+  )
+
+  @Suppress("unused")
+  private fun requestWithMissingMandatoryProbationInfo(): Stream<UpdateRecallRequest>? {
+    return Stream.of(
+      recallRequestWithProbationInfo(probationOfficerName = null),
+      recallRequestWithProbationInfo(probationOfficerPhoneNumber = null),
+      recallRequestWithProbationInfo(probationOfficerEmail = null),
+      recallRequestWithProbationInfo(probationDivision = null),
+      recallRequestWithProbationInfo(authorisingAssistantChiefOfficer = null),
+    )
+  }
+
+  @ParameterizedTest
+  @MethodSource("requestWithMissingMandatoryProbationInfo")
+  fun `should not update recall probation information if a mandatory field is not populated`(request: UpdateRecallRequest) {
+    assertUpdateRecallDoesNotUpdate(request)
+  }
+
+  private fun recallRequestWithProbationInfo(
+    probationOfficerName: String? = "PON",
+    probationOfficerPhoneNumber: String? = "07111111111",
+    probationOfficerEmail: String? = "email@email.com",
+    probationDivision: ProbationDivision? = ProbationDivision.NORTH_EAST,
+    authorisingAssistantChiefOfficer: String? = "AACO"
+  ) = UpdateRecallRequest(
+    probationOfficerName = probationOfficerName,
+    probationOfficerPhoneNumber = probationOfficerPhoneNumber,
+    probationOfficerEmail = probationOfficerEmail,
+    probationDivision = probationDivision,
+    authorisingAssistantChiefOfficer = authorisingAssistantChiefOfficer
   )
 }
