@@ -30,7 +30,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Hmp
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.random.Random
@@ -111,7 +111,7 @@ abstract class IntegrationTestBase {
 
   protected fun randomBoolean() = Random.nextBoolean()
 
-  protected fun dateTimeNow() = ZonedDateTime.now()
+  protected fun dateTimeNow() = OffsetDateTime.now()
 
   protected fun randomAdultDateOfBirth(): LocalDate? {
     val age18 = LocalDate.now().minusYears(18)

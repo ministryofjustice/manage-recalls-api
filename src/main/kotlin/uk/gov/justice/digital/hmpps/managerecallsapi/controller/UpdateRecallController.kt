@@ -16,7 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping(produces = [APPLICATION_JSON_VALUE])
@@ -73,7 +73,7 @@ data class UpdateRecallRequest(
   val agreeWithRecallRecommendation: Boolean? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
-  val recallEmailReceivedDateTime: ZonedDateTime? = null,
+  val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceService: String? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversityDetail: String? = null,

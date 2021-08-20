@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -132,7 +133,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
       .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(agree)
       .jsonPath("$.lastReleasePrison").isEqualTo(prison)
-      .jsonPath("$.recallEmailReceivedDateTime").isNotEmpty
+      .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))
       .jsonPath("$.localPoliceService").isEqualTo(policeService)
       .jsonPath("$.contrabandDetail").isNotEmpty
       .jsonPath("$.vulnerabilityDiversityDetail").isNotEmpty
