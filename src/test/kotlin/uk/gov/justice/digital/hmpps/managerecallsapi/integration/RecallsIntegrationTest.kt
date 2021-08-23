@@ -115,11 +115,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     )
     every { recallRepository.getByRecallId(recallId) } returns recall
 
-    val prison = recall.lastReleasePrison
-    val policeService = recall.localPoliceService
-    val agree = recall.agreeWithRecallRecommendation
-    val bookingNumber = recall.bookingNumber
-
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
       .expectStatus().isOk
@@ -131,20 +126,20 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.documents[0].documentId").isNotEmpty
       .jsonPath("$.revocationOrderId").isNotEmpty
       .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
-      .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(agree)
-      .jsonPath("$.lastReleasePrison").isEqualTo(prison)
+      .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(recall.agreeWithRecallRecommendation.toString())
+      .jsonPath("$.lastReleasePrison").isEqualTo(recall.lastReleasePrison.toString())
       .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))
-      .jsonPath("$.localPoliceService").isEqualTo(policeService)
-      .jsonPath("$.contrabandDetail").isNotEmpty
-      .jsonPath("$.vulnerabilityDiversityDetail").isNotEmpty
+      .jsonPath("$.localPoliceForce").isEqualTo(recall.localPoliceForce!!)
+      .jsonPath("$.contrabandDetail").isEqualTo(recall.contrabandDetail!!)
+      .jsonPath("$.vulnerabilityDiversityDetail").isEqualTo(recall.vulnerabilityDiversityDetail!!)
       .jsonPath("$.mappaLevel").isEqualTo(MappaLevel.NA.name)
       .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.licenceExpiryDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.sentenceExpiryDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.sentencingCourt").isNotEmpty
-      .jsonPath("$.indexOffence").isNotEmpty
+      .jsonPath("$.sentencingCourt").isEqualTo(recall.sentencingInfo!!.sentencingCourt)
+      .jsonPath("$.indexOffence").isEqualTo(recall.sentencingInfo!!.indexOffence)
       .jsonPath("$.conditionalReleaseDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.bookingNumber").isEqualTo(bookingNumber)
+      .jsonPath("$.bookingNumber").isEqualTo(recall.bookingNumber!!)
   }
 
   @Test

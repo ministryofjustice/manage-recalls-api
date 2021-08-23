@@ -140,7 +140,7 @@ abstract class IntegrationTestBase {
     lastReleasePrison = randomString(),
     lastReleaseDate = LocalDate.now(),
     recallEmailReceivedDateTime = dateTimeNow(),
-    localPoliceService = randomString(),
+    localPoliceForce = randomString(),
     contraband = randomString(),
     vulnerabilityDiversity = randomString(),
     mappaLevel = MappaLevel.NA,
