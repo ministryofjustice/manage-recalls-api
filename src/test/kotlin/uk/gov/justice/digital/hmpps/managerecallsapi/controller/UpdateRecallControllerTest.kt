@@ -102,6 +102,7 @@ class UpdateRecallControllerTest {
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
     localPoliceService = fullyPopulatedUpdateRecallRequest.localPoliceService,
+    localPoliceForce = fullyPopulatedUpdateRecallRequest.localPoliceService,
     contrabandDetail = fullyPopulatedUpdateRecallRequest.contrabandDetail,
     vulnerabilityDiversityDetail = fullyPopulatedUpdateRecallRequest.vulnerabilityDiversityDetail,
     mappaLevel = fullyPopulatedUpdateRecallRequest.mappaLevel,

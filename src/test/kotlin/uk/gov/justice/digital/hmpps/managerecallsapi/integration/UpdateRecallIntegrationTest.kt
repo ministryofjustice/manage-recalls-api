@@ -111,6 +111,35 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), bookingNumber = "BN12345")))
   }
 
+  @Deprecated("Use localPoliceForce, delete this field once PUD-409 is complete in the UI")
+  @Test
+  fun `update a recall with local police service`() {
+    val existingRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+
+    val policeForce = "London"
+    val updatedRecall = existingRecall.copy(localPoliceService = policeForce, recallType = FIXED)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceService = policeForce))
+
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), localPoliceService = policeForce, localPoliceForce = policeForce)))
+  }
+
+  @Test
+  fun `update a recall with local police force`() {
+    val existingRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+
+    val policeForce = "London"
+    val updatedRecall = existingRecall.copy(localPoliceService = policeForce, recallType = FIXED)
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceForce = policeForce))
+
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), localPoliceService = policeForce, localPoliceForce = policeForce)))
+  }
+
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =
     sendAuthenticatedPatchRequestWithBody(path, request)
       .expectStatus().isOk
