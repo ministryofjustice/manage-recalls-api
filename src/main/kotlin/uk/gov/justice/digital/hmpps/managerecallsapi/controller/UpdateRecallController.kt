@@ -40,7 +40,7 @@ class UpdateRecallController(
           recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime,
           lastReleasePrison = updateRecallRequest.lastReleasePrison ?: it.lastReleasePrison,
           lastReleaseDate = updateRecallRequest.lastReleaseDate ?: it.lastReleaseDate,
-          localPoliceService = updateRecallRequest.getLocalPoliceForce(it),
+          localPoliceForce = updateRecallRequest.getLocalPoliceForce(it),
           contrabandDetail = updateRecallRequest.contrabandDetail ?: it.contrabandDetail,
           vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: it.vulnerabilityDiversityDetail,
           mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel,
@@ -91,7 +91,7 @@ private fun UpdateRecallRequest.getLocalPoliceForce(existingRecall: Recall): Str
   when {
     this.localPoliceService != null -> localPoliceService
     this.localPoliceForce != null -> localPoliceForce
-    else -> existingRecall.localPoliceService
+    else -> existingRecall.localPoliceForce
   }
 
 data class UpdateRecallRequest(

@@ -53,7 +53,7 @@ data class Recall(
 
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
 
-  val localPoliceService: String? = null,
+  val localPoliceForce: String? = null,
 
   val contrabandDetail: String? = null,
 
@@ -80,7 +80,7 @@ data class Recall(
     lastReleasePrison: String? = null,
     lastReleaseDate: LocalDate? = null,
     recallEmailReceivedDateTime: OffsetDateTime? = null,
-    localPoliceService: String? = null,
+    localPoliceForce: String? = null,
     contraband: String? = null,
     vulnerabilityDiversity: String? = null,
     mappaLevel: MappaLevel? = null,
@@ -100,7 +100,7 @@ data class Recall(
       lastReleasePrison,
       lastReleaseDate,
       recallEmailReceivedDateTime,
-      localPoliceService,
+      localPoliceForce,
       contraband,
       vulnerabilityDiversity,
       mappaLevel,

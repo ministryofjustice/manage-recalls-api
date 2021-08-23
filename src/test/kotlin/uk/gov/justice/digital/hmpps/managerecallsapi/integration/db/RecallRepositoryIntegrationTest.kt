@@ -73,7 +73,7 @@ class RecallRepositoryIntegrationTest(
       recallEmailReceivedDateTime = OffsetDateTime.now(),
       lastReleasePrison = "A Prison",
       lastReleaseDate = localDate,
-      localPoliceService = "London",
+      localPoliceForce = "London",
       contrabandDetail = "i am worried...",
       vulnerabilityDiversityDetail = "has the following needs",
       mappaLevel = MappaLevel.NOT_KNOWN,

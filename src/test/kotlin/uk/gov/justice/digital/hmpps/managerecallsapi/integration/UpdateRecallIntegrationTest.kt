@@ -118,7 +118,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
 
     val policeForce = "London"
-    val updatedRecall = existingRecall.copy(localPoliceService = policeForce, recallType = FIXED)
+    val updatedRecall = existingRecall.copy(localPoliceForce = policeForce, recallType = FIXED)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceService = policeForce))
@@ -132,7 +132,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
 
     val policeForce = "London"
-    val updatedRecall = existingRecall.copy(localPoliceService = policeForce, recallType = FIXED)
+    val updatedRecall = existingRecall.copy(localPoliceForce = policeForce, recallType = FIXED)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceForce = policeForce))
