@@ -6,7 +6,6 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -25,7 +24,7 @@ class EndpointSecurityIntegrationTest : IntegrationTestBase() {
     category = category.toString(),
     fileContent = Base64.getEncoder().encodeToString(fileBytes)
   )
-  private val updateRecallRequest = UpdateRecallRequest(TWENTY_EIGHT_DAYS)
+  private val updateRecallRequest = UpdateRecallRequest()
   private val apiSearchRequest = SearchRequest(nomsNumber)
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
