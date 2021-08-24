@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 
-import junit.framework.Assert.assertEquals
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -22,16 +23,18 @@ class SentenceLengthTest {
     sentenceMonths: Int,
     sentenceDays: Int
   ) {
-    assertEquals(
+    assertThat(
       recallLength,
-      SentencingInfo(
-        LocalDate.now(),
-        LocalDate.now(),
-        LocalDate.now(),
-        "court",
-        "offence",
-        SentenceLength(sentenceYears, sentenceMonths, sentenceDays)
-      ).calculateRecallLength()
+      equalTo(
+        SentencingInfo(
+          LocalDate.now(),
+          LocalDate.now(),
+          LocalDate.now(),
+          "court",
+          "offence",
+          SentenceLength(sentenceYears, sentenceMonths, sentenceDays)
+        ).calculateRecallLength()
+      )
     )
   }
 

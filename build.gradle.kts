@@ -11,6 +11,7 @@ repositories {
 configurations {
   testImplementation {
     exclude(group = "org.junit.vintage")
+    exclude(group = "junit")
     exclude(group = "com.vaadin.external.google", module = "android-json")
   }
 }
