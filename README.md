@@ -18,7 +18,7 @@ will apply ktlint styles to intellij and also add a pre-commit hook to format al
 
 ### Run locally on the command line
 Requires postgres:
-```docker compose up postgres -d```
+```docker compose up -d postgres```
 
 ```bash
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
@@ -52,6 +52,8 @@ every time)
 Builds everything, runs the unit tests, integration tests, start gotenberg and document generation tests
 
 `./build.sh`
+
+Note: this script will start up a `postgresql` instance using `docker-compose` in the background.
 
 # Swagger UI
 

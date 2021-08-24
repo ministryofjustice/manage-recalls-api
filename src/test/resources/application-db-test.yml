@@ -1,0 +1,6 @@
+aws:
+  region: eu-west-1
+  credentials:
+    accessKey: randomAccessKey
+    secretKey: randomSecretKey
+  s3.bucketName: test-bucket

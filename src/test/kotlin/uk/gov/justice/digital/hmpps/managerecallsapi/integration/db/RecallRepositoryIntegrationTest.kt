@@ -2,15 +2,12 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.context.annotation.Import
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
@@ -30,21 +27,19 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundExcep
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
+import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
-@AutoConfigureEmbeddedDatabase(provider = ZONKY)
-@DataJpaTest
-@AutoConfigureTestDatabase
-@Import(RecallRepository::class)
+@SpringBootTest
+@ActiveProfiles("db-test")
 class RecallRepositoryIntegrationTest(
   @Autowired
   private val repository: RecallRepository
 ) {
-  // TODO: Avoid bugs such as PUD-329 by use of a real database for integration tests such as this, i.e. PUD-330.
-
   private val nomsNumber = NomsNumber("A12345F")
 
   @Test
+  @Transactional
   fun `saves and retrieves a recall`() {
     val recallId = ::RecallId.random()
     val recall = Recall(recallId, nomsNumber)
@@ -56,6 +51,7 @@ class RecallRepositoryIntegrationTest(
   }
 
   @Test
+  @Transactional
   fun `can update an existing recall`() {
     val recallId = ::RecallId.random()
     val originalRecall = Recall(recallId, nomsNumber)

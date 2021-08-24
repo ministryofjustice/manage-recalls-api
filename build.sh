@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+docker-compose up -d postgres
+
 ./gradlew ktlintFormat
 ./gradlew clean check
 ./gradlew verifyPactAndPublish
