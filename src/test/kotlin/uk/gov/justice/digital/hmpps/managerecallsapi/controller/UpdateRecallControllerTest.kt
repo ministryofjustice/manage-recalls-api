@@ -10,7 +10,6 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.http.ResponseEntity
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -38,10 +37,9 @@ class UpdateRecallControllerTest {
 
   private val fullyPopulatedUpdateRecallRequest = UpdateRecallRequest(
     agreeWithRecallRecommendation = true,
-    recallLength = FOURTEEN_DAYS,
-    recallEmailReceivedDateTime = OffsetDateTime.now(),
     lastReleasePrison = "Andys house",
     lastReleaseDate = LocalDate.now(),
+    recallEmailReceivedDateTime = OffsetDateTime.now(),
     localPoliceService = "Oxford",
     contrabandDetail = "Dodgy hat",
     vulnerabilityDiversityDetail = "Lots",
@@ -61,10 +59,23 @@ class UpdateRecallControllerTest {
     authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer"
   )
 
+  private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
+    fullyPopulatedUpdateRecallRequest.sentenceDate!!,
+    fullyPopulatedUpdateRecallRequest.licenceExpiryDate!!,
+    fullyPopulatedUpdateRecallRequest.sentenceExpiryDate!!,
+    fullyPopulatedUpdateRecallRequest.sentencingCourt!!,
+    fullyPopulatedUpdateRecallRequest.indexOffence!!,
+    SentenceLength(
+      fullyPopulatedUpdateRecallRequest.sentenceLength!!.years,
+      fullyPopulatedUpdateRecallRequest.sentenceLength!!.months,
+      fullyPopulatedUpdateRecallRequest.sentenceLength!!.days
+    ),
+    fullyPopulatedUpdateRecallRequest.conditionalReleaseDate
+  )
   private val fullyPopulatedRecall = existingRecall.copy(
     recallType = FIXED,
     agreeWithRecallRecommendation = fullyPopulatedUpdateRecallRequest.agreeWithRecallRecommendation,
-    recallLength = fullyPopulatedUpdateRecallRequest.recallLength,
+    recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
@@ -72,19 +83,7 @@ class UpdateRecallControllerTest {
     contrabandDetail = fullyPopulatedUpdateRecallRequest.contrabandDetail,
     vulnerabilityDiversityDetail = fullyPopulatedUpdateRecallRequest.vulnerabilityDiversityDetail,
     mappaLevel = fullyPopulatedUpdateRecallRequest.mappaLevel,
-    sentencingInfo = SentencingInfo(
-      fullyPopulatedUpdateRecallRequest.sentenceDate!!,
-      fullyPopulatedUpdateRecallRequest.licenceExpiryDate!!,
-      fullyPopulatedUpdateRecallRequest.sentenceExpiryDate!!,
-      fullyPopulatedUpdateRecallRequest.sentencingCourt!!,
-      fullyPopulatedUpdateRecallRequest.indexOffence!!,
-      SentenceLength(
-        fullyPopulatedUpdateRecallRequest.sentenceLength!!.years,
-        fullyPopulatedUpdateRecallRequest.sentenceLength!!.months,
-        fullyPopulatedUpdateRecallRequest.sentenceLength!!.days
-      ),
-      fullyPopulatedUpdateRecallRequest.conditionalReleaseDate
-    ),
+    sentencingInfo = fullyPopulatedRecallSentencingInfo,
     bookingNumber = fullyPopulatedUpdateRecallRequest.bookingNumber,
     probationInfo = ProbationInfo(
       fullyPopulatedUpdateRecallRequest.probationOfficerName!!,
@@ -97,7 +96,7 @@ class UpdateRecallControllerTest {
 
   private val fullyPopulatedRecallResponse = existingRecallResponse.copy(
     agreeWithRecallRecommendation = fullyPopulatedUpdateRecallRequest.agreeWithRecallRecommendation,
-    recallLength = fullyPopulatedUpdateRecallRequest.recallLength,
+    recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,

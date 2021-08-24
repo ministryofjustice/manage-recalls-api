@@ -32,21 +32,22 @@ class UpdateRecallController(
     @RequestBody updateRecallRequest: UpdateRecallRequest
   ): ResponseEntity<RecallResponse> =
     ResponseEntity.ok(
-      recallRepository.getByRecallId(recallId).let {
-        it.copy(
+      recallRepository.getByRecallId(recallId).let { recall ->
+        val sentencingInfo = updateRecallRequest.toSentencingInfo(recall)
+        recall.copy(
           recallType = FIXED,
-          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation ?: it.agreeWithRecallRecommendation,
-          recallLength = updateRecallRequest.recallLength ?: it.recallLength,
-          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: it.recallEmailReceivedDateTime,
-          lastReleasePrison = updateRecallRequest.lastReleasePrison ?: it.lastReleasePrison,
-          lastReleaseDate = updateRecallRequest.lastReleaseDate ?: it.lastReleaseDate,
-          localPoliceForce = updateRecallRequest.getLocalPoliceForce(it),
-          contrabandDetail = updateRecallRequest.contrabandDetail ?: it.contrabandDetail,
-          vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: it.vulnerabilityDiversityDetail,
-          mappaLevel = updateRecallRequest.mappaLevel ?: it.mappaLevel,
-          sentencingInfo = updateRecallRequest.toSentencingInfo(it),
-          probationInfo = updateRecallRequest.toProbationInfo(it),
-          bookingNumber = updateRecallRequest.bookingNumber ?: it.bookingNumber
+          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation ?: recall.agreeWithRecallRecommendation,
+          recallLength = sentencingInfo?.calculateRecallLength() ?: recall.recallLength,
+          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recall.recallEmailReceivedDateTime,
+          lastReleasePrison = updateRecallRequest.lastReleasePrison ?: recall.lastReleasePrison,
+          lastReleaseDate = updateRecallRequest.lastReleaseDate ?: recall.lastReleaseDate,
+          localPoliceForce = updateRecallRequest.getLocalPoliceForce(recall),
+          contrabandDetail = updateRecallRequest.contrabandDetail ?: recall.contrabandDetail,
+          vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: recall.vulnerabilityDiversityDetail,
+          mappaLevel = updateRecallRequest.mappaLevel ?: recall.mappaLevel,
+          sentencingInfo = sentencingInfo,
+          probationInfo = updateRecallRequest.toProbationInfo(recall),
+          bookingNumber = updateRecallRequest.bookingNumber ?: recall.bookingNumber
         )
       }.let(recallRepository::save).toResponse()
     )
@@ -95,7 +96,6 @@ private fun UpdateRecallRequest.getLocalPoliceForce(existingRecall: Recall): Str
   }
 
 data class UpdateRecallRequest(
-  val recallLength: RecallLength? = null,
   val agreeWithRecallRecommendation: Boolean? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
