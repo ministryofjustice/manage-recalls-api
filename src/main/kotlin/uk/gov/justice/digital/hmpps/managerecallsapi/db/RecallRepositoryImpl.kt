@@ -4,6 +4,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Profile
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
@@ -17,14 +18,15 @@ import java.util.UUID
 interface JpaRecallRepository : JpaRepository<Recall, UUID>
 
 @NoRepositoryBean
-interface ExtendedRecallRepository : JpaRecallRepository {
+interface RecallRepository : JpaRecallRepository {
   fun getByRecallId(recallId: RecallId): Recall
 }
 
 @Component
-class RecallRepository(
+@Profile("!test")
+class RecallRepositoryImpl(
   @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
-) : JpaRecallRepository by jpaRepository, ExtendedRecallRepository {
+) : JpaRecallRepository by jpaRepository, RecallRepository {
   override fun getByRecallId(recallId: RecallId): Recall =
     try {
       getById(recallId.value)

@@ -61,6 +61,7 @@ tasks {
 
   test {
     useJUnitPlatform {
+      include("**/*Test")
       exclude("**/*RealPdfDocumentGeneratorTest*")
       exclude("**/*PactTest*")
     }

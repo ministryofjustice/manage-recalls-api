@@ -8,6 +8,7 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
@@ -39,7 +40,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     gotenbergMockServer.stop()
   }
 
-  @MockkBean
+  @Autowired
   private lateinit var recallRepository: RecallRepository
 
   @MockkBean
@@ -60,7 +61,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `books a recall`() {
 
-    every { recallRepository.save(any()) } returns aRecall
+    recallRepository.save(aRecall)
 
     val response =
       webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest).headers {
@@ -80,7 +81,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `returns all recalls`() {
 
-    every { recallRepository.findAll() } returns listOf(aRecall)
+    recallRepository.save(aRecall)
 
     webTestClient.get().uri("/recalls").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
@@ -94,7 +95,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `gets a minimal recall`() {
 
-    every { recallRepository.getByRecallId(recallId) } returns minimalRecall(recallId, nomsNumber)
+    recallRepository.save(minimalRecall(recallId, nomsNumber))
 
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
@@ -113,7 +114,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       nomsNumber,
       documents = exampleDocuments(recallId)
     )
-    every { recallRepository.getByRecallId(recallId) } returns recall
+    recallRepository.save(recall)
 
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
       .exchange()
@@ -147,7 +148,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     val expectedPdf = "Expected Generated PDF".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
+    recallRepository.save(aRecall)
 
     val firstName = "Natalia"
     prisonerOffenderSearch.prisonerSearchRespondsWith(

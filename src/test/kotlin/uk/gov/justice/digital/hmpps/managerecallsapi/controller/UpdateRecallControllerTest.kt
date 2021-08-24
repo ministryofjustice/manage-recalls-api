@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
@@ -13,19 +11,19 @@ import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.db.InMemoryRecallRepository
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)
 class UpdateRecallControllerTest {
-  private val recallRepository = mockk<RecallRepository>()
+  private val recallRepository = InMemoryRecallRepository()
   private val underTest = UpdateRecallController(recallRepository)
 
   private val recallId = ::RecallId.random()
@@ -125,8 +123,7 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can update recall with all fields populated`() {
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    every { recallRepository.save(fullyPopulatedRecall) } returns fullyPopulatedRecall
+    recallRepository.save(existingRecall)
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
 
@@ -135,8 +132,7 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `cannot reset recall properties to null with update recall`() {
-    every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecall
-    every { recallRepository.save(fullyPopulatedRecall) } returns fullyPopulatedRecall
+    recallRepository.save(fullyPopulatedRecall)
 
     val emptyUpdateRecallRequest = UpdateRecallRequest()
     val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
@@ -163,10 +159,8 @@ class UpdateRecallControllerTest {
   }
 
   private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    // TODO: don't set the recallType unless we need to
     val recallWithType = existingRecall.copy(recallType = FIXED)
-    every { recallRepository.save(recallWithType) } returns recallWithType
+    recallRepository.save(recallWithType)
 
     val response = underTest.updateRecall(recallId, request)
 
