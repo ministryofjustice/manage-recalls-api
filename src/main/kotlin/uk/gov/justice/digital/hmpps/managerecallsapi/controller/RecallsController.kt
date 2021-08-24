@@ -114,7 +114,6 @@ fun Recall.toResponse() = RecallResponse(
   lastReleasePrison = this.lastReleasePrison,
   lastReleaseDate = this.lastReleaseDate,
   recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
-  localPoliceService = localPoliceForce,
   localPoliceForce = localPoliceForce,
   vulnerabilityDiversityDetail = this.vulnerabilityDiversityDetail,
   contrabandDetail = this.contrabandDetail,
@@ -146,8 +145,6 @@ data class RecallResponse(
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
-  @Deprecated("Use localPoliceForce, delete this field once PUD-409 is complete in the UI")
-  val localPoliceService: String? = null,
   val localPoliceForce: String? = null,
   val vulnerabilityDiversityDetail: String? = null,
   val contrabandDetail: String? = null,
