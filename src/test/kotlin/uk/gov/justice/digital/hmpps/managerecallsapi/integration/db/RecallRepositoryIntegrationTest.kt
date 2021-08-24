@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
+import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.DOCKER
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -32,7 +32,7 @@ import java.time.OffsetDateTime
 import java.util.UUID
 
 @ExtendWith(SpringExtension::class)
-@AutoConfigureEmbeddedDatabase(provider = ZONKY)
+@AutoConfigureEmbeddedDatabase(provider = DOCKER)
 @DataJpaTest
 @AutoConfigureTestDatabase
 @Import(RecallRepository::class)
@@ -40,8 +40,6 @@ class RecallRepositoryIntegrationTest(
   @Autowired
   private val repository: RecallRepository
 ) {
-  // TODO: Avoid bugs such as PUD-329 by use of a real database for integration tests such as this, i.e. PUD-330.
-
   private val nomsNumber = NomsNumber("A12345F")
 
   @Test
