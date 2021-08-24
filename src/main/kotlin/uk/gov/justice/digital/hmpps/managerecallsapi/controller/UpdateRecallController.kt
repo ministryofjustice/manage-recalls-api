@@ -41,7 +41,7 @@ class UpdateRecallController(
           recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recall.recallEmailReceivedDateTime,
           lastReleasePrison = updateRecallRequest.lastReleasePrison ?: recall.lastReleasePrison,
           lastReleaseDate = updateRecallRequest.lastReleaseDate ?: recall.lastReleaseDate,
-          localPoliceForce = updateRecallRequest.getLocalPoliceForce(recall),
+          localPoliceForce = updateRecallRequest.localPoliceForce ?: recall.localPoliceForce,
           contrabandDetail = updateRecallRequest.contrabandDetail ?: recall.contrabandDetail,
           vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: recall.vulnerabilityDiversityDetail,
           mappaLevel = updateRecallRequest.mappaLevel ?: recall.mappaLevel,
@@ -88,20 +88,11 @@ class UpdateRecallController(
   ) else existingRecall.probationInfo
 }
 
-private fun UpdateRecallRequest.getLocalPoliceForce(existingRecall: Recall): String? =
-  when {
-    this.localPoliceService != null -> localPoliceService
-    this.localPoliceForce != null -> localPoliceForce
-    else -> existingRecall.localPoliceForce
-  }
-
 data class UpdateRecallRequest(
   val agreeWithRecallRecommendation: Boolean? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
-  @Deprecated("Use localPoliceForce, delete this field once PUD-409 is complete in the UI")
-  val localPoliceService: String? = null,
   val localPoliceForce: String? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversityDetail: String? = null,
