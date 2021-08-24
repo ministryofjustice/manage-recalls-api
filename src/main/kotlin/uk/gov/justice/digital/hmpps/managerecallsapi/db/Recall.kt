@@ -131,7 +131,14 @@ data class SentencingInfo(
   @Embedded
   val sentenceLength: SentenceLength,
   val conditionalReleaseDate: LocalDate? = null
-)
+) {
+  fun calculateRecallLength(): RecallLength {
+    return if (sentenceLength.sentenceDays >= 366 || sentenceLength.sentenceMonths >= 12 || sentenceLength.sentenceYears >= 1) {
+      RecallLength.TWENTY_EIGHT_DAYS
+    } else
+      RecallLength.FOURTEEN_DAYS
+  }
+}
 
 @Embeddable
 data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val sentenceDays: Int)

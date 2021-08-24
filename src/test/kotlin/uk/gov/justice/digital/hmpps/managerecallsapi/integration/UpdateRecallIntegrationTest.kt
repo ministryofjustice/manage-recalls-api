@@ -27,26 +27,25 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val recallId = ::RecallId.random()
-  private val recallLength = TWENTY_EIGHT_DAYS
 
   @Test
   fun `update a recall returns updated recall including with recallType of FIXED`() {
     val priorRecall = Recall(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns priorRecall
-    val expectedRecall = priorRecall.copy(recallLength = recallLength, recallType = FIXED)
+    val expectedRecall = priorRecall.copy(agreeWithRecallRecommendation = true, recallType = FIXED)
     every { recallRepository.save(expectedRecall) } returns expectedRecall
 
-    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(recallLength))
+    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true))
 
     assertThat(
       response,
-      equalTo(RecallResponse(recallId, nomsNumber, emptyList(), recallLength = recallLength))
+      equalTo(RecallResponse(recallId, nomsNumber, emptyList(), agreeWithRecallRecommendation = true))
     )
   }
 
   @Test
-  fun `update a recall with no recall length returns 400`() {
-    sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", "{\"recallLength\":\"\"}")
+  fun `update a recall with blank mappaLevel returns 400`() {
+    sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", "{\"mappaLevel\":\"\"}")
       .expectStatus().isBadRequest
   }
 
@@ -54,17 +53,17 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
   fun `update a recall that does not exist returns 404`() {
     every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException("blah", Exception())
 
-    sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", UpdateRecallRequest(recallLength))
+    sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", UpdateRecallRequest())
       .expectStatus().isNotFound
   }
 
   @Test
-  fun `update a recall with sentence information`() {
+  fun `update a recall with sentence information will update recall length`() {
     val existingRecall = Recall(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
 
     val sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), "court", "index offence", SentenceLength(2, 5, 31))
-    val updatedRecall = existingRecall.copy(sentencingInfo = sentencingInfo, recallType = FIXED)
+    val updatedRecall = existingRecall.copy(sentencingInfo = sentencingInfo, recallType = FIXED, recallLength = TWENTY_EIGHT_DAYS)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = authenticatedPatchRequest(
@@ -92,7 +91,8 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
           sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
           sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
-          sentenceLength = Api.SentenceLength(2, 5, 31)
+          sentenceLength = Api.SentenceLength(2, 5, 31),
+          recallLength = TWENTY_EIGHT_DAYS
         )
       )
     )
@@ -111,21 +111,6 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), bookingNumber = "BN12345")))
   }
 
-  @Deprecated("Use localPoliceForce, delete this field once PUD-409 is complete in the UI")
-  @Test
-  fun `update a recall with local police service`() {
-    val existingRecall = Recall(recallId, nomsNumber)
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-
-    val policeForce = "London"
-    val updatedRecall = existingRecall.copy(localPoliceForce = policeForce, recallType = FIXED)
-    every { recallRepository.save(updatedRecall) } returns updatedRecall
-
-    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceService = policeForce))
-
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), localPoliceService = policeForce, localPoliceForce = policeForce)))
-  }
-
   @Test
   fun `update a recall with local police force`() {
     val existingRecall = Recall(recallId, nomsNumber)
@@ -137,7 +122,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceForce = policeForce))
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), localPoliceService = policeForce, localPoliceForce = policeForce)))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), localPoliceForce = policeForce)))
   }
 
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =
