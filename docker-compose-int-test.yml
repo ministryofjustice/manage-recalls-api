@@ -6,6 +6,7 @@ services:
       - "9093:3000"
     networks:
       - manage-recalls-api-int-tests
+    container_name: gotenberg-int-tests
 
   manage-recalls-api-int-tests:
     build:
