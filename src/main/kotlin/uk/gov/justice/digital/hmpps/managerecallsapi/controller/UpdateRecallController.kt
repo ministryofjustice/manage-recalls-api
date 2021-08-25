@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -9,12 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -22,9 +15,7 @@ import java.time.OffsetDateTime
 @RestController
 @RequestMapping(produces = [APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
-class UpdateRecallController(
-  @Autowired private val recallRepository: RecallRepository
-) {
+class UpdateRecallController(private val updateRecallService: UpdateRecallService) {
 
   @PatchMapping("/recalls/{recallId}")
   fun updateRecall(
@@ -32,60 +23,9 @@ class UpdateRecallController(
     @RequestBody updateRecallRequest: UpdateRecallRequest
   ): ResponseEntity<RecallResponse> =
     ResponseEntity.ok(
-      recallRepository.getByRecallId(recallId).let { recall ->
-        val sentencingInfo = updateRecallRequest.toSentencingInfo(recall)
-        recall.copy(
-          recallType = FIXED,
-          agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation ?: recall.agreeWithRecallRecommendation,
-          recallLength = sentencingInfo?.calculateRecallLength() ?: recall.recallLength,
-          recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recall.recallEmailReceivedDateTime,
-          lastReleasePrison = updateRecallRequest.lastReleasePrison ?: recall.lastReleasePrison,
-          lastReleaseDate = updateRecallRequest.lastReleaseDate ?: recall.lastReleaseDate,
-          localPoliceForce = updateRecallRequest.localPoliceForce ?: recall.localPoliceForce,
-          contrabandDetail = updateRecallRequest.contrabandDetail ?: recall.contrabandDetail,
-          vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: recall.vulnerabilityDiversityDetail,
-          mappaLevel = updateRecallRequest.mappaLevel ?: recall.mappaLevel,
-          sentencingInfo = sentencingInfo,
-          probationInfo = updateRecallRequest.toProbationInfo(recall),
-          bookingNumber = updateRecallRequest.bookingNumber ?: recall.bookingNumber
-        )
-      }.let(recallRepository::save).toResponse()
+      updateRecallService.updateRecall(recallId, updateRecallRequest)
+        .toResponse()
     )
-
-  private fun UpdateRecallRequest.toSentencingInfo(
-    existingRecall: Recall
-  ) = if (sentenceDate != null &&
-    licenceExpiryDate != null &&
-    sentenceExpiryDate != null &&
-    sentencingCourt != null &&
-    indexOffence != null &&
-    sentenceLength != null
-  ) SentencingInfo(
-    sentenceDate,
-    licenceExpiryDate,
-    sentenceExpiryDate,
-    sentencingCourt,
-    indexOffence,
-    SentenceLength(sentenceLength.years, sentenceLength.months, sentenceLength.days),
-    conditionalReleaseDate
-  ) else existingRecall.sentencingInfo
-
-  private fun UpdateRecallRequest.toProbationInfo(
-    existingRecall: Recall
-  ) = if (
-    probationOfficerName != null &&
-    probationOfficerPhoneNumber != null &&
-    probationOfficerEmail != null &&
-    probationDivision != null &&
-    authorisingAssistantChiefOfficer != null
-
-  ) ProbationInfo(
-    probationOfficerName,
-    probationOfficerPhoneNumber,
-    probationOfficerEmail,
-    probationDivision,
-    authorisingAssistantChiefOfficer,
-  ) else existingRecall.probationInfo
 }
 
 data class UpdateRecallRequest(
@@ -97,7 +37,6 @@ data class UpdateRecallRequest(
   val contrabandDetail: String? = null,
   val vulnerabilityDiversityDetail: String? = null,
   val mappaLevel: MappaLevel? = null,
-  // sentencing info
   val sentenceDate: LocalDate? = null,
   val licenceExpiryDate: LocalDate? = null,
   val sentenceExpiryDate: LocalDate? = null,
@@ -105,7 +44,6 @@ data class UpdateRecallRequest(
   val indexOffence: String? = null,
   val conditionalReleaseDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,
-  //
   val bookingNumber: String? = null,
   val probationOfficerName: String? = null,
   val probationOfficerPhoneNumber: String? = null,

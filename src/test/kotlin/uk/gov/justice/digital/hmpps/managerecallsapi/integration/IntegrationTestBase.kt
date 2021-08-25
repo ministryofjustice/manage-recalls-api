@@ -141,8 +141,8 @@ abstract class IntegrationTestBase {
     lastReleaseDate = LocalDate.now(),
     recallEmailReceivedDateTime = dateTimeNow(),
     localPoliceForce = randomString(),
-    contraband = randomString(),
-    vulnerabilityDiversity = randomString(),
+    contrabandDetail = randomString(),
+    vulnerabilityDiversityDetail = randomString(),
     mappaLevel = MappaLevel.NA,
     sentencingInfo = SentencingInfo(
       LocalDate.now(),
