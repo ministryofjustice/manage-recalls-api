@@ -20,9 +20,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivisio
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -141,8 +143,8 @@ abstract class IntegrationTestBase {
     lastReleaseDate = LocalDate.now(),
     recallEmailReceivedDateTime = dateTimeNow(),
     localPoliceForce = randomString(),
-    contraband = randomString(),
-    vulnerabilityDiversity = randomString(),
+    contrabandDetail = randomString(),
+    vulnerabilityDiversityDetail = randomString(),
     mappaLevel = MappaLevel.NA,
     sentencingInfo = SentencingInfo(
       LocalDate.now(),
@@ -161,6 +163,8 @@ abstract class IntegrationTestBase {
       ProbationDivision.NORTH_EAST,
       randomString()
     ),
+    licenceConditionsBreached = "blah be de blah blue blah",
+    reasonsForRecall = ReasonForRecall.values().map { reason -> RecallReason(UUID.randomUUID(), recallId.value, reason) }.toSortedSet(compareBy { it.reasonForRecall.name })
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

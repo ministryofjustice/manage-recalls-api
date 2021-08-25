@@ -68,6 +68,12 @@ data class Recall(
 
   val probationInfo: ProbationInfo? = null,
 
+  val licenceConditionsBreached: String? = null,
+
+  @OneToMany(cascade = [ALL])
+  @JoinColumn(name = "recall_id")
+  val reasonsForRecall: Set<RecallReason> = emptySet(),
+
   val currentPrison: String? = null,
 
 ) {
@@ -83,12 +89,14 @@ data class Recall(
     lastReleaseDate: LocalDate? = null,
     recallEmailReceivedDateTime: OffsetDateTime? = null,
     localPoliceForce: String? = null,
-    contraband: String? = null,
-    vulnerabilityDiversity: String? = null,
+    contrabandDetail: String? = null,
+    vulnerabilityDiversityDetail: String? = null,
     mappaLevel: MappaLevel? = null,
     sentencingInfo: SentencingInfo? = null,
     bookingNumber: String? = null,
     probationInfo: ProbationInfo? = null,
+    licenceConditionsBreached: String? = null,
+    reasonsForRecall: Set<RecallReason> = emptySet(),
     currentPrison: String? = null
 
   ) :
@@ -104,12 +112,14 @@ data class Recall(
       lastReleaseDate,
       recallEmailReceivedDateTime,
       localPoliceForce,
-      contraband,
-      vulnerabilityDiversity,
+      contrabandDetail,
+      vulnerabilityDiversityDetail,
       mappaLevel,
       sentencingInfo,
       bookingNumber,
       probationInfo,
+      licenceConditionsBreached,
+      reasonsForRecall,
       currentPrison
     )
 

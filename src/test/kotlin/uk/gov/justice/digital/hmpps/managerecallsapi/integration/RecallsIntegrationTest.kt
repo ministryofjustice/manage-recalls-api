@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -73,7 +74,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     assertThat(
       response.responseBody,
-      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, emptyList()))
+      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, emptyList(), reasonsForRecall = emptyList()))
     )
   }
 
@@ -140,6 +141,15 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.indexOffence").isEqualTo(recall.sentencingInfo!!.indexOffence)
       .jsonPath("$.conditionalReleaseDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.bookingNumber").isEqualTo(recall.bookingNumber!!)
+      .jsonPath("$.probationOfficerName").isEqualTo(recall.probationInfo!!.probationOfficerName)
+      .jsonPath("$.probationOfficerPhoneNumber").isEqualTo(recall.probationInfo!!.probationOfficerPhoneNumber)
+      .jsonPath("$.probationOfficerEmail").isEqualTo(recall.probationInfo!!.probationOfficerEmail)
+      .jsonPath("$.probationDivision").isEqualTo(recall.probationInfo!!.probationDivision.name)
+      .jsonPath("$.authorisingAssistantChiefOfficer").isEqualTo(recall.probationInfo!!.authorisingAssistantChiefOfficer)
+      .jsonPath("$.licenceConditionsBreached").isEqualTo(recall.licenceConditionsBreached!!)
+      .jsonPath("$.reasonsForRecall.length()").isEqualTo(ReasonForRecall.values().size)
+      .jsonPath("$.reasonsForRecall[0].reasonId").isNotEmpty
+      .jsonPath("$.reasonsForRecall[0].reasonForRecall").isEqualTo("BREACH_EXCLUSION_ZONE")
   }
 
   @Test
