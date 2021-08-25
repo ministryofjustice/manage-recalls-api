@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -19,7 +18,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.util.UUID
 
 @TestInstance(PER_CLASS)
 class UpdateRecallControllerTest {
@@ -53,8 +51,8 @@ class UpdateRecallControllerTest {
     authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer",
     licenceConditionsBreached = "Breached on .... by ...",
     reasonsForRecall = setOf(
-      Api.RecallReason(UUID.randomUUID(), ReasonForRecall.BREACH_EXCLUSION_ZONE),
-      Api.RecallReason(UUID.randomUUID(), ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION)
+      ReasonForRecall.BREACH_EXCLUSION_ZONE,
+      ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION
     ),
     currentPrison = "PrisonId"
   )
@@ -96,14 +94,13 @@ class UpdateRecallControllerTest {
       fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
     ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
-    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.map { RecallReason(it.reasonId, recallId.value, it.reasonForRecall) }.toSet(),
+    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
     currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
   )
 
   private val fullyPopulatedRecallResponse = RecallResponse(
     recallId = recallId,
     nomsNumber = nomsNumber,
-    documents = emptyList(),
     agreeWithRecallRecommendation = fullyPopulatedUpdateRecallRequest.agreeWithRecallRecommendation,
     recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,

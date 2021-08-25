@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -21,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.time.LocalDate
-import java.util.UUID
 
 class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
@@ -41,15 +39,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     val response =
       authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true))
 
-    assertThat(
-      response,
-      equalTo(
-        RecallResponse(
-          recallId, nomsNumber, emptyList(), agreeWithRecallRecommendation = true,
-          reasonsForRecall = emptyList()
-        )
-      )
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, agreeWithRecallRecommendation = true)))
   }
 
   @Test
@@ -106,15 +96,13 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
-          emptyList(),
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
           sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
           sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
           sentenceLength = Api.SentenceLength(2, 5, 31),
-          recallLength = TWENTY_EIGHT_DAYS,
-          reasonsForRecall = emptyList()
+          recallLength = TWENTY_EIGHT_DAYS
         )
       )
     )
@@ -130,15 +118,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(bookingNumber = "BN12345"))
 
-    assertThat(
-      response,
-      equalTo(
-        RecallResponse(
-          recallId, nomsNumber, emptyList(),
-          reasonsForRecall = emptyList(), bookingNumber = "BN12345"
-        )
-      )
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, bookingNumber = "BN12345")))
   }
 
   @Test
@@ -152,15 +132,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceForce = policeForce))
 
-    assertThat(
-      response,
-      equalTo(
-        RecallResponse(
-          recallId, nomsNumber, emptyList(),
-          reasonsForRecall = emptyList(), localPoliceForce = policeForce
-        )
-      )
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, localPoliceForce = policeForce)))
   }
 
   @Test
@@ -168,25 +140,16 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     val existingRecall = Recall(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
 
-    val recallReason = Api.RecallReason(UUID.randomUUID(), ReasonForRecall.BREACH_EXCLUSION_ZONE)
+    val recallReason = ReasonForRecall.BREACH_EXCLUSION_ZONE
     val updatedRecall = existingRecall.copy(
-      reasonsForRecall = setOf(
-        RecallReason(
-          recallReason.reasonId,
-          recallId.value,
-          recallReason.reasonForRecall
-        )
-      ),
+      reasonsForRecall = setOf(recallReason),
       recallType = FIXED
     )
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(reasonsForRecall = setOf(recallReason)))
 
-    assertThat(
-      response,
-      equalTo(RecallResponse(recallId, nomsNumber, emptyList(), reasonsForRecall = listOf(recallReason)))
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, reasonsForRecall = listOf(recallReason))))
   }
 
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =
