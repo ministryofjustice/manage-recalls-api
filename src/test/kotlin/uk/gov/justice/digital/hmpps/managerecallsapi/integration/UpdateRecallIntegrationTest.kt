@@ -10,7 +10,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -19,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.time.LocalDate
+import java.util.UUID
 
 class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
@@ -35,11 +38,17 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     val expectedRecall = priorRecall.copy(agreeWithRecallRecommendation = true, recallType = FIXED)
     every { recallRepository.save(expectedRecall) } returns expectedRecall
 
-    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true))
+    val response =
+      authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true))
 
     assertThat(
       response,
-      equalTo(RecallResponse(recallId, nomsNumber, emptyList(), agreeWithRecallRecommendation = true))
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber, emptyList(), agreeWithRecallRecommendation = true,
+          reasonsForRecall = emptyList()
+        )
+      )
     )
   }
 
@@ -62,8 +71,16 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     val existingRecall = Recall(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
 
-    val sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), "court", "index offence", SentenceLength(2, 5, 31))
-    val updatedRecall = existingRecall.copy(sentencingInfo = sentencingInfo, recallType = FIXED, recallLength = TWENTY_EIGHT_DAYS)
+    val sentencingInfo = SentencingInfo(
+      LocalDate.now(),
+      LocalDate.now(),
+      LocalDate.now(),
+      "court",
+      "index offence",
+      SentenceLength(2, 5, 31)
+    )
+    val updatedRecall =
+      existingRecall.copy(sentencingInfo = sentencingInfo, recallType = FIXED, recallLength = TWENTY_EIGHT_DAYS)
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = authenticatedPatchRequest(
@@ -75,7 +92,11 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
         sentencingCourt = sentencingInfo.sentencingCourt,
         indexOffence = sentencingInfo.indexOffence,
         conditionalReleaseDate = sentencingInfo.conditionalReleaseDate,
-        sentenceLength = Api.SentenceLength(sentencingInfo.sentenceLength.sentenceYears, sentencingInfo.sentenceLength.sentenceMonths, sentencingInfo.sentenceLength.sentenceDays),
+        sentenceLength = Api.SentenceLength(
+          sentencingInfo.sentenceLength.sentenceYears,
+          sentencingInfo.sentenceLength.sentenceMonths,
+          sentencingInfo.sentenceLength.sentenceDays
+        ),
       )
     )
 
@@ -92,7 +113,8 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
           sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
           sentenceLength = Api.SentenceLength(2, 5, 31),
-          recallLength = TWENTY_EIGHT_DAYS
+          recallLength = TWENTY_EIGHT_DAYS,
+          reasonsForRecall = emptyList()
         )
       )
     )
@@ -108,7 +130,15 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(bookingNumber = "BN12345"))
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), bookingNumber = "BN12345")))
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber, emptyList(),
+          reasonsForRecall = emptyList(), bookingNumber = "BN12345"
+        )
+      )
+    )
   }
 
   @Test
@@ -122,7 +152,41 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceForce = policeForce))
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, emptyList(), localPoliceForce = policeForce)))
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber, emptyList(),
+          reasonsForRecall = emptyList(), localPoliceForce = policeForce
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `update a recall with non empty reasons for recall list`() {
+    val existingRecall = Recall(recallId, nomsNumber)
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+
+    val recallReason = Api.RecallReason(UUID.randomUUID(), ReasonForRecall.BREACH_EXCLUSION_ZONE)
+    val updatedRecall = existingRecall.copy(
+      reasonsForRecall = setOf(
+        RecallReason(
+          recallReason.reasonId,
+          recallId.value,
+          recallReason.reasonForRecall
+        )
+      ),
+      recallType = FIXED
+    )
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(reasonsForRecall = setOf(recallReason)))
+
+    assertThat(
+      response,
+      equalTo(RecallResponse(recallId, nomsNumber, emptyList(), reasonsForRecall = listOf(recallReason)))
+    )
   }
 
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =

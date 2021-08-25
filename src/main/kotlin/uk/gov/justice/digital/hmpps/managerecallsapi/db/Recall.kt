@@ -68,6 +68,12 @@ data class Recall(
 
   val probationInfo: ProbationInfo? = null,
 
+  val licenceConditionsBreached: String? = null,
+
+  @OneToMany(cascade = [ALL])
+  @JoinColumn(name = "recall_id")
+  val reasonsForRecall: Set<RecallReason> = emptySet(),
+
 ) {
   constructor(
     recallId: RecallId,
@@ -86,8 +92,9 @@ data class Recall(
     mappaLevel: MappaLevel? = null,
     sentencingInfo: SentencingInfo? = null,
     bookingNumber: String? = null,
-    probationInfo: ProbationInfo? = null
-
+    probationInfo: ProbationInfo? = null,
+    licenceConditionsBreached: String? = null,
+    reasonsForRecall: Set<RecallReason> = emptySet()
   ) :
     this(
       recallId.value,
@@ -106,7 +113,9 @@ data class Recall(
       mappaLevel,
       sentencingInfo,
       bookingNumber,
-      probationInfo
+      probationInfo,
+      licenceConditionsBreached,
+      reasonsForRecall
     )
 
   fun recallId() = RecallId(id)

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -130,7 +131,9 @@ fun Recall.toResponse() = RecallResponse(
   probationOfficerPhoneNumber = this.probationInfo?.probationOfficerPhoneNumber,
   probationOfficerEmail = this.probationInfo?.probationOfficerEmail,
   probationDivision = this.probationInfo?.probationDivision,
-  authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer
+  authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer,
+  licenceConditionsBreached = this.licenceConditionsBreached,
+  reasonsForRecall = this.reasonsForRecall.map { reason -> Api.RecallReason(reason.id, reason.reasonForRecall) }
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -162,10 +165,17 @@ data class RecallResponse(
   val probationOfficerEmail: String? = null,
   val probationDivision: ProbationDivision? = null,
   val authorisingAssistantChiefOfficer: String? = null,
+  val licenceConditionsBreached: String? = null,
+  val reasonsForRecall: List<Api.RecallReason>
 )
 
 class Api {
   data class SentenceLength(val years: Int, val months: Int, val days: Int)
+
+  data class RecallReason(
+    val reasonId: UUID,
+    val reasonForRecall: ReasonForRecall
+  )
 }
 
 data class ApiRecallDocument(

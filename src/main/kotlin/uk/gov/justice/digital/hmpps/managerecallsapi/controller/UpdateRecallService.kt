@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -34,10 +35,18 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       mappaLevel = updateRecallRequest.mappaLevel ?: mappaLevel,
       sentencingInfo = sentencingInfo,
       probationInfo = updateRecallRequest.toProbationInfo(this),
-      bookingNumber = updateRecallRequest.bookingNumber ?: bookingNumber
+      bookingNumber = updateRecallRequest.bookingNumber ?: bookingNumber,
+      licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
+      reasonsForRecall = updateRecallRequest.toReasonsForRecall(this)
     )
   }
 }
+
+fun UpdateRecallRequest.toReasonsForRecall(
+  existingRecall: Recall
+) =
+  reasonsForRecall?.map { RecallReason(it.reasonId, existingRecall.id, it.reasonForRecall) }?.toSet()
+    ?: existingRecall.reasonsForRecall
 
 fun UpdateRecallRequest.toSentencingInfo(
   existingRecall: Recall

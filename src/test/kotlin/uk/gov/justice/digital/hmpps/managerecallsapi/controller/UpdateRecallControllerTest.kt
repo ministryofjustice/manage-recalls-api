@@ -9,7 +9,9 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -17,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.util.UUID
 
 @TestInstance(PER_CLASS)
 class UpdateRecallControllerTest {
@@ -47,7 +50,12 @@ class UpdateRecallControllerTest {
     probationOfficerPhoneNumber = "+44(0)111111111",
     probationOfficerEmail = "probationOfficer@email.com",
     probationDivision = ProbationDivision.LONDON,
-    authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer"
+    authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer",
+    licenceConditionsBreached = "Breached on .... by ...",
+    reasonsForRecall = setOf(
+      Api.RecallReason(UUID.randomUUID(), ReasonForRecall.BREACH_EXCLUSION_ZONE),
+      Api.RecallReason(UUID.randomUUID(), ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION)
+    )
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -85,7 +93,9 @@ class UpdateRecallControllerTest {
       fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
       fullyPopulatedUpdateRecallRequest.probationDivision!!,
       fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
-    )
+    ),
+    licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
+    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.map { RecallReason(it.reasonId, recallId.value, it.reasonForRecall) }.toSet()
   )
 
   private val fullyPopulatedRecallResponse = RecallResponse(
@@ -118,6 +128,8 @@ class UpdateRecallControllerTest {
     probationOfficerEmail = fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
     probationDivision = fullyPopulatedUpdateRecallRequest.probationDivision!!,
     authorisingAssistantChiefOfficer = fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
+    licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
+    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toList()
   )
 
   @Test
