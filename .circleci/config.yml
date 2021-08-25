@@ -18,6 +18,14 @@ parameters:
     type: string
     default: main
 
+_db_docker_config: &db_docker_config
+  - image: cimg/openjdk:11.0
+  - image: circleci/postgres:10-alpine-ram
+    environment:
+      POSTGRES_USER: ppud_user
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: manage_recalls
+
 executors:
   local-docker:
     docker:
@@ -29,6 +37,7 @@ jobs:
     executor:
       name: hmpps/java
       tag: "16.0"
+    docker: *db_docker_config
     steps:
       - checkout
       - gradle/with_cache:
