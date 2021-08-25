@@ -13,6 +13,7 @@ import javax.persistence.AttributeConverter
 import javax.persistence.CascadeType.ALL
 import javax.persistence.Column
 import javax.persistence.Convert
+import javax.persistence.ElementCollection
 import javax.persistence.Embeddable
 import javax.persistence.Embedded
 import javax.persistence.Entity
@@ -20,6 +21,7 @@ import javax.persistence.EnumType.STRING
 import javax.persistence.Enumerated
 import javax.persistence.Id
 import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -70,9 +72,11 @@ data class Recall(
 
   val licenceConditionsBreached: String? = null,
 
-  @OneToMany(cascade = [ALL])
-  @JoinColumn(name = "recall_id")
-  val reasonsForRecall: Set<RecallReason> = emptySet(),
+  @ElementCollection(targetClass = ReasonForRecall::class)
+  @JoinTable(name = "recall_reason", joinColumns = [JoinColumn(name = "recall_id")])
+  @Column(name = "reason_for_recall", nullable = false)
+  @Enumerated(STRING)
+  val reasonsForRecall: Set<ReasonForRecall> = emptySet(),
 
 ) {
   constructor(
@@ -94,7 +98,7 @@ data class Recall(
     bookingNumber: String? = null,
     probationInfo: ProbationInfo? = null,
     licenceConditionsBreached: String? = null,
-    reasonsForRecall: Set<RecallReason> = emptySet()
+    reasonsForRecall: Set<ReasonForRecall> = emptySet()
   ) :
     this(
       recallId.value,

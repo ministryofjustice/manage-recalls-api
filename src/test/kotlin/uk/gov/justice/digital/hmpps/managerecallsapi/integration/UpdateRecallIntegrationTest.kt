@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -21,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.time.LocalDate
-import java.util.UUID
 
 class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
@@ -168,15 +166,9 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     val existingRecall = Recall(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
 
-    val recallReason = Api.RecallReason(UUID.randomUUID(), ReasonForRecall.BREACH_EXCLUSION_ZONE)
+    val recallReason = ReasonForRecall.BREACH_EXCLUSION_ZONE
     val updatedRecall = existingRecall.copy(
-      reasonsForRecall = setOf(
-        RecallReason(
-          recallReason.reasonId,
-          recallId.value,
-          recallReason.reasonForRecall
-        )
-      ),
+      reasonsForRecall = setOf(recallReason),
       recallType = FIXED
     )
     every { recallRepository.save(updatedRecall) } returns updatedRecall
