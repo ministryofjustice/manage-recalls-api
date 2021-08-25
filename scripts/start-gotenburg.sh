@@ -10,4 +10,4 @@ readonly DOCKER_COMPOSE_FILE="$PROJECT_DIR/docker-compose-int-test.yml"
 
 echo "Starting gotenberg"
 docker compose -f "${DOCKER_COMPOSE_FILE}" pull
-docker compose -f "${DOCKER_COMPOSE_FILE}" up gotenberg -d --remove-orphans
+docker compose -f "${DOCKER_COMPOSE_FILE}" -p gotenberg_test up gotenberg -d
