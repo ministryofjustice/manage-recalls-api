@@ -74,7 +74,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
 
     assertThat(
       response.responseBody,
-      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber, emptyList(), reasonsForRecall = emptyList()))
+      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber))
     )
   }
 

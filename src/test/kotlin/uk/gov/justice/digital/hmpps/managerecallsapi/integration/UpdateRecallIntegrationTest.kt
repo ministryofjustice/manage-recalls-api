@@ -39,15 +39,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
     val response =
       authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true))
 
-    assertThat(
-      response,
-      equalTo(
-        RecallResponse(
-          recallId, nomsNumber, emptyList(), agreeWithRecallRecommendation = true,
-          reasonsForRecall = emptyList()
-        )
-      )
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, agreeWithRecallRecommendation = true)))
   }
 
   @Test
@@ -104,15 +96,13 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
-          emptyList(),
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
           sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
           sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
           sentenceLength = Api.SentenceLength(2, 5, 31),
-          recallLength = TWENTY_EIGHT_DAYS,
-          reasonsForRecall = emptyList()
+          recallLength = TWENTY_EIGHT_DAYS
         )
       )
     )
@@ -128,15 +118,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(bookingNumber = "BN12345"))
 
-    assertThat(
-      response,
-      equalTo(
-        RecallResponse(
-          recallId, nomsNumber, emptyList(),
-          reasonsForRecall = emptyList(), bookingNumber = "BN12345"
-        )
-      )
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, bookingNumber = "BN12345")))
   }
 
   @Test
@@ -150,15 +132,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceForce = policeForce))
 
-    assertThat(
-      response,
-      equalTo(
-        RecallResponse(
-          recallId, nomsNumber, emptyList(),
-          reasonsForRecall = emptyList(), localPoliceForce = policeForce
-        )
-      )
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, localPoliceForce = policeForce)))
   }
 
   @Test
@@ -175,10 +149,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(reasonsForRecall = setOf(recallReason)))
 
-    assertThat(
-      response,
-      equalTo(RecallResponse(recallId, nomsNumber, emptyList(), reasonsForRecall = listOf(recallReason)))
-    )
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, reasonsForRecall = listOf(recallReason))))
   }
 
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =

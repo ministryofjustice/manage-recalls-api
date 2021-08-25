@@ -99,7 +99,6 @@ class UpdateRecallControllerTest {
   private val fullyPopulatedRecallResponse = RecallResponse(
     recallId = recallId,
     nomsNumber = nomsNumber,
-    documents = emptyList(),
     agreeWithRecallRecommendation = fullyPopulatedUpdateRecallRequest.agreeWithRecallRecommendation,
     recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,

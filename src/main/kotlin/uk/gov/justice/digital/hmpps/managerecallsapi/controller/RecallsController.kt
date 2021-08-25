@@ -141,7 +141,7 @@ data class BookRecallRequest(val nomsNumber: NomsNumber)
 data class RecallResponse(
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
-  val documents: List<ApiRecallDocument>,
+  val documents: List<ApiRecallDocument> = emptyList(),
   val revocationOrderId: UUID? = null,
   val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null,
@@ -166,7 +166,7 @@ data class RecallResponse(
   val probationDivision: ProbationDivision? = null,
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
-  val reasonsForRecall: List<ReasonForRecall>
+  val reasonsForRecall: List<ReasonForRecall> = emptyList()
 )
 
 class Api {
