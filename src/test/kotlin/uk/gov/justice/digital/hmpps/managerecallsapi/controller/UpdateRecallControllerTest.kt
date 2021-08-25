@@ -56,7 +56,8 @@ class UpdateRecallControllerTest {
     probationOfficerPhoneNumber = "+44(0)111111111",
     probationOfficerEmail = "probationOfficer@email.com",
     probationDivision = ProbationDivision.LONDON,
-    authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer"
+    authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer",
+    currentPrison = "PrisonId"
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -91,7 +92,8 @@ class UpdateRecallControllerTest {
       fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
       fullyPopulatedUpdateRecallRequest.probationDivision!!,
       fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
-    )
+    ),
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
   )
 
   private val fullyPopulatedRecallResponse = existingRecallResponse.copy(
@@ -121,6 +123,7 @@ class UpdateRecallControllerTest {
     probationOfficerEmail = fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
     probationDivision = fullyPopulatedUpdateRecallRequest.probationDivision!!,
     authorisingAssistantChiefOfficer = fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison!!,
   )
 
   @Test

@@ -130,7 +130,8 @@ fun Recall.toResponse() = RecallResponse(
   probationOfficerPhoneNumber = this.probationInfo?.probationOfficerPhoneNumber,
   probationOfficerEmail = this.probationInfo?.probationOfficerEmail,
   probationDivision = this.probationInfo?.probationDivision,
-  authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer
+  authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer,
+  currentPrison = this.currentPrison
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -162,6 +163,7 @@ data class RecallResponse(
   val probationOfficerEmail: String? = null,
   val probationDivision: ProbationDivision? = null,
   val authorisingAssistantChiefOfficer: String? = null,
+  val currentPrison: String? = null,
 )
 
 class Api {

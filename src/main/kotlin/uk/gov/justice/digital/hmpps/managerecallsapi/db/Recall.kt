@@ -68,6 +68,8 @@ data class Recall(
 
   val probationInfo: ProbationInfo? = null,
 
+  val currentPrison: String? = null,
+
 ) {
   constructor(
     recallId: RecallId,
@@ -86,7 +88,8 @@ data class Recall(
     mappaLevel: MappaLevel? = null,
     sentencingInfo: SentencingInfo? = null,
     bookingNumber: String? = null,
-    probationInfo: ProbationInfo? = null
+    probationInfo: ProbationInfo? = null,
+    currentPrison: String? = null
 
   ) :
     this(
@@ -106,7 +109,8 @@ data class Recall(
       mappaLevel,
       sentencingInfo,
       bookingNumber,
-      probationInfo
+      probationInfo,
+      currentPrison
     )
 
   fun recallId() = RecallId(id)

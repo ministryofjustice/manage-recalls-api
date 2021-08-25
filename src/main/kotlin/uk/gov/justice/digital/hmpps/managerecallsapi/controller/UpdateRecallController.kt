@@ -47,7 +47,8 @@ class UpdateRecallController(
           mappaLevel = updateRecallRequest.mappaLevel ?: recall.mappaLevel,
           sentencingInfo = sentencingInfo,
           probationInfo = updateRecallRequest.toProbationInfo(recall),
-          bookingNumber = updateRecallRequest.bookingNumber ?: recall.bookingNumber
+          bookingNumber = updateRecallRequest.bookingNumber ?: recall.bookingNumber,
+          currentPrison = updateRecallRequest.currentPrison ?: recall.currentPrison
         )
       }.let(recallRepository::save).toResponse()
     )
@@ -111,7 +112,8 @@ data class UpdateRecallRequest(
   val probationOfficerPhoneNumber: String? = null,
   val probationOfficerEmail: String? = null,
   val probationDivision: ProbationDivision? = null,
-  val authorisingAssistantChiefOfficer: String? = null
+  val authorisingAssistantChiefOfficer: String? = null,
+  val currentPrison: String? = null
 )
 
 enum class RecallLength {
