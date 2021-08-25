@@ -1,66 +1,74 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration
+package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.time.LocalDate
+import java.util.stream.Stream
 
-class UpdateRecallIntegrationTest : IntegrationTestBase() {
-
-  @MockkBean
-  private lateinit var recallRepository: RecallRepository
+class UpdateRecallComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
-  private val recallId = ::RecallId.random()
+
+  private lateinit var recallId: RecallId
+
+  @BeforeEach
+  fun setupExistingRecall() {
+    recallId = ::RecallId.random()
+    recallRepository.save(Recall(recallId, nomsNumber))
+  }
 
   @Test
-  fun `update a recall returns updated recall including with recallType of FIXED`() {
-    val priorRecall = Recall(recallId, nomsNumber)
-    every { recallRepository.getByRecallId(recallId) } returns priorRecall
-    val expectedRecall = priorRecall.copy(agreeWithRecallRecommendation = true, recallType = FIXED)
-    every { recallRepository.save(expectedRecall) } returns expectedRecall
-
-    val response =
-      authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true))
+  fun `update a recall returns updated recall`() {
+    val response = authenticatedPatchRequest(
+      "/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true)
+    )
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, agreeWithRecallRecommendation = true)))
   }
 
-  @Test
-  fun `update a recall with blank mappaLevel returns 400`() {
-    sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", "{\"mappaLevel\":\"\"}")
+  @Suppress("unused")
+  private fun requestsWithInvalidEnumValues(): Stream<String> {
+    return Stream.of(
+      "{\"mappaLevel\":\"\"}",
+      "{\"mappaLevel\":\"INVALID\"}",
+      "{\"probationDivision\":\"\"}",
+      "{\"probationDivision\":\"INVALID\"}",
+      "{\"reasonsForRecall\": \'\"}",
+      "{\"reasonsForRecall\":[\"INVALID\"]}"
+    )
+  }
+
+  @ParameterizedTest
+  @MethodSource("requestsWithInvalidEnumValues")
+  fun `update a recall with invalid enum values returns 400`(jsonRequest: String) {
+    sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", jsonRequest)
       .expectStatus().isBadRequest
   }
 
   @Test
   fun `update a recall that does not exist returns 404`() {
-    every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException("blah", Exception())
-
-    sendAuthenticatedPatchRequestWithBody("/recalls/$recallId", UpdateRecallRequest())
+    sendAuthenticatedPatchRequestWithBody("/recalls/${::RecallId.random()}", UpdateRecallRequest())
       .expectStatus().isNotFound
   }
 
   @Test
   fun `update a recall with sentence information will update recall length`() {
-    val existingRecall = Recall(recallId, nomsNumber)
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-
     val sentencingInfo = SentencingInfo(
       LocalDate.now(),
       LocalDate.now(),
@@ -69,9 +77,6 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
       "index offence",
       SentenceLength(2, 5, 31)
     )
-    val updatedRecall =
-      existingRecall.copy(sentencingInfo = sentencingInfo, recallType = FIXED, recallLength = TWENTY_EIGHT_DAYS)
-    every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val response = authenticatedPatchRequest(
       "/recalls/$recallId",
@@ -110,26 +115,15 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `update a recall with booking number`() {
-    val existingRecall = Recall(recallId, nomsNumber)
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+    val bookingNumber = "BN12345"
+    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(bookingNumber = bookingNumber))
 
-    val updatedRecall = existingRecall.copy(bookingNumber = "BN12345", recallType = FIXED)
-    every { recallRepository.save(updatedRecall) } returns updatedRecall
-
-    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(bookingNumber = "BN12345"))
-
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, bookingNumber = "BN12345")))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, bookingNumber = bookingNumber)))
   }
 
   @Test
   fun `update a recall with local police force`() {
-    val existingRecall = Recall(recallId, nomsNumber)
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-
     val policeForce = "London"
-    val updatedRecall = existingRecall.copy(localPoliceForce = policeForce, recallType = FIXED)
-    every { recallRepository.save(updatedRecall) } returns updatedRecall
-
     val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(localPoliceForce = policeForce))
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, localPoliceForce = policeForce)))
@@ -137,17 +131,7 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `update a recall with non empty reasons for recall list`() {
-    val existingRecall = Recall(recallId, nomsNumber)
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-
-    val recallReason = ReasonForRecall.BREACH_EXCLUSION_ZONE
-    val updatedRecall = existingRecall.copy(
-      recallType = FIXED,
-      licenceConditionsBreached = "Breached",
-      reasonsForRecall = setOf(recallReason),
-      reasonsForRecallOtherDetail = "Other reasons"
-    )
-    every { recallRepository.save(updatedRecall) } returns updatedRecall
+    val recallReason = BREACH_EXCLUSION_ZONE
 
     val response = authenticatedPatchRequest(
       "/recalls/$recallId",
