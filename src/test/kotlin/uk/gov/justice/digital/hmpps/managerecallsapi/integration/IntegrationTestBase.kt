@@ -24,7 +24,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -164,7 +163,7 @@ abstract class IntegrationTestBase {
       randomString()
     ),
     licenceConditionsBreached = "blah be de blah blue blah",
-    reasonsForRecall = ReasonForRecall.values().map { reason -> RecallReason(UUID.randomUUID(), recallId.value, reason) }.toSortedSet(compareBy { it.reasonForRecall.name })
+    reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name })
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

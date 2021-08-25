@@ -133,7 +133,7 @@ fun Recall.toResponse() = RecallResponse(
   probationDivision = this.probationInfo?.probationDivision,
   authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer,
   licenceConditionsBreached = this.licenceConditionsBreached,
-  reasonsForRecall = this.reasonsForRecall.map { reason -> Api.RecallReason(reason.id, reason.reasonForRecall) }
+  reasonsForRecall = this.reasonsForRecall.toList()
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -141,7 +141,7 @@ data class BookRecallRequest(val nomsNumber: NomsNumber)
 data class RecallResponse(
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
-  val documents: List<ApiRecallDocument>,
+  val documents: List<ApiRecallDocument> = emptyList(),
   val revocationOrderId: UUID? = null,
   val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null,
@@ -166,16 +166,11 @@ data class RecallResponse(
   val probationDivision: ProbationDivision? = null,
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
-  val reasonsForRecall: List<Api.RecallReason>
+  val reasonsForRecall: List<ReasonForRecall> = emptyList()
 )
 
 class Api {
   data class SentenceLength(val years: Int, val months: Int, val days: Int)
-
-  data class RecallReason(
-    val reasonId: UUID,
-    val reasonForRecall: ReasonForRecall
-  )
 }
 
 data class ApiRecallDocument(

@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -79,7 +78,7 @@ class RecallRepositoryIntegrationTest(
       bookingNumber = "BN12345",
       probationInfo = ProbationInfo("Probation Officer Name", "07111111111", "email@email.com", ProbationDivision.NORTH_EAST, "Assistant Chief Officer"),
       licenceConditionsBreached = "Breached by blah blah blah",
-      reasonsForRecall = setOf(RecallReason(UUID.randomUUID(), recallId.value, ReasonForRecall.ELM_FURTHER_OFFENCE))
+      reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE)
     )
     repository.save(recallToUpdate)
 

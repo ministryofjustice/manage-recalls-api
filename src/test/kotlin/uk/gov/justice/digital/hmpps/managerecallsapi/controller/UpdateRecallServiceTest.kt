@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -22,7 +21,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.util.UUID
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)
@@ -56,7 +54,7 @@ class UpdateRecallServiceTest {
     probationDivision = ProbationDivision.LONDON,
     authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer",
     licenceConditionsBreached = "Breached by ... on ...",
-    reasonsForRecall = setOf(Api.RecallReason(UUID.randomUUID(), ReasonForRecall.ELM_FURTHER_OFFENCE))
+    reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE)
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -94,7 +92,7 @@ class UpdateRecallServiceTest {
       fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
     ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
-    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.map { RecallReason(it.reasonId, existingRecall.id, it.reasonForRecall) }.toSet()
+    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet()
   )
 
   @Test
