@@ -10,7 +10,9 @@ import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
+import exampleDocuments
 import io.mockk.every
+import minimalRecall
 import org.apache.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestTemplate
@@ -18,8 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import randomString
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
+import recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -112,7 +115,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
       recallWithPopulatedFields(
-        recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
+        recallId, nomsNumber, exampleDocuments(recallId)
       )
   }
 
@@ -129,7 +132,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
     every { recallRepository.save(any()) } returns recallWithPopulatedFields(
-      recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
+      recallId, nomsNumber, exampleDocuments(recallId)
     )
   }
 
@@ -165,6 +168,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     )
   }
 
+  @Suppress("ReactiveStreamsUnusedPublisher")
   @State("a revocation order can be downloaded")
   fun `a revocation order can be downloaded`() {
     every { revocationOrderService.getRevocationOrder(any()) } returns Mono.just("some pdf contents".toByteArray())

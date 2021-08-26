@@ -11,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -55,6 +54,7 @@ class UpdateRecallServiceTest {
     authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer",
     licenceConditionsBreached = "Breached by ... on ...",
     reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
+    reasonsForRecallOtherDetail = "Something else they've done",
     currentPrison = "MWI"
   )
 
@@ -94,6 +94,7 @@ class UpdateRecallServiceTest {
     ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
+    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
     currentPrison = "MWI"
   )
 

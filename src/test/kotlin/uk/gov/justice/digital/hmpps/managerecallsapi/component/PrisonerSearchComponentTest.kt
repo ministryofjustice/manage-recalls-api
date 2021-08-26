@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration
+package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.UNAUTHORIZED
+import randomAdultDateOfBirth
+import randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
@@ -18,11 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 
-class PrisonerSearchIntegrationTest : IntegrationTestBase() {
-
-  private val firstName = "John"
-  private val middleNames = "Geoff"
-  private val lastName = "Smith"
+class PrisonerSearchComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val apiSearchRequest = SearchRequest(nomsNumber)
@@ -40,7 +38,7 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
   fun `can send search request to prisoner search api and retrieve no matches`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
 
-    val responseBody = authenticatedPostRequest("/search", apiSearchRequest)
+    val responseBody = prisonerSearchRequest(apiSearchRequest)
 
     assertThat(responseBody, isEmpty)
   }
@@ -68,44 +66,30 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
 
   @Test
   fun `can send search request to prisoner search api and retrieve matches`() {
-    val prisoner1 = testPrisoner(nomsNumber, firstName, lastName)
-    val prisoner2 = testPrisoner(null, firstName, lastName)
-    prisonerOffenderSearch.prisonerSearchRespondsWith(
-      prisonerSearchRequest,
-      listOf(
-        prisoner1,
-        prisoner2
-      )
-    )
+    val prisoner1 = testPrisoner(nomsNumber)
+    val prisoner2 = testPrisoner(null)
+    prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, listOf(prisoner1, prisoner2))
 
-    val response = authenticatedPostRequest("/search", apiSearchRequest)
+    val response = prisonerSearchRequest(apiSearchRequest)
 
-    assertThat(
-      response,
-      equalTo(
-        listOf(
-          searchResult(prisoner1),
-          searchResult(prisoner2),
-        )
-      )
-    )
+    assertThat(response, equalTo(listOf(prisoner1.searchResult(), prisoner2.searchResult())))
   }
 
-  private fun searchResult(p: Prisoner): SearchResult = SearchResult(
-    p.firstName,
-    p.middleNames,
-    p.lastName,
-    p.dateOfBirth,
-    p.gender,
-    p.prisonerNumber,
-    p.pncNumber,
-    p.croNumber,
+  private fun Prisoner.searchResult(): SearchResult = SearchResult(
+    firstName,
+    middleNames,
+    lastName,
+    dateOfBirth,
+    gender,
+    prisonerNumber,
+    pncNumber,
+    croNumber,
   )
 
-  private fun testPrisoner(nomsNumber: NomsNumber?, firstName: String?, lastName: String?) = Prisoner(
-    firstName = firstName,
-    middleNames = middleNames,
-    lastName = lastName,
+  private fun testPrisoner(nomsNumber: NomsNumber?) = Prisoner(
+    firstName = randomString(),
+    middleNames = randomString(),
+    lastName = randomString(),
     dateOfBirth = randomAdultDateOfBirth(),
     gender = randomString(),
     prisonerNumber = nomsNumber?.value,
@@ -113,8 +97,8 @@ class PrisonerSearchIntegrationTest : IntegrationTestBase() {
     croNumber = randomString(),
   )
 
-  private fun authenticatedPostRequest(path: String, request: Any): List<SearchResult> =
-    sendAuthenticatedPostRequestWithBody(path, request)
+  private fun prisonerSearchRequest(request: SearchRequest): List<SearchResult> =
+    sendAuthenticatedPostRequestWithBody("/search", request)
       .expectStatus().isOk
       .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
       .returnResult()

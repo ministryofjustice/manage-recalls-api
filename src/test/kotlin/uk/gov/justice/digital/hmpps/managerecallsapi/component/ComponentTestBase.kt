@@ -1,41 +1,37 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration
+package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
-import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
-import org.springframework.http.MediaType
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.JwtAuthenticationHelper
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
-import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-abstract class IntegrationTestBase {
+@ActiveProfiles("db-test")
+@TestInstance(PER_CLASS)
+abstract class ComponentTestBase {
 
-  @MockkBean
-  lateinit var s3Service: S3Service
+  @Autowired
+  protected lateinit var recallRepository: RecallRepository
 
   @Autowired
   lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
-
-  @Autowired
-  lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
-
-  @Autowired
-  lateinit var gotenbergMockServer: GotenbergMockServer
 
   @Autowired
   lateinit var hmppsAuthMockServer: HmppsAuthMockServer
@@ -44,32 +40,28 @@ abstract class IntegrationTestBase {
   @Autowired
   lateinit var webTestClient: WebTestClient
 
+  @Autowired
+  lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
+
   @BeforeAll
   fun startMocks() {
-    prisonerOffenderSearch.start()
     hmppsAuthMockServer.start()
+    prisonerOffenderSearch.start()
   }
 
   @AfterAll
   fun stopMocks() {
-    prisonerOffenderSearch.stop()
     hmppsAuthMockServer.stop()
+    prisonerOffenderSearch.stop()
   }
 
   @BeforeEach
   fun resetMocksAndStubClientToken() {
-    prisonerOffenderSearch.resetAll()
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
   }
 
   protected fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
-
-  protected final inline fun <reified T> sendAuthenticatedPostRequestWithBody(
-    path: String,
-    request: T
-  ): WebTestClient.ResponseSpec =
-    webTestClient.post().sendAuthenticatedRequestWithBody(path, request)
 
   protected final inline fun <reified T> sendAuthenticatedPatchRequestWithBody(
     path: String,
@@ -85,10 +77,35 @@ abstract class IntegrationTestBase {
     this.uri(path)
       .body(Mono.just(request), T::class.java)
       .headers {
-        it.add(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         it.withBearerAuthToken(userJwt)
       }
       .exchange()
 
+  protected final inline fun <reified T> sendAuthenticatedPostRequestWithBody(
+    path: String,
+    request: T
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post().sendAuthenticatedRequestWithBody(path, request)
+
   fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")
+
+  protected fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =
+    sendAuthenticatedPatchRequestWithBody(path, request)
+      .expectStatus().isOk
+      .expectBody(RecallResponse::class.java)
+      .returnResult()
+      .responseBody!!
+
+  protected fun authenticatedPostRequest(path: String, request: Any): RecallResponse =
+    sendAuthenticatedPostRequestWithBody(path, request)
+      .expectStatus().isCreated
+      .expectBody(RecallResponse::class.java)
+      .returnResult()
+      .responseBody!!
+
+  protected fun authenticatedPostRequest(path: String, request: Any, expectedStatus: HttpStatus) {
+    sendAuthenticatedPostRequestWithBody(path, request)
+      .expectStatus().isEqualTo(expectedStatus)
+  }
 }

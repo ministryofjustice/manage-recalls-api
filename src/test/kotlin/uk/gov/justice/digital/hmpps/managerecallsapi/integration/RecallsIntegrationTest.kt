@@ -3,17 +3,18 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
+import exampleDocuments
 import io.mockk.every
+import minimalRecall
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -49,7 +50,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   private val nomsNumber = NomsNumber("123456")
   private val recallId = ::RecallId.random()
   private val aRecall = Recall(recallId, nomsNumber)
-  private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val fileBytes = "content".toByteArray()
   private val fileContent = Base64.getEncoder().encodeToString(fileBytes)
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
@@ -57,26 +57,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     category = category.toString(),
     fileContent = fileContent
   )
-
-  @Test
-  fun `books a recall`() {
-
-    every { recallRepository.save(any()) } returns aRecall
-
-    val response =
-      webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest).headers {
-        it.withBearerAuthToken(jwtWithRoleManageRecalls())
-      }
-        .exchange()
-        .expectStatus().isCreated
-        .expectBody(RecallResponse::class.java)
-        .returnResult()
-
-    assertThat(
-      response.responseBody,
-      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber))
-    )
-  }
 
   @Test
   fun `returns all recalls`() {
@@ -126,7 +106,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.documents[0].category").isEqualTo("PART_A_RECALL_REPORT")
       .jsonPath("$.documents[0].documentId").isNotEmpty
       .jsonPath("$.revocationOrderId").isNotEmpty
-      .jsonPath("$.recallLength").isEqualTo("FOURTEEN_DAYS")
+      .jsonPath("$.recallLength").isEqualTo(recall.recallLength!!.name)
       .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(recall.agreeWithRecallRecommendation.toString())
       .jsonPath("$.lastReleasePrison").isEqualTo(recall.lastReleasePrison.toString())
       .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))
@@ -149,6 +129,9 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.licenceConditionsBreached").isEqualTo(recall.licenceConditionsBreached!!)
       .jsonPath("$.reasonsForRecall.length()").isEqualTo(ReasonForRecall.values().size)
       .jsonPath("$.reasonsForRecall[0]").isEqualTo("BREACH_EXCLUSION_ZONE")
+      .jsonPath("$.reasonsForRecallOtherDetail").isEqualTo(recall.reasonsForRecallOtherDetail!!)
+      .jsonPath("$.agreeWithRecallLength").isEqualTo(recall.agreeWithRecallLength!!.name)
+      .jsonPath("$.agreeWithRecallLengthDetail").isEqualTo(recall.agreeWithRecallLengthDetail!!)
   }
 
   @Test

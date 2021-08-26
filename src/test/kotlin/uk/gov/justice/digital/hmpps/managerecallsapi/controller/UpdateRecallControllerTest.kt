@@ -9,7 +9,6 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -54,6 +53,7 @@ class UpdateRecallControllerTest {
       ReasonForRecall.BREACH_EXCLUSION_ZONE,
       ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION
     ),
+    reasonsForRecallOtherDetail = "Because of something else...",
     currentPrison = "MWI"
   )
 
@@ -95,6 +95,7 @@ class UpdateRecallControllerTest {
     ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
+    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
     currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
   )
 
@@ -129,6 +130,7 @@ class UpdateRecallControllerTest {
     authorisingAssistantChiefOfficer = fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toList(),
+    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
     currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison!!,
   )
 

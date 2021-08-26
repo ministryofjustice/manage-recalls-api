@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -78,6 +80,13 @@ data class Recall(
   @Enumerated(STRING)
   val reasonsForRecall: Set<ReasonForRecall> = emptySet(),
 
+  val reasonsForRecallOtherDetail: String? = null,
+
+  @Enumerated(STRING)
+  val agreeWithRecallLength: AgreeWithRecallLength? = null,
+
+  val agreeWithRecallLengthDetail: String? = null,
+
   val currentPrison: String? = null,
 
 ) {
@@ -101,6 +110,9 @@ data class Recall(
     probationInfo: ProbationInfo? = null,
     licenceConditionsBreached: String? = null,
     reasonsForRecall: Set<ReasonForRecall> = emptySet(),
+    reasonsForRecallOtherDetail: String? = null,
+    agreeWithRecallLength: AgreeWithRecallLength? = null,
+    agreeWithRecallLengthDetail: String? = null,
     currentPrison: String? = null
 
   ) :
@@ -124,6 +136,9 @@ data class Recall(
       probationInfo,
       licenceConditionsBreached,
       reasonsForRecall,
+      reasonsForRecallOtherDetail,
+      agreeWithRecallLength,
+      agreeWithRecallLengthDetail,
       currentPrison
     )
 

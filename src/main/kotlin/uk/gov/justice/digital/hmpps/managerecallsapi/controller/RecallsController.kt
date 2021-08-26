@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -134,6 +133,9 @@ fun Recall.toResponse() = RecallResponse(
   authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer,
   licenceConditionsBreached = this.licenceConditionsBreached,
   reasonsForRecall = this.reasonsForRecall.toList(),
+  reasonsForRecallOtherDetail = this.reasonsForRecallOtherDetail,
+  agreeWithRecallLength = this.agreeWithRecallLength,
+  agreeWithRecallLengthDetail = this.agreeWithRecallLengthDetail,
   currentPrison = this.currentPrison
 )
 
@@ -168,6 +170,9 @@ data class RecallResponse(
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
   val reasonsForRecall: List<ReasonForRecall> = emptyList(),
+  val reasonsForRecallOtherDetail: String? = null,
+  val agreeWithRecallLength: AgreeWithRecallLength? = null,
+  val agreeWithRecallLengthDetail: String? = null,
   val currentPrison: String? = null,
 )
 
