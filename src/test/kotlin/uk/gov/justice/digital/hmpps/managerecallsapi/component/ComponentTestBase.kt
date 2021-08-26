@@ -104,6 +104,20 @@ abstract class ComponentTestBase {
       .returnResult()
       .responseBody!!
 
+  protected fun authenticatedGetRequest(path: String): RecallResponse =
+    authenticatedGet(path)
+      .expectBody(RecallResponse::class.java)
+      .returnResult()
+      .responseBody!!
+
+  protected fun authenticatedGet(path: String) = webTestClient.get().uri(path)
+    .headers {
+      it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+      it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
+    }
+    .exchange()
+    .expectStatus().isOk
+
   protected fun authenticatedPostRequest(path: String, request: Any, expectedStatus: HttpStatus) {
     sendAuthenticatedPostRequestWithBody(path, request)
       .expectStatus().isEqualTo(expectedStatus)
