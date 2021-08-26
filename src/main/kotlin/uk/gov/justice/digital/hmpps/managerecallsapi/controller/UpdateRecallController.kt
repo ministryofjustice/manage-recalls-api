@@ -52,7 +52,8 @@ data class UpdateRecallRequest(
   val probationDivision: ProbationDivision? = null,
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
-  val reasonsForRecall: Set<ReasonForRecall>? = null
+  val reasonsForRecall: Set<ReasonForRecall>? = null,
+  val reasonsForRecallOtherDetail: String? = null
 )
 
 enum class RecallLength {

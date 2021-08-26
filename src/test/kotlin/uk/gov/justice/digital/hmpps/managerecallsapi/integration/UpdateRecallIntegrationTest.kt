@@ -142,14 +142,33 @@ class UpdateRecallIntegrationTest : IntegrationTestBase() {
 
     val recallReason = ReasonForRecall.BREACH_EXCLUSION_ZONE
     val updatedRecall = existingRecall.copy(
+      recallType = FIXED,
+      licenceConditionsBreached = "Breached",
       reasonsForRecall = setOf(recallReason),
-      recallType = FIXED
+      reasonsForRecallOtherDetail = "Other reasons"
     )
     every { recallRepository.save(updatedRecall) } returns updatedRecall
 
-    val response = authenticatedPatchRequest("/recalls/$recallId", UpdateRecallRequest(reasonsForRecall = setOf(recallReason)))
+    val response = authenticatedPatchRequest(
+      "/recalls/$recallId",
+      UpdateRecallRequest(
+        licenceConditionsBreached = "Breached",
+        reasonsForRecall = setOf(recallReason),
+        reasonsForRecallOtherDetail = "Other reasons"
+      )
+    )
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, reasonsForRecall = listOf(recallReason))))
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber,
+          licenceConditionsBreached = "Breached",
+          reasonsForRecall = listOf(recallReason),
+          reasonsForRecallOtherDetail = "Other reasons"
+        )
+      )
+    )
   }
 
   private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =

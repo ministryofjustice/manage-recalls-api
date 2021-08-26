@@ -133,7 +133,8 @@ fun Recall.toResponse() = RecallResponse(
   probationDivision = this.probationInfo?.probationDivision,
   authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer,
   licenceConditionsBreached = this.licenceConditionsBreached,
-  reasonsForRecall = this.reasonsForRecall.toList()
+  reasonsForRecall = this.reasonsForRecall.toList(),
+  reasonsForRecallOtherDetail = this.reasonsForRecallOtherDetail,
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -166,7 +167,8 @@ data class RecallResponse(
   val probationDivision: ProbationDivision? = null,
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
-  val reasonsForRecall: List<ReasonForRecall> = emptyList()
+  val reasonsForRecall: List<ReasonForRecall> = emptyList(),
+  val reasonsForRecallOtherDetail: String? = null
 )
 
 class Api {

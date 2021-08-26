@@ -1,0 +1,1 @@
+ALTER TABLE recall ADD COLUMN reasons_for_recall_other_detail TEXT
