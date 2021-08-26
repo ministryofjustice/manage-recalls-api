@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -80,6 +82,11 @@ data class Recall(
 
   val reasonsForRecallOtherDetail: String? = null,
 
+  @Enumerated(STRING)
+  val agreeWithRecallLength: AgreeWithRecallLength? = null,
+
+  val agreeWithRecallLengthDetail: String? = null,
+
 ) {
   constructor(
     recallId: RecallId,
@@ -101,7 +108,9 @@ data class Recall(
     probationInfo: ProbationInfo? = null,
     licenceConditionsBreached: String? = null,
     reasonsForRecall: Set<ReasonForRecall> = emptySet(),
-    reasonsForRecallOtherDetail: String? = null
+    reasonsForRecallOtherDetail: String? = null,
+    agreeWithRecallLength: AgreeWithRecallLength? = null,
+    agreeWithRecallLengthDetail: String? = null
   ) :
     this(
       recallId.value,
@@ -123,7 +132,9 @@ data class Recall(
       probationInfo,
       licenceConditionsBreached,
       reasonsForRecall,
-      reasonsForRecallOtherDetail
+      reasonsForRecallOtherDetail,
+      agreeWithRecallLength,
+      agreeWithRecallLengthDetail
     )
 
   fun recallId() = RecallId(id)

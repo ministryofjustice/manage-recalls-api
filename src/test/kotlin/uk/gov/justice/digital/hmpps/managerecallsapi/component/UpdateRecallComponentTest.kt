@@ -6,11 +6,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
@@ -49,7 +50,9 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       "{\"probationDivision\":\"\"}",
       "{\"probationDivision\":\"INVALID\"}",
       "{\"reasonsForRecall\": \'\"}",
-      "{\"reasonsForRecall\":[\"INVALID\"]}"
+      "{\"reasonsForRecall\":[\"INVALID\"]}",
+      "{\"agreeWithRecallLength\": \'\"}",
+      "{\"agreeWithRecallLength\":[\"INVALID\"]}"
     )
   }
 
@@ -130,7 +133,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `update a recall with non empty reasons for recall list`() {
-    val recallReason = BREACH_EXCLUSION_ZONE
+    val recallReason = ReasonForRecall.BREACH_EXCLUSION_ZONE
 
     val response = authenticatedPatchRequest(
       "/recalls/$recallId",
@@ -149,6 +152,28 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           licenceConditionsBreached = "Breached",
           reasonsForRecall = listOf(recallReason),
           reasonsForRecallOtherDetail = "Other reasons"
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `update a recall with agreeWithRecallLength and detail`() {
+    val response = authenticatedPatchRequest(
+      "/recalls/$recallId",
+      UpdateRecallRequest(
+        agreeWithRecallLength = AgreeWithRecallLength.YES,
+        agreeWithRecallLengthDetail = "Other reasons"
+      )
+    )
+
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber,
+          agreeWithRecallLength = AgreeWithRecallLength.YES,
+          agreeWithRecallLengthDetail = "Other reasons"
         )
       )
     )

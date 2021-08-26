@@ -23,7 +23,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import randomString
 import reactor.core.publisher.Mono
 import recallWithPopulatedFields
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -116,7 +115,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
       recallWithPopulatedFields(
-        recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
+        recallId, nomsNumber, exampleDocuments(recallId)
       )
   }
 
@@ -133,7 +132,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
     every { recallRepository.save(any()) } returns recallWithPopulatedFields(
-      recallId, nomsNumber, TWENTY_EIGHT_DAYS, exampleDocuments(recallId)
+      recallId, nomsNumber, exampleDocuments(recallId)
     )
   }
 

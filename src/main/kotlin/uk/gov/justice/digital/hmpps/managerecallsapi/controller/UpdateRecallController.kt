@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -53,7 +52,9 @@ data class UpdateRecallRequest(
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
   val reasonsForRecall: Set<ReasonForRecall>? = null,
-  val reasonsForRecallOtherDetail: String? = null
+  val reasonsForRecallOtherDetail: String? = null,
+  val agreeWithRecallLength: AgreeWithRecallLength? = null,
+  val agreeWithRecallLengthDetail: String? = null
 )
 
 enum class RecallLength {
@@ -83,4 +84,30 @@ enum class ProbationDivision {
   SOUTH_WEST,
   SOUTH_WEST_AND_SOUTH_CENTRAL,
   WALES
+}
+
+enum class ReasonForRecall {
+  BREACH_EXCLUSION_ZONE,
+  ELM_BREACH_EXCLUSION_ZONE,
+  ELM_BREACH_NON_CURFEW_CONDITION,
+  ELM_FURTHER_OFFENCE,
+  ELM_EQUIPMENT_TAMPER,
+  ELM_FAILURE_CHARGE_BATTERY,
+  FAILED_HOME_VISIT,
+  FAILED_KEEP_IN_TOUCH,
+  FAILED_RESIDE,
+  FAILED_WORK_AS_APPROVED,
+  POOR_BEHAVIOUR_ALCOHOL,
+  POOR_BEHAVIOUR_FURTHER_OFFENCE,
+  POOR_BEHAVIOUR_DRUGS,
+  POOR_BEHAVIOUR_NON_COMPLIANCE,
+  POOR_BEHAVIOUR_RELATIONSHIPS,
+  TRAVELLING_OUTSIDE_UK,
+  OTHER
+}
+
+enum class AgreeWithRecallLength {
+  YES,
+  NO_STANDARD,
+  NO_CANCEL
 }
