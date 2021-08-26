@@ -1,3 +1,4 @@
+import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
@@ -19,8 +20,6 @@ import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.random.Random
 
-fun randomString() = UUID.randomUUID().toString()
-
 fun randomBoolean() = Random.nextBoolean()
 
 fun dateTimeNow() = OffsetDateTime.now()
@@ -37,44 +36,43 @@ fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId,
 
 fun recallWithPopulatedFields(
   recallId: RecallId,
-  nomsNumber: NomsNumber,
-  documents: Set<RecallDocument>
+  nomsNumber: NomsNumber
 ) = Recall(
   recallId, nomsNumber,
   revocationOrderId = UUID.randomUUID(),
-  documents = documents,
+  documents = exampleDocuments(recallId),
   recallType = RecallType.FIXED,
   recallLength = RecallLength.values().random(),
-  lastReleasePrison = randomString(),
+  lastReleasePrison = randomAlphanumeric(500),
   lastReleaseDate = LocalDate.now(),
   recallEmailReceivedDateTime = dateTimeNow(),
-  localPoliceForce = randomString(),
-  contrabandDetail = randomString(),
-  vulnerabilityDiversityDetail = randomString(),
+  localPoliceForce = randomAlphanumeric(500),
+  contrabandDetail = randomAlphanumeric(500),
+  vulnerabilityDiversityDetail = randomAlphanumeric(500),
   mappaLevel = MappaLevel.NA,
   sentencingInfo = SentencingInfo(
     LocalDate.now(),
     LocalDate.now(),
     LocalDate.now(),
-    randomString(),
-    randomString(),
+    randomAlphanumeric(500),
+    randomAlphanumeric(500),
     SentenceLength(1, 2, 3),
     LocalDate.now()
   ),
-  bookingNumber = randomString(),
+  bookingNumber = randomAlphanumeric(500),
   probationInfo = ProbationInfo(
-    randomString(),
-    randomString(),
-    randomString(),
+    randomAlphanumeric(500),
+    randomAlphanumeric(500),
+    randomAlphanumeric(500),
     ProbationDivision.NORTH_EAST,
-    randomString()
+    randomAlphanumeric(500)
   ),
-  licenceConditionsBreached = randomString(),
+  licenceConditionsBreached = randomAlphanumeric(500),
   reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name }),
-  reasonsForRecallOtherDetail = randomString(),
+  reasonsForRecallOtherDetail = randomAlphanumeric(500),
   agreeWithRecall = AgreeWithRecall.values().random(),
-  agreeWithRecallDetail = randomString(),
-  currentPrison = randomString()
+  agreeWithRecallDetail = randomAlphanumeric(500),
+  currentPrison = randomAlphanumeric(500)
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

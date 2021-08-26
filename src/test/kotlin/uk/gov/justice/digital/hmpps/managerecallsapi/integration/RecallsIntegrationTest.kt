@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
-import exampleDocuments
 import io.mockk.every
 import minimalRecall
 import org.hamcrest.Matchers.endsWith
@@ -89,11 +88,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @Test
   fun `gets a fully populated recall`() {
 
-    val recall = recallWithPopulatedFields(
-      recallId,
-      nomsNumber,
-      documents = exampleDocuments(recallId)
-    )
+    val recall = recallWithPopulatedFields(recallId, nomsNumber)
     every { recallRepository.getByRecallId(recallId) } returns recall
 
     webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }

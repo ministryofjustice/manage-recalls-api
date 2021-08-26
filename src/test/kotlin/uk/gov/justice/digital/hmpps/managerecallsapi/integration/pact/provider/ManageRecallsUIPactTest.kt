@@ -10,9 +10,9 @@ import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
-import exampleDocuments
 import io.mockk.every
 import minimalRecall
+import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.apache.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestTemplate
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import randomString
 import reactor.core.publisher.Mono
 import recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -114,9 +113,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns
-      recallWithPopulatedFields(
-        recallId, nomsNumber, exampleDocuments(recallId)
-      )
+      recallWithPopulatedFields(recallId, nomsNumber)
   }
 
   @State("a list of recalls exists")
@@ -131,9 +128,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall exists and can be updated`() {
     val recallId = ::RecallId.random()
     every { recallRepository.getByRecallId(any()) } returns minimalRecall(recallId, nomsNumber)
-    every { recallRepository.save(any()) } returns recallWithPopulatedFields(
-      recallId, nomsNumber, exampleDocuments(recallId)
-    )
+    every { recallRepository.save(any()) } returns recallWithPopulatedFields(recallId, nomsNumber)
   }
 
   @State("an empty recall exists and will not be updated")
@@ -152,8 +147,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         LocalDate.now(),
         LocalDate.now(),
         LocalDate.now(),
-        randomString(),
-        randomString(),
+        randomAlphanumeric(1, 32),
+        randomAlphanumeric(1, 32),
         SentenceLength(1, 2, 3),
         LocalDate.now()
       )

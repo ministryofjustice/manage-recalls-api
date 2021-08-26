@@ -7,12 +7,12 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.isEmpty
 import com.natpryce.hamkrest.present
+import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import randomAdultDateOfBirth
-import randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
@@ -87,14 +87,14 @@ class PrisonerSearchComponentTest : ComponentTestBase() {
   )
 
   private fun testPrisoner(nomsNumber: NomsNumber?) = Prisoner(
-    firstName = randomString(),
-    middleNames = randomString(),
-    lastName = randomString(),
+    firstName = randomAlphanumeric(1, 32),
+    middleNames = randomAlphanumeric(1, 32),
+    lastName = randomAlphanumeric(1, 32),
     dateOfBirth = randomAdultDateOfBirth(),
-    gender = randomString(),
+    gender = randomAlphanumeric(1, 32),
     prisonerNumber = nomsNumber?.value,
-    pncNumber = randomString(),
-    croNumber = randomString(),
+    pncNumber = randomAlphanumeric(1, 32),
+    croNumber = randomAlphanumeric(1, 32),
   )
 
   private fun prisonerSearchRequest(request: SearchRequest): List<SearchResult> =
