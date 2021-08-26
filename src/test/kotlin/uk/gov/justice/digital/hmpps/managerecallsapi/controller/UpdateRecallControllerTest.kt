@@ -9,7 +9,6 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo

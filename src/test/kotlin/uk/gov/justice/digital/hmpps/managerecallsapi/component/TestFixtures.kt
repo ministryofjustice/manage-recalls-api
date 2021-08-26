@@ -1,10 +1,10 @@
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
@@ -38,7 +38,6 @@ fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId,
 fun recallWithPopulatedFields(
   recallId: RecallId,
   nomsNumber: NomsNumber,
-  recallLength: RecallLength = FOURTEEN_DAYS, // TODO AN: intending to remove this parameter also - in favour of a non-null default set below
   documents: Set<RecallDocument>
 ) = Recall(
   recallId, nomsNumber,
@@ -46,7 +45,7 @@ fun recallWithPopulatedFields(
   documents = documents,
   recallType = RecallType.FIXED,
   agreeWithRecallRecommendation = randomBoolean(),
-  recallLength = recallLength,
+  recallLength = RecallLength.values().random(),
   lastReleasePrison = randomString(),
   lastReleaseDate = LocalDate.now(),
   recallEmailReceivedDateTime = dateTimeNow(),
@@ -73,7 +72,9 @@ fun recallWithPopulatedFields(
   ),
   licenceConditionsBreached = randomString(),
   reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name }),
-  reasonsForRecallOtherDetail = randomString()
+  reasonsForRecallOtherDetail = randomString(),
+  agreeWithRecallLength = AgreeWithRecallLength.values().random(),
+  agreeWithRecallLengthDetail = randomString()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
