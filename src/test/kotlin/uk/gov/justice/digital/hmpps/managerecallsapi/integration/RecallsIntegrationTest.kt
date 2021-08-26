@@ -3,11 +3,14 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
+import exampleDocuments
 import io.mockk.every
+import minimalRecall
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
