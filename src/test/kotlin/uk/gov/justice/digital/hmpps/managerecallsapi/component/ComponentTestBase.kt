@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.JwtAuthenticationHelper
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -37,14 +38,19 @@ abstract class ComponentTestBase {
   @Autowired
   lateinit var webTestClient: WebTestClient
 
+  @Autowired
+  lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
+
   @BeforeAll
   fun startMocks() {
     hmppsAuthMockServer.start()
+    prisonerOffenderSearch.start()
   }
 
   @AfterAll
   fun stopMocks() {
     hmppsAuthMockServer.stop()
+    prisonerOffenderSearch.stop()
   }
 
   @BeforeEach
@@ -73,6 +79,12 @@ abstract class ComponentTestBase {
         it.withBearerAuthToken(userJwt)
       }
       .exchange()
+
+  protected final inline fun <reified T> sendAuthenticatedPostRequestWithBody(
+    path: String,
+    request: T
+  ): WebTestClient.ResponseSpec =
+    webTestClient.post().sendAuthenticatedRequestWithBody(path, request)
 
   fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")
 }
