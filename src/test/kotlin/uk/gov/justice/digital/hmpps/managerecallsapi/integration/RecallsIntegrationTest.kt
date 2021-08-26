@@ -12,10 +12,8 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -52,7 +50,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   private val nomsNumber = NomsNumber("123456")
   private val recallId = ::RecallId.random()
   private val aRecall = Recall(recallId, nomsNumber)
-  private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val fileBytes = "content".toByteArray()
   private val fileContent = Base64.getEncoder().encodeToString(fileBytes)
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
@@ -60,26 +57,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     category = category.toString(),
     fileContent = fileContent
   )
-
-  @Test
-  fun `books a recall`() {
-
-    every { recallRepository.save(any()) } returns aRecall
-
-    val response =
-      webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest).headers {
-        it.withBearerAuthToken(jwtWithRoleManageRecalls())
-      }
-        .exchange()
-        .expectStatus().isCreated
-        .expectBody(RecallResponse::class.java)
-        .returnResult()
-
-    assertThat(
-      response.responseBody,
-      equalTo(RecallResponse(aRecall.recallId(), aRecall.nomsNumber))
-    )
-  }
 
   @Test
   fun `returns all recalls`() {
