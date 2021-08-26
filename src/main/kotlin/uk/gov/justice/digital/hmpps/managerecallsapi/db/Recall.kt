@@ -78,6 +78,8 @@ data class Recall(
   @Enumerated(STRING)
   val reasonsForRecall: Set<ReasonForRecall> = emptySet(),
 
+  val reasonsForRecallOtherDetail: String? = null,
+
 ) {
   constructor(
     recallId: RecallId,
@@ -98,7 +100,8 @@ data class Recall(
     bookingNumber: String? = null,
     probationInfo: ProbationInfo? = null,
     licenceConditionsBreached: String? = null,
-    reasonsForRecall: Set<ReasonForRecall> = emptySet()
+    reasonsForRecall: Set<ReasonForRecall> = emptySet(),
+    reasonsForRecallOtherDetail: String? = null
   ) :
     this(
       recallId.value,
@@ -119,7 +122,8 @@ data class Recall(
       bookingNumber,
       probationInfo,
       licenceConditionsBreached,
-      reasonsForRecall
+      reasonsForRecall,
+      reasonsForRecallOtherDetail
     )
 
   fun recallId() = RecallId(id)

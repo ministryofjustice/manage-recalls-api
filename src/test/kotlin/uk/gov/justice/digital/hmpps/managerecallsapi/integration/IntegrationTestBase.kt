@@ -162,8 +162,9 @@ abstract class IntegrationTestBase {
       ProbationDivision.NORTH_EAST,
       randomString()
     ),
-    licenceConditionsBreached = "blah be de blah blue blah",
-    reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name })
+    licenceConditionsBreached = randomString(),
+    reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name }),
+    reasonsForRecallOtherDetail = randomString()
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

@@ -149,6 +149,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.licenceConditionsBreached").isEqualTo(recall.licenceConditionsBreached!!)
       .jsonPath("$.reasonsForRecall.length()").isEqualTo(ReasonForRecall.values().size)
       .jsonPath("$.reasonsForRecall[0]").isEqualTo("BREACH_EXCLUSION_ZONE")
+      .jsonPath("$.reasonsForRecallOtherDetail").isEqualTo(recall.reasonsForRecallOtherDetail!!)
   }
 
   @Test

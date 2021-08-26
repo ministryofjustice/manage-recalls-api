@@ -54,7 +54,8 @@ class UpdateRecallServiceTest {
     probationDivision = ProbationDivision.LONDON,
     authorisingAssistantChiefOfficer = "Authorising Assistant Chief Officer",
     licenceConditionsBreached = "Breached by ... on ...",
-    reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE)
+    reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
+    reasonsForRecallOtherDetail = "Something else they've done"
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -92,7 +93,8 @@ class UpdateRecallServiceTest {
       fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
     ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
-    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet()
+    reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
+    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail
   )
 
   @Test

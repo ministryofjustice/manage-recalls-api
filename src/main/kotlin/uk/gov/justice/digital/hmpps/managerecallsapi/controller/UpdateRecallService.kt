@@ -36,7 +36,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       probationInfo = updateRecallRequest.toProbationInfo(this),
       bookingNumber = updateRecallRequest.bookingNumber ?: bookingNumber,
       licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
-      reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall
+      reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
+      reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail
     )
   }
 }
