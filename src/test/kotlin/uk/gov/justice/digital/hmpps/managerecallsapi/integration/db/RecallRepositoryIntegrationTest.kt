@@ -79,7 +79,7 @@ class RecallRepositoryIntegrationTest(
       probationInfo = ProbationInfo("Probation Officer Name", "07111111111", "email@email.com", ProbationDivision.NORTH_EAST, "Assistant Chief Officer"),
       licenceConditionsBreached = "Breached by blah blah blah",
       reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
-      currentPrison = "currentPrison"
+      currentPrison = "MWI"
     )
     repository.save(recallToUpdate)
 

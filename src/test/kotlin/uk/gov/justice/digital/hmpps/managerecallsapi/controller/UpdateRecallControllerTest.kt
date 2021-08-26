@@ -54,7 +54,7 @@ class UpdateRecallControllerTest {
       ReasonForRecall.BREACH_EXCLUSION_ZONE,
       ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION
     ),
-    currentPrison = "PrisonId"
+    currentPrison = "MWI"
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(

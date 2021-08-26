@@ -163,7 +163,8 @@ abstract class IntegrationTestBase {
       randomString()
     ),
     licenceConditionsBreached = "blah be de blah blue blah",
-    reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name })
+    reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name }),
+    currentPrison = "MWI"
   )
 
   fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
