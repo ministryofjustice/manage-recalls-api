@@ -38,7 +38,7 @@ class PrisonerSearchComponentTest : ComponentTestBase() {
   fun `can send search request to prisoner search api and retrieve no matches`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
 
-    val responseBody = authenticatedPostRequest("/search", apiSearchRequest)
+    val responseBody = prisonerSearchRequest(apiSearchRequest)
 
     assertThat(responseBody, isEmpty)
   }
@@ -70,7 +70,7 @@ class PrisonerSearchComponentTest : ComponentTestBase() {
     val prisoner2 = testPrisoner(null)
     prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, listOf(prisoner1, prisoner2))
 
-    val response = authenticatedPostRequest("/search", apiSearchRequest)
+    val response = prisonerSearchRequest(apiSearchRequest)
 
     assertThat(response, equalTo(listOf(prisoner1.searchResult(), prisoner2.searchResult())))
   }
@@ -97,8 +97,8 @@ class PrisonerSearchComponentTest : ComponentTestBase() {
     croNumber = randomString(),
   )
 
-  private fun authenticatedPostRequest(path: String, request: Any): List<SearchResult> =
-    sendAuthenticatedPostRequestWithBody(path, request)
+  private fun prisonerSearchRequest(request: SearchRequest): List<SearchResult> =
+    sendAuthenticatedPostRequestWithBody("/search", request)
       .expectStatus().isOk
       .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
       .returnResult()

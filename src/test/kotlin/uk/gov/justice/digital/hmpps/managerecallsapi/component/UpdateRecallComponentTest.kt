@@ -153,11 +153,4 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       )
     )
   }
-
-  private fun authenticatedPatchRequest(path: String, request: Any): RecallResponse =
-    sendAuthenticatedPatchRequestWithBody(path, request)
-      .expectStatus().isOk
-      .expectBody(RecallResponse::class.java)
-      .returnResult()
-      .responseBody!!
 }
