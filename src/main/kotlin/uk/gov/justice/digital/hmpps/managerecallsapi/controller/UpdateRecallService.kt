@@ -16,7 +16,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       .updateWithRequestDetails(updateRecallRequest)
       .let(recallRepository::save)
 
-  private fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
+  // FIXME - need a test to ensure that we test the preservation of ALL existing values, currently only those added to `fullyPopulatedRecall`
+  protected fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
       recallType = FIXED,
@@ -36,8 +37,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
       reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
-      agreeWithRecall = updateRecallRequest.agreeWithRecall,
-      agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail
+      agreeWithRecall = updateRecallRequest.agreeWithRecall ?: agreeWithRecall,
+      agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail ?: agreeWithRecallDetail
     )
   }
 }
