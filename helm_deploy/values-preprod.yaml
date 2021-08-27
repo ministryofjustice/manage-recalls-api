@@ -13,3 +13,4 @@ generic-service:
     SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth/.well-known/jwks.json
     PRISONERSEARCH_ENDPOINT_URL: https://prisoner-offender-search-preprod.prison.service.justice.gov.uk
     MANAGE_RECALLS_API_BASE_URI: https://manage-recalls-api-preprod.hmpps.service.justice.gov.uk
+    PRISONREGISTER_ENDPOINT_URL:  https://prison-register-preprod.hmpps.service.justice.gov.uk
