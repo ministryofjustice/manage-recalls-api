@@ -85,6 +85,8 @@ data class Recall(
 
   val agreeWithRecallDetail: String? = null,
 
+  val currentPrison: String? = null,
+
 ) {
   constructor(
     recallId: RecallId,
@@ -107,7 +109,9 @@ data class Recall(
     reasonsForRecall: Set<ReasonForRecall> = emptySet(),
     reasonsForRecallOtherDetail: String? = null,
     agreeWithRecall: AgreeWithRecall? = null,
-    agreeWithRecallDetail: String? = null
+    agreeWithRecallDetail: String? = null,
+    currentPrison: String? = null
+
   ) :
     this(
       recallId.value,
@@ -130,7 +134,8 @@ data class Recall(
       reasonsForRecall,
       reasonsForRecallOtherDetail,
       agreeWithRecall,
-      agreeWithRecallDetail
+      agreeWithRecallDetail,
+      currentPrison
     )
 
   fun recallId() = RecallId(id)
