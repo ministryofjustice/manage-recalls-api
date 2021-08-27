@@ -31,7 +31,6 @@ class UpdateRecallServiceTest {
   private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"))
 
   private val fullyPopulatedUpdateRecallRequest = UpdateRecallRequest(
-    agreeWithRecallRecommendation = true,
     lastReleasePrison = "Andys house",
     lastReleaseDate = LocalDate.now(),
     recallEmailReceivedDateTime = OffsetDateTime.now(),
@@ -74,7 +73,6 @@ class UpdateRecallServiceTest {
 
   private val fullyPopulatedRecall = existingRecall.copy(
     recallType = FIXED,
-    agreeWithRecallRecommendation = fullyPopulatedUpdateRecallRequest.agreeWithRecallRecommendation,
     recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,

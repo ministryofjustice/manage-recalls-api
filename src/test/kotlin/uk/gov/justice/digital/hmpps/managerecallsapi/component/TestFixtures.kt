@@ -1,4 +1,4 @@
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
@@ -44,7 +44,6 @@ fun recallWithPopulatedFields(
   revocationOrderId = UUID.randomUUID(),
   documents = documents,
   recallType = RecallType.FIXED,
-  agreeWithRecallRecommendation = randomBoolean(),
   recallLength = RecallLength.values().random(),
   lastReleasePrison = randomString(),
   lastReleaseDate = LocalDate.now(),
@@ -73,8 +72,8 @@ fun recallWithPopulatedFields(
   licenceConditionsBreached = randomString(),
   reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name }),
   reasonsForRecallOtherDetail = randomString(),
-  agreeWithRecallLength = AgreeWithRecallLength.values().random(),
-  agreeWithRecallLengthDetail = randomString()
+  agreeWithRecall = AgreeWithRecall.values().random(),
+  agreeWithRecallDetail = randomString()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

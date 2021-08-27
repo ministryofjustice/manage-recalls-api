@@ -20,8 +20,6 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
       recallType = FIXED,
-      agreeWithRecallRecommendation = updateRecallRequest.agreeWithRecallRecommendation
-        ?: agreeWithRecallRecommendation,
       recallLength = sentencingInfo?.calculateRecallLength() ?: recallLength,
       recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime
         ?: recallEmailReceivedDateTime,
@@ -38,8 +36,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
       reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
-      agreeWithRecallLength = updateRecallRequest.agreeWithRecallLength,
-      agreeWithRecallLengthDetail = updateRecallRequest.agreeWithRecallLengthDetail,
+      agreeWithRecall = updateRecallRequest.agreeWithRecall,
+      agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail,
       currentPrison = updateRecallRequest.currentPrison ?: currentPrison
     )
   }

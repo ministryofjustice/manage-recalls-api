@@ -109,7 +109,6 @@ fun Recall.toResponse() = RecallResponse(
   nomsNumber = this.nomsNumber,
   documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category) },
   revocationOrderId = this.revocationOrderId,
-  agreeWithRecallRecommendation = this.agreeWithRecallRecommendation,
   recallLength = this.recallLength,
   lastReleasePrison = this.lastReleasePrison,
   lastReleaseDate = this.lastReleaseDate,
@@ -134,8 +133,8 @@ fun Recall.toResponse() = RecallResponse(
   licenceConditionsBreached = this.licenceConditionsBreached,
   reasonsForRecall = this.reasonsForRecall.toList(),
   reasonsForRecallOtherDetail = this.reasonsForRecallOtherDetail,
-  agreeWithRecallLength = this.agreeWithRecallLength,
-  agreeWithRecallLengthDetail = this.agreeWithRecallLengthDetail,
+  agreeWithRecall = this.agreeWithRecall,
+  agreeWithRecallDetail = this.agreeWithRecallDetail,
   currentPrison = this.currentPrison
 )
 
@@ -146,7 +145,6 @@ data class RecallResponse(
   val nomsNumber: NomsNumber,
   val documents: List<ApiRecallDocument> = emptyList(),
   val revocationOrderId: UUID? = null,
-  val agreeWithRecallRecommendation: Boolean? = null,
   val recallLength: RecallLength? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
@@ -171,8 +169,8 @@ data class RecallResponse(
   val licenceConditionsBreached: String? = null,
   val reasonsForRecall: List<ReasonForRecall> = emptyList(),
   val reasonsForRecallOtherDetail: String? = null,
-  val agreeWithRecallLength: AgreeWithRecallLength? = null,
-  val agreeWithRecallLengthDetail: String? = null,
+  val agreeWithRecall: AgreeWithRecall? = null,
+  val agreeWithRecallDetail: String? = null,
   val currentPrison: String? = null,
 )
 
