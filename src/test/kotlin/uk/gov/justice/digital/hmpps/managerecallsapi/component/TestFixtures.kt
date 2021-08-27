@@ -73,7 +73,8 @@ fun recallWithPopulatedFields(
   reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name }),
   reasonsForRecallOtherDetail = randomString(),
   agreeWithRecall = AgreeWithRecall.values().random(),
-  agreeWithRecallDetail = randomString()
+  agreeWithRecallDetail = randomString(),
+  currentPrison = randomString()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
