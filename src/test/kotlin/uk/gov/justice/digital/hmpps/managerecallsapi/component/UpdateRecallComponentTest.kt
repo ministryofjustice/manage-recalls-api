@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
@@ -36,10 +36,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   @Test
   fun `update a recall returns updated recall`() {
     val response = authenticatedPatchRequest(
-      "/recalls/$recallId", UpdateRecallRequest(agreeWithRecallRecommendation = true)
+      "/recalls/$recallId", UpdateRecallRequest(lastReleasePrison = "Belmarsh")
     )
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, agreeWithRecallRecommendation = true)))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = "Belmarsh")))
   }
 
   @Suppress("unused")
@@ -51,8 +51,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       "{\"probationDivision\":\"INVALID\"}",
       "{\"reasonsForRecall\": \'\"}",
       "{\"reasonsForRecall\":[\"INVALID\"]}",
-      "{\"agreeWithRecallLength\": \'\"}",
-      "{\"agreeWithRecallLength\":[\"INVALID\"]}"
+      "{\"agreeWithRecall\": \'\"}",
+      "{\"agreeWithRecall\":[\"INVALID\"]}"
     )
   }
 
@@ -103,13 +103,13 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          recallLength = TWENTY_EIGHT_DAYS,
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
           sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
           sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
-          sentenceLength = Api.SentenceLength(2, 5, 31),
-          recallLength = TWENTY_EIGHT_DAYS
+          sentenceLength = Api.SentenceLength(2, 5, 31)
         )
       )
     )
@@ -158,12 +158,12 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `update a recall with agreeWithRecallLength and detail`() {
+  fun `update a recall with agreeWithRecall and detail`() {
     val response = authenticatedPatchRequest(
       "/recalls/$recallId",
       UpdateRecallRequest(
-        agreeWithRecallLength = AgreeWithRecallLength.YES,
-        agreeWithRecallLengthDetail = "Other reasons"
+        agreeWithRecall = AgreeWithRecall.YES,
+        agreeWithRecallDetail = "Other reasons"
       )
     )
 
@@ -172,8 +172,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       equalTo(
         RecallResponse(
           recallId, nomsNumber,
-          agreeWithRecallLength = AgreeWithRecallLength.YES,
-          agreeWithRecallLengthDetail = "Other reasons"
+          agreeWithRecall = AgreeWithRecall.YES,
+          agreeWithRecallDetail = "Other reasons"
         )
       )
     )

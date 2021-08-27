@@ -107,7 +107,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.documents[0].documentId").isNotEmpty
       .jsonPath("$.revocationOrderId").isNotEmpty
       .jsonPath("$.recallLength").isEqualTo(recall.recallLength!!.name)
-      .jsonPath("$.agreeWithRecallRecommendation").isEqualTo(recall.agreeWithRecallRecommendation.toString())
       .jsonPath("$.lastReleasePrison").isEqualTo(recall.lastReleasePrison.toString())
       .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))
       .jsonPath("$.localPoliceForce").isEqualTo(recall.localPoliceForce!!)
@@ -130,8 +129,8 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.reasonsForRecall.length()").isEqualTo(ReasonForRecall.values().size)
       .jsonPath("$.reasonsForRecall[0]").isEqualTo("BREACH_EXCLUSION_ZONE")
       .jsonPath("$.reasonsForRecallOtherDetail").isEqualTo(recall.reasonsForRecallOtherDetail!!)
-      .jsonPath("$.agreeWithRecallLength").isEqualTo(recall.agreeWithRecallLength!!.name)
-      .jsonPath("$.agreeWithRecallLengthDetail").isEqualTo(recall.agreeWithRecallLengthDetail!!)
+      .jsonPath("$.agreeWithRecall").isEqualTo(recall.agreeWithRecall!!.name)
+      .jsonPath("$.agreeWithRecallDetail").isEqualTo(recall.agreeWithRecallDetail!!)
   }
 
   @Test
