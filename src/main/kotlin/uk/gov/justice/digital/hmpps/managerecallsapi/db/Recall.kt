@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
@@ -46,8 +46,6 @@ data class Recall(
   @Enumerated(STRING)
   val recallType: RecallType? = null,
 
-  val agreeWithRecallRecommendation: Boolean? = null,
-
   @Enumerated(STRING)
   val recallLength: RecallLength? = null,
 
@@ -83,9 +81,9 @@ data class Recall(
   val reasonsForRecallOtherDetail: String? = null,
 
   @Enumerated(STRING)
-  val agreeWithRecallLength: AgreeWithRecallLength? = null,
+  val agreeWithRecall: AgreeWithRecall? = null,
 
-  val agreeWithRecallLengthDetail: String? = null,
+  val agreeWithRecallDetail: String? = null,
 
 ) {
   constructor(
@@ -94,7 +92,6 @@ data class Recall(
     revocationOrderId: UUID? = null,
     documents: Set<RecallDocument> = emptySet(),
     recallType: RecallType? = null,
-    agreeWithRecallRecommendation: Boolean? = null,
     recallLength: RecallLength? = null,
     lastReleasePrison: String? = null,
     lastReleaseDate: LocalDate? = null,
@@ -109,8 +106,8 @@ data class Recall(
     licenceConditionsBreached: String? = null,
     reasonsForRecall: Set<ReasonForRecall> = emptySet(),
     reasonsForRecallOtherDetail: String? = null,
-    agreeWithRecallLength: AgreeWithRecallLength? = null,
-    agreeWithRecallLengthDetail: String? = null
+    agreeWithRecall: AgreeWithRecall? = null,
+    agreeWithRecallDetail: String? = null
   ) :
     this(
       recallId.value,
@@ -118,7 +115,6 @@ data class Recall(
       revocationOrderId,
       documents,
       recallType,
-      agreeWithRecallRecommendation,
       recallLength,
       lastReleasePrison,
       lastReleaseDate,
@@ -133,8 +129,8 @@ data class Recall(
       licenceConditionsBreached,
       reasonsForRecall,
       reasonsForRecallOtherDetail,
-      agreeWithRecallLength,
-      agreeWithRecallLengthDetail
+      agreeWithRecall,
+      agreeWithRecallDetail
     )
 
   fun recallId() = RecallId(id)

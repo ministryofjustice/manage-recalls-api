@@ -29,7 +29,6 @@ class UpdateRecallController(private val updateRecallService: UpdateRecallServic
 }
 
 data class UpdateRecallRequest(
-  val agreeWithRecallRecommendation: Boolean? = null,
   val lastReleasePrison: String? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
@@ -53,8 +52,8 @@ data class UpdateRecallRequest(
   val licenceConditionsBreached: String? = null,
   val reasonsForRecall: Set<ReasonForRecall>? = null,
   val reasonsForRecallOtherDetail: String? = null,
-  val agreeWithRecallLength: AgreeWithRecallLength? = null,
-  val agreeWithRecallLengthDetail: String? = null
+  val agreeWithRecall: AgreeWithRecall? = null,
+  val agreeWithRecallDetail: String? = null
 )
 
 enum class RecallLength {
@@ -106,8 +105,7 @@ enum class ReasonForRecall {
   OTHER
 }
 
-enum class AgreeWithRecallLength {
+enum class AgreeWithRecall {
   YES,
-  NO_STANDARD,
-  NO_CANCEL
+  NO_STOP
 }

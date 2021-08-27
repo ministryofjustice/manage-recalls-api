@@ -80,7 +80,6 @@ class RecallsControllerTest {
       nomsNumber = nomsNumber,
       revocationOrderId = revocationOrderId,
       documents = setOf(document),
-      agreeWithRecallRecommendation = true,
       lastReleasePrison = "prison",
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
@@ -99,7 +98,6 @@ class RecallsControllerTest {
         )
       ),
       revocationOrderId = revocationOrderId,
-      agreeWithRecallRecommendation = true,
       lastReleasePrison = "prison",
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
