@@ -131,6 +131,7 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$.reasonsForRecallOtherDetail").isEqualTo(recall.reasonsForRecallOtherDetail!!)
       .jsonPath("$.agreeWithRecall").isEqualTo(recall.agreeWithRecall!!.name)
       .jsonPath("$.agreeWithRecallDetail").isEqualTo(recall.agreeWithRecallDetail!!)
+      .jsonPath("$.currentPrison").isEqualTo(recall.currentPrison)
   }
 
   @Test

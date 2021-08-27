@@ -55,7 +55,8 @@ class UpdateRecallServiceTest {
     reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
     reasonsForRecallOtherDetail = "Something else they've done",
     agreeWithRecall = AgreeWithRecall.NO_STOP,
-    agreeWithRecallDetail = "Blah blah blah"
+    agreeWithRecallDetail = "Blah blah blah",
+    currentPrison = "MWI"
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -95,7 +96,8 @@ class UpdateRecallServiceTest {
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
     agreeWithRecall = fullyPopulatedUpdateRecallRequest.agreeWithRecall,
-    agreeWithRecallDetail = fullyPopulatedUpdateRecallRequest.agreeWithRecallDetail
+    agreeWithRecallDetail = fullyPopulatedUpdateRecallRequest.agreeWithRecallDetail,
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
   )
 
   @Test

@@ -52,7 +52,8 @@ class UpdateRecallControllerTest {
       ReasonForRecall.BREACH_EXCLUSION_ZONE,
       ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION
     ),
-    reasonsForRecallOtherDetail = "Because of something else..."
+    reasonsForRecallOtherDetail = "Because of something else...",
+    currentPrison = "MWI"
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -92,7 +93,8 @@ class UpdateRecallControllerTest {
     ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
-    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail
+    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
   )
 
   private val fullyPopulatedRecallResponse = RecallResponse(
@@ -125,7 +127,8 @@ class UpdateRecallControllerTest {
     authorisingAssistantChiefOfficer = fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toList(),
-    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail
+    reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison!!,
   )
 
   @Test

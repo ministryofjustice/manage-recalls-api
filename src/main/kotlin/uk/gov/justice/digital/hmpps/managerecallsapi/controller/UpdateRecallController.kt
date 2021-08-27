@@ -53,7 +53,8 @@ data class UpdateRecallRequest(
   val reasonsForRecall: Set<ReasonForRecall>? = null,
   val reasonsForRecallOtherDetail: String? = null,
   val agreeWithRecall: AgreeWithRecall? = null,
-  val agreeWithRecallDetail: String? = null
+  val agreeWithRecallDetail: String? = null,
+  val currentPrison: String? = null
 )
 
 enum class RecallLength {
