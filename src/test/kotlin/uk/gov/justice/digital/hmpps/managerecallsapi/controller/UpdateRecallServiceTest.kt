@@ -54,6 +54,8 @@ class UpdateRecallServiceTest {
     licenceConditionsBreached = "Breached by ... on ...",
     reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
     reasonsForRecallOtherDetail = "Something else they've done",
+    agreeWithRecall = AgreeWithRecall.NO_STOP,
+    agreeWithRecallDetail = "Blah blah blah",
     currentPrison = "MWI"
   )
 
@@ -93,6 +95,8 @@ class UpdateRecallServiceTest {
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
+    agreeWithRecall = fullyPopulatedUpdateRecallRequest.agreeWithRecall,
+    agreeWithRecallDetail = fullyPopulatedUpdateRecallRequest.agreeWithRecallDetail,
     currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
   )
 
