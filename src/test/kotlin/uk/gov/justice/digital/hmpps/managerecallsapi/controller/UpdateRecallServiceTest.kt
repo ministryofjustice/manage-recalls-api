@@ -93,7 +93,7 @@ class UpdateRecallServiceTest {
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
-    currentPrison = "MWI"
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
   )
 
   @Test
