@@ -53,20 +53,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   )
 
   @Test
-  fun `returns all recalls`() {
-
-    every { recallRepository.findAll() } returns listOf(aRecall)
-
-    webTestClient.get().uri("/recalls").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
-      .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$[:1].recallId").isEqualTo(recallId.toString())
-      .jsonPath("$[:1].nomsNumber").isEqualTo(nomsNumber.value)
-      .jsonPath("$.revocationOrderId").doesNotExist()
-  }
-
-  @Test
   fun `gets a revocation order`() {
     val expectedPdf = "Expected Generated PDF".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
