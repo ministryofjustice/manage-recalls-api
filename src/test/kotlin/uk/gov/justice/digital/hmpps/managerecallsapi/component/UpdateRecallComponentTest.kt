@@ -36,10 +36,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   @Test
   fun `update a recall returns updated recall`() {
     val response = authenticatedPatchRequest(
-      "/recalls/$recallId", UpdateRecallRequest(lastReleasePrison = "Belmarsh")
+      "/recalls/$recallId", UpdateRecallRequest(lastReleasePrison = "BEL")
     )
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = "Belmarsh")))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = "BEL")))
   }
 
   @Suppress("unused")
