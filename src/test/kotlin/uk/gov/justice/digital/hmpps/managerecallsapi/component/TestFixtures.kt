@@ -18,9 +18,8 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
-import kotlin.random.Random
 
-fun randomBoolean() = Random.nextBoolean()
+fun randomString() = randomAlphanumeric(500)
 
 fun dateTimeNow() = OffsetDateTime.now()
 
@@ -43,36 +42,36 @@ fun recallWithPopulatedFields(
   documents = exampleDocuments(recallId),
   recallType = RecallType.FIXED,
   recallLength = RecallLength.values().random(),
-  lastReleasePrison = randomAlphanumeric(500),
+  lastReleasePrison = randomString(),
   lastReleaseDate = LocalDate.now(),
   recallEmailReceivedDateTime = dateTimeNow(),
-  localPoliceForce = randomAlphanumeric(500),
-  contrabandDetail = randomAlphanumeric(500),
-  vulnerabilityDiversityDetail = randomAlphanumeric(500),
+  localPoliceForce = randomString(),
+  contrabandDetail = randomString(),
+  vulnerabilityDiversityDetail = randomString(),
   mappaLevel = MappaLevel.NA,
   sentencingInfo = SentencingInfo(
     LocalDate.now(),
     LocalDate.now(),
     LocalDate.now(),
-    randomAlphanumeric(500),
-    randomAlphanumeric(500),
+    randomString(),
+    randomString(),
     SentenceLength(1, 2, 3),
     LocalDate.now()
   ),
-  bookingNumber = randomAlphanumeric(500),
+  bookingNumber = randomString(),
   probationInfo = ProbationInfo(
-    randomAlphanumeric(500),
-    randomAlphanumeric(500),
-    randomAlphanumeric(500),
+    randomString(),
+    randomString(),
+    randomString(),
     ProbationDivision.NORTH_EAST,
-    randomAlphanumeric(500)
+    randomString()
   ),
-  licenceConditionsBreached = randomAlphanumeric(500),
+  licenceConditionsBreached = randomString(),
   reasonsForRecall = ReasonForRecall.values().toSortedSet(compareBy { it.name }),
-  reasonsForRecallOtherDetail = randomAlphanumeric(500),
+  reasonsForRecallOtherDetail = randomString(),
   agreeWithRecall = AgreeWithRecall.values().random(),
-  agreeWithRecallDetail = randomAlphanumeric(500),
-  currentPrison = randomAlphanumeric(500)
+  agreeWithRecallDetail = randomString(),
+  currentPrison = randomString()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
