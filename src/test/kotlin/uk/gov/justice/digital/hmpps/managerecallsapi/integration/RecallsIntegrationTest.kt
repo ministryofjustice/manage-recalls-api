@@ -4,16 +4,11 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import minimalRecall
-import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -69,64 +64,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
       .jsonPath("$[:1].recallId").isEqualTo(recallId.toString())
       .jsonPath("$[:1].nomsNumber").isEqualTo(nomsNumber.value)
       .jsonPath("$.revocationOrderId").doesNotExist()
-  }
-
-  @Test
-  fun `gets a minimal recall`() {
-
-    every { recallRepository.getByRecallId(recallId) } returns minimalRecall(recallId, nomsNumber)
-
-    webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
-      .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.recallId").isEqualTo(recallId.toString())
-      .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)
-      .jsonPath("$.revocationOrderId").doesNotExist()
-  }
-
-  @Test
-  fun `gets a fully populated recall`() {
-
-    val recall = recallWithPopulatedFields(recallId, nomsNumber)
-    every { recallRepository.getByRecallId(recallId) } returns recall
-
-    webTestClient.get().uri("/recalls/$recallId").headers { it.withBearerAuthToken(jwtWithRoleManageRecalls()) }
-      .exchange()
-      .expectStatus().isOk
-      .expectBody()
-      .jsonPath("$.recallId").isEqualTo(recallId.toString())
-      .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)
-      .jsonPath("$.documents.length()").isEqualTo(2)
-      .jsonPath("$.documents[0].category").isEqualTo("PART_A_RECALL_REPORT")
-      .jsonPath("$.documents[0].documentId").isNotEmpty
-      .jsonPath("$.revocationOrderId").isNotEmpty
-      .jsonPath("$.recallLength").isEqualTo(recall.recallLength!!.name)
-      .jsonPath("$.lastReleasePrison").isEqualTo(recall.lastReleasePrison.toString())
-      .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))
-      .jsonPath("$.localPoliceForce").isEqualTo(recall.localPoliceForce!!)
-      .jsonPath("$.contrabandDetail").isEqualTo(recall.contrabandDetail!!)
-      .jsonPath("$.vulnerabilityDiversityDetail").isEqualTo(recall.vulnerabilityDiversityDetail!!)
-      .jsonPath("$.mappaLevel").isEqualTo(MappaLevel.NA.name)
-      .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.licenceExpiryDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.sentenceExpiryDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.sentencingCourt").isEqualTo(recall.sentencingInfo!!.sentencingCourt)
-      .jsonPath("$.indexOffence").isEqualTo(recall.sentencingInfo!!.indexOffence)
-      .jsonPath("$.conditionalReleaseDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.bookingNumber").isEqualTo(recall.bookingNumber!!)
-      .jsonPath("$.probationOfficerName").isEqualTo(recall.probationInfo!!.probationOfficerName)
-      .jsonPath("$.probationOfficerPhoneNumber").isEqualTo(recall.probationInfo!!.probationOfficerPhoneNumber)
-      .jsonPath("$.probationOfficerEmail").isEqualTo(recall.probationInfo!!.probationOfficerEmail)
-      .jsonPath("$.probationDivision").isEqualTo(recall.probationInfo!!.probationDivision.name)
-      .jsonPath("$.authorisingAssistantChiefOfficer").isEqualTo(recall.probationInfo!!.authorisingAssistantChiefOfficer)
-      .jsonPath("$.licenceConditionsBreached").isEqualTo(recall.licenceConditionsBreached!!)
-      .jsonPath("$.reasonsForRecall.length()").isEqualTo(ReasonForRecall.values().size)
-      .jsonPath("$.reasonsForRecall[0]").isEqualTo("BREACH_EXCLUSION_ZONE")
-      .jsonPath("$.reasonsForRecallOtherDetail").isEqualTo(recall.reasonsForRecallOtherDetail!!)
-      .jsonPath("$.agreeWithRecall").isEqualTo(recall.agreeWithRecall!!.name)
-      .jsonPath("$.agreeWithRecallDetail").isEqualTo(recall.agreeWithRecallDetail!!)
-      .jsonPath("$.currentPrison").isEqualTo(recall.currentPrison)
   }
 
   @Test
