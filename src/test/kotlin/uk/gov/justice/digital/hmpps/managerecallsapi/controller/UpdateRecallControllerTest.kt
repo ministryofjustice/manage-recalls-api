@@ -27,7 +27,7 @@ class UpdateRecallControllerTest {
   private val nomsNumber = NomsNumber("A9876ZZ")
 
   private val fullyPopulatedUpdateRecallRequest = UpdateRecallRequest(
-    lastReleasePrison = "Andys house",
+    lastReleasePrison = "WIN",
     lastReleaseDate = LocalDate.now(),
     recallEmailReceivedDateTime = OffsetDateTime.now(),
     localPoliceForce = "Oxford",
