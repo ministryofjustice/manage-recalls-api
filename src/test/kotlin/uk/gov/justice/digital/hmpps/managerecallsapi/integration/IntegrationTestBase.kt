@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
-import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -18,15 +17,11 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
-import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class IntegrationTestBase {
-
-  @MockkBean
-  lateinit var s3Service: S3Service
 
   @Autowired
   lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
@@ -38,7 +33,7 @@ abstract class IntegrationTestBase {
   lateinit var gotenbergMockServer: GotenbergMockServer
 
   @Autowired
-  lateinit var hmppsAuthMockServer: HmppsAuthMockServer
+  private lateinit var hmppsAuthMockServer: HmppsAuthMockServer
 
   @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
