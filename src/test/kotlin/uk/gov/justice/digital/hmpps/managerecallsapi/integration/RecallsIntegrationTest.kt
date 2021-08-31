@@ -1,25 +1,16 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration
 
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
-import java.time.LocalDate
 import java.util.Base64
 import java.util.UUID
 
@@ -41,9 +32,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
   @MockkBean
   private lateinit var recallDocumentService: RecallDocumentService
 
-  private val nomsNumber = NomsNumber("123456")
-  private val recallId = ::RecallId.random()
-  private val aRecall = Recall(recallId, nomsNumber)
   private val fileBytes = "content".toByteArray()
   private val fileContent = Base64.getEncoder().encodeToString(fileBytes)
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
@@ -51,47 +39,6 @@ class RecallsIntegrationTest : IntegrationTestBase() {
     category = category.toString(),
     fileContent = fileContent
   )
-
-  @Test
-  fun `gets a revocation order`() {
-    val expectedPdf = "Expected Generated PDF".toByteArray()
-    val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
-
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
-
-    val firstName = "Natalia"
-    prisonerOffenderSearch.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNumber),
-      listOf(
-        Prisoner(
-          prisonerNumber = nomsNumber.value,
-          firstName = firstName,
-          lastName = "Oskina",
-          dateOfBirth = LocalDate.of(2000, 1, 31),
-          bookNumber = "Book Num 123",
-          croNumber = "CRO Num/456"
-        )
-      )
-    )
-
-    gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName)
-
-    val documentId = UUID.randomUUID()
-    every { s3Service.uploadFile(any()) } returns documentId
-
-    every { recallRepository.save(any()) } returns Recall(recallId, nomsNumber, documentId)
-
-    val response = webTestClient.get().uri("/recalls/$recallId/revocationOrder").headers {
-      it.withBearerAuthToken(jwtWithRoleManageRecalls())
-    }
-      .exchange()
-      .expectStatus().isOk
-      .expectBody(Pdf::class.java)
-      .returnResult()
-      .responseBody!!
-
-    assertThat(response.content, equalTo(expectedBase64Pdf))
-  }
 
   @Test
   fun `adds a recall document`() {

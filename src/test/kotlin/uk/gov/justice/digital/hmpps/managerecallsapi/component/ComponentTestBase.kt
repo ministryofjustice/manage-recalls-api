@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
+import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -20,12 +21,15 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.JwtAuthenticationHelper
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -48,16 +52,24 @@ abstract class ComponentTestBase {
   @Autowired
   lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
 
+  @Autowired
+  lateinit var gotenbergMockServer: GotenbergMockServer
+
+  @MockkBean
+  lateinit var s3Service: S3Service
+
   @BeforeAll
   fun startMocks() {
     hmppsAuthMockServer.start()
     prisonerOffenderSearch.start()
+    gotenbergMockServer.start()
   }
 
   @AfterAll
   fun stopMocks() {
     hmppsAuthMockServer.stop()
     prisonerOffenderSearch.stop()
+    gotenbergMockServer.stop()
   }
 
   @BeforeEach
@@ -121,6 +133,9 @@ abstract class ComponentTestBase {
 
   protected fun getRecall(recallId: RecallId): RecallResponse =
     authenticatedGetRequest("/recalls/$recallId", RecallResponse::class.java)
+
+  protected fun getRevocationOrder(recallId: RecallId): Pdf =
+    authenticatedGetRequest("/recalls/$recallId/revocationOrder", Pdf::class.java)
 
   protected fun getAllRecalls(): List<RecallResponse> =
     authenticatedGetRequest("/recalls", object : ParameterizedTypeReference<List<RecallResponse>>() {})
