@@ -39,7 +39,11 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
       agreeWithRecall = updateRecallRequest.agreeWithRecall ?: agreeWithRecall,
       agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail ?: agreeWithRecallDetail,
-      currentPrison = updateRecallRequest.currentPrison ?: currentPrison
+      currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
+      additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
+      additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail ?: additionalLicenceConditionsDetail,
+      differentNomsNumber = updateRecallRequest.differentNomsNumber ?: differentNomsNumber,
+      differentNomsNumberDetail = updateRecallRequest.differentNomsNumberDetail ?: differentNomsNumberDetail
     )
   }
 }

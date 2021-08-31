@@ -87,6 +87,14 @@ data class Recall(
 
   val currentPrison: String? = null,
 
+  val additionalLicenceConditions: Boolean? = null,
+
+  val additionalLicenceConditionsDetail: String? = null,
+
+  val differentNomsNumber: Boolean? = null,
+
+  val differentNomsNumberDetail: String? = null
+
 ) {
   constructor(
     recallId: RecallId,
@@ -110,8 +118,11 @@ data class Recall(
     reasonsForRecallOtherDetail: String? = null,
     agreeWithRecall: AgreeWithRecall? = null,
     agreeWithRecallDetail: String? = null,
-    currentPrison: String? = null
-
+    currentPrison: String? = null,
+    additionalLicenceConditions: Boolean? = null,
+    additionalLicenceConditionsDetail: String? = null,
+    differentNomsNumber: Boolean? = null,
+    differentNomsNumberDetail: String? = null
   ) :
     this(
       recallId.value,
@@ -135,7 +146,11 @@ data class Recall(
       reasonsForRecallOtherDetail,
       agreeWithRecall,
       agreeWithRecallDetail,
-      currentPrison
+      currentPrison,
+      additionalLicenceConditions,
+      additionalLicenceConditionsDetail,
+      differentNomsNumber,
+      differentNomsNumberDetail
     )
 
   fun recallId() = RecallId(id)

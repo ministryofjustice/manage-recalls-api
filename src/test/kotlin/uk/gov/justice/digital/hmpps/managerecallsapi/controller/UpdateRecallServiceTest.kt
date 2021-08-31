@@ -56,7 +56,11 @@ class UpdateRecallServiceTest {
     reasonsForRecallOtherDetail = "Something else they've done",
     agreeWithRecall = AgreeWithRecall.NO_STOP,
     agreeWithRecallDetail = "Blah blah blah",
-    currentPrison = "MWI"
+    currentPrison = "MWI",
+    additionalLicenceConditions = true,
+    additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    differentNomsNumber = true,
+    differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -97,7 +101,11 @@ class UpdateRecallServiceTest {
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
     agreeWithRecall = fullyPopulatedUpdateRecallRequest.agreeWithRecall,
     agreeWithRecallDetail = fullyPopulatedUpdateRecallRequest.agreeWithRecallDetail,
-    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison,
+    additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
+    additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
+    differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
+    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail
   )
 
   @Test
