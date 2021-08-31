@@ -21,6 +21,9 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -30,6 +33,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Got
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import java.util.UUID
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -139,6 +143,29 @@ abstract class ComponentTestBase {
 
   protected fun getAllRecalls(): List<RecallResponse> =
     authenticatedGetRequest("/recalls", object : ParameterizedTypeReference<List<RecallResponse>>() {})
+
+  protected fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
+    authenticatedPostRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
+
+  protected fun getRecallDocument(recallId: RecallId, documentId: UUID): GetDocumentResponse =
+    authenticatedGetRequest("/recalls/$recallId/documents/$documentId", GetDocumentResponse::class.java)
+
+  protected fun <T> authenticatedPostRequest(path: String, request: Any, responseClass: Class<T>): T =
+    authenticatedPost(path, request)
+      .expectBody(responseClass)
+      .returnResult()
+      .responseBody!!
+
+  protected fun authenticatedPost(path: String, request: Any): WebTestClient.ResponseSpec = webTestClient
+    .post()
+    .uri(path)
+    .bodyValue(request)
+    .headers {
+      it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+      it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
+    }
+    .exchange()
+    .expectStatus().isCreated
 
   protected fun <T> authenticatedGetRequest(path: String, responseClass: Class<T>): T =
     authenticatedGet(path)
