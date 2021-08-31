@@ -134,6 +134,7 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can update recall and return a response with all fields populated`() {
+    every { prisonValidateService.isValidPrison("MWI") } returns true
     every { updateRecallService.updateRecall(recallId, fullyPopulatedUpdateRecallRequest) } returns fullyPopulatedRecall
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
