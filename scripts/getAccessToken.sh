@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This script gets the token that the 'manage-recalls-api' uses to connect to other HMPPS services.
+# The token it generates can not be used to access the 'manage-recalls-api' endpoints directly.
+
 set -euo pipefail
 
 ENV=${1-dev}
