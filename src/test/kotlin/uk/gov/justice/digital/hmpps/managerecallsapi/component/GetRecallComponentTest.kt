@@ -23,7 +23,7 @@ class GetRecallComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     recallRepository.save(Recall(recallId, nomsNumber))
 
-    val response = authenticatedGetRequest("/recalls/$recallId")
+    val response = getRecall(recallId)
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber)))
   }

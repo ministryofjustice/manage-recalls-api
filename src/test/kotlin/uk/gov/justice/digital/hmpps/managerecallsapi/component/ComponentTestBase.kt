@@ -6,8 +6,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
@@ -18,6 +22,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.JwtAuthenticationHelper
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
@@ -59,6 +64,16 @@ abstract class ComponentTestBase {
   fun resetMocksAndStubClientToken() {
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
+  }
+
+  @Configuration
+  class TestConfig {
+    @Bean
+    fun cleanDatabase(): FlywayMigrationStrategy =
+      FlywayMigrationStrategy { flyway ->
+        flyway.clean()
+        flyway.migrate()
+      }
   }
 
   protected fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
@@ -104,13 +119,25 @@ abstract class ComponentTestBase {
       .returnResult()
       .responseBody!!
 
-  protected fun authenticatedGetRequest(path: String): RecallResponse =
+  protected fun getRecall(recallId: RecallId): RecallResponse =
+    authenticatedGetRequest("/recalls/$recallId", RecallResponse::class.java)
+
+  protected fun getAllRecalls(): List<RecallResponse> =
+    authenticatedGetRequest("/recalls", object : ParameterizedTypeReference<List<RecallResponse>>() {})
+
+  protected fun <T> authenticatedGetRequest(path: String, responseClass: Class<T>): T =
     authenticatedGet(path)
-      .expectBody(RecallResponse::class.java)
+      .expectBody(responseClass)
       .returnResult()
       .responseBody!!
 
-  protected fun authenticatedGet(path: String) = webTestClient.get().uri(path)
+  protected fun <T> authenticatedGetRequest(path: String, responseClass: ParameterizedTypeReference<T>): T =
+    authenticatedGet(path)
+      .expectBody(responseClass)
+      .returnResult()
+      .responseBody!!
+
+  protected fun authenticatedGet(path: String): WebTestClient.ResponseSpec = webTestClient.get().uri(path)
     .headers {
       it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
       it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
