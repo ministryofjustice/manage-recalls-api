@@ -1,3 +1,10 @@
+server:
+  shutdown: immediate
+
+management.endpoint:
+  health.cache.time-to-live: 0
+  info.cache.time-to-live: 0
+
 aws:
   region: eu-west-1
   credentials:

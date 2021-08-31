@@ -1,29 +1,16 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration.health
+package uk.gov.justice.digital.hmpps.managerecallsapi.component.health
 
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase
-import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.test.web.reactive.server.WebTestClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
 
-@AutoConfigureEmbeddedDatabase(provider = ZONKY)
-class HealthCheckTest : IntegrationTestBase() {
-
-  @BeforeAll
-  fun startGotenberg() {
-    gotenbergMockServer.start()
-  }
-
-  @AfterAll
-  fun stopGotenberg() {
-    gotenbergMockServer.stop()
-  }
+class HealthCheckComponentTest : ComponentTestBase() {
 
   @Test
   fun `healthy service returns status of each health check and version details`() {
@@ -44,14 +31,20 @@ class HealthCheckTest : IntegrationTestBase() {
   fun `service is unhealthy when prisonerOffenderSearch is unhealthy`() {
     prisonerOffenderSearch.isUnhealthy()
 
-    healthCheckIsDownWith("components.prisonerOffenderSearchHealth.details.status" to INTERNAL_SERVER_ERROR.name)
+    healthCheckIsDownWith(
+      SERVICE_UNAVAILABLE,
+      "components.prisonerOffenderSearchHealth.details.status" to INTERNAL_SERVER_ERROR.name
+    )
   }
 
   @Test
   fun `service is unhealthy when gotenberg is unhealthy`() {
     gotenbergMockServer.isUnhealthy()
 
-    healthCheckIsDownWith("components.gotenbergHealth.details.status" to INTERNAL_SERVER_ERROR.name)
+    healthCheckIsDownWith(
+      SERVICE_UNAVAILABLE,
+      "components.gotenbergHealth.details.status" to INTERNAL_SERVER_ERROR.name
+    )
   }
 
   @Test
@@ -73,11 +66,8 @@ class HealthCheckTest : IntegrationTestBase() {
     healthCheckIsUpWith(healthUrl, "status" to "UP")
   }
 
-  private fun healthCheckIsDownWith(vararg jsonPathAssertions: Pair<String, String>) {
-    webTestClient.get()
-      .uri("/health")
-      .exchange()
-      .expectStatus().is5xxServerError
+  private fun healthCheckIsDownWith(expectedStatus: HttpStatus, vararg jsonPathAssertions: Pair<String, String>) {
+    unauthenticatedGet("/health", expectedStatus)
       .expectBody()
       .jsonPath("status").isEqualTo("DOWN")
       .apply {
@@ -87,11 +77,8 @@ class HealthCheckTest : IntegrationTestBase() {
       }
   }
 
-  private fun healthCheckIsUpWith(healthUrl: String, vararg jsonPathAssertions: Pair<String, String>) {
-    webTestClient.get()
-      .uri(healthUrl)
-      .exchange()
-      .expectStatus().isOk
+  private fun healthCheckIsUpWith(healthUrl: String, vararg jsonPathAssertions: Pair<String, String>, expectedStatus: HttpStatus = OK) {
+    unauthenticatedGet(healthUrl, expectedStatus)
       .expectBody()
       .apply {
         jsonPathAssertions.forEach { (jsonPath, equalTo) ->
