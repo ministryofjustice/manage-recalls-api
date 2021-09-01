@@ -153,4 +153,14 @@ class UpdateRecallControllerTest {
 
     assertThat(response, equalTo(ResponseEntity.ok(fullyPopulatedRecallResponse)))
   }
+
+  @Test
+  fun `can't update recall when prison is not valid`() {
+    every { prisonValidateService.isValidPrison("MWI") } returns false
+    every { updateRecallService.updateRecall(recallId, fullyPopulatedUpdateRecallRequest) } returns fullyPopulatedRecall
+
+    val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
+
+    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
+  }
 }
