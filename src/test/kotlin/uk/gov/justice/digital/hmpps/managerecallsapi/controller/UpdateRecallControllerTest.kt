@@ -21,7 +21,8 @@ import java.time.OffsetDateTime
 @TestInstance(PER_CLASS)
 class UpdateRecallControllerTest {
   private val updateRecallService = mockk<UpdateRecallService>()
-  private val underTest = UpdateRecallController(updateRecallService)
+  private val prisonValidateService = mockk<PrisonValidationService>()
+  private val underTest = UpdateRecallController(updateRecallService, prisonValidateService)
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A9876ZZ")
@@ -145,10 +146,21 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can update recall and return a response with all fields populated`() {
+    every { prisonValidateService.isValidPrison("MWI") } returns true
     every { updateRecallService.updateRecall(recallId, fullyPopulatedUpdateRecallRequest) } returns fullyPopulatedRecall
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
 
     assertThat(response, equalTo(ResponseEntity.ok(fullyPopulatedRecallResponse)))
+  }
+
+  @Test
+  fun `can't update recall when prison is not valid`() {
+    every { prisonValidateService.isValidPrison("MWI") } returns false
+    every { updateRecallService.updateRecall(recallId, fullyPopulatedUpdateRecallRequest) } returns fullyPopulatedRecall
+
+    val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
+
+    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
   }
 }

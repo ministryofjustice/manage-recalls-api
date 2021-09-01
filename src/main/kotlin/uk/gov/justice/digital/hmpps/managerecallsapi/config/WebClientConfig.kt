@@ -48,6 +48,14 @@ class WebClientConfig {
     return WebClient.builder().build()
   }
 
+  @Value("\${prisonRegister.endpoint.url}")
+  private lateinit var prisonRegisterEndpointUrl: String
+
+  @Bean
+  fun prisonRegisterWebClient(): WebClient {
+    return WebClient.builder().baseUrl(prisonRegisterEndpointUrl).build()
+  }
+
   private fun webClientFactory(
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,
