@@ -4,6 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
@@ -14,7 +15,7 @@ import java.util.Base64
 import java.util.UUID
 import java.util.stream.Stream
 
-class EndpointSecurityIntegrationTest : IntegrationTestBase() {
+class EndpointSecurityIntegrationTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
