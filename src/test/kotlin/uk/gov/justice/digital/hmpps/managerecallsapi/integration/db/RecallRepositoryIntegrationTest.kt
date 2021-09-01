@@ -79,7 +79,11 @@ class RecallRepositoryIntegrationTest(
       licenceConditionsBreached = "Breached by blah blah blah",
       reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
       reasonsForRecallOtherDetail = "Because of something else",
-      currentPrison = "MWI"
+      currentPrison = "MWI",
+      additionalLicenceConditions = true,
+      additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      differentNomsNumber = false,
+      differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     )
     repository.save(recallToUpdate)
 

@@ -135,7 +135,11 @@ fun Recall.toResponse() = RecallResponse(
   reasonsForRecallOtherDetail = this.reasonsForRecallOtherDetail,
   agreeWithRecall = this.agreeWithRecall,
   agreeWithRecallDetail = this.agreeWithRecallDetail,
-  currentPrison = this.currentPrison
+  currentPrison = this.currentPrison,
+  additionalLicenceConditions = this.additionalLicenceConditions,
+  additionalLicenceConditionsDetail = this.additionalLicenceConditionsDetail,
+  differentNomsNumber = this.differentNomsNumber,
+  differentNomsNumberDetail = this.differentNomsNumberDetail
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -172,6 +176,10 @@ data class RecallResponse(
   val agreeWithRecall: AgreeWithRecall? = null,
   val agreeWithRecallDetail: String? = null,
   val currentPrison: String? = null,
+  val additionalLicenceConditions: Boolean? = null,
+  val additionalLicenceConditionsDetail: String? = null,
+  val differentNomsNumber: Boolean? = null,
+  val differentNomsNumberDetail: String? = null
 )
 
 class Api {
