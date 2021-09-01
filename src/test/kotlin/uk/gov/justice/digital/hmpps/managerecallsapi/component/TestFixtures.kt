@@ -71,7 +71,11 @@ fun recallWithPopulatedFields(
   reasonsForRecallOtherDetail = randomString(),
   agreeWithRecall = AgreeWithRecall.values().random(),
   agreeWithRecallDetail = randomString(),
-  currentPrison = randomString()
+  currentPrison = randomString(),
+  additionalLicenceConditions = true,
+  additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  differentNomsNumber = true,
+  differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
