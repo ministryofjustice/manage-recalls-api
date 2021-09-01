@@ -28,7 +28,7 @@ class UpdateRecallControllerTest {
   private val nomsNumber = NomsNumber("A9876ZZ")
 
   private val fullyPopulatedUpdateRecallRequest = UpdateRecallRequest(
-    lastReleasePrison = "Andys house",
+    lastReleasePrison = "WIN",
     lastReleaseDate = LocalDate.now(),
     recallEmailReceivedDateTime = OffsetDateTime.now(),
     localPoliceForce = "Oxford",
@@ -54,7 +54,11 @@ class UpdateRecallControllerTest {
       ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION
     ),
     reasonsForRecallOtherDetail = "Because of something else...",
-    currentPrison = "MWI"
+    currentPrison = "MWI",
+    additionalLicenceConditions = true,
+    additionalLicenceConditionsDetail = "Ut enim ad minima veniam, quis nostrum exercitationem",
+    differentNomsNumber = false,
+    differentNomsNumberDetail = "Nam libero tempore, cum soluta nobis est eligendi",
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -95,7 +99,11 @@ class UpdateRecallControllerTest {
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
-    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison,
+    additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
+    additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
+    differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
+    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail
   )
 
   private val fullyPopulatedRecallResponse = RecallResponse(
@@ -130,6 +138,10 @@ class UpdateRecallControllerTest {
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toList(),
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
     currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison!!,
+    additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
+    additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
+    differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
+    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail
   )
 
   @Test

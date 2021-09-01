@@ -1,3 +1,4 @@
+import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
@@ -17,11 +18,8 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
-import kotlin.random.Random
 
-fun randomString() = UUID.randomUUID().toString()
-
-fun randomBoolean() = Random.nextBoolean()
+fun randomString() = randomAlphanumeric(500)
 
 fun dateTimeNow() = OffsetDateTime.now()
 
@@ -37,12 +35,11 @@ fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId,
 
 fun recallWithPopulatedFields(
   recallId: RecallId,
-  nomsNumber: NomsNumber,
-  documents: Set<RecallDocument>
+  nomsNumber: NomsNumber
 ) = Recall(
   recallId, nomsNumber,
   revocationOrderId = UUID.randomUUID(),
-  documents = documents,
+  documents = exampleDocuments(recallId),
   recallType = RecallType.FIXED,
   recallLength = RecallLength.values().random(),
   lastReleasePrison = randomString(),
@@ -74,7 +71,11 @@ fun recallWithPopulatedFields(
   reasonsForRecallOtherDetail = randomString(),
   agreeWithRecall = AgreeWithRecall.values().random(),
   agreeWithRecallDetail = randomString(),
-  currentPrison = randomString()
+  currentPrison = randomString(),
+  additionalLicenceConditions = true,
+  additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  differentNomsNumber = true,
+  differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

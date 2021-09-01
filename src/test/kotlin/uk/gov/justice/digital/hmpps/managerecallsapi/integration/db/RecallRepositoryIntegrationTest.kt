@@ -67,7 +67,7 @@ class RecallRepositoryIntegrationTest(
       documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT)),
       recallLength = TWENTY_EIGHT_DAYS,
       recallEmailReceivedDateTime = OffsetDateTime.now(),
-      lastReleasePrison = "A Prison",
+      lastReleasePrison = "WIN",
       lastReleaseDate = localDate,
       localPoliceForce = "London",
       contrabandDetail = "i am worried...",
@@ -79,7 +79,11 @@ class RecallRepositoryIntegrationTest(
       licenceConditionsBreached = "Breached by blah blah blah",
       reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
       reasonsForRecallOtherDetail = "Because of something else",
-      currentPrison = "MWI"
+      currentPrison = "MWI",
+      additionalLicenceConditions = true,
+      additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      differentNomsNumber = false,
+      differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     )
     repository.save(recallToUpdate)
 

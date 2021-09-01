@@ -5,35 +5,30 @@ import io.zonky.test.db.AutoConfigureEmbeddedDatabase.DatabaseProvider.ZONKY
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.IntegrationTestBase
-import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
 
 @AutoConfigureEmbeddedDatabase(provider = ZONKY)
 class HealthCheckTest : IntegrationTestBase() {
 
-  @Autowired
-  lateinit var gotenberg: GotenbergMockServer
-
   @BeforeAll
   fun startGotenberg() {
-    gotenberg.start()
+    gotenbergMockServer.start()
   }
 
   @AfterAll
   fun stopGotenberg() {
-    gotenberg.stop()
+    gotenbergMockServer.stop()
   }
 
   @Test
   fun `healthy service returns status of each health check and version details`() {
     prisonerOffenderSearch.isHealthy()
-    gotenberg.isHealthy()
+    gotenbergMockServer.isHealthy()
 
     healthCheckIsUpWith(
       "/health",
@@ -54,7 +49,7 @@ class HealthCheckTest : IntegrationTestBase() {
 
   @Test
   fun `service is unhealthy when gotenberg is unhealthy`() {
-    gotenberg.isUnhealthy()
+    gotenbergMockServer.isUnhealthy()
 
     healthCheckIsDownWith("components.gotenbergHealth.details.status" to INTERNAL_SERVER_ERROR.name)
   }
