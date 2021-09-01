@@ -139,7 +139,8 @@ fun Recall.toResponse() = RecallResponse(
   additionalLicenceConditions = this.additionalLicenceConditions,
   additionalLicenceConditionsDetail = this.additionalLicenceConditionsDetail,
   differentNomsNumber = this.differentNomsNumber,
-  differentNomsNumberDetail = this.differentNomsNumberDetail
+  differentNomsNumberDetail = this.differentNomsNumberDetail,
+  recallNotificationEmailSentDateTime = this.recallNotificationEmailSentDateTime
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -179,7 +180,8 @@ data class RecallResponse(
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
   val differentNomsNumber: Boolean? = null,
-  val differentNomsNumberDetail: String? = null
+  val differentNomsNumberDetail: String? = null,
+  val recallNotificationEmailSentDateTime: LocalDate? = null
 )
 
 class Api {

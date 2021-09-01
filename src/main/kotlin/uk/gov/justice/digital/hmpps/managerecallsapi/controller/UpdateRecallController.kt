@@ -62,7 +62,8 @@ data class UpdateRecallRequest(
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
   val differentNomsNumber: Boolean? = null,
-  val differentNomsNumberDetail: String? = null
+  val differentNomsNumberDetail: String? = null,
+  val recallNotificationEmailSentDateTime: LocalDate? = null
 )
 
 enum class RecallLength {
