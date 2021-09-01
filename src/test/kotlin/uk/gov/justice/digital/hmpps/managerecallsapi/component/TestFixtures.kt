@@ -1,4 +1,7 @@
+package uk.gov.justice.digital.hmpps.managerecallsapi.component
+
 import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
+import org.apache.commons.lang3.RandomUtils
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
@@ -19,7 +22,11 @@ import java.time.OffsetDateTime
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 
+fun ((UUID) -> RecallId).zeroes() = this(UUID(0, 0))
+
 fun randomString() = randomAlphanumeric(500)
+
+fun randomBoolean() = RandomUtils.nextBoolean()
 
 fun dateTimeNow() = OffsetDateTime.now()
 
@@ -31,15 +38,14 @@ fun randomAdultDateOfBirth(): LocalDate? {
   return LocalDate.ofEpochDay(randomDay)
 }
 
-fun minimalRecall(recallId: RecallId, nomsNumber: NomsNumber) = Recall(recallId, nomsNumber)
-
 fun recallWithPopulatedFields(
   recallId: RecallId,
-  nomsNumber: NomsNumber
+  nomsNumber: NomsNumber,
+  documents: Set<RecallDocument> = exampleDocuments(recallId)
 ) = Recall(
   recallId, nomsNumber,
   revocationOrderId = UUID.randomUUID(),
-  documents = exampleDocuments(recallId),
+  documents = documents,
   recallType = RecallType.FIXED,
   recallLength = RecallLength.values().random(),
   lastReleasePrison = randomString(),
@@ -72,10 +78,10 @@ fun recallWithPopulatedFields(
   agreeWithRecall = AgreeWithRecall.values().random(),
   agreeWithRecallDetail = randomString(),
   currentPrison = randomString(),
-  additionalLicenceConditions = true,
-  additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  differentNomsNumber = true,
-  differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+  additionalLicenceConditions = randomBoolean(),
+  additionalLicenceConditionsDetail = randomString(),
+  differentNomsNumber = randomBoolean(),
+  differentNomsNumberDetail = randomString()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

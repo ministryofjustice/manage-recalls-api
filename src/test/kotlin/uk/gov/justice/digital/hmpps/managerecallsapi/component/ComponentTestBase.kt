@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -80,6 +81,7 @@ abstract class ComponentTestBase {
   fun resetMocksAndStubClientToken() {
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
+    prisonerOffenderSearch.resetAll()
   }
 
   @Configuration
@@ -179,13 +181,20 @@ abstract class ComponentTestBase {
       .returnResult()
       .responseBody!!
 
-  protected fun authenticatedGet(path: String): WebTestClient.ResponseSpec = webTestClient.get().uri(path)
-    .headers {
-      it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-      it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
-    }
-    .exchange()
-    .expectStatus().isOk
+  protected fun authenticatedGet(path: String): WebTestClient.ResponseSpec =
+    webTestClient.get().uri(path)
+      .headers {
+        it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
+      }
+      .exchange()
+      .expectStatus().isOk
+
+  protected fun unauthenticatedGet(path: String, expectedStatus: HttpStatus = OK): WebTestClient.ResponseSpec =
+    webTestClient.get().uri(path)
+      .headers { it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE) }
+      .exchange()
+      .expectStatus().isEqualTo(expectedStatus)
 
   protected fun authenticatedPostRequest(path: String, request: Any, expectedStatus: HttpStatus) {
     sendAuthenticatedPostRequestWithBody(path, request)
