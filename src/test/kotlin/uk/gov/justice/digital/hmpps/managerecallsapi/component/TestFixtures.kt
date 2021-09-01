@@ -1,4 +1,7 @@
+package uk.gov.justice.digital.hmpps.managerecallsapi.component
+
 import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
+import org.apache.commons.lang3.RandomUtils
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
@@ -20,6 +23,8 @@ import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 
 fun randomString() = randomAlphanumeric(500)
+
+fun randomBoolean() = RandomUtils.nextBoolean()
 
 fun dateTimeNow() = OffsetDateTime.now()
 
@@ -72,9 +77,9 @@ fun recallWithPopulatedFields(
   agreeWithRecall = AgreeWithRecall.values().random(),
   agreeWithRecallDetail = randomString(),
   currentPrison = randomString(),
-  additionalLicenceConditions = true,
+  additionalLicenceConditions = randomBoolean(),
   additionalLicenceConditionsDetail = randomString(),
-  differentNomsNumber = true,
+  differentNomsNumber = randomBoolean(),
   differentNomsNumberDetail = randomString()
 )
 
