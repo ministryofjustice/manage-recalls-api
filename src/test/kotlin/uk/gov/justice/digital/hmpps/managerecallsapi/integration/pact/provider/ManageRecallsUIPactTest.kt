@@ -11,7 +11,6 @@ import au.com.dius.pact.provider.junitsupport.loader.PactFilter
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import minimalRecall
 import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.apache.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
@@ -21,7 +20,8 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
-import recallWithPopulatedFields
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.minimalRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
