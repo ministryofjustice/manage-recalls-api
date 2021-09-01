@@ -77,6 +77,7 @@ jobs:
     environment:
       PACTBROKER_HOST: "pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk"
     executor: hmpps/java
+    docker: *db_docker_config
     steps:
       - checkout
       - gradle/with_cache:
