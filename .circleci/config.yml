@@ -158,12 +158,11 @@ workflows:
           repository: manage-recalls-e2e-tests
           token: $CIRCLECI_AUTH_TOKEN
           build_parameters: '{ "only_run_deploy_check": true, "e2e_environment": "dev" }'
-#          requires: # ••• dont merge
-#            - deploy_dev # ••• dont merge
+          requires:
+            - deploy_dev
           filters:
             branches:
               only:
-                - PUD-454 # ••• dont merge
                 - main
           context:
             - ppud-replacement-circleci-vars
@@ -186,12 +185,11 @@ workflows:
           repository: manage-recalls-e2e-tests
           token: $CIRCLECI_AUTH_TOKEN
           build_parameters: '{ "only_run_deploy_check": true, "e2e_environment": "preprod" }'
-#          requires: # ••• dont merge
-#            - deploy_preprod # ••• dont merge
+          requires:
+            - deploy_preprod
           filters:
             branches:
               only:
-                - PUD-454 # ••• dont merge
                 - main
           context:
             - ppud-replacement-circleci-vars
@@ -199,7 +197,7 @@ workflows:
       - request-prod-approval:
           type: approval
           requires:
-            - deploy_preprod
+            - end-to-end-tests-preprod
       - hmpps/deploy_env:
           name: deploy_prod
           env: prod
