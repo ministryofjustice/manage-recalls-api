@@ -46,6 +46,7 @@ internal class RecallDocumentServiceTest {
   fun `uploads a document to S3 and adds it to persisted recall`() {
     val documentCategory = RecallDocumentCategory.PART_A_RECALL_REPORT
 
+    every { recallRepository.existsById(recallId.value) } returns true
     every { recallRepository.getByRecallId(recallId) } returns aRecall
 
     val documentId = UUID.randomUUID()
@@ -69,6 +70,22 @@ internal class RecallDocumentServiceTest {
         }
       )
     }
+  }
+
+  @Test
+  fun `add document to recall throws NotFoundException if recall does not exist`() {
+    every { recallRepository.existsById(recallId.value) } returns false
+
+    assertThrows<RecallNotFoundException> {
+      underTest.addDocumentToRecall(
+        recallId,
+        documentBytes,
+        RecallDocumentCategory.PART_A_RECALL_REPORT
+      )
+    }
+
+    verify(exactly = 0) { s3Service.uploadFile(any()) }
+    verify(exactly = 0) { recallRepository.save(any()) }
   }
 
   @Test
