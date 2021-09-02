@@ -19,7 +19,6 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.integration.JwtAuthenticationHelper
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
@@ -89,9 +88,10 @@ abstract class ComponentTestBase {
 
   protected fun testJwt(role: String) = authenticatedClient.testJwt(role)
 
-  protected fun unauthenticatedGet(path: String, expectedStatus: HttpStatus = OK): WebTestClient.ResponseSpec =
+  protected fun unauthenticatedGet(path: String, expectedStatus: HttpStatus = OK): WebTestClient.BodyContentSpec =
     webTestClient.get().uri(path)
       .headers { it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE) }
       .exchange()
       .expectStatus().isEqualTo(expectedStatus)
+      .expectBody()
 }

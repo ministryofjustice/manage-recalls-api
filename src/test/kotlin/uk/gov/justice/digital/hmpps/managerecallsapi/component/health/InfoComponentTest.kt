@@ -11,7 +11,6 @@ class InfoComponentTest : ComponentTestBase() {
   @Test
   fun `Info page is accessible and has build version`() {
     unauthenticatedGet("/info")
-      .expectBody()
       .jsonPath("app.name").isEqualTo("Manage Recalls Api")
       .jsonPath("build.version").value<String> {
         assertThat(it).startsWith(LocalDate.now().format(ISO_DATE))
