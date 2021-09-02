@@ -22,7 +22,7 @@ class GetRecallComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     recallRepository.save(Recall(recallId, nomsNumber))
 
-    val response = getRecall(recallId)
+    val response = authenticatedClient.getRecall(recallId)
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber)))
   }
@@ -34,7 +34,7 @@ class GetRecallComponentTest : ComponentTestBase() {
     recallRepository.save(fullyPopulatedRecall)
 
     // TODO:  MD Fix assertions, or move somewhere more sensible.
-    authenticatedGet("/recalls/$recallId")
+    authenticatedClient.get("/recalls/$recallId")
       .expectBody()
       .jsonPath("$.recallId").isEqualTo(recallId.toString())
       .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)

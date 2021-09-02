@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration.pact.provider
+package uk.gov.justice.digital.hmpps.managerecallsapi.component.pact.provider
 
 import au.com.dius.pact.provider.junit5.HttpTestTarget
 import au.com.dius.pact.provider.junit5.PactVerificationContext
@@ -40,7 +40,6 @@ import java.util.UUID
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val nomsNumber = NomsNumber("A1234AA")
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
-  private fun validJwt() = jwtAuthenticationHelper.createTestJwt(role = "ROLE_MANAGE_RECALLS")
 
   @MockkBean
   private lateinit var revocationOrderService: RevocationOrderService
@@ -52,7 +51,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @ExtendWith(PactVerificationSpringProvider::class)
   fun pactVerificationTest(pactContext: PactVerificationContext, request: HttpRequest) {
     request.removeHeaders(AUTHORIZATION)
-    request.addHeader(AUTHORIZATION, "Bearer ${validJwt()}")
+    request.addHeader(AUTHORIZATION, "Bearer ${testJwt("ROLE_MANAGE_RECALLS")}")
     pactContext.verifyInteraction()
   }
 

@@ -35,7 +35,7 @@ class RecallDocumentComponentTest : ComponentTestBase() {
 
     expectADocumentWillBeUploadedToS3()
 
-    val response = uploadRecallDocument(recallId, addDocumentRequest)
+    val response = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest)
 
     assertThat(response.documentId, present())
   }
@@ -50,7 +50,7 @@ class RecallDocumentComponentTest : ComponentTestBase() {
 
     expectADocumentWillBeDownloadedFromS3(documentId, documentContents)
 
-    val response = getRecallDocument(recallId, documentId)
+    val response = authenticatedClient.getRecallDocument(recallId, documentId)
 
     assertThat(response, equalTo(GetDocumentResponse(documentId, documentCategory, base64EncodedDocumentContents)))
   }
