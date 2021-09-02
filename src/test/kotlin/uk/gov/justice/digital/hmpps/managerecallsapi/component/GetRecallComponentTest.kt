@@ -34,7 +34,7 @@ class GetRecallComponentTest : ComponentTestBase() {
     recallRepository.save(fullyPopulatedRecall)
 
     // TODO:  MD Fix assertions, or move somewhere more sensible.
-    authenticatedClient.authenticatedGet("/recalls/$recallId")
+    authenticatedClient.get("/recalls/$recallId")
       .expectBody()
       .jsonPath("$.recallId").isEqualTo(recallId.toString())
       .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)
