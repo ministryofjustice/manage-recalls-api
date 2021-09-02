@@ -1,10 +1,9 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration
+package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
-import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
@@ -15,7 +14,7 @@ import java.util.Base64
 import java.util.UUID
 import java.util.stream.Stream
 
-class EndpointSecurityIntegrationTest : ComponentTestBase() {
+class EndpointSecurityComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
@@ -33,22 +32,21 @@ class EndpointSecurityIntegrationTest : ComponentTestBase() {
   @Suppress("unused")
   private fun requestBodySpecs(): Stream<WebTestClient.RequestHeadersSpec<*>>? {
     return Stream.of(
-      webTestClient.post().uri("/search").bodyValue(apiSearchRequest),
       webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest),
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}"),
-      webTestClient.get().uri("/recalls/${UUID.randomUUID()}/revocationOrder"),
       webTestClient.get().uri("/recalls"),
+      webTestClient.get().uri("/recalls/${UUID.randomUUID()}/revocationOrder"),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents").bodyValue(addDocumentRequest),
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents/${UUID.randomUUID()}"),
-      webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest)
+      webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
+      webTestClient.post().uri("/search").bodyValue(apiSearchRequest)
     )
   }
 
   @ParameterizedTest
   @MethodSource("requestBodySpecs")
   fun `unauthorized when ROLE_MANAGE_RECALLS role is missing`(requestBodySpec: RequestBodySpec) {
-    val invalidUserJwt = testJwt("ROLE_UNKNOWN")
-    requestBodySpec.headers { it.withBearerAuthToken(invalidUserJwt) }
+    requestBodySpec
       .exchange()
       .expectStatus().isUnauthorized
   }

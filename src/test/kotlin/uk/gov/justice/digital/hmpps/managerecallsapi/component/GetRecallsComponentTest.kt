@@ -17,7 +17,7 @@ class GetRecallsComponentTest : ComponentTestBase() {
     recallRepository.save(recall1)
     recallRepository.save(recall2)
 
-    val response = getAllRecalls()
+    val response = authenticatedClient.getAllRecalls()
 
     assertThat(
       response, List<RecallResponse>::containsAll,

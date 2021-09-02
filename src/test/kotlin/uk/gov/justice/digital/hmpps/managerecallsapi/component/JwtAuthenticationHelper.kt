@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration
+package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm

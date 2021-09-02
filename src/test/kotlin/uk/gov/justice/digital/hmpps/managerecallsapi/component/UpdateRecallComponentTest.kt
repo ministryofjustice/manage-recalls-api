@@ -2,17 +2,14 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.startsWith
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -41,9 +38,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `update a recall returns updated recall`() {
-    val response = authenticatedPatchRequest(
-      recallPath, UpdateRecallRequest(lastReleasePrison = "BEL")
-    )
+    val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = "BEL"))
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = "BEL")))
   }
@@ -65,13 +60,13 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   @ParameterizedTest
   @MethodSource("requestsWithInvalidEnumValues")
   fun `update a recall with invalid enum values returns 400`(jsonRequest: String) {
-    sendAuthenticatedPatchRequestWithBody(recallPath, jsonRequest)
+    authenticatedClient.patch(recallPath, jsonRequest)
       .expectStatus().isBadRequest
   }
 
   @Test
   fun `update a recall that does not exist returns 404`() {
-    sendAuthenticatedPatchRequestWithBody("/recalls/${::RecallId.random()}", UpdateRecallRequest())
+    authenticatedClient.patch("/recalls/${::RecallId.random()}", "{}")
       .expectStatus().isNotFound
   }
 
@@ -86,8 +81,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       SentenceLength(2, 5, 31)
     )
 
-    val response = authenticatedPatchRequest(
-      recallPath,
+    val response = authenticatedClient.updateRecall(
+      recallId,
       UpdateRecallRequest(
         sentenceDate = sentencingInfo.sentenceDate,
         licenceExpiryDate = sentencingInfo.licenceExpiryDate,
@@ -99,7 +94,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           sentencingInfo.sentenceLength.sentenceYears,
           sentencingInfo.sentenceLength.sentenceMonths,
           sentencingInfo.sentenceLength.sentenceDays
-        ),
+        )
       )
     )
 
@@ -124,7 +119,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   @Test
   fun `update a recall with booking number`() {
     val bookingNumber = "BN12345"
-    val response = authenticatedPatchRequest(recallPath, UpdateRecallRequest(bookingNumber = bookingNumber))
+    val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(bookingNumber = bookingNumber))
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, bookingNumber = bookingNumber)))
   }
@@ -132,20 +127,18 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   @Test
   fun `update a recall with local police force`() {
     val policeForce = "London"
-    val response = authenticatedPatchRequest(recallPath, UpdateRecallRequest(localPoliceForce = policeForce))
+    val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(localPoliceForce = policeForce))
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, localPoliceForce = policeForce)))
   }
 
   @Test
   fun `update a recall with non empty reasons for recall list`() {
-    val recallReason = ReasonForRecall.BREACH_EXCLUSION_ZONE
-
-    val response = authenticatedPatchRequest(
-      recallPath,
+    val response = authenticatedClient.updateRecall(
+      recallId,
       UpdateRecallRequest(
         licenceConditionsBreached = "Breached",
-        reasonsForRecall = setOf(recallReason),
+        reasonsForRecall = setOf(BREACH_EXCLUSION_ZONE),
         reasonsForRecallOtherDetail = "Other reasons"
       )
     )
@@ -156,7 +149,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId, nomsNumber,
           licenceConditionsBreached = "Breached",
-          reasonsForRecall = listOf(recallReason),
+          reasonsForRecall = listOf(BREACH_EXCLUSION_ZONE),
           reasonsForRecallOtherDetail = "Other reasons"
         )
       )
@@ -165,8 +158,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `update a recall with agreeWithRecall and detail`() {
-    val response = authenticatedPatchRequest(
-      recallPath,
+    val response = authenticatedClient.updateRecall(
+      recallId,
       UpdateRecallRequest(
         agreeWithRecall = AgreeWithRecall.YES,
         agreeWithRecallDetail = "Other reasons"
@@ -186,14 +179,14 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `updates a recall with "letter to prison" info`() {
+  fun `updates a recall with 'letter to prison' info`() {
     val request = UpdateRecallRequest(
       additionalLicenceConditions = true,
       additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
       differentNomsNumber = false,
       differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing."
     )
-    val response = authenticatedPatchRequest(recallPath, request)
+    val response = authenticatedClient.updateRecall(recallId, request)
 
     assertThat(
       response,
@@ -221,15 +214,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   @ParameterizedTest
   @MethodSource("invalidLetterToPrisonFields")
   fun `validates the 'letter to prison' boolean fields`(requestJson: String) {
-    webTestClient
-      .patch()
-      .uri(recallPath)
-      .bodyValue(requestJson)
-      .headers {
-        it.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
-      }
-      .exchange()
+    authenticatedClient.patch(recallPath, requestJson)
       .expectStatus().isBadRequest
       .expectBody().jsonPath("$.message").value(Matchers.startsWith("JSON parse error"))
   }
