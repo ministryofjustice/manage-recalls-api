@@ -4,12 +4,8 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.reactive.server.WebTestClient
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
@@ -27,6 +23,8 @@ interface ManageRecallsApi {
   fun post(path: String, json: String): WebTestClient.ResponseSpec
 
   fun patch(path: String, json: String): WebTestClient.ResponseSpec
+
+  fun get(path: String): WebTestClient.ResponseSpec
 
   fun bookRecall(bookRecallRequest: BookRecallRequest): RecallResponse
 
@@ -49,123 +47,104 @@ class AuthenticatedClient(
   private val webTestClient: WebTestClient,
   private val jwtAuthenticationHelper: JwtAuthenticationHelper
 ) : ManageRecallsApi {
+
+  private val addHeaders: (headers: HttpHeaders) -> Unit = {
+    it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+    it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
+  }
+
   override fun post(path: String, json: String): WebTestClient.ResponseSpec =
-    sendAuthenticatedPostRequestWithBody(path, json)
+    sendPostRequest(path, json)
 
   override fun patch(path: String, json: String): WebTestClient.ResponseSpec =
-    sendAuthenticatedPatchRequestWithBody(path, json)
+    sendPatchRequest(path, json)
+
+  override fun get(path: String): WebTestClient.ResponseSpec =
+    sendGetRequest(path)
 
   override fun bookRecall(bookRecallRequest: BookRecallRequest): RecallResponse =
-    authenticatedPostRequest("/recalls", bookRecallRequest, RecallResponse::class.java)
+    postRequest("/recalls", bookRecallRequest, RecallResponse::class.java)
 
   override fun getRecall(recallId: RecallId): RecallResponse =
-    authenticatedGetRequest("/recalls/$recallId", RecallResponse::class.java)
+    getRequest("/recalls/$recallId", RecallResponse::class.java)
 
   override fun getAllRecalls(): List<RecallResponse> =
-    authenticatedGetRequest("/recalls", object : ParameterizedTypeReference<List<RecallResponse>>() {})
+    sendGetRequest("/recalls")
+      .expectBody(object : ParameterizedTypeReference<List<RecallResponse>>() {})
+      .returnResult()
+      .responseBody!!
 
   override fun getRevocationOrder(recallId: RecallId): Pdf =
-    authenticatedGetRequest("/recalls/$recallId/revocationOrder", Pdf::class.java)
+    getRequest("/recalls/$recallId/revocationOrder", Pdf::class.java)
 
   override fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
-    authenticatedPostRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
+    postRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
 
   override fun getRecallDocument(recallId: RecallId, documentId: UUID): GetDocumentResponse =
-    authenticatedGetRequest("/recalls/$recallId/documents/$documentId", GetDocumentResponse::class.java)
+    getRequest("/recalls/$recallId/documents/$documentId", GetDocumentResponse::class.java)
 
   override fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
-    authenticatedPatchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)
+    patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)
 
   override fun search(searchRequest: SearchRequest) =
-    authenticatedPostRequest("/search", searchRequest, object : ParameterizedTypeReference<List<SearchResult>>() {}, OK)
+    sendPostRequest("/search", searchRequest)
+      .expectStatus().isOk
+      .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
+      .returnResult()
+      .responseBody!!
 
-  private fun authenticatedPatchRequest(
-    path: String,
-    request: Any,
-    responseClass: Class<RecallResponse>
-  ): RecallResponse =
-    sendAuthenticatedPatchRequestWithBody(path, request)
+  private fun patchRequest(path: String, request: Any, responseClass: Class<RecallResponse>): RecallResponse =
+    sendPatchRequest(path, request)
       .expectStatus().isOk
       .expectBody(responseClass)
       .returnResult()
       .responseBody!!
 
-  private inline fun <reified T> sendAuthenticatedPatchRequestWithBody(
+  private fun sendPatchRequest(
     path: String,
-    request: T
+    request: Any
   ): WebTestClient.ResponseSpec =
     webTestClient.patch().sendAuthenticatedRequestWithBody(path, request)
 
-  private fun <T> authenticatedPostRequest(
+  private fun <T> postRequest(
     path: String,
     request: Any,
-    responseClass: ParameterizedTypeReference<T>,
-    expectedStatus: HttpStatus = CREATED
+    responseClass: Class<T>
   ): T =
-    sendAuthenticatedPostRequestWithBody(path, request)
-      .expectStatus().isEqualTo(expectedStatus)
+    sendPostRequest(path, request)
+      .expectStatus().isCreated
       .expectBody(responseClass)
       .returnResult()
       .responseBody!!
 
-  private fun <T> authenticatedPostRequest(path: String, request: Any, responseClass: Class<T>): T =
-    authenticatedPost(path, request)
-      .expectBody(responseClass)
-      .returnResult()
-      .responseBody!!
-
-  private fun authenticatedPost(path: String, request: Any): WebTestClient.ResponseSpec = webTestClient
-    .post()
-    .uri(path)
-    .bodyValue(request)
-    .headers {
-      it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-      it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
-    }
-    .exchange()
-    .expectStatus().isCreated
-
-  private inline fun <reified T> sendAuthenticatedPostRequestWithBody(
+  private fun sendPostRequest(
     path: String,
-    request: T
+    request: Any
   ): WebTestClient.ResponseSpec =
     webTestClient.post().sendAuthenticatedRequestWithBody(path, request)
 
-  private inline fun <reified T> WebTestClient.RequestBodyUriSpec.sendAuthenticatedRequestWithBody(
+  private fun WebTestClient.RequestBodyUriSpec.sendAuthenticatedRequestWithBody(
     path: String,
-    request: T,
-    userJwt: String = testJwt("ROLE_MANAGE_RECALLS")
+    request: Any
   ): WebTestClient.ResponseSpec =
     this.uri(path)
-      .body(Mono.just(request), T::class.java)
-      .headers {
-        it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        it.withBearerAuthToken(userJwt)
-      }
+      .bodyValue(request)
+      .headers(addHeaders)
       .exchange()
 
-  fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
-
-  private fun <T> authenticatedGetRequest(path: String, responseClass: Class<T>): T =
-    authenticatedGet(path)
-      .expectBody(responseClass)
-      .returnResult()
-      .responseBody!!
-
-  private fun <T> authenticatedGetRequest(path: String, responseClass: ParameterizedTypeReference<T>): T =
-    authenticatedGet(path)
-      .expectBody(responseClass)
-      .returnResult()
-      .responseBody!!
-
-  internal fun authenticatedGet(path: String): WebTestClient.ResponseSpec =
+  private fun sendGetRequest(path: String) =
     webTestClient.get().uri(path)
-      .headers {
-        it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-        it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
-      }
+      .headers(addHeaders)
       .exchange()
       .expectStatus().isOk
+
+  private fun <T> getRequest(path: String, responseClass: Class<T>): T =
+    sendGetRequest(path)
+      .expectBody(responseClass)
+      .returnResult()
+      .responseBody!!
+
+  fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
 }
 
 fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")
