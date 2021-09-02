@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.integration.JwtAuthenticationHelper
 import java.util.UUID
 
 interface ManageRecallsApi {
@@ -104,7 +103,7 @@ class AuthenticatedClient(
     path: String,
     request: Any
   ): WebTestClient.ResponseSpec =
-    webTestClient.patch().sendAuthenticatedRequestWithBody(path, request)
+    webTestClient.patch().sendRequestWithBody(path, request)
 
   private fun <T> postRequest(
     path: String,
@@ -121,9 +120,9 @@ class AuthenticatedClient(
     path: String,
     request: Any
   ): WebTestClient.ResponseSpec =
-    webTestClient.post().sendAuthenticatedRequestWithBody(path, request)
+    webTestClient.post().sendRequestWithBody(path, request)
 
-  private fun WebTestClient.RequestBodyUriSpec.sendAuthenticatedRequestWithBody(
+  private fun WebTestClient.RequestBodyUriSpec.sendRequestWithBody(
     path: String,
     request: Any
   ): WebTestClient.ResponseSpec =
@@ -145,6 +144,6 @@ class AuthenticatedClient(
       .responseBody!!
 
   fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
-}
 
-fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")
+  private fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")
+}

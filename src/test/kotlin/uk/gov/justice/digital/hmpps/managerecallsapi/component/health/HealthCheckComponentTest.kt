@@ -68,7 +68,6 @@ class HealthCheckComponentTest : ComponentTestBase() {
 
   private fun healthCheckIsDownWith(expectedStatus: HttpStatus, vararg jsonPathAssertions: Pair<String, String>) {
     unauthenticatedGet("/health", expectedStatus)
-      .expectBody()
       .jsonPath("status").isEqualTo("DOWN")
       .apply {
         jsonPathAssertions.forEach { (jsonPath, equalTo) ->
@@ -79,7 +78,6 @@ class HealthCheckComponentTest : ComponentTestBase() {
 
   private fun healthCheckIsUpWith(healthUrl: String, vararg jsonPathAssertions: Pair<String, String>, expectedStatus: HttpStatus = OK) {
     unauthenticatedGet(healthUrl, expectedStatus)
-      .expectBody()
       .apply {
         jsonPathAssertions.forEach { (jsonPath, equalTo) ->
           hasJsonPath(jsonPath, equalTo)
