@@ -60,7 +60,8 @@ class UpdateRecallServiceTest {
     additionalLicenceConditions = true,
     additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     differentNomsNumber = true,
-    differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    recallNotificationEmailSentDateTime = LocalDate.now()
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -105,7 +106,8 @@ class UpdateRecallServiceTest {
     additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
-    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail
+    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail,
+    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime
   )
 
   @Test
