@@ -59,6 +59,7 @@ class UpdateRecallControllerTest {
     additionalLicenceConditionsDetail = "Ut enim ad minima veniam, quis nostrum exercitationem",
     differentNomsNumber = false,
     differentNomsNumberDetail = "Nam libero tempore, cum soluta nobis est eligendi",
+    recallNotificationEmailSentDateTime = OffsetDateTime.now()
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -103,7 +104,8 @@ class UpdateRecallControllerTest {
     additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
-    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail
+    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail,
+    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime
   )
 
   private val fullyPopulatedRecallResponse = RecallResponse(
@@ -141,7 +143,8 @@ class UpdateRecallControllerTest {
     additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
-    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail
+    differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail,
+    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime
   )
 
   @Test

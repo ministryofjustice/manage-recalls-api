@@ -181,7 +181,7 @@ data class RecallResponse(
   val additionalLicenceConditionsDetail: String? = null,
   val differentNomsNumber: Boolean? = null,
   val differentNomsNumberDetail: String? = null,
-  val recallNotificationEmailSentDateTime: LocalDate? = null
+  val recallNotificationEmailSentDateTime: OffsetDateTime? = null
 )
 
 class Api {
