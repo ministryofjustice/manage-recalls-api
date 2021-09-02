@@ -5,6 +5,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.withBearerAuthToken
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest

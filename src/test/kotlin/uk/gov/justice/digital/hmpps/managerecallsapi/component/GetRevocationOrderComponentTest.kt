@@ -31,7 +31,7 @@ class GetRevocationOrderComponentTest : ComponentTestBase() {
     expectAPdfWillBeGenerated(expectedPdf, firstName)
     expectTheRevocationOrderWillBeUploadedToS3()
 
-    val response = getRevocationOrder(recallId)
+    val response = authenticatedClient.getRevocationOrder(recallId)
 
     assertThat(response.content, equalTo(expectedBase64Pdf))
   }
@@ -44,7 +44,7 @@ class GetRevocationOrderComponentTest : ComponentTestBase() {
 
     expectTheRevocationOrderWillBeDownloadedFromS3(revocationOrderId, expectedPdf)
 
-    val response = getRevocationOrder(recallId)
+    val response = authenticatedClient.getRevocationOrder(recallId)
 
     assertThat(response.content, equalTo(expectedBase64Pdf))
   }
