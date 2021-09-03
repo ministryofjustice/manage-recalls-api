@@ -104,6 +104,7 @@ class RecallsControllerTest {
     assertThat(result, equalTo(expected))
   }
 
+  @Suppress("ReactiveStreamsUnusedPublisher")
   @Test
   fun `book a recall`() {
     val recall = recallRequest.toRecall()
@@ -131,10 +132,7 @@ class RecallsControllerTest {
 
     every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category) } returns documentId
 
-    val request = AddDocumentRequest(
-      category = category.toString(),
-      fileContent = Base64.getEncoder().encodeToString(documentBytes)
-    )
+    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes))
     val response = underTest.addDocument(recallId, request)
 
     assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
@@ -154,10 +152,7 @@ class RecallsControllerTest {
 
     every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category) } throws recallNotFoundError
 
-    val request = AddDocumentRequest(
-      category = category.toString(),
-      fileContent = Base64.getEncoder().encodeToString(documentBytes)
-    )
+    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes))
 
     val exception = assertThrows<ResponseStatusException> { underTest.addDocument(recallId, request) }
 

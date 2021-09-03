@@ -71,7 +71,7 @@ class RecallsController(
       recallDocumentService.addDocumentToRecall(
         recallId = recallId,
         documentBytes = Base64.getDecoder().decode(body.fileContent),
-        documentCategory = RecallDocumentCategory.valueOf(body.category)
+        documentCategory = body.category
       )
     } catch (e: RecallNotFoundException) {
       throw ResponseStatusException(BAD_REQUEST, e.message, e)
@@ -189,7 +189,7 @@ data class ApiRecallDocument(
 
 data class Pdf(val content: String)
 
-data class AddDocumentRequest(val category: String, val fileContent: String)
+data class AddDocumentRequest(val category: RecallDocumentCategory, val fileContent: String)
 
 data class AddDocumentResponse(val documentId: UUID)
 
