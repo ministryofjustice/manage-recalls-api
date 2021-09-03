@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
-  fun stubPdfGeneration(generatedPdf: ByteArray, firstName: String) {
+  fun stubPdfGeneration(generatedPdf: ByteArray, textOfHtml: String) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html"))
         .withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
@@ -25,13 +25,33 @@ class GotenbergMockServer : WireMockServer(9093) {
           aMultipart()
             .withName("files")
             .withHeader("Content-Disposition", equalTo("form-data; name=index.html; filename=index.html"))
-            .withBody(containing(firstName))
+            .withBody(containing(textOfHtml))
         )
         .withMultipartRequestBody(
           aMultipart()
             .withName("files")
             .withHeader("Content-Disposition", equalTo("form-data; name=logo.png; filename=logo.png"))
             .withBody(equalTo(ClassPathResource("/document/template/revocation-order/logo.png").file.readText()))
+        )
+        .willReturn(aResponse().withBody(generatedPdf))
+    )
+  }
+
+  fun stubMergePdfs(generatedPdf: ByteArray) {
+    stubFor(
+      post(WireMock.urlEqualTo("/merge"))
+        .withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("files")
+            .withHeader("Content-Disposition", equalTo("form-data; name=a.pdf; filename=a.pdf"))
+            .withBody(equalTo(ClassPathResource("/document/licence.pdf").file.readText()))
+        )
+        .withMultipartRequestBody(
+          aMultipart()
+            .withName("files")
+            .withHeader("Content-Disposition", equalTo("form-data; name=b.pdf; filename=b.pdf"))
+            .withBody(equalTo(ClassPathResource("/document/revocation-order.pdf").file.readText()))
         )
         .willReturn(aResponse().withBody(generatedPdf))
     )
