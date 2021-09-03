@@ -71,7 +71,8 @@ class RecallsController(
       recallDocumentService.addDocumentToRecall(
         recallId = recallId,
         documentBytes = Base64.getDecoder().decode(body.fileContent),
-        documentCategory = body.category
+        documentCategory = body.category,
+        fileName = body.fileName
       )
     } catch (e: RecallNotFoundException) {
       throw ResponseStatusException(BAD_REQUEST, e.message, e)
@@ -92,7 +93,8 @@ class RecallsController(
       GetDocumentResponse(
         documentId = documentId,
         category = document.category,
-        content = Base64.getEncoder().encodeToString(bytes)
+        content = Base64.getEncoder().encodeToString(bytes),
+        fileName = document.fileName
       )
     )
   }
@@ -103,7 +105,7 @@ fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
 fun Recall.toResponse() = RecallResponse(
   recallId = this.recallId(),
   nomsNumber = this.nomsNumber,
-  documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category) },
+  documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) },
   revocationOrderId = this.revocationOrderId,
   recallLength = this.recallLength,
   lastReleasePrison = this.lastReleasePrison,
@@ -186,17 +188,19 @@ class Api {
 
 data class ApiRecallDocument(
   val documentId: UUID,
-  val category: RecallDocumentCategory
+  val category: RecallDocumentCategory,
+  val fileName: String?
 )
 
 data class Pdf(val content: String)
 
-data class AddDocumentRequest(val category: RecallDocumentCategory, val fileContent: String)
+data class AddDocumentRequest(val category: RecallDocumentCategory, val fileContent: String, val fileName: String?)
 
 data class AddDocumentResponse(val documentId: UUID)
 
 data class GetDocumentResponse(
   val documentId: UUID,
   val category: RecallDocumentCategory,
-  val content: String
+  val content: String,
+  val fileName: String?
 )

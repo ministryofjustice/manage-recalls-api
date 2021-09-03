@@ -20,7 +20,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val fileBytes = "content".toByteArray()
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
-  private val addDocumentRequest = AddDocumentRequest(category, Base64.getEncoder().encodeToString(fileBytes))
+  private val addDocumentRequest = AddDocumentRequest(category, Base64.getEncoder().encodeToString(fileBytes), "fileName")
   private val updateRecallRequest = UpdateRecallRequest()
   private val apiSearchRequest = SearchRequest(nomsNumber)
 

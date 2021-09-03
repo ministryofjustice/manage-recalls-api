@@ -41,6 +41,7 @@ class RecallsControllerTest {
   private val nomsNumber = NomsNumber("A1234AA")
   private val revocationOrderId = UUID.randomUUID()
   private val recallRequest = BookRecallRequest(nomsNumber)
+  private val fileName = "fileName"
 
   @Test
   fun `book recall returns request with id`() {
@@ -70,7 +71,8 @@ class RecallsControllerTest {
     val document = RecallDocument(
       id = UUID.randomUUID(),
       recallId = UUID.randomUUID(),
-      category = RecallDocumentCategory.PART_A_RECALL_REPORT
+      category = RecallDocumentCategory.PART_A_RECALL_REPORT,
+      fileName = fileName
     )
     val recallEmailReceivedDateTime = OffsetDateTime.now()
     val lastReleaseDate = LocalDate.now()
@@ -93,7 +95,8 @@ class RecallsControllerTest {
       documents = listOf(
         ApiRecallDocument(
           documentId = document.id,
-          category = document.category
+          category = document.category,
+          fileName = fileName
         )
       ),
       revocationOrderId = revocationOrderId,
@@ -130,9 +133,9 @@ class RecallsControllerTest {
     val category = RecallDocumentCategory.PART_A_RECALL_REPORT
     val documentId = UUID.randomUUID()
 
-    every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category) } returns documentId
+    every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category, fileName) } returns documentId
 
-    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes))
+    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes), fileName)
     val response = underTest.addDocument(recallId, request)
 
     assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
@@ -150,9 +153,9 @@ class RecallsControllerTest {
     val category = RecallDocumentCategory.PART_A_RECALL_REPORT
     val recallNotFoundError = RecallNotFoundException(recallId)
 
-    every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category) } throws recallNotFoundError
+    every { recallDocumentService.addDocumentToRecall(recallId, documentBytes, category, fileName) } throws recallNotFoundError
 
-    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes))
+    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes), fileName)
 
     val exception = assertThrows<ResponseStatusException> { underTest.addDocument(recallId, request) }
 
@@ -168,7 +171,8 @@ class RecallsControllerTest {
     val aRecallDocument = RecallDocument(
       documentId,
       recallId1.value,
-      RecallDocumentCategory.PART_A_RECALL_REPORT
+      RecallDocumentCategory.PART_A_RECALL_REPORT,
+      fileName
     )
     val bytes = "Hello".toByteArray()
 
@@ -180,7 +184,8 @@ class RecallsControllerTest {
     val expected = GetDocumentResponse(
       documentId,
       aRecallDocument.category,
-      content = Base64.getEncoder().encodeToString(bytes)
+      content = Base64.getEncoder().encodeToString(bytes),
+      fileName
     )
     assertThat(response.body, equalTo(expected))
   }

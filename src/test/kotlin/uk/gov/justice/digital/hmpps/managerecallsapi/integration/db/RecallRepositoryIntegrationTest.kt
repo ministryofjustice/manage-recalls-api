@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
@@ -64,7 +65,7 @@ class RecallRepositoryIntegrationTest(
     val recallToUpdate = originalRecall.copy(
       recallType = FIXED,
       revocationOrderId = UUID.randomUUID(),
-      documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT)),
+      documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, randomString())),
       recallLength = TWENTY_EIGHT_DAYS,
       recallEmailReceivedDateTime = OffsetDateTime.now(),
       lastReleasePrison = "WIN",
@@ -97,5 +98,22 @@ class RecallRepositoryIntegrationTest(
     assertThrows<RecallNotFoundException> {
       repository.getByRecallId(::RecallId.random())
     }
+  }
+
+  @Test
+  @Transactional
+  fun `can save a document without fileName`() {
+    val recallId = ::RecallId.random()
+
+    val recallToUpdate = Recall(
+      recallId,
+      nomsNumber,
+      documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, null)),
+    )
+    repository.save(recallToUpdate)
+
+    val createdRecall = repository.getByRecallId(recallId)
+
+    assertThat(createdRecall, equalTo(recallToUpdate))
   }
 }
