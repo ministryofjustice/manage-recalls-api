@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
@@ -68,5 +69,10 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.agreeWithRecallDetail").isEqualTo(fullyPopulatedRecall.agreeWithRecallDetail!!)
       .jsonPath("$.currentPrison").isEqualTo(fullyPopulatedRecall.currentPrison!!)
       .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
+  }
+
+  @Test
+  fun `get recall returns 404 if it does not exist`() {
+    authenticatedClient.getRecall(::RecallId.random(), expectedStatus = NOT_FOUND)
   }
 }

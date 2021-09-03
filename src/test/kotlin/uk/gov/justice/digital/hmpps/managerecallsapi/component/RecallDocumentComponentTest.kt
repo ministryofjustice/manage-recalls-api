@@ -5,6 +5,8 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import io.mockk.every
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -41,6 +43,11 @@ class RecallDocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
+  fun `add a recall document returns 400 if recall does not exist`() {
+    authenticatedClient.uploadRecallDocument(::RecallId.random(), addDocumentRequest, expectedStatus = BAD_REQUEST)
+  }
+
+  @Test
   fun `get a recall document downloads the file from S3`() {
     val recallId = ::RecallId.random()
     val documentId = UUID.randomUUID()
@@ -53,6 +60,14 @@ class RecallDocumentComponentTest : ComponentTestBase() {
     val response = authenticatedClient.getRecallDocument(recallId, documentId)
 
     assertThat(response, equalTo(GetDocumentResponse(documentId, documentCategory, base64EncodedDocumentContents)))
+  }
+
+  @Test
+  fun `get recall document returns 404 if recall exist but document does not exist`() {
+    val recallId = ::RecallId.random()
+    recallRepository.save(Recall(recallId, nomsNumber))
+
+    authenticatedClient.getRecallDocument(recallId, UUID.randomUUID(), expectedStatus = NOT_FOUND)
   }
 
   private fun expectADocumentWillBeDownloadedFromS3(documentId: UUID, expectedDocument: ByteArray) {

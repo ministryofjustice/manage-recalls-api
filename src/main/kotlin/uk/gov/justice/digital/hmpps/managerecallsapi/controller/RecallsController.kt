@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -20,7 +21,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
@@ -74,7 +74,7 @@ class RecallsController(
         documentCategory = RecallDocumentCategory.valueOf(body.category)
       )
     } catch (e: RecallNotFoundException) {
-      throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+      throw ResponseStatusException(BAD_REQUEST, e.message, e)
     }
 
     return ResponseEntity
@@ -87,18 +87,14 @@ class RecallsController(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("documentId") documentId: UUID
   ): ResponseEntity<GetDocumentResponse> {
-    try {
-      val (document, bytes) = recallDocumentService.getDocument(recallId, documentId)
-      return ResponseEntity.ok(
-        GetDocumentResponse(
-          documentId = documentId,
-          category = document.category,
-          content = Base64.getEncoder().encodeToString(bytes)
-        )
+    val (document, bytes) = recallDocumentService.getDocument(recallId, documentId)
+    return ResponseEntity.ok(
+      GetDocumentResponse(
+        documentId = documentId,
+        category = document.category,
+        content = Base64.getEncoder().encodeToString(bytes)
       )
-    } catch (e: NotFoundException) {
-      throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message, e)
-    }
+    )
   }
 }
 

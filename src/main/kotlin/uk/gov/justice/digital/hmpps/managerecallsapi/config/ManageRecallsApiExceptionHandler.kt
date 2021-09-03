@@ -11,6 +11,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 
 @RestControllerAdvice
@@ -28,23 +29,31 @@ class ManageRecallsApiExceptionHandler {
 
   @ExceptionHandler(NotFoundException::class)
   fun handleException(e: NotFoundException): ResponseEntity<ErrorResponse> =
-    with(e.message) {
+    with(e) {
       log.info(e.toString())
       ResponseEntity
         .status(NOT_FOUND)
-        .body(ErrorResponse(NOT_FOUND, this))
+        .body(ErrorResponse(NOT_FOUND, e.toString()))
     }
 
   @ExceptionHandler(java.lang.Exception::class)
-  fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse?>? {
+  fun handleException(e: java.lang.Exception): ResponseEntity<ErrorResponse> {
     log.error("Unexpected exception", e)
     return ResponseEntity
       .status(INTERNAL_SERVER_ERROR)
       .body(ErrorResponse(INTERNAL_SERVER_ERROR, "Unexpected error: ${e.message}"))
   }
 
+  @ExceptionHandler(ResponseStatusException::class)
+  fun handleException(e: ResponseStatusException): ResponseEntity<ErrorResponse> {
+    log.error("ResponseStatusException {}", e)
+    return ResponseEntity
+      .status(e.status)
+      .body(ErrorResponse(e.status, e.message))
+  }
+
   @ExceptionHandler(AccessDeniedException::class)
-  fun handleException(e: AccessDeniedException): ResponseEntity<ErrorResponse?>? {
+  fun handleException(e: AccessDeniedException): ResponseEntity<ErrorResponse> {
     log.error("Unexpected AccessDeniedException", e)
     return ResponseEntity
       .status(UNAUTHORIZED)

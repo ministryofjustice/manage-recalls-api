@@ -29,6 +29,6 @@ class RecallRepository(
     try {
       getById(recallId.value)
     } catch (e: JpaObjectRetrievalFailureException) {
-      throw RecallNotFoundException("Recall not found: '$recallId'", e)
+      throw RecallNotFoundException(recallId)
     }
 }
