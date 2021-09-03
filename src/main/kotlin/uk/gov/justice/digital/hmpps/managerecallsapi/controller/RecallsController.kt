@@ -183,7 +183,7 @@ data class RecallResponse(
 ) {
   val status: Status? = calculateStatus()
 
-  private fun calculateStatus() = if (recallNotificationEmailSentDateTime == null) null else Status.RECALL_NOTIFICATION_ISSUED
+  private fun calculateStatus() = recallNotificationEmailSentDateTime?.let { Status.RECALL_NOTIFICATION_ISSUED }
 }
 
 class Api {
