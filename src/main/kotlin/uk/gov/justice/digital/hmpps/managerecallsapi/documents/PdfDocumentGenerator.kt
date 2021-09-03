@@ -3,10 +3,12 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.InputStreamResource
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
+import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.io.IOException
@@ -19,7 +21,19 @@ class PdfDocumentGenerator(
 ) {
 
   fun makePdf(details: List<DocumentDetail<out Any>>): Mono<ByteArray> {
-    val documentBody = MultipartBodyBuilder().apply {
+    val documentBody = multipartBody(details)
+
+    return gotenbergResponse("/convert/html", documentBody)
+  }
+
+  fun mergePdfs(details: List<DocumentDetail<out Any>>): Mono<ByteArray> {
+    val documentBody = multipartBody(details)
+
+    return gotenbergResponse("/merge", documentBody)
+  }
+
+  private fun multipartBody(details: List<DocumentDetail<out Any>>) =
+    MultipartBodyBuilder().apply {
       details.forEach { documentDetail ->
         this
           .part(documentDetail.name, documentDetail.data())
@@ -27,14 +41,16 @@ class PdfDocumentGenerator(
       }
     }.build()
 
-    return webClient
-      .post()
-      .uri("$gotenbergEndpointUrl/convert/html")
-      .contentType(MULTIPART_FORM_DATA)
-      .bodyValue(documentBody)
-      .retrieve()
-      .bodyToMono(ByteArray::class.java)
-  }
+  private fun gotenbergResponse(
+    path: String,
+    documentBody: MultiValueMap<String, HttpEntity<*>>
+  ) = webClient
+    .post()
+    .uri("$gotenbergEndpointUrl$path")
+    .contentType(MULTIPART_FORM_DATA)
+    .bodyValue(documentBody)
+    .retrieve()
+    .bodyToMono(ByteArray::class.java)
 }
 
 interface DocumentDetail<T> {
