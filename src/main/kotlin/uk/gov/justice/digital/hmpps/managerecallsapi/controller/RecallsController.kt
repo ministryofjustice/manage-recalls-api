@@ -180,7 +180,11 @@ data class RecallResponse(
   val differentNomsNumber: Boolean? = null,
   val differentNomsNumberDetail: String? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null
-)
+) {
+  val status: Status? = calculateStatus()
+
+  private fun calculateStatus() = recallNotificationEmailSentDateTime?.let { Status.RECALL_NOTIFICATION_ISSUED }
+}
 
 class Api {
   data class SentenceLength(val years: Int, val months: Int, val days: Int)
@@ -204,3 +208,7 @@ data class GetDocumentResponse(
   val content: String,
   val fileName: String?
 )
+
+enum class Status {
+  RECALL_NOTIFICATION_ISSUED
+}

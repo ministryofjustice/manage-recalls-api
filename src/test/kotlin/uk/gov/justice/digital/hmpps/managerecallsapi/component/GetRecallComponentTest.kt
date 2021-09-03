@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -69,6 +70,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.agreeWithRecallDetail").isEqualTo(fullyPopulatedRecall.agreeWithRecallDetail!!)
       .jsonPath("$.currentPrison").isEqualTo(fullyPopulatedRecall.currentPrison!!)
       .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
+      .jsonPath("$.status").isEqualTo(Status.RECALL_NOTIFICATION_ISSUED.toString())
   }
 
   @Test
