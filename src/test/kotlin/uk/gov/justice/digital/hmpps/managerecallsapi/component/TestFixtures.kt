@@ -81,7 +81,8 @@ fun recallWithPopulatedFields(
   additionalLicenceConditions = randomBoolean(),
   additionalLicenceConditionsDetail = randomString(),
   differentNomsNumber = randomBoolean(),
-  differentNomsNumberDetail = randomString()
+  differentNomsNumberDetail = randomString(),
+  recallNotificationEmailSentDateTime = dateTimeNow()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

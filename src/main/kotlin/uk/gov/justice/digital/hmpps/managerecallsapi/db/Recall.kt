@@ -93,8 +93,9 @@ data class Recall(
 
   val differentNomsNumber: Boolean? = null,
 
-  val differentNomsNumberDetail: String? = null
+  val differentNomsNumberDetail: String? = null,
 
+  val recallNotificationEmailSentDateTime: OffsetDateTime? = null
 ) {
   constructor(
     recallId: RecallId,
@@ -122,7 +123,8 @@ data class Recall(
     additionalLicenceConditions: Boolean? = null,
     additionalLicenceConditionsDetail: String? = null,
     differentNomsNumber: Boolean? = null,
-    differentNomsNumberDetail: String? = null
+    differentNomsNumberDetail: String? = null,
+    recallNotificationEmailSentDateTime: OffsetDateTime? = null
   ) :
     this(
       recallId.value,
@@ -150,7 +152,8 @@ data class Recall(
       additionalLicenceConditions,
       additionalLicenceConditionsDetail,
       differentNomsNumber,
-      differentNomsNumberDetail
+      differentNomsNumberDetail,
+      recallNotificationEmailSentDateTime
     )
 
   fun recallId() = RecallId(id)

@@ -1,0 +1,1 @@
+ALTER TABLE recall ADD COLUMN recall_notification_email_sent_date_time TIMESTAMPTZ;

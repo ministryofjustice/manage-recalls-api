@@ -29,6 +29,25 @@ class RealPdfDocumentGeneratorTest {
       .create(makePdfResult)
       .assertNext {
         assertThat(it.size, greaterThan(0))
+        // java.io.File("makePdfTest.pdf").writeBytes(it)   // uncomment to save to temp file for viewing
+      }
+      .verifyComplete()
+  }
+
+  @Test
+  fun `should return byte array when merging pdfs`() {
+    val details = listOf(
+      ClassPathDocumentDetail("a.pdf", "/document/licence.pdf"),
+      ClassPathDocumentDetail("b.pdf", "/document/revocation-order.pdf")
+    )
+
+    val pdfResult = pdfDocumentGenerator.mergePdfs(details)
+
+    StepVerifier
+      .create(pdfResult)
+      .assertNext {
+        assertThat(it.size, greaterThan(0))
+        // java.io.File("mergePdfsTest.pdf").writeBytes(it)   // uncomment to save to temp file for viewing
       }
       .verifyComplete()
   }
