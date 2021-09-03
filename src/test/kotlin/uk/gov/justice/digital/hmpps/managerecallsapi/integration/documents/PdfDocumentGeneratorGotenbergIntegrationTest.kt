@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.test.context.ActiveProfiles
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
@@ -39,20 +40,42 @@ class PdfDocumentGeneratorGotenbergIntegrationTest {
   }
 
   @Test
-  fun `should return byte array when requesting pdf`() {
-    gotenbergMockServer.stubPdfGeneration("test".toByteArray(), "<<FIRST_NAMES>>")
+  fun `should return byte array when generating pdf from html`() {
+    val stubResponseAsString = randomString()
+    val textOfHtml = randomString()
+    gotenbergMockServer.stubPdfGeneration(stubResponseAsString.toByteArray(), textOfHtml)
 
     val details = listOf(
-      HtmlDocumentDetail("index.html", "<body><span><<FIRST_NAMES>></span></body>"),
+      HtmlDocumentDetail("index.html", "<body><span>$textOfHtml</span></body>"),
       ClassPathDocumentDetail("logo.png", "/document/template/revocation-order/logo.png")
     )
 
-    val makePdfResult = pdfDocumentGenerator.makePdf(details)
+    val pdfResult = pdfDocumentGenerator.makePdf(details)
 
     StepVerifier
-      .create(makePdfResult)
+      .create(pdfResult)
       .assertNext {
-        assertThat(String(it), equalTo("test"))
+        assertThat(String(it), equalTo(stubResponseAsString))
+      }
+      .verifyComplete()
+  }
+
+  @Test
+  fun `should return byte array when merging many pdfs to one`() {
+    val stubResponseAsString = randomString()
+    gotenbergMockServer.stubMergePdfs(stubResponseAsString.toByteArray())
+
+    val details = listOf(
+      ClassPathDocumentDetail("a.pdf", "/document/licence.pdf"),
+      ClassPathDocumentDetail("b.pdf", "/document/revocation-order.pdf")
+    )
+
+    val pdfResult = pdfDocumentGenerator.mergePdfs(details)
+
+    StepVerifier
+      .create(pdfResult)
+      .assertNext {
+        assertThat(String(it), equalTo(stubResponseAsString))
       }
       .verifyComplete()
   }
