@@ -1,0 +1,1 @@
+ALTER TABLE recall_document ADD COLUMN file_name TEXT;

@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.recallWithPopulatedFields
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -123,7 +124,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a document can be created`() {
     val documentId = UUID.fromString("3fa85f64-5718-4562-b3fc-2c963f66afa8")
     every {
-      recallDocumentService.addDocumentToRecall(any(), any(), any())
+      recallDocumentService.addDocumentToRecall(any(), any(), any(), any())
     } returns documentId
   }
 
@@ -136,7 +137,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     )
     every { recallDocumentService.getDocument(any(), any()) } returns
       Pair(
-        RecallDocument(documentId, recallId.value, RecallDocumentCategory.PART_A_RECALL_REPORT),
+        RecallDocument(documentId, recallId.value, RecallDocumentCategory.PART_A_RECALL_REPORT, randomString()),
         documentBytes
       )
   }

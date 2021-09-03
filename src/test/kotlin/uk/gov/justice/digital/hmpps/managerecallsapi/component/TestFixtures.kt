@@ -86,7 +86,7 @@ fun recallWithPopulatedFields(
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
-  val partA = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = PART_A_RECALL_REPORT)
-  val license = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = LICENCE)
+  val partA = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = PART_A_RECALL_REPORT, randomString())
+  val license = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = LICENCE, randomString())
   return setOf(partA, license)
 }

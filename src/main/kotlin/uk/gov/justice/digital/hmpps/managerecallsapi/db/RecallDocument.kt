@@ -19,5 +19,7 @@ data class RecallDocument(
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  val category: RecallDocumentCategory
+  val category: RecallDocumentCategory,
+
+  val fileName: String?
 )

@@ -8,6 +8,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -45,6 +46,7 @@ internal class RecallDocumentServiceTest {
   @Test
   fun `uploads a document to S3 and adds it to persisted recall`() {
     val documentCategory = RecallDocumentCategory.PART_A_RECALL_REPORT
+    val fileName = randomString()
 
     every { recallRepository.existsById(recallId.value) } returns true
     every { recallRepository.getByRecallId(recallId) } returns aRecall
@@ -54,7 +56,7 @@ internal class RecallDocumentServiceTest {
 
     every { recallRepository.save(any()) } returns Recall(recallId.value, NomsNumber("A12345B"))
 
-    val actualDocumentId = underTest.addDocumentToRecall(recallId, documentBytes, documentCategory)
+    val actualDocumentId = underTest.addDocumentToRecall(recallId, documentBytes, documentCategory, fileName)
 
     assertThat(actualDocumentId, equalTo(documentId))
 
@@ -65,7 +67,7 @@ internal class RecallDocumentServiceTest {
         withArg { recall ->
           assertThat(
             recall.documents,
-            allElements(equalTo(RecallDocument(documentId, recallId.value, documentCategory)))
+            allElements(equalTo(RecallDocument(documentId, recallId.value, documentCategory, fileName)))
           )
         }
       )
@@ -80,7 +82,8 @@ internal class RecallDocumentServiceTest {
       underTest.addDocumentToRecall(
         recallId,
         documentBytes,
-        RecallDocumentCategory.PART_A_RECALL_REPORT
+        RecallDocumentCategory.PART_A_RECALL_REPORT,
+        randomString()
       )
     }
 
@@ -94,7 +97,8 @@ internal class RecallDocumentServiceTest {
     val aDocument = RecallDocument(
       id = aDocumentId,
       recallId = recallId.value,
-      category = RecallDocumentCategory.PART_A_RECALL_REPORT
+      category = RecallDocumentCategory.PART_A_RECALL_REPORT,
+      fileName = randomString()
     )
     val aRecallWithDocument = aRecall.copy(documents = setOf(aDocument))
     val fileBytes = "Hello".toByteArray()

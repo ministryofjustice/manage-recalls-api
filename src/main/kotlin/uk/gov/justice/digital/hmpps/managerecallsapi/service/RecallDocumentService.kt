@@ -18,11 +18,12 @@ class RecallDocumentService(
   fun addDocumentToRecall(
     recallId: RecallId,
     documentBytes: ByteArray,
-    documentCategory: RecallDocumentCategory
+    documentCategory: RecallDocumentCategory,
+    fileName: String?
   ): UUID {
     if (recallRepository.existsById(recallId.value)) {
       return s3Service.uploadFile(documentBytes).also { documentId ->
-        addDocumentToRecall(recallId, documentId, documentCategory)
+        addDocumentToRecall(recallId, documentId, documentCategory, fileName)
       }
     } else {
       throw RecallNotFoundException(recallId)
@@ -32,10 +33,11 @@ class RecallDocumentService(
   private fun addDocumentToRecall(
     recallId: RecallId,
     documentId: UUID,
-    documentCategory: RecallDocumentCategory
+    documentCategory: RecallDocumentCategory,
+    fileName: String?
   ) {
     with(recallRepository.getByRecallId(recallId)) {
-      val document = RecallDocument(documentId, recallId.value, documentCategory)
+      val document = RecallDocument(documentId, recallId.value, documentCategory, fileName)
       // TODO: [KF] delete the document from S3 if saving fails?
       recallRepository.save(this.copy(documents = this.documents + document))
     }

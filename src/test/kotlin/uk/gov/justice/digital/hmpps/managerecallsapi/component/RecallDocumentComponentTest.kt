@@ -25,10 +25,8 @@ class RecallDocumentComponentTest : ComponentTestBase() {
   private val documentCategory = RecallDocumentCategory.PART_A_RECALL_REPORT
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = Base64.getEncoder().encodeToString(documentContents)
-  private val addDocumentRequest = AddDocumentRequest(
-    category = documentCategory.name,
-    fileContent = base64EncodedDocumentContents
-  )
+  private val fileName = "emailfileName"
+  private val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, fileName)
 
   @Test
   fun `add a recall document uploads the file to S3 and returns the documentId`() {
@@ -52,14 +50,24 @@ class RecallDocumentComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     val documentId = UUID.randomUUID()
     recallRepository.save(
-      Recall(recallId, nomsNumber, documents = setOf(RecallDocument(documentId, recallId.value, documentCategory)))
+      Recall(recallId, nomsNumber, documents = setOf(RecallDocument(documentId, recallId.value, documentCategory, fileName)))
     )
 
     expectADocumentWillBeDownloadedFromS3(documentId, documentContents)
 
     val response = authenticatedClient.getRecallDocument(recallId, documentId)
 
-    assertThat(response, equalTo(GetDocumentResponse(documentId, documentCategory, base64EncodedDocumentContents)))
+    assertThat(
+      response,
+      equalTo(
+        GetDocumentResponse(
+          documentId,
+          documentCategory,
+          base64EncodedDocumentContents,
+          fileName
+        )
+      )
+    )
   }
 
   @Test
