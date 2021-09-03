@@ -68,6 +68,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.agreeWithRecall").isEqualTo(fullyPopulatedRecall.agreeWithRecall!!.name)
       .jsonPath("$.agreeWithRecallDetail").isEqualTo(fullyPopulatedRecall.agreeWithRecallDetail!!)
       .jsonPath("$.currentPrison").isEqualTo(fullyPopulatedRecall.currentPrison!!)
+      .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
   }
 
   @Test
