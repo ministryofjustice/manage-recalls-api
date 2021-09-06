@@ -59,6 +59,10 @@ class AuthenticatedClient(
   fun getRevocationOrder(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/revocationOrder", Pdf::class.java)
 
+  // TODO PUD-521: un-used for now ... for starters just return the revocation order
+  fun getDossier(recallId: RecallId): Pdf =
+    getRequest("/recalls/$recallId/dossier", Pdf::class.java)
+
   fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
     postRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
 

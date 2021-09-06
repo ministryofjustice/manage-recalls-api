@@ -62,6 +62,10 @@ class RecallsController(
         ResponseEntity.ok(Pdf(pdfBase64Encoded))
       }
 
+  @GetMapping("/recalls/{recallId}/dossier")
+  fun getDossier(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
+    getRevocationOrder(recallId) // TODO PUD-521: return the required PDF ... for starters just return the revocation order
+
   @PostMapping("/recalls/{recallId}/documents")
   fun addDocument(
     @PathVariable("recallId") recallId: RecallId,
