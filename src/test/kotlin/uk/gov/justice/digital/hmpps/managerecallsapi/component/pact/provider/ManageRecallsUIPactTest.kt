@@ -37,6 +37,7 @@ import java.time.LocalDate
 import java.util.Base64
 import java.util.UUID
 
+@Suppress("unused")
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val nomsNumber = NomsNumber("A1234AA")
@@ -120,6 +121,12 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     every { revocationOrderService.getRevocationOrder(any()) } returns Mono.just("some pdf contents".toByteArray())
   }
 
+  @Suppress("ReactiveStreamsUnusedPublisher")
+  @State("a dossier can be downloaded")
+  fun `a dossier can be downloaded`() {
+    every { revocationOrderService.getRevocationOrder(any()) } returns Mono.just("some pdf contents".toByteArray())
+  }
+
   @State("a document can be created")
   fun `a document can be created`() {
     val documentId = UUID.fromString("3fa85f64-5718-4562-b3fc-2c963f66afa8")
@@ -143,6 +150,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 }
 
+@Suppress("unused")
 @PactFilter(value = [".*unauthorized.*"])
 class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @TestTemplate
