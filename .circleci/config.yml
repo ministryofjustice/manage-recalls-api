@@ -153,6 +153,13 @@ workflows:
           requires:
             - publish_docker
 
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_dev
+          sentry_project: manage-recalls-api
+          sentry_environment: DEV
+          requires:
+            - deploy_dev
+
       - hmpps/trigger_job:
           name: end-to-end-tests-dev
           repository: manage-recalls-e2e-tests
@@ -179,6 +186,13 @@ workflows:
             - ppud-replacement-preprod
           requires:
             - request-preprod-approval
+
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_preprod
+          sentry_project: manage-recalls-api
+          sentry_environment: PRE-PROD
+          requires:
+            - deploy_preprod
 
       - hmpps/trigger_job:
           name: end-to-end-tests-preprod
@@ -208,6 +222,13 @@ workflows:
             - request-prod-approval
           slack_notification: true
           slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+
+      - hmpps/sentry_release_and_deploy:
+          name: notify_sentry_prod
+          sentry_project: manage-recalls-api
+          sentry_environment: PROD
+          requires:
+            - deploy_prod
 
   security:
     triggers:
