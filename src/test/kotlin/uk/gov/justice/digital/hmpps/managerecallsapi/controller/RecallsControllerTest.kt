@@ -109,7 +109,7 @@ class RecallsControllerTest {
 
   @Suppress("ReactiveStreamsUnusedPublisher")
   @Test
-  fun `book a recall`() {
+  fun `get revocation order returns RevocationOrder PDF`() {
     val recall = recallRequest.toRecall()
     val expectedPdf = "Some pdf".toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
@@ -117,6 +117,26 @@ class RecallsControllerTest {
     every { revocationOrderService.getRevocationOrder(recall.recallId()) } returns Mono.just(expectedPdf)
 
     val result = underTest.getRevocationOrder(recall.recallId())
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
+      }
+      .verifyComplete()
+  }
+
+  @Suppress("ReactiveStreamsUnusedPublisher")
+  @Test
+  fun `get dossier returns expected PDF`() {
+    val recall = recallRequest.toRecall()
+    val expectedPdf = "Some pdf".toByteArray()
+    val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+
+    // TODO PUD-521: return the required PDF ... for starters just return the revocation order
+    every { revocationOrderService.getRevocationOrder(recall.recallId()) } returns Mono.just(expectedPdf)
+
+    val result = underTest.getDossier(recall.recallId())
 
     StepVerifier
       .create(result)
