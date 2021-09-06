@@ -135,6 +135,7 @@ workflows:
           name: publish_docker
           requires:
             - validate
+            - document-generation-tests
             - helm_lint
             - trivy_scan
           filters:
