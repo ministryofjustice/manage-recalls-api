@@ -23,6 +23,6 @@ class PrisonRegisterClient {
   data class Prison(
     val prisonId: String? = null,
     val prisonName: String? = null,
-    val active: String? = null
+    val active: Boolean? = null
   )
 }

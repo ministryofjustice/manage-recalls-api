@@ -17,14 +17,14 @@ class PrisonRegisterTest : ComponentTestBase() {
   @Test
   fun `can check prison is in register`() {
     val prisonList: MutableList<PrisonRegisterClient.Prison> = ArrayList()
-    prisonList.add(PrisonRegisterClient.Prison("HPI"))
-    prisonList.add(PrisonRegisterClient.Prison("MWI"))
-    prisonList.add(PrisonRegisterClient.Prison("ALI"))
-    prisonList.add(PrisonRegisterClient.Prison("FYI"))
+    prisonList.add(PrisonRegisterClient.Prison("HPI", "HPI name", false))
+    prisonList.add(PrisonRegisterClient.Prison("MWI", "MWI name", true))
+    prisonList.add(PrisonRegisterClient.Prison("ALI", "ALI name", true))
+    prisonList.add(PrisonRegisterClient.Prison("FYI", "FYI name", false))
 
     every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
 
-    val prisonValidationResult = prisonValidationService.isValidPrison("MWI")
+    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive("MWI")
 
     assertThat(prisonValidationResult, equalTo(true))
   }
@@ -38,7 +38,7 @@ class PrisonRegisterTest : ComponentTestBase() {
 
     every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
 
-    val prisonValidationResult = prisonValidationService.isValidPrison("MWI")
+    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive("MWI")
 
     assertThat(prisonValidationResult, equalTo(false))
   }
@@ -46,7 +46,7 @@ class PrisonRegisterTest : ComponentTestBase() {
   @Test
   fun `can return true if prison name is null`() {
 
-    val prisonValidationResult = prisonValidationService.isValidPrison(null)
+    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive(null)
 
     assertThat(prisonValidationResult, equalTo(true))
   }

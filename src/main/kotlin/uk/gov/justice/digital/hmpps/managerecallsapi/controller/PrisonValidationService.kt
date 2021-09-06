@@ -7,8 +7,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterCl
 @Service
 class PrisonValidationService(@Autowired private val prisonRegisterClient: PrisonRegisterClient) {
 
-  fun isValidPrison(prisonId: String?): Boolean {
+  fun isPrisonValidAndActive(prisonId: String?): Boolean {
     if (prisonId == null) return true
-    return prisonRegisterClient.getAllPrisons().block()?.any { it.prisonId == prisonId } ?: false
+    return prisonRegisterClient.getAllPrisons().block()?.any { (it.prisonId == prisonId) && (it.active == true) } ?: false
+  }
+
+  fun isPrisonValid(prisonId: String?): Boolean {
+    if (prisonId == null) return true
+    return prisonRegisterClient.getAllPrisons().block()?.any { (it.prisonId == prisonId) } ?: false
   }
 }
