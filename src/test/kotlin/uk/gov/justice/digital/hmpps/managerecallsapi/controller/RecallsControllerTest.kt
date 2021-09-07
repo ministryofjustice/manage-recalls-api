@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -19,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
@@ -33,9 +35,10 @@ class RecallsControllerTest {
   private val recallRepository = mockk<RecallRepository>()
   private val revocationOrderService = mockk<RevocationOrderService>()
   private val recallDocumentService = mockk<RecallDocumentService>()
+  private val dossierService = mockk<DossierService>()
 
   private val underTest =
-    RecallsController(recallRepository, revocationOrderService, recallDocumentService, advertisedBaseUri)
+    RecallsController(recallRepository, revocationOrderService, recallDocumentService, dossierService, advertisedBaseUri)
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
@@ -111,7 +114,7 @@ class RecallsControllerTest {
   @Test
   fun `get revocation order returns RevocationOrder PDF`() {
     val recall = recallRequest.toRecall()
-    val expectedPdf = "Some pdf".toByteArray()
+    val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
     every { revocationOrderService.getRevocationOrder(recall.recallId()) } returns Mono.just(expectedPdf)
@@ -130,11 +133,10 @@ class RecallsControllerTest {
   @Test
   fun `get dossier returns expected PDF`() {
     val recall = recallRequest.toRecall()
-    val expectedPdf = "Some pdf".toByteArray()
+    val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    // TODO PUD-521: return the required PDF ... for starters just return the revocation order
-    every { revocationOrderService.getRevocationOrder(recall.recallId()) } returns Mono.just(expectedPdf)
+    every { dossierService.getDossier(recall.recallId()) } returns Mono.just(expectedPdf)
 
     val result = underTest.getDossier(recall.recallId())
 

@@ -12,10 +12,11 @@ import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomNoms
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -25,6 +26,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
+@Suppress("ReactiveStreamsUnusedPublisher")
 internal class RevocationOrderServiceTest {
 
   private val pdfDocumentGenerator = mockk<PdfDocumentGenerator>()
@@ -41,11 +43,10 @@ internal class RevocationOrderServiceTest {
     recallRepository
   )
 
+  // TODO: will be good to agree as the dev team whether we prefer this model or local vals per test fun
   private val recallId = ::RecallId.random()
-  private val expectedBytes = "Some pdf".toByteArray()
-  private val s3Bucket = "a-bucket"
-  private val nomsNumber = NomsNumber("123456")
-  private val revocationOrderId = UUID.randomUUID()
+  private val expectedBytes = randomString().toByteArray()
+  private val nomsNumber = randomNoms()
 
   @Test
   fun `generates a revocation order for a recall without an existing revocation order`() {
@@ -55,12 +56,12 @@ internal class RevocationOrderServiceTest {
     every { pdfDocumentGenerator.makePdf(any()) } returns Mono.just(expectedBytes)
     every { thymeleafConfig.process("revocation-order", capture(contextSlot)) } returns "Some html, honest"
 
-    val aRecall = Recall(recallId, nomsNumber)
+    val theRecall = Recall(recallId, nomsNumber)
     val revocationOrderId = UUID.randomUUID()
-    val aRecallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderId)
+    val theRecallWithRevocationOrder = theRecall.copy(revocationOrderId = revocationOrderId)
 
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
-    every { recallRepository.save(aRecallWithRevocationOrder) } returns aRecallWithRevocationOrder
+    every { recallRepository.getByRecallId(recallId) } returns theRecall
+    every { recallRepository.save(theRecallWithRevocationOrder) } returns theRecallWithRevocationOrder
     every { s3Service.uploadFile(any()) } returns revocationOrderId
 
     val result = underTest.getRevocationOrder(recallId)
@@ -70,7 +71,7 @@ internal class RevocationOrderServiceTest {
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
         assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
-        verify { recallRepository.save(aRecallWithRevocationOrder) }
+        verify { recallRepository.save(theRecallWithRevocationOrder) }
         verify { s3Service.uploadFile(expectedBytes) }
       }
       .verifyComplete()
@@ -78,18 +79,12 @@ internal class RevocationOrderServiceTest {
 
   @Test
   fun `gets existing revocation order for a recall when one exists`() {
-    val recallId = ::RecallId.random()
-    val revocationOrderId = UUID.randomUUID()
-    val expectedBytes = "Some pdf".toByteArray()
 
-    val aRecall = Recall(recallId, NomsNumber("aNumber"), revocationOrderId)
-    val aRecallWithRevocationOrder = Recall(
-      id = UUID.randomUUID(),
-      nomsNumber = NomsNumber("aNumber"),
-      revocationOrderId = revocationOrderId
-    )
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
-    every { recallRepository.save(aRecallWithRevocationOrder) } returns aRecallWithRevocationOrder
+    val revocationOrderId = UUID.randomUUID()
+    val theRecallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderId)
+
+    every { recallRepository.getByRecallId(recallId) } returns theRecallWithRevocationOrder
+    every { recallRepository.save(theRecallWithRevocationOrder) } returns theRecallWithRevocationOrder
     every { s3Service.downloadFile(revocationOrderId) } returns expectedBytes
 
     val result = underTest.getRevocationOrder(recallId)
@@ -101,7 +96,7 @@ internal class RevocationOrderServiceTest {
         verify { prisonerOffenderSearchClient wasNot Called }
         verify { pdfDocumentGenerator wasNot Called }
         verify { thymeleafConfig wasNot Called }
-        verify(exactly = 0) { recallRepository.save(aRecallWithRevocationOrder) }
+        verify(exactly = 0) { recallRepository.save(theRecallWithRevocationOrder) }
         verify(exactly = 0) { s3Service.uploadFile(expectedBytes) }
         verify { recallRepository.getByRecallId(recallId) }
         verify { s3Service.downloadFile(revocationOrderId) }

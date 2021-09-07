@@ -28,6 +28,8 @@ fun randomString() = randomAlphanumeric(500)
 
 fun randomBoolean() = RandomUtils.nextBoolean()
 
+fun randomNoms() = NomsNumber(randomAlphanumeric(7))
+
 fun dateTimeNow() = OffsetDateTime.now()
 
 fun randomAdultDateOfBirth(): LocalDate? {
