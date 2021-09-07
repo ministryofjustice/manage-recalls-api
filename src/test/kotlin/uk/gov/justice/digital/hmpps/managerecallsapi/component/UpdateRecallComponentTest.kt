@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import io.mockk.mockk
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -10,7 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
@@ -30,8 +28,6 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   private lateinit var recallId: RecallId
   private lateinit var recallPath: String
-
-  private val prisonValidationService = mockk<PrisonValidationService>()
 
   @BeforeEach
   fun setupExistingRecall() {
