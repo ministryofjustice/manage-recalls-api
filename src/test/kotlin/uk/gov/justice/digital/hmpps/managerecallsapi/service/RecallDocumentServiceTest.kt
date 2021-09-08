@@ -8,6 +8,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -27,19 +29,27 @@ internal class RecallDocumentServiceTest {
   private val underTest = RecallDocumentService(s3Service, recallRepository)
 
   private val recallId = ::RecallId.random()
-  private val documentBytes = "a document".toByteArray()
+  private val documentBytes = randomString().toByteArray()
   private val aRecall = Recall(
     id = recallId.value,
-    nomsNumber = NomsNumber("A1235B")
+    nomsNumber = randomNoms()
   )
 
   @Test
-  fun `throws 'document not found' error if document is not found in recall`() {
-    val aRecallWithoutDocuments = aRecall.copy(documents = emptySet())
-    every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
+  fun `throws a custom 'document not found' error if document with id is not found in recall`() {
+    val theDocumentId = UUID.randomUUID()
+    val otherDocumentId = UUID.randomUUID()
+    val otherDocument = RecallDocument(
+      id = otherDocumentId,
+      recallId = recallId.value,
+      category = randomDocumentCategory(),
+      fileName = randomString()
+    )
+    val aRecallWithAnotherDocument = aRecall.copy(documents = setOf(otherDocument))
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithAnotherDocument
 
     assertThrows<RecallDocumentNotFoundException> {
-      underTest.getDocument(recallId, UUID.randomUUID())
+      underTest.getDocument(recallId, theDocumentId)
     }
   }
 
@@ -101,7 +111,7 @@ internal class RecallDocumentServiceTest {
       fileName = randomString()
     )
     val aRecallWithDocument = aRecall.copy(documents = setOf(aDocument))
-    val fileBytes = "Hello".toByteArray()
+    val fileBytes = randomString().toByteArray()
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
     every { s3Service.downloadFile(aDocumentId) } returns fileBytes
@@ -109,6 +119,55 @@ internal class RecallDocumentServiceTest {
     val (actualDocument, actualBytes) = underTest.getDocument(recallId, aDocumentId)
 
     assertThat(actualDocument, equalTo(aDocument))
+    assertThat(actualBytes, equalTo(fileBytes))
+  }
+
+  @Test
+  fun `gets a document by recall ID and document category`() {
+    val aDocumentCategory = randomDocumentCategory()
+    val documentId = UUID.randomUUID()
+    val aDocument = RecallDocument(
+      id = documentId,
+      recallId = recallId.value,
+      category = aDocumentCategory,
+      fileName = randomString()
+    )
+    val aRecallWithDocument = aRecall.copy(documents = setOf(aDocument))
+    val fileBytes = randomString().toByteArray()
+
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
+    every { s3Service.downloadFile(documentId) } returns fileBytes
+
+    val (actualDocument, actualBytes) = underTest.getDocumentWithCategory(recallId, aDocumentCategory)
+
+    assertThat(actualDocument, equalTo(aDocument))
+    assertThat(actualBytes, equalTo(fileBytes))
+  }
+
+  @Test
+  fun `throws a custom 'document with category not found' error if no document of category is found for recall`() {
+    val aRecallWithoutDocuments = aRecall.copy(documents = emptySet())
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
+
+    assertThrows<RecallDocumentWithCategoryNotFoundException> {
+      underTest.getDocumentWithCategory(recallId, randomDocumentCategory())
+    }
+  }
+
+  @Test
+  fun `ignores all but one document matching recall ID and document category`() {
+    val theDocumentCategory = randomDocumentCategory()
+    val documentOne = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = theDocumentCategory, fileName = randomString())
+    val documentTwo = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = theDocumentCategory, fileName = randomString())
+    val aRecallWithDocument = aRecall.copy(documents = setOf(documentOne, documentTwo))
+    val fileBytes = randomString().toByteArray()
+
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
+    every { s3Service.downloadFile(any()) } returns fileBytes
+
+    val (actualDocument, actualBytes) = underTest.getDocumentWithCategory(recallId, theDocumentCategory)
+
+    assertThat(actualDocument.recallId, equalTo(recallId.value))
     assertThat(actualBytes, equalTo(fileBytes))
   }
 }

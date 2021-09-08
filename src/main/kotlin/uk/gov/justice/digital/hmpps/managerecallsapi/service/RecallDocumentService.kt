@@ -49,8 +49,17 @@ class RecallDocumentService(
     val bytes = s3Service.downloadFile(documentId)
     return Pair(document, bytes)
   }
+
+  fun getDocumentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): Pair<RecallDocument, ByteArray> {
+    // For any occurrence of > 1 doc matching recallId and category the actual returned doc here is undefined
+    val document = recallRepository.getByRecallId(recallId).documents.firstOrNull { it.category == documentCategory }
+      ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
+    val bytes = s3Service.downloadFile(document.id)
+    return Pair(document, bytes)
+  }
 }
 
 data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
 data class RecallDocumentNotFoundException(val recallId: RecallId, val documentId: UUID) : NotFoundException()
+data class RecallDocumentWithCategoryNotFoundException(val recallId: RecallId, val documentCategory: RecallDocumentCategory) : NotFoundException()
 open class NotFoundException : Exception()
