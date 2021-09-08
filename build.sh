@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-docker-compose up -d postgres
+docker-compose up -d postgres localstack
 
 ./gradlew ktlintFormat
 ./gradlew clean check
