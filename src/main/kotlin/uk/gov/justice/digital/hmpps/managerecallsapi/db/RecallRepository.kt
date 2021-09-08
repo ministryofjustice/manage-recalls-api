@@ -19,6 +19,7 @@ interface JpaRecallRepository : JpaRepository<Recall, UUID>
 @NoRepositoryBean
 interface ExtendedRecallRepository : JpaRecallRepository {
   fun getByRecallId(recallId: RecallId): Recall
+  fun findByRecallId(recallId: RecallId): Recall?
 }
 
 @Component
@@ -31,4 +32,7 @@ class RecallRepository(
     } catch (e: JpaObjectRetrievalFailureException) {
       throw RecallNotFoundException(recallId)
     }
+
+  override fun findByRecallId(recallId: RecallId): Recall? =
+    findById(recallId.value).orElse(null)
 }
