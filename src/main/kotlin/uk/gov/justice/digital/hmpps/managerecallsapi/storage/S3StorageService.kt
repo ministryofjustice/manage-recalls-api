@@ -24,12 +24,10 @@ class S3StorageService(
     return s3Client.getObject(request).readAllBytes()
   }
 
-  override fun uploadFile(fileBytes: ByteArray): UUID {
-    val documentId = UUID.randomUUID()
+  override fun uploadFile(documentId: UUID, fileBytes: ByteArray) {
     log.debug("Uploading file to s3://$bucketName/$documentId")
     val request = PutObjectRequest.builder().bucket(bucketName).key(documentId.toString()).build()
     val body = RequestBody.fromBytes(fileBytes)
     s3Client.putObject(request, body)
-    return documentId
   }
 }

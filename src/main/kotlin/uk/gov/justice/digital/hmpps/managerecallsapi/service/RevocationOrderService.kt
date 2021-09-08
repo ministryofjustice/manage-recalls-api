@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.thymeleaf.context.Context
@@ -16,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSear
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Service
 class RevocationOrderService(
@@ -25,8 +25,6 @@ class RevocationOrderService(
   @Autowired private val s3Service: S3Service,
   @Autowired private val recallRepository: RecallRepository
 ) {
-
-  private val log = LoggerFactory.getLogger(this::class.java)
 
   fun getRevocationOrder(recallId: RecallId): Mono<ByteArray> {
     val recall = recallRepository.getByRecallId(recallId)
@@ -51,9 +49,11 @@ class RevocationOrderService(
           )
 
           pdfDocumentGenerator.makePdf(details).map { bytes ->
-            val revocationOrderId = s3Service.uploadFile(bytes)
-            recallRepository.save(recall.copy(revocationOrderId = revocationOrderId))
-            bytes
+            UUID.randomUUID().let { revocationOrderId ->
+              s3Service.uploadFile(revocationOrderId, bytes)
+              recallRepository.save(recall.copy(revocationOrderId = revocationOrderId))
+              bytes
+            }
           }
         }
     } else {

@@ -4,6 +4,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -38,6 +40,21 @@ class RecallDocumentComponentTest : ComponentTestBase() {
     val response = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest)
 
     assertThat(response.documentId, present())
+  }
+
+  @Test
+  fun `upload a recall document with a category that already exists overwrites the existing document`() {
+    val recallId = ::RecallId.random()
+    recallRepository.save(Recall(recallId, nomsNumber))
+
+    expectADocumentWillBeUploadedToS3()
+
+    val documentId = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest).documentId
+    val newFilename = "newFilename"
+    val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, newFilename)
+    val response = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest)
+
+    assertThat(response.documentId, equalTo(documentId))
   }
 
   @Test
@@ -83,6 +100,6 @@ class RecallDocumentComponentTest : ComponentTestBase() {
   }
 
   private fun expectADocumentWillBeUploadedToS3() {
-    every { s3Service.uploadFile(any()) } returns UUID.randomUUID()
+    every { s3Service.uploadFile(any(), any()) } just runs
   }
 }

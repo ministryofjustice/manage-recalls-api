@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -54,7 +56,7 @@ class GetRevocationOrderComponentTest : ComponentTestBase() {
   }
 
   private fun expectTheRevocationOrderWillBeUploadedToS3() {
-    every { s3Service.uploadFile(any()) } returns UUID.randomUUID()
+    every { s3Service.uploadFile(any(), any()) } just runs
   }
 
   private fun expectAPdfWillBeGenerated(expectedPdf: ByteArray, firstName: String) {

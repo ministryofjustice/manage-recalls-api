@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
@@ -34,17 +35,15 @@ import javax.transaction.Transactional
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 @ActiveProfiles("db-test")
-class RecallRepositoryIntegrationTest(
-  @Autowired
-  private val repository: RecallRepository
-) {
+class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallRepository) {
+
   private val nomsNumber = NomsNumber("A12345F")
+  private val recallId = ::RecallId.random()
+  private val recall = Recall(recallId, nomsNumber)
 
   @Test
   @Transactional
   fun `saves and retrieves a recall`() {
-    val recallId = ::RecallId.random()
-    val recall = Recall(recallId, nomsNumber)
     repository.save(recall)
 
     val retrieved = repository.getByRecallId(recallId)
@@ -55,14 +54,12 @@ class RecallRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can update an existing recall`() {
-    val recallId = ::RecallId.random()
-    val originalRecall = Recall(recallId, nomsNumber)
-    repository.save(originalRecall)
+    repository.save(recall)
 
-    assertThat(repository.getByRecallId(recallId), equalTo(originalRecall))
+    assertThat(repository.getByRecallId(recallId), equalTo(recall))
 
     val localDate = LocalDate.now()
-    val recallToUpdate = originalRecall.copy(
+    val recallToUpdate = recall.copy(
       recallType = FIXED,
       revocationOrderId = UUID.randomUUID(),
       documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, randomString())),
@@ -74,9 +71,23 @@ class RecallRepositoryIntegrationTest(
       contrabandDetail = "i am worried...",
       vulnerabilityDiversityDetail = "has the following needs",
       mappaLevel = MappaLevel.NOT_KNOWN,
-      sentencingInfo = SentencingInfo(localDate, localDate, localDate, "A Court", "Some Offence", SentenceLength(2, 4, 6), localDate),
+      sentencingInfo = SentencingInfo(
+        localDate,
+        localDate,
+        localDate,
+        "A Court",
+        "Some Offence",
+        SentenceLength(2, 4, 6),
+        localDate
+      ),
       bookingNumber = "BN12345",
-      probationInfo = ProbationInfo("Probation Officer Name", "07111111111", "email@email.com", ProbationDivision.NORTH_EAST, "Assistant Chief Officer"),
+      probationInfo = ProbationInfo(
+        "Probation Officer Name",
+        "07111111111",
+        "email@email.com",
+        ProbationDivision.NORTH_EAST,
+        "Assistant Chief Officer"
+      ),
       licenceConditionsBreached = "Breached by blah blah blah",
       reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
       reasonsForRecallOtherDetail = "Because of something else",
@@ -102,9 +113,22 @@ class RecallRepositoryIntegrationTest(
 
   @Test
   @Transactional
-  fun `can save a document without fileName`() {
-    val recallId = ::RecallId.random()
+  fun `can find an existing recall by recallId`() {
+    repository.save(recall)
 
+    val retrieved = repository.findByRecallId(recallId)
+
+    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber)))
+  }
+
+  @Test
+  fun `find by recallId returns null if a recall does not exist`() {
+    assertThat(repository.findByRecallId(::RecallId.random()), absent())
+  }
+
+  @Test
+  @Transactional
+  fun `can save a document without fileName`() {
     val recallToUpdate = Recall(
       recallId,
       nomsNumber,

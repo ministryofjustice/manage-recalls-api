@@ -4,7 +4,9 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.mockk.Called
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
@@ -51,30 +53,24 @@ internal class RevocationOrderServiceTest {
   @Test
   fun `generates a revocation order for a recall without an existing revocation order`() {
     val contextSlot = slot<IContext>()
+    val revocationOrderIdSlot = slot<UUID>()
+    val savedRecallSlot = slot<Recall>()
 
     every { prisonerOffenderSearchClient.prisonerSearch(any()) } returns Mono.just(listOf(Prisoner()))
     every { pdfDocumentGenerator.makePdf(any()) } returns Mono.just(expectedBytes)
     every { thymeleafConfig.process("revocation-order", capture(contextSlot)) } returns "Some html, honest"
 
-    val theRecall = Recall(recallId, nomsNumber)
-    val revocationOrderId = UUID.randomUUID()
-    val theRecallWithRevocationOrder = theRecall.copy(revocationOrderId = revocationOrderId)
+    val aRecall = Recall(recallId, nomsNumber)
 
-    every { recallRepository.getByRecallId(recallId) } returns theRecall
-    every { recallRepository.save(theRecallWithRevocationOrder) } returns theRecallWithRevocationOrder
-    every { s3Service.uploadFile(any()) } returns revocationOrderId
+    every { recallRepository.getByRecallId(recallId) } returns aRecall
+    every { s3Service.uploadFile(capture(revocationOrderIdSlot), expectedBytes) } just runs
+    every { recallRepository.save(capture(savedRecallSlot)) } returns mockk()
 
-    val result = underTest.getRevocationOrder(recallId)
+    val result = underTest.getRevocationOrder(recallId).block()!!
 
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it, equalTo(expectedBytes))
-        assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
-        verify { recallRepository.save(theRecallWithRevocationOrder) }
-        verify { s3Service.uploadFile(expectedBytes) }
-      }
-      .verifyComplete()
+    assertThat(result, equalTo(expectedBytes))
+    assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
+    assertThat(savedRecallSlot.captured, equalTo(Recall(recallId, nomsNumber, revocationOrderIdSlot.captured)))
   }
 
   @Test
@@ -97,7 +93,7 @@ internal class RevocationOrderServiceTest {
         verify { pdfDocumentGenerator wasNot Called }
         verify { thymeleafConfig wasNot Called }
         verify(exactly = 0) { recallRepository.save(theRecallWithRevocationOrder) }
-        verify(exactly = 0) { s3Service.uploadFile(expectedBytes) }
+        verify(exactly = 0) { s3Service.uploadFile(any(), any()) }
         verify { recallRepository.getByRecallId(recallId) }
         verify { s3Service.downloadFile(revocationOrderId) }
       }
