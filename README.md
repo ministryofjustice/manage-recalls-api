@@ -16,9 +16,9 @@ API service for managing recalls
 ```
 will apply ktlint styles to intellij and also add a pre-commit hook to format all changed kotlin files.
 
-### Run locally on the command line
-Requires postgres:
-```docker compose up -d postgres```
+### Run the service locally on the command line
+Requires postgres and localstack:
+```docker compose up -d postgres localstack```
 
 ```bash
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
@@ -53,7 +53,7 @@ Builds everything, runs the unit tests, integration tests, start gotenberg and d
 
 `./build.sh`
 
-Note: this script will start up a `postgresql` instance using `docker-compose` in the background.
+Note: this script will start up a `postgresql` and `localstack` instance using `docker-compose` in the background.
 
 # Swagger UI
 
