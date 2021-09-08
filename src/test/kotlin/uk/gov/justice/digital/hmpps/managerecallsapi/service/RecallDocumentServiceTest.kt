@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
-import com.natpryce.hamkrest.allElements
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.mockk.every
@@ -58,41 +57,39 @@ internal class RecallDocumentServiceTest {
   @Test
   fun `addDocumentToRecall uploads the document to S3 and adds it to the existing recall`() {
     val documentIdSlot = slot<UUID>()
-    val savedRecallSlot = slot<Recall>()
+    val savedDocumentSlot = slot<RecallDocument>()
 
     every { recallRepository.findByRecallId(recallId) } returns aRecallWithoutDocuments
     every { s3Service.uploadFile(capture(documentIdSlot), documentBytes) } just runs
-    every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
-    every { recallRepository.save(capture(savedRecallSlot)) } returns mockk()
+    every { recallRepository.addDocumentToRecall(recallId, capture(savedDocumentSlot)) } just runs
 
     val actualDocumentId = underTest.addDocumentToRecall(recallId, documentBytes, documentCategory, fileName)
 
     val newDocumentId = documentIdSlot.captured
     assertThat(actualDocumentId, equalTo(newDocumentId))
     assertThat(
-      savedRecallSlot.captured.documents,
-      allElements(equalTo(RecallDocument(newDocumentId, recallId.value, documentCategory, fileName)))
+      savedDocumentSlot.captured,
+      equalTo(RecallDocument(newDocumentId, recallId.value, documentCategory, fileName))
     )
   }
 
   @Test
   fun `addDocumentToRecall with a category that already exists updates the existing document in both S3 and the repository`() {
-    val savedRecallSlot = slot<Recall>()
+    val savedDocumentSlot = slot<RecallDocument>()
     val existingDocumentId = UUID.randomUUID()
     val aRecallWithDocument = Recall(recallId, nomsNumber, documents = setOf(RecallDocument(existingDocumentId, recallId.value, documentCategory, fileName)))
     val newFileName = randomString()
 
     every { recallRepository.findByRecallId(recallId) } returns aRecallWithDocument
     every { s3Service.uploadFile(existingDocumentId, documentBytes) } just runs
-    every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
-    every { recallRepository.save(capture(savedRecallSlot)) } returns mockk()
+    every { recallRepository.addDocumentToRecall(recallId, capture(savedDocumentSlot)) } just runs
 
     val actualDocumentId = underTest.addDocumentToRecall(recallId, documentBytes, documentCategory, newFileName)
 
     assertThat(actualDocumentId, equalTo(existingDocumentId))
     assertThat(
-      savedRecallSlot.captured.documents,
-      equalTo(setOf(RecallDocument(existingDocumentId, recallId.value, documentCategory, newFileName)))
+      savedDocumentSlot.captured,
+      equalTo(RecallDocument(existingDocumentId, recallId.value, documentCategory, newFileName))
     )
   }
 

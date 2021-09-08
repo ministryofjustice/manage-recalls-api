@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.hasElement
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -139,5 +140,33 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
     val createdRecall = repository.getByRecallId(recallId)
 
     assertThat(createdRecall, equalTo(recallToUpdate))
+  }
+
+  @Test
+  @Transactional
+  fun `can add a document to an existing recall`() {
+    val recallDocument = RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, null)
+    repository.save(recall)
+    repository.addDocumentToRecall(recallId, recallDocument)
+
+    val updatedRecall = repository.getByRecallId(recallId)
+
+    assertThat(updatedRecall.documents, hasElement(recallDocument))
+  }
+
+  @Test
+  @Transactional
+  fun `can add a document to a recall with a document of the same category`() {
+    val documentId = UUID.randomUUID()
+    val existingDocument = RecallDocument(documentId, recallId.value, PART_A_RECALL_REPORT, "originalFilename")
+    val newDocument = RecallDocument(documentId, recallId.value, PART_A_RECALL_REPORT, "newFilename")
+    val existingRecall = Recall(recallId, nomsNumber, documents = setOf(existingDocument))
+
+    repository.save(existingRecall)
+    repository.addDocumentToRecall(recallId, newDocument)
+
+    val updatedRecall = repository.getByRecallId(recallId)
+
+    assertThat(updatedRecall.documents, hasElement(newDocument))
   }
 }
