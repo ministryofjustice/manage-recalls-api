@@ -47,7 +47,7 @@ class PdfDocumentGeneratorGotenbergIntegrationTest {
 
     val details = listOf(
       HtmlDocumentDetail("index.html", "<body><span>$textOfHtml</span></body>"),
-      ClassPathDocumentDetail("logo.png", "/document/template/revocation-order/logo.png")
+      ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
     )
 
     val pdfResult = pdfDocumentGenerator.makePdf(details)
