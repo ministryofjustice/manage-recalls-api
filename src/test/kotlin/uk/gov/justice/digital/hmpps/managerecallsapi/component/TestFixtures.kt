@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -21,12 +22,17 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
+import kotlin.random.Random
 
 fun ((UUID) -> RecallId).zeroes() = this(UUID(0, 0))
 
 fun randomString() = randomAlphanumeric(500)
 
 fun randomBoolean() = RandomUtils.nextBoolean()
+
+fun randomNoms() = NomsNumber(randomAlphanumeric(7))
+
+fun randomDocumentCategory() = RecallDocumentCategory.values()[Random.nextInt(RecallDocumentCategory.values().size)]
 
 fun dateTimeNow() = OffsetDateTime.now()
 

@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
@@ -37,6 +38,7 @@ class RecallsController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val dossierService: DossierService,
   @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
 ) {
 
@@ -64,7 +66,11 @@ class RecallsController(
 
   @GetMapping("/recalls/{recallId}/dossier")
   fun getDossier(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
-    getRevocationOrder(recallId) // TODO PUD-521: return the required PDF ... for starters just return the revocation order
+    dossierService.getDossier(recallId)
+      .map {
+        val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)
+        ResponseEntity.ok(Pdf(pdfBase64Encoded))
+      }
 
   @PostMapping("/recalls/{recallId}/documents")
   fun addDocument(
