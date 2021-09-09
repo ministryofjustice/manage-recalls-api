@@ -2,10 +2,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import io.mockk.every
-import io.mockk.just
-import io.mockk.runs
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -14,9 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 import java.util.Base64
-import java.util.UUID
 
-// TODO: MD  Use localstack instead of mocking S3Service
 class GetRevocationOrderComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
@@ -31,7 +27,6 @@ class GetRevocationOrderComponentTest : ComponentTestBase() {
 
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     expectAPdfWillBeGenerated(expectedPdf, firstName)
-    expectTheRevocationOrderWillBeUploadedToS3()
 
     val response = authenticatedClient.getRevocationOrder(recallId)
 
@@ -40,23 +35,19 @@ class GetRevocationOrderComponentTest : ComponentTestBase() {
 
   @Test
   fun `get revocation order downloads the document from S3 if it already exists`() {
-    val recallId = ::RecallId.random()
-    val revocationOrderId = UUID.randomUUID()
-    recallRepository.save(Recall(recallId, nomsNumber, revocationOrderId = revocationOrderId))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
 
-    expectTheRevocationOrderWillBeDownloadedFromS3(revocationOrderId, expectedPdf)
+    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
+    expectAPdfWillBeGenerated(expectedPdf, firstName)
 
-    val response = authenticatedClient.getRevocationOrder(recallId)
+    authenticatedClient.getRevocationOrder(recall.recallId)
+
+    prisonerOffenderSearch.resetAll()
+    gotenbergMockServer.resetAll()
+
+    val response = authenticatedClient.getRevocationOrder(recall.recallId)
 
     assertThat(response.content, equalTo(expectedBase64Pdf))
-  }
-
-  private fun expectTheRevocationOrderWillBeDownloadedFromS3(revocationOrderId: UUID, expectedPdf: ByteArray) {
-    every { s3Service.downloadFile(revocationOrderId) } returns expectedPdf
-  }
-
-  private fun expectTheRevocationOrderWillBeUploadedToS3() {
-    every { s3Service.uploadFile(any(), any()) } just runs
   }
 
   private fun expectAPdfWillBeGenerated(expectedPdf: ByteArray, firstName: String) {
