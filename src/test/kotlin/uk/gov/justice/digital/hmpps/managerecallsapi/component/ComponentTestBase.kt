@@ -21,6 +21,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 
@@ -46,6 +47,9 @@ abstract class ComponentTestBase {
   protected lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
 
   @Autowired
+  protected lateinit var prisonRegisterMockServer: PrisonRegisterMockServer
+
+  @Autowired
   protected lateinit var gotenbergMockServer: GotenbergMockServer
 
   @MockkBean
@@ -60,6 +64,7 @@ abstract class ComponentTestBase {
     hmppsAuthMockServer.start()
     prisonerOffenderSearch.start()
     gotenbergMockServer.start()
+    prisonRegisterMockServer.start()
   }
 
   @AfterAll
@@ -67,6 +72,7 @@ abstract class ComponentTestBase {
     hmppsAuthMockServer.stop()
     prisonerOffenderSearch.stop()
     gotenbergMockServer.stop()
+    prisonRegisterMockServer.stop()
   }
 
   @BeforeEach
@@ -74,6 +80,7 @@ abstract class ComponentTestBase {
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
     prisonerOffenderSearch.resetAll()
+    prisonRegisterMockServer.resetAll()
   }
 
   @Configuration
