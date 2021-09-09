@@ -26,21 +26,22 @@ class UpdateRecallControllerTest {
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A9876ZZ")
+  private val today = LocalDate.now()
 
   private val fullyPopulatedUpdateRecallRequest = UpdateRecallRequest(
     lastReleasePrison = "WIN",
-    lastReleaseDate = LocalDate.now(),
+    lastReleaseDate = today,
     recallEmailReceivedDateTime = OffsetDateTime.now(),
     localPoliceForce = "Oxford",
     contrabandDetail = "Dodgy hat",
     vulnerabilityDiversityDetail = "Lots",
     mappaLevel = MappaLevel.CONFIRMATION_REQUIRED,
-    sentenceDate = LocalDate.now(),
-    licenceExpiryDate = LocalDate.now(),
-    sentenceExpiryDate = LocalDate.now(),
+    sentenceDate = today,
+    licenceExpiryDate = today,
+    sentenceExpiryDate = today,
     sentencingCourt = "court",
     indexOffence = "offence",
-    conditionalReleaseDate = LocalDate.now(),
+    conditionalReleaseDate = today,
     sentenceLength = Api.SentenceLength(10, 1, 1),
     bookingNumber = "B12345",
     probationOfficerName = "Probation officer name",
@@ -59,7 +60,8 @@ class UpdateRecallControllerTest {
     additionalLicenceConditionsDetail = "Ut enim ad minima veniam, quis nostrum exercitationem",
     differentNomsNumber = false,
     differentNomsNumberDetail = "Nam libero tempore, cum soluta nobis est eligendi",
-    recallNotificationEmailSentDateTime = OffsetDateTime.now()
+    recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+    dossierEmailSentDate = today
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -105,7 +107,8 @@ class UpdateRecallControllerTest {
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
     differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail,
-    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime
+    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime,
+    dossierEmailSentDate = fullyPopulatedUpdateRecallRequest.dossierEmailSentDate
   )
 
   private val fullyPopulatedRecallResponse = RecallResponse(
@@ -144,7 +147,8 @@ class UpdateRecallControllerTest {
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
     differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail,
-    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime
+    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime,
+    dossierEmailSentDate = fullyPopulatedUpdateRecallRequest.dossierEmailSentDate
   )
 
   @Test

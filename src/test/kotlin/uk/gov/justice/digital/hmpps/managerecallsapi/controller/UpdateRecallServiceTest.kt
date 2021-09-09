@@ -29,21 +29,22 @@ class UpdateRecallServiceTest {
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"))
+  private val today = LocalDate.now()
 
   private val fullyPopulatedUpdateRecallRequest = UpdateRecallRequest(
     lastReleasePrison = "WIN",
-    lastReleaseDate = LocalDate.now(),
+    lastReleaseDate = today,
     recallEmailReceivedDateTime = OffsetDateTime.now(),
     localPoliceForce = "Oxford",
     contrabandDetail = "Dodgy hat",
     vulnerabilityDiversityDetail = "Lots",
     mappaLevel = MappaLevel.CONFIRMATION_REQUIRED,
-    sentenceDate = LocalDate.now(),
-    licenceExpiryDate = LocalDate.now(),
-    sentenceExpiryDate = LocalDate.now(),
+    sentenceDate = today,
+    licenceExpiryDate = today,
+    sentenceExpiryDate = today,
     sentencingCourt = "court",
     indexOffence = "offence",
-    conditionalReleaseDate = LocalDate.now(),
+    conditionalReleaseDate = today,
     sentenceLength = Api.SentenceLength(10, 1, 1),
     bookingNumber = "B12345",
     probationOfficerName = "Probation officer name",
@@ -61,7 +62,8 @@ class UpdateRecallServiceTest {
     additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     differentNomsNumber = true,
     differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    recallNotificationEmailSentDateTime = OffsetDateTime.now()
+    recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+    dossierEmailSentDate = today
   )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
@@ -107,7 +109,8 @@ class UpdateRecallServiceTest {
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
     differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail,
-    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime
+    recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime,
+    dossierEmailSentDate = fullyPopulatedUpdateRecallRequest.dossierEmailSentDate
   )
 
   @Test
@@ -161,9 +164,9 @@ class UpdateRecallServiceTest {
   }
 
   private fun recallRequestWithMandatorySentencingInfo(
-    sentenceDate: LocalDate? = LocalDate.now(),
-    licenceExpiryDate: LocalDate? = LocalDate.now(),
-    sentenceExpiryDate: LocalDate? = LocalDate.now(),
+    sentenceDate: LocalDate? = today,
+    licenceExpiryDate: LocalDate? = today,
+    sentenceExpiryDate: LocalDate? = today,
     sentencingCourt: String? = "court",
     indexOffence: String? = "index offence",
     sentenceLength: Api.SentenceLength? = Api.SentenceLength(10, 1, 1)
