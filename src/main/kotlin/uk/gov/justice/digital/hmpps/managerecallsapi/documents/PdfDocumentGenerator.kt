@@ -30,6 +30,7 @@ class PdfDocumentGenerator(
     val documentBody = multipartBody(details)
 
     // TODO This exposes the gotenberg internal feature of how the inputs are ordered - alphabetical by filename - in the output - which should be hidden from callers
+    // Note: for PDF input docs, gotenberg API requires names to be "*.pdf"
     return gotenbergResponse("/merge", documentBody)
   }
 

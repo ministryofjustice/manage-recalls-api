@@ -26,6 +26,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
   fun `can generate the dossier sending the correct documents to gotenberg`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     expectTheRevocationOrderWillBeGenerated(expectedPdf, firstName)
+    // Note: for PDF input docs, gotenberg API requires names to be "*.pdf"
     gotenbergMockServer.stubMergePdfs(
       expectedPdf,
       "3-license.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
