@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.ActiveProfiles
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
@@ -63,7 +64,11 @@ class PdfDocumentGeneratorGotenbergIntegrationTest {
   @Test
   fun `should return byte array when merging many pdfs to one`() {
     val stubResponseAsString = randomString()
-    gotenbergMockServer.stubMergePdfs(stubResponseAsString.toByteArray())
+    gotenbergMockServer.stubMergePdfs(
+      stubResponseAsString.toByteArray(),
+      "a.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
+      "b.pdf" to ClassPathResource("/document/revocation-order.pdf").file.readText()
+    )
 
     val details = listOf(
       ClassPathDocumentDetail("a.pdf", "/document/licence.pdf"),

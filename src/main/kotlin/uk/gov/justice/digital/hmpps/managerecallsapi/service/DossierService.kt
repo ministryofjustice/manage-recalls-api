@@ -24,12 +24,12 @@ class DossierService(
     val license = recallDocumentService.getDocumentWithCategory(recallId, RecallDocumentCategory.LICENCE)
     val partARecallReport = recallDocumentService.getDocumentWithCategory(recallId, RecallDocumentCategory.PART_A_RECALL_REPORT)
 
-    docs.add(InputStreamDocumentDetail("3-license", license.second.inputStream()))
-    docs.add(InputStreamDocumentDetail("6-partA_RecallReport", partARecallReport.second.inputStream()))
+    docs.add(InputStreamDocumentDetail("3-license.pdf", license.second.inputStream()))
+    docs.add(InputStreamDocumentDetail("6-partA_RecallReport.pdf", partARecallReport.second.inputStream()))
 
     // Warning from following block() should be addressed:
     revocationOrderService.getRevocationOrder(recallId).block(Duration.ofSeconds(5))?.let {
-      docs.add(InputStreamDocumentDetail("9-revocationOrder", it.inputStream()))
+      docs.add(InputStreamDocumentDetail("9-revocationOrder.pdf", it.inputStream()))
     }
 
     return pdfDocumentGenerator.mergePdfs(docs)
