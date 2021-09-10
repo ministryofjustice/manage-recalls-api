@@ -38,7 +38,7 @@ class RecallDocumentService(
   }
 
   fun getDocumentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): Pair<RecallDocument, ByteArray> {
-    // For any occurrence of > 1 doc matching recallId and category the actual returned doc here is undefined
+    // DB constraint ("UNIQUE (recall_id, category)") disallows > 1 doc matching recallId and category
     val document = recallRepository.getByRecallId(recallId).documents.firstOrNull { it.category == documentCategory }
       ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
     val bytes = s3Service.downloadFile(document.id)
