@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
 import java.time.LocalDate
@@ -45,6 +46,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @MockkBean
   private lateinit var revocationOrderService: RevocationOrderService
+
+  @MockkBean
+  private lateinit var dossierService: DossierService
 
   @MockkBean
   private lateinit var recallDocumentService: RecallDocumentService
@@ -124,7 +128,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @Suppress("ReactiveStreamsUnusedPublisher")
   @State("a dossier can be downloaded")
   fun `a dossier can be downloaded`() {
-    every { revocationOrderService.getRevocationOrder(any()) } returns Mono.just("some pdf contents".toByteArray())
+    every { dossierService.getDossier(any()) } returns Mono.just("some pdf contents".toByteArray())
   }
 
   @State("a document can be created")
