@@ -45,7 +45,7 @@ class RevocationOrderService(
 
           val details = listOf(
             HtmlDocumentDetail("index.html", populatedHtml),
-            ClassPathDocumentDetail("logo.png", "/document/template/revocation-order/logo.png")
+            ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
           )
 
           pdfDocumentGenerator.makePdf(details).map { bytes ->

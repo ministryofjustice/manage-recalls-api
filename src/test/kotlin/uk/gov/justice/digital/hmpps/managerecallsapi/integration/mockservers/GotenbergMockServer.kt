@@ -30,8 +30,8 @@ class GotenbergMockServer : WireMockServer(9093) {
         .withMultipartRequestBody(
           aMultipart()
             .withName("files")
-            .withHeader("Content-Disposition", equalTo("form-data; name=logo.png; filename=logo.png"))
-            .withBody(equalTo(ClassPathResource("/document/template/revocation-order/logo.png").file.readText()))
+            .withHeader("Content-Disposition", equalTo("form-data; name=revocation-order-logo.png; filename=revocation-order-logo.png"))
+            .withBody(equalTo(ClassPathResource("/templates/images/revocation-order-logo.png").file.readText()))
         )
         .willReturn(aResponse().withBody(generatedPdf))
     )
