@@ -156,6 +156,14 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
   @Test
   @Transactional
+  fun `addDocumentToRecall throws RecallNotFoundException if recall does not exist`() {
+    val recallDocument = RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, null)
+
+    assertThrows<RecallNotFoundException> { repository.addDocumentToRecall(recallId, recallDocument) }
+  }
+
+  @Test
+  @Transactional
   fun `can add a document to a recall with a document of the same category`() {
     val documentId = UUID.randomUUID()
     val existingDocument = RecallDocument(documentId, recallId.value, PART_A_RECALL_REPORT, "originalFilename")
