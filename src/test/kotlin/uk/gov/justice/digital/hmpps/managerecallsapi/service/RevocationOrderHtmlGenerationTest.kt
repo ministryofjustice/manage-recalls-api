@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ApprovalTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ThymeleafConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import java.time.LocalDate
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ThymeleafConfig::class])
@@ -21,8 +22,18 @@ class RevocationOrderHtmlGenerationTest(
 
   @Test
   fun `generate revocation order HTML`(approver: ContentApprover) {
-    val generatedHtml = underTest.generateHtml(Prisoner())
+    val generatedHtml = underTest.generateHtml(
+      Prisoner(
+        firstName = "PrisonerFirstName",
+        middleNames = "PrisonerMiddleNames",
+        lastName = "PrisonerLastName",
+        dateOfBirth = LocalDate.of(1999, 12, 31),
+        bookNumber = "PrisonerBookNumber",
+        croNumber = "PrisonerCroNumber"
+      )
+    )
 
     approver.assertApproved(generatedHtml)
   }
+
 }

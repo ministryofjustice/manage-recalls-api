@@ -19,11 +19,10 @@ class NamedResourceContentApprover(
 
     with(approved.input()) {
       val actualSource = approvalSource.actualFor(name)
-      val actualContent = content.byteInputStream()
 
       when (this) {
         null -> {
-          with(actualContent) {
+          with(content.byteInputStream()) {
             if (available() > 0) {
               copyTo(actualSource.output())
               throw ApprovalFailed("No approved content found", actualSource, approved)
@@ -32,11 +31,11 @@ class NamedResourceContentApprover(
         }
         else -> try {
           assertThat(
-            this.reader().use { it.readText() },
-            equalTo(actualContent.reader().readText())
+            content.byteInputStream().reader().readText(),
+            equalTo(this.reader().use { it.readText() })
           )
         } catch (e: AssertionError) {
-          actualContent.copyTo(actualSource.output())
+          content.byteInputStream().copyTo(actualSource.output())
           throw AssertionError(ApprovalFailed("Mismatch", actualSource, approved).message + "\n" + e.message)
         }
       }
