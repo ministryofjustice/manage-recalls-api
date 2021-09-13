@@ -115,6 +115,7 @@ workflows:
   version: 2
 
   fake-prisoner-offender-search-api-build:
+    unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:
       - hmpps/build_docker:
           name: build_fake_prisoner_offender_search_api
