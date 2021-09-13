@@ -5,18 +5,20 @@ import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import java.time.Clock
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Component
 class RevocationOrderGenerator(
-  @Autowired private val templateEngine: SpringTemplateEngine
+  @Autowired private val templateEngine: SpringTemplateEngine,
+  @Autowired private val clock: Clock
 ) {
 
   fun generateHtml(prisoner: Prisoner): String =
     Context().apply {
       val firstAndMiddleNames = String.format("%s %s", prisoner.firstName, prisoner.middleNames).trim()
-      val todaysDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
+      val todaysDate = LocalDate.now(clock).format(DateTimeFormatter.ofPattern("dd MMM yyyy"))
       setVariable("firstNames", firstAndMiddleNames)
       setVariable("lastName", prisoner.lastName)
       setVariable("dateOfBirth", prisoner.dateOfBirth)
