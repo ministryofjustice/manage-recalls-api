@@ -172,6 +172,7 @@ workflows:
           name: notify_sentry_dev
           sentry_project: manage-recalls-api
           sentry_environment: DEV
+          sentry_create_release: true
           requires:
             - deploy_dev
 
