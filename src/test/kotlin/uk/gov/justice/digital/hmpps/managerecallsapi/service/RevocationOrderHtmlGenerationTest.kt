@@ -10,7 +10,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ApprovalTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ThymeleafConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ThymeleafConfig::class])
@@ -18,7 +21,8 @@ class RevocationOrderHtmlGenerationTest(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) : ApprovalTestCase() {
 
-  private val underTest = RevocationOrderGenerator(templateEngine)
+  private val fixedClock = Clock.fixed(Instant.parse("2021-09-01T16:48:30.00Z"), ZoneId.of("UTC"))
+  private val underTest = RevocationOrderGenerator(templateEngine, fixedClock)
 
   @Test
   fun `generate revocation order HTML`(approver: ContentApprover) {
@@ -35,5 +39,4 @@ class RevocationOrderHtmlGenerationTest(
 
     approver.assertApproved(generatedHtml)
   }
-
 }

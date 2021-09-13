@@ -11,13 +11,16 @@ import org.junit.jupiter.api.Test
 import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
 
 class RevocationOrderGeneratorTest {
   private val templateEngine = mockk<SpringTemplateEngine>()
+  private val fixedClock = Clock.fixed(Instant.parse("2017-08-29T00:00:00.00Z"), ZoneId.of("UTC"))
 
-  private val underTest = RevocationOrderGenerator(templateEngine)
+  private val underTest = RevocationOrderGenerator(templateEngine, fixedClock)
 
   @Test
   fun `generate revocation order HTML`() {
@@ -46,9 +49,7 @@ class RevocationOrderGeneratorTest {
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("1995-10-03")),
         has("prisonNumber", { it.variable("prisonNumber") }, equalTo("bookNumber")),
         has("croNumber", { it.variable("croNumber") }, equalTo("croNumber")),
-        has(
-          "licenseRevocationDate", { it.variable("licenseRevocationDate") }, equalTo((LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")))),
-        )
+        has("licenseRevocationDate", { it.variable("licenseRevocationDate") }, equalTo("29 Aug 2017"))
       )
     )
   }
