@@ -97,7 +97,11 @@ data class Recall(
 
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
 
-  val dossierEmailSentDate: LocalDate? = null
+  val dossierEmailSentDate: LocalDate? = null,
+
+  val hasOtherPreviousConvictionMainName: Boolean? = null,
+
+  val previousConvictionMainName: String? = null,
 ) {
   constructor(
     recallId: RecallId,
@@ -128,6 +132,8 @@ data class Recall(
     differentNomsNumberDetail: String? = null,
     recallNotificationEmailSentDateTime: OffsetDateTime? = null,
     dossierEmailSentDate: LocalDate? = null,
+    hasOtherPreviousConvictionMainName: Boolean? = null,
+    previousConvictionMainName: String? = null,
   ) :
     this(
       recallId.value,
@@ -157,7 +163,9 @@ data class Recall(
       differentNomsNumber,
       differentNomsNumberDetail,
       recallNotificationEmailSentDateTime,
-      dossierEmailSentDate
+      dossierEmailSentDate,
+      hasOtherPreviousConvictionMainName,
+      previousConvictionMainName
     )
 
   fun recallId() = RecallId(id)

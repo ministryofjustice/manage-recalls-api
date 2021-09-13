@@ -149,7 +149,9 @@ fun Recall.toResponse() = RecallResponse(
   differentNomsNumber = this.differentNomsNumber,
   differentNomsNumberDetail = this.differentNomsNumberDetail,
   recallNotificationEmailSentDateTime = this.recallNotificationEmailSentDateTime,
-  dossierEmailSentDate = this.dossierEmailSentDate
+  dossierEmailSentDate = this.dossierEmailSentDate,
+  hasOtherPreviousConvictionMainName = this.hasOtherPreviousConvictionMainName,
+  previousConvictionMainName = this.previousConvictionMainName
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -191,7 +193,9 @@ data class RecallResponse(
   val differentNomsNumber: Boolean? = null,
   val differentNomsNumberDetail: String? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
-  val dossierEmailSentDate: LocalDate? = null
+  val dossierEmailSentDate: LocalDate? = null,
+  val hasOtherPreviousConvictionMainName: Boolean? = null,
+  val previousConvictionMainName: String? = null,
 ) {
   val status: Status? = calculateStatus()
 
