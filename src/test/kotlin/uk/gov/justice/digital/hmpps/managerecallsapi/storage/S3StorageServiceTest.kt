@@ -25,17 +25,18 @@ class S3StorageServiceTest {
   @Test
   fun `can store file in s3`() {
     val fileBytes = "blah".toByteArray()
+    val documentId = UUID.randomUUID()
 
     every { s3Client.putObject(any<PutObjectRequest>(), any<RequestBody>()) } returns
       PutObjectResponse.builder().build()
 
-    val fileId = underTest.uploadFile(fileBytes)
+    underTest.uploadFile(documentId, fileBytes)
 
     verify {
       s3Client.putObject(
         withArg<PutObjectRequest> { request ->
           assertThat(request.bucket(), equalTo(bucketName))
-          assertThat(request.key(), equalTo(fileId.toString()))
+          assertThat(request.key(), equalTo(documentId.toString()))
         },
         any<RequestBody>()
       )

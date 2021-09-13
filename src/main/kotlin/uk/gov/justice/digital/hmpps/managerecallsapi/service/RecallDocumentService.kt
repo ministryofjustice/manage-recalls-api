@@ -21,26 +21,13 @@ class RecallDocumentService(
     documentCategory: RecallDocumentCategory,
     fileName: String?
   ): UUID {
-    if (recallRepository.existsById(recallId.value)) {
-      return s3Service.uploadFile(documentBytes).also { documentId ->
-        addDocumentToRecall(recallId, documentId, documentCategory, fileName)
-      }
-    } else {
-      throw RecallNotFoundException(recallId)
-    }
-  }
-
-  private fun addDocumentToRecall(
-    recallId: RecallId,
-    documentId: UUID,
-    documentCategory: RecallDocumentCategory,
-    fileName: String?
-  ) {
-    with(recallRepository.getByRecallId(recallId)) {
-      val document = RecallDocument(documentId, recallId.value, documentCategory, fileName)
+    recallRepository.findByRecallId(recallId)?.let { recall ->
+      val documentId = recall.documents.firstOrNull { it.category == documentCategory }?.id ?: UUID.randomUUID()
+      s3Service.uploadFile(documentId, documentBytes)
       // TODO: [KF] delete the document from S3 if saving fails?
-      recallRepository.save(this.copy(documents = this.documents + document))
-    }
+      recallRepository.addDocumentToRecall(recallId, RecallDocument(documentId, recallId.value, documentCategory, fileName))
+      return documentId
+    } ?: throw RecallNotFoundException(recallId)
   }
 
   fun getDocument(recallId: RecallId, documentId: UUID): Pair<RecallDocument, ByteArray> {
@@ -51,7 +38,7 @@ class RecallDocumentService(
   }
 
   fun getDocumentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): Pair<RecallDocument, ByteArray> {
-    // For any occurrence of > 1 doc matching recallId and category the actual returned doc here is undefined
+    // DB constraint ("UNIQUE (recall_id, category)") disallows > 1 doc matching recallId and category
     val document = recallRepository.getByRecallId(recallId).documents.firstOrNull { it.category == documentCategory }
       ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
     val bytes = s3Service.downloadFile(document.id)

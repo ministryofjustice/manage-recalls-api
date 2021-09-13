@@ -20,7 +20,7 @@ class RealPdfDocumentGeneratorTest {
   fun `should return byte array when requesting pdf`() {
     val details = listOf(
       HtmlDocumentDetail("index.html", "<html><body></body></html>"),
-      ClassPathDocumentDetail("logo.png", "/document/template/revocation-order/logo.png")
+      ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
     )
 
     val makePdfResult = pdfDocumentGenerator.makePdf(details)

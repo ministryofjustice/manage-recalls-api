@@ -35,6 +35,7 @@ fun randomNoms() = NomsNumber(randomAlphanumeric(7))
 fun randomDocumentCategory() = RecallDocumentCategory.values()[Random.nextInt(RecallDocumentCategory.values().size)]
 
 fun dateTimeNow() = OffsetDateTime.now()
+fun dateNow() = LocalDate.now()
 
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)
@@ -55,20 +56,20 @@ fun recallWithPopulatedFields(
   recallType = RecallType.FIXED,
   recallLength = RecallLength.values().random(),
   lastReleasePrison = "WIN",
-  lastReleaseDate = LocalDate.now(),
+  lastReleaseDate = dateNow(),
   recallEmailReceivedDateTime = dateTimeNow(),
   localPoliceForce = randomString(),
   contrabandDetail = randomString(),
   vulnerabilityDiversityDetail = randomString(),
   mappaLevel = MappaLevel.NA,
   sentencingInfo = SentencingInfo(
-    LocalDate.now(),
-    LocalDate.now(),
-    LocalDate.now(),
+    dateNow(),
+    dateNow(),
+    dateNow(),
     randomString(),
     randomString(),
     SentenceLength(1, 2, 3),
-    LocalDate.now()
+    dateNow()
   ),
   bookingNumber = randomString(),
   probationInfo = ProbationInfo(
@@ -88,11 +89,15 @@ fun recallWithPopulatedFields(
   additionalLicenceConditionsDetail = randomString(),
   differentNomsNumber = randomBoolean(),
   differentNomsNumberDetail = randomString(),
-  recallNotificationEmailSentDateTime = dateTimeNow()
+  recallNotificationEmailSentDateTime = dateTimeNow(),
+  dossierEmailSentDate = dateNow(),
+  hasOtherPreviousConvictionMainName = randomBoolean(),
+  previousConvictionMainName = randomString()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {
-  val partA = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = PART_A_RECALL_REPORT, randomString())
+  val partA =
+    RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = PART_A_RECALL_REPORT, randomString())
   val license = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = LICENCE, randomString())
   return setOf(partA, license)
 }

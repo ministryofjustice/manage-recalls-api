@@ -26,12 +26,6 @@ pact:
   verifier:
     publishResults: false
 
-localstack:
-  services: S3
-# starting with releases after v0.11.5, all services are now exposed via the edge service (port 4566) only!
-  services.port: 4566
-  image.version: 0.12.1
-  
 aws:
   region: eu-west-1
   credentials:

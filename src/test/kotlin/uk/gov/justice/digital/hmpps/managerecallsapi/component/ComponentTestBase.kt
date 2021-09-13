@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
-import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -23,7 +22,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Got
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
-import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -51,9 +49,6 @@ abstract class ComponentTestBase {
 
   @Autowired
   protected lateinit var gotenbergMockServer: GotenbergMockServer
-
-  @MockkBean
-  protected lateinit var s3Service: S3Service
 
   protected val authenticatedClient: AuthenticatedClient by lazy {
     AuthenticatedClient(webTestClient, jwtAuthenticationHelper)

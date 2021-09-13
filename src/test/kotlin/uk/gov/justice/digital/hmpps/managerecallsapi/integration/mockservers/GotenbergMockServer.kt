@@ -30,30 +30,33 @@ class GotenbergMockServer : WireMockServer(9093) {
         .withMultipartRequestBody(
           aMultipart()
             .withName("files")
-            .withHeader("Content-Disposition", equalTo("form-data; name=logo.png; filename=logo.png"))
-            .withBody(equalTo(ClassPathResource("/document/template/revocation-order/logo.png").file.readText()))
+            .withHeader("Content-Disposition", equalTo("form-data; name=revocation-order-logo.png; filename=revocation-order-logo.png"))
+            .withBody(equalTo(ClassPathResource("/templates/images/revocation-order-logo.png").file.readText()))
         )
         .willReturn(aResponse().withBody(generatedPdf))
     )
   }
 
-  fun stubMergePdfs(generatedPdf: ByteArray) {
+  fun stubMergePdfs(
+    generatedPdf: ByteArray,
+    vararg fileDetails: Pair<String, String>
+  ) {
     stubFor(
       post(WireMock.urlEqualTo("/merge"))
         .withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
-        .withMultipartRequestBody(
-          aMultipart()
-            .withName("files")
-            .withHeader("Content-Disposition", equalTo("form-data; name=a.pdf; filename=a.pdf"))
-            .withBody(equalTo(ClassPathResource("/document/licence.pdf").file.readText()))
-        )
-        .withMultipartRequestBody(
-          aMultipart()
-            .withName("files")
-            .withHeader("Content-Disposition", equalTo("form-data; name=b.pdf; filename=b.pdf"))
-            .withBody(equalTo(ClassPathResource("/document/revocation-order.pdf").file.readText()))
-        )
-        .willReturn(aResponse().withBody(generatedPdf))
+        .apply {
+          fileDetails.forEach { fileDetails ->
+            this.withMultipartRequestBody(
+              aMultipart()
+                .withHeader(
+                  "Content-Disposition",
+                  equalTo("form-data; name=${fileDetails.first}; filename=${fileDetails.first}")
+                )
+                .withBody(equalTo(fileDetails.second))
+            )
+          }
+        }.willReturn(aResponse().withBody(generatedPdf))
+
     )
   }
 

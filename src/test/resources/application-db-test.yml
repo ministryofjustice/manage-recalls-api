@@ -10,4 +10,7 @@ aws:
   credentials:
     accessKey: randomAccessKey
     secretKey: randomSecretKey
-  s3.bucketName: test-bucket
+  s3:
+    bucketName: test-manage-recalls-api
+  local:
+    endpoint: http://localhost:4566

@@ -29,6 +29,8 @@ class PdfDocumentGenerator(
   fun mergePdfs(details: List<DocumentDetail<out Any>>): Mono<ByteArray> {
     val documentBody = multipartBody(details)
 
+    // TODO This exposes the gotenberg internal feature of how the inputs are ordered - alphabetical by filename - in the output - which should be hidden from callers
+    // Note: for PDF input docs, gotenberg API requires names to be "*.pdf"
     return gotenbergResponse("/merge", documentBody)
   }
 
@@ -63,10 +65,17 @@ data class ClassPathDocumentDetail(override val name: String, val path: String) 
   override fun data() = MultipartInputStreamFileResource(ClassPathResource(path).inputStream, name)
 }
 
+data class InputStreamDocumentDetail(override val name: String, val inputStream: InputStream) :
+  DocumentDetail<MultipartInputStreamFileResource> {
+  override fun data() = MultipartInputStreamFileResource(inputStream, name)
+}
+
+// TODO: rename `HtmlDocumentDetail` as simply `StringDocumentDetail`?
 data class HtmlDocumentDetail(override val name: String, val html: String) : DocumentDetail<String> {
   override fun data() = html
 }
 
+// TODO: rename - remove 'file'
 class MultipartInputStreamFileResource(inputStream: InputStream, private val filename: String) :
   InputStreamResource(inputStream) {
   override fun getFilename(): String {

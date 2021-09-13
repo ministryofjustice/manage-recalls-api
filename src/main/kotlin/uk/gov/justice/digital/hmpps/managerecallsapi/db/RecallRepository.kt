@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.util.UUID
+import javax.transaction.Transactional
 
 @Repository("jpaRecallRepository")
 interface JpaRecallRepository : JpaRepository<Recall, UUID>
@@ -19,6 +20,8 @@ interface JpaRecallRepository : JpaRepository<Recall, UUID>
 @NoRepositoryBean
 interface ExtendedRecallRepository : JpaRecallRepository {
   fun getByRecallId(recallId: RecallId): Recall
+  fun findByRecallId(recallId: RecallId): Recall?
+  fun addDocumentToRecall(recallId: RecallId, recallDocument: RecallDocument)
 }
 
 @Component
@@ -31,4 +34,17 @@ class RecallRepository(
     } catch (e: JpaObjectRetrievalFailureException) {
       throw RecallNotFoundException(recallId)
     }
+
+  override fun findByRecallId(recallId: RecallId): Recall? =
+    findById(recallId.value).orElse(null)
+
+  @Transactional
+  override fun addDocumentToRecall(recallId: RecallId, recallDocument: RecallDocument) {
+    getByRecallId(recallId).let { recall ->
+      val updatedDocuments = recall.documents.toMutableSet().apply {
+        this.removeIf { it.id == recallDocument.id }
+      } + recallDocument
+      save(recall.copy(documents = updatedDocuments))
+    }
+  }
 }

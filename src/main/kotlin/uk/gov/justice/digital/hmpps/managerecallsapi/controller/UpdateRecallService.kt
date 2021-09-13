@@ -44,7 +44,10 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail ?: additionalLicenceConditionsDetail,
       differentNomsNumber = updateRecallRequest.differentNomsNumber ?: differentNomsNumber,
       differentNomsNumberDetail = updateRecallRequest.differentNomsNumberDetail ?: differentNomsNumberDetail,
-      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime
+      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
+      dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate ?: dossierEmailSentDate,
+      hasOtherPreviousConvictionMainName = updateRecallRequest.hasOtherPreviousConvictionMainName ?: hasOtherPreviousConvictionMainName,
+      previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName
     )
   }
 }
