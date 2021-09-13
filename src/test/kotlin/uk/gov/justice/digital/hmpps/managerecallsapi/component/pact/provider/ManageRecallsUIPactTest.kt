@@ -6,8 +6,8 @@ import au.com.dius.pact.provider.junitsupport.Consumer
 import au.com.dius.pact.provider.junitsupport.Provider
 import au.com.dius.pact.provider.junitsupport.State
 import au.com.dius.pact.provider.junitsupport.VerificationReports
-import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
+import au.com.dius.pact.provider.junitsupport.loader.PactFolder
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -183,7 +183,7 @@ class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
 @VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
 @Consumer("manage-recalls-ui")
-@PactBroker
+@PactFolder("../manage-recalls-ui/pact/pacts")
 abstract class ManagerRecallsUiPactTestBase : ComponentTestBase() {
   @LocalServerPort
   private val port = 0

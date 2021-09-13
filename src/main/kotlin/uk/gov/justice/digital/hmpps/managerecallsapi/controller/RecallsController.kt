@@ -151,6 +151,7 @@ fun Recall.toResponse() = RecallResponse(
   recallNotificationEmailSentDateTime = this.recallNotificationEmailSentDateTime,
   dossierEmailSentDate = this.dossierEmailSentDate,
   hasOtherPreviousConvictionMainName = this.hasOtherPreviousConvictionMainName,
+  hasDossierBeenChecked = this.hasDossierBeenChecked,
   previousConvictionMainName = this.previousConvictionMainName
 )
 
@@ -195,6 +196,7 @@ data class RecallResponse(
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
   val hasOtherPreviousConvictionMainName: Boolean? = null,
+  val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
 ) {
   val status: Status? = calculateStatus()

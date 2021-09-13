@@ -29,8 +29,7 @@ class PdfDocumentGenerator(
   fun mergePdfs(details: List<DocumentDetail<out Any>>): Mono<ByteArray> {
     val documentBody = multipartBody(details)
 
-    // TODO This exposes the gotenberg internal feature of how the inputs are ordered - alphabetical by filename - in the output - which should be hidden from callers
-    // Note: for PDF input docs, gotenberg API requires names to be "*.pdf"
+    // TODO PUD-572 De-couple PDF merge operation from gotenberg API, incl. e.g. how the inputs are ordered plus gotenberg API requires names to be "*.pdf"
     return gotenbergResponse("/merge", documentBody)
   }
 
