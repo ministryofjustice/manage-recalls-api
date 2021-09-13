@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class RevocationOrderGeneratorTest() {
+class RevocationOrderGeneratorTest {
   private val templateEngine = mockk<SpringTemplateEngine>()
 
   private val underTest = RevocationOrderGenerator(templateEngine)
