@@ -57,7 +57,7 @@ class AuthenticatedClient(
       .responseBody!!
 
   fun getRevocationOrder(recallId: RecallId): Pdf =
-    getRequest("/recalls/$recallId/revocationOrder", Pdf::class.java)
+    getRequest("/recalls/$recallId/recallNotification", Pdf::class.java)
 
   // TODO PUD-521: un-used for now ... for starters just return the revocation order
   fun getDossier(recallId: RecallId): Pdf =

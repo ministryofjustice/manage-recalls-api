@@ -56,7 +56,7 @@ class RecallsController(
   fun getRecall(@PathVariable("recallId") recallId: RecallId): RecallResponse =
     recallRepository.getByRecallId(recallId).toResponse()
 
-  @GetMapping("/recalls/{recallId}/revocationOrder")
+  @GetMapping("/recalls/{recallId}/recallNotification")
   fun getRevocationOrder(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
     revocationOrderService.getRevocationOrder(recallId)
       .map {
