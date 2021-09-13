@@ -10,22 +10,21 @@ import io.mockk.runs
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.thymeleaf.context.IContext
-import org.thymeleaf.spring5.SpringTemplateEngine
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Suppress("ReactiveStreamsUnusedPublisher")
@@ -33,16 +32,16 @@ internal class RevocationOrderServiceTest {
 
   private val pdfDocumentGenerator = mockk<PdfDocumentGenerator>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
-  private val thymeleafConfig = mockk<SpringTemplateEngine>()
   private val s3Service = mockk<S3Service>()
   private val recallRepository = mockk<RecallRepository>()
+  private val revocationOrderGenerator = mockk<RevocationOrderGenerator>()
 
   private val underTest = RevocationOrderService(
     pdfDocumentGenerator,
     prisonerOffenderSearchClient,
-    thymeleafConfig,
     s3Service,
-    recallRepository
+    recallRepository,
+    revocationOrderGenerator
   )
 
   // TODO: will be good to agree as the dev team whether we prefer this model or local vals per test fun
@@ -52,24 +51,29 @@ internal class RevocationOrderServiceTest {
 
   @Test
   fun `generates a revocation order for a recall without an existing revocation order`() {
-    val contextSlot = slot<IContext>()
+    val aRecall = Recall(recallId, nomsNumber)
+    val prisoner = mockk<Prisoner>()
     val revocationOrderIdSlot = slot<UUID>()
     val savedRecallSlot = slot<Recall>()
 
-    every { prisonerOffenderSearchClient.prisonerSearch(any()) } returns Mono.just(listOf(Prisoner()))
-    every { pdfDocumentGenerator.makePdf(any()) } returns Mono.just(expectedBytes)
-    every { thymeleafConfig.process("revocation-order", capture(contextSlot)) } returns "Some html, honest"
-
-    val aRecall = Recall(recallId, nomsNumber)
-
     every { recallRepository.getByRecallId(recallId) } returns aRecall
+    every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
+    val generatedHtml = "Some html, honest"
+    every { revocationOrderGenerator.generateHtml(prisoner) } returns generatedHtml
+    every {
+      pdfDocumentGenerator.makePdf(
+        listOf(
+          HtmlDocumentDetail("index.html", generatedHtml),
+          ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
+        )
+      )
+    } returns Mono.just(expectedBytes)
     every { s3Service.uploadFile(capture(revocationOrderIdSlot), expectedBytes) } just runs
     every { recallRepository.save(capture(savedRecallSlot)) } returns mockk()
 
     val result = underTest.getPdf(recallId).block()!!
 
     assertThat(result, equalTo(expectedBytes))
-    assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
     assertThat(savedRecallSlot.captured, equalTo(Recall(recallId, nomsNumber, revocationOrderIdSlot.captured)))
   }
 
@@ -91,7 +95,7 @@ internal class RevocationOrderServiceTest {
         assertThat(it, equalTo(expectedBytes))
         verify { prisonerOffenderSearchClient wasNot Called }
         verify { pdfDocumentGenerator wasNot Called }
-        verify { thymeleafConfig wasNot Called }
+        verify { revocationOrderGenerator wasNot Called }
         verify(exactly = 0) { recallRepository.save(theRecallWithRevocationOrder) }
         verify(exactly = 0) { s3Service.uploadFile(any(), any()) }
         verify { recallRepository.getByRecallId(recallId) }
