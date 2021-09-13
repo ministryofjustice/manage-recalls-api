@@ -113,6 +113,18 @@ jobs:
 
 workflows:
   version: 2
+
+  fake-prisoner-offender-search-api-build:
+    jobs:
+      - hmpps/build_docker:
+          name: build_fake_prisoner_offender_search_api
+          image_name: quay.io/hmpps/ppud-fake-prisoner-offender-search-api
+          dockerfile_dir: fake-prisoner-offender-search-api
+          filters:
+            branches:
+              only:
+                - main
+
   build-test-and-deploy:
     unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:
