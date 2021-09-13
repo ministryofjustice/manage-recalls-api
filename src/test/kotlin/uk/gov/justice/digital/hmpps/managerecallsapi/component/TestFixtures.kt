@@ -90,7 +90,9 @@ fun recallWithPopulatedFields(
   differentNomsNumber = randomBoolean(),
   differentNomsNumberDetail = randomString(),
   recallNotificationEmailSentDateTime = dateTimeNow(),
-  dossierEmailSentDate = dateNow()
+  dossierEmailSentDate = dateNow(),
+  hasOtherPreviousConvictionMainName = randomBoolean(),
+  previousConvictionMainName = randomString()
 )
 
 fun exampleDocuments(recallId: RecallId): Set<RecallDocument> {

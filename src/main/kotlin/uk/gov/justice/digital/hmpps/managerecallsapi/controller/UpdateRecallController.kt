@@ -66,7 +66,9 @@ data class UpdateRecallRequest(
   val differentNomsNumber: Boolean? = null,
   val differentNomsNumberDetail: String? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
-  val dossierEmailSentDate: LocalDate? = null
+  val dossierEmailSentDate: LocalDate? = null,
+  val hasOtherPreviousConvictionMainName: Boolean? = null,
+  val previousConvictionMainName: String? = null,
 )
 
 enum class RecallLength {

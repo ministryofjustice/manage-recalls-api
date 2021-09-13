@@ -72,6 +72,8 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
       .jsonPath("$.dossierEmailSentDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.status").isEqualTo(Status.RECALL_NOTIFICATION_ISSUED.toString())
+      .jsonPath("$.hasOtherPreviousConvictionMainName").isEqualTo(fullyPopulatedRecall.hasOtherPreviousConvictionMainName!!)
+      .jsonPath("$.previousConvictionMainName").isEqualTo(fullyPopulatedRecall.previousConvictionMainName!!)
   }
 
   @Test

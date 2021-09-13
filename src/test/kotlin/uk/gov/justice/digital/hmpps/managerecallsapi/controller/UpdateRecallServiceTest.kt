@@ -99,7 +99,9 @@ class UpdateRecallServiceTest {
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
     differentNomsNumberDetail = fullyPopulatedUpdateRecallRequest.differentNomsNumberDetail,
     recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime,
-    dossierEmailSentDate = fullyPopulatedUpdateRecallRequest.dossierEmailSentDate
+    dossierEmailSentDate = fullyPopulatedUpdateRecallRequest.dossierEmailSentDate,
+    hasOtherPreviousConvictionMainName = fullyPopulatedUpdateRecallRequest.hasOtherPreviousConvictionMainName,
+    previousConvictionMainName = fullyPopulatedUpdateRecallRequest.previousConvictionMainName
   )
 
   @Test
