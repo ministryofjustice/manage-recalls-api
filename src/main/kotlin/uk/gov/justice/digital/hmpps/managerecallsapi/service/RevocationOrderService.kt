@@ -27,7 +27,7 @@ class RevocationOrderService(
     if (recall.revocationOrderId == null) {
       return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
         .flatMap { prisoners ->
-          val revocationOrderHtml = revocationOrderGenerator.generateHtml(prisoners.first())
+          val revocationOrderHtml = revocationOrderGenerator.generateHtml(prisoners.first(), recall)
 
           val details = listOf(
             StringDocumentDetail("index.html", revocationOrderHtml),

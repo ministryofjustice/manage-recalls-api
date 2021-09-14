@@ -59,7 +59,7 @@ internal class RevocationOrderServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     val generatedHtml = "Some html, honest"
-    every { revocationOrderGenerator.generateHtml(prisoner) } returns generatedHtml
+    every { revocationOrderGenerator.generateHtml(prisoner, aRecall) } returns generatedHtml
     every {
       pdfDocumentGenerator.makePdf(
         listOf(
