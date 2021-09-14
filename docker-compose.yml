@@ -15,6 +15,7 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
       - PRISONERSEARCH_ENDPOINT_URL=http://fake-prisoner-offender-search-api:8080
+      - PRISONREGISTER_ENDPOINT_URL=http://fake-prison-register-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - POSTGRES_HOST=postgres:5432
       - POSTGRES_DBNAME=manage_recalls
@@ -40,6 +41,17 @@ services:
     container_name: fake-prisoner-offender-search-api_manage-recalls-api
     ports:
       - "9092:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
+    command: --verbose
+
+  fake-prison-register-api:
+    build: ./fake-prison-register-api
+    networks:
+      - manage-recalls-api
+    container_name: fake-prison-register-api
+    ports:
+      - "9094:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
     command: --verbose
