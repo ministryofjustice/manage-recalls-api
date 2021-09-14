@@ -1,15 +1,10 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.thymeleaf.spring5.SpringTemplateEngine
-import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ApprovalTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.ThymeleafConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -19,11 +14,9 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
-@ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [ThymeleafConfig::class])
 class RevocationOrderHtmlGenerationTest(
   @Autowired private val templateEngine: SpringTemplateEngine
-) : ApprovalTestCase() {
+): HtmlGenerationTestCase() {
 
   private val fixedClock = Clock.fixed(Instant.parse("2021-09-01T16:48:30.00Z"), ZoneId.of("UTC"))
   private val underTest = RevocationOrderGenerator(templateEngine, fixedClock)
