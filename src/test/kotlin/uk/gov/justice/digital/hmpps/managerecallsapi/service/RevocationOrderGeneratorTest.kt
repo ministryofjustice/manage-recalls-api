@@ -56,7 +56,7 @@ class RevocationOrderGeneratorTest {
         has("prisonNumber", { it.variable("prisonNumber") }, equalTo("bookNumber")),
         has("croNumber", { it.variable("croNumber") }, equalTo("croNumber")),
         has("licenseRevocationDate", { it.variable("licenseRevocationDate") }, equalTo("29 Aug 2017")),
-        has("lastReleaseDate", { it.variable("lastReleaseDate") }, equalTo("01 Sept 2020")),
+        has("lastReleaseDate", { it.variable("lastReleaseDate") }, equalTo("01 Sep 2020")),
       )
     )
   }
