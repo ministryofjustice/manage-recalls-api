@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 class RecallNotificationService(
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val recallSummaryService: RecallSummaryService,
+  @Autowired private val letterToProbationService: LetterToProbationService,
   @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator
 ) {
 
@@ -21,8 +22,12 @@ class RecallNotificationService(
       docs.add(InputStreamDocumentDetail("1-recallSummary.pdf", recallSummaryBytes.inputStream()))
     }.flatMap {
       revocationOrderService.getPdf(recallId)
-    }.flatMap { revocationOrderBytes ->
+    }.map { revocationOrderBytes ->
       docs.add(InputStreamDocumentDetail("2-revocationOrder.pdf", revocationOrderBytes.inputStream()))
+    }.flatMap {
+      letterToProbationService.getPdf(recallId)
+    }.flatMap { letterToProbationBytes ->
+      docs.add(InputStreamDocumentDetail("3-letterToProbation.pdf", letterToProbationBytes.inputStream()))
       pdfDocumentGenerator.mergePdfs(docs)
     }
   }

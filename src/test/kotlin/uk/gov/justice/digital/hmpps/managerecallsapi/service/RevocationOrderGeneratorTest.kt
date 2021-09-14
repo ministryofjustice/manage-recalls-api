@@ -77,7 +77,7 @@ class RevocationOrderGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("firstNames", { it.variable("firstNames") }, equalTo("null null")),
+        has("firstNames", { it.variable("firstNames") }, equalTo("")),
         has("lastName", { it.variable("lastName") }, absent()),
         has("dateOfBirth", { it.variable("dateOfBirth") }, absent()),
         has("prisonNumber", { it.variable("prisonNumber") }, absent()),

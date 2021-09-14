@@ -21,7 +21,7 @@ class RevocationOrderGenerator(
 
   fun generateHtml(prisoner: Prisoner, recall: Recall): String =
     Context().apply {
-      val firstAndMiddleNames = String.format("%s %s", prisoner.firstName, prisoner.middleNames).trim()
+      val firstAndMiddleNames = String.format("%s %s", prisoner.firstName ?: "", prisoner.middleNames ?: "").trim()
       val todaysDate = LocalDate.now(clock).format(dateTimeFormatter)
       val lastReleaseDate = recall.lastReleaseDate?.format(dateTimeFormatter)
       setVariable("firstNames", firstAndMiddleNames)
