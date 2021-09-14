@@ -1,0 +1,1048 @@
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <style
+    type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=uTXSPZwEp3TWQFaTM2vlS3s421DlrhI9eSNlJenMRKM_aAifJoacbFX6HU9PyTi6');
+
+  ol {
+    margin: 0;
+    padding: 0
+  }
+
+  table td, table th {
+    padding: 0
+  }
+
+  .c24 {
+    border-right-style: solid;
+    padding-top: 1pt;
+    border-top-width: 0.5pt;
+    border-bottom-color: #000000;
+    border-right-width: 0.5pt;
+    padding-left: 4pt;
+    margin-left: -5.4pt;
+    border-left-color: #000000;
+    padding-bottom: 31pt;
+    line-height: 1.0;
+    border-right-color: #000000;
+    border-left-width: 0.5pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+    padding-right: 4pt
+  }
+
+  .c37 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 496.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c63 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 253.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c26 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 291.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c65 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 241.2pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c39 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 506.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c56 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 75.8pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c73 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 82.3pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c51 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 170.7pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c67 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 180pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c16 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 70.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c42 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 75.8pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c41 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 11.8pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c54 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 450.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c31 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 171pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c64 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 172.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c38 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 61pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c12 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 202.7pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c52 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 158.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c71 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 202.7pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c40 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 45.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c47 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 248.2pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c69 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 171pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c32 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 230.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c9 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 172.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c46 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 180pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c21 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 158.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c8 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: center;
+    height: 10pt
+  }
+
+  .c15 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+  }
+
+  .c6 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c27 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+  }
+
+  .c20 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    font-size: 11.5pt;
+    font-family: "Open Sans";
+    font-style: normal
+  }
+
+  .c0 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c58 {
+    padding-top: 9pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c29 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify
+  }
+
+  .c5 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: right
+  }
+
+  .c17 {
+    color: #000000;
+    text-decoration: none;
+    font-size: 18pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c10 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    text-align: left;
+    height: 10pt
+  }
+
+  .c23 {
+    -webkit-text-decoration-skip: none;
+    color: #ff0000;
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+    font-size: 14pt
+  }
+
+  .c57 {
+    margin-left: -5.4pt;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c25 {
+    color: #000000;
+    text-decoration: none;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c74 {
+    margin-left: -36.8pt;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c50 {
+    margin-left: -5pt;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c60 {
+    font-weight: 400;
+    text-decoration: none;
+    font-family: "Open Sans";
+    font-style: normal
+  }
+
+  .c34 {
+    background-color: #ffffff;
+    max-width: 496pt;
+    padding: 35.5pt 42.5pt 42.5pt 56.7pt
+  }
+
+  .c43 {
+    font-weight: 400;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c53 {
+    color: #ff0000;
+    text-decoration: none
+  }
+
+  .c4 {
+    vertical-align: baseline;
+    font-style: italic
+  }
+
+  .c59 {
+    font-size: 11.5pt;
+    font-family: "Open Sans"
+  }
+
+  .c1 {
+    vertical-align: baseline;
+    font-weight: 700
+  }
+
+  .c48 {
+    margin-left: 252pt;
+    text-indent: 36pt
+  }
+
+  .c70 {
+    margin-left: 0.1pt;
+    text-indent: -0.1pt
+  }
+
+  .c44 {
+    vertical-align: super
+  }
+
+  .c72 {
+    height: 31.5pt
+  }
+
+  .c28 {
+    page-break-after: avoid
+  }
+
+  .c45 {
+    height: 31.1pt
+  }
+
+  .c7 {
+    font-size: 10pt
+  }
+
+  .c61 {
+    height: 18.4pt
+  }
+
+  .c11 {
+    height: 10pt
+  }
+
+  .c22 {
+    height: 8.5pt
+  }
+
+  .c55 {
+    margin-left: 252pt
+  }
+
+  .c49 {
+    height: 0pt
+  }
+
+  .c35 {
+    font-size: 14pt
+  }
+
+  .c370 {
+    background-color: #ffffff;
+    font-size: 8pt
+  }
+
+  .c3 {
+    font-weight: 700
+  }
+
+  .c13 {
+    vertical-align: baseline
+  }
+
+  .c62 {
+    font-size: 11.5pt
+  }
+
+  .c18 {
+    height: 28.4pt
+  }
+
+  .c68 {
+    height: 34.9pt
+  }
+
+  .c30 {
+    height: 18pt
+  }
+
+  .c66 {
+    font-style: normal
+  }
+
+  .c33 {
+    height: 21pt
+  }
+
+  .c2 {
+    font-size: 11pt
+  }
+
+  .c14 {
+    font-size: 8.5pt
+  }
+
+  .c19 {
+    height: 68pt
+  }
+
+  .c36 {
+    color: #000000
+  }
+
+  .title {
+    padding-top: 24pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 36pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .subtitle {
+    padding-top: 0pt;
+    color: #000000;
+    font-size: 12pt;
+    padding-bottom: 3pt;
+    font-family: "Calibri";
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+  }
+
+  li {
+    color: #000000;
+    font-size: 10pt;
+    font-family: "Arial"
+  }
+
+  p {
+    margin: 0;
+    color: #000000;
+    font-size: 10pt;
+    font-family: "Arial"
+  }
+
+  h1 {
+    padding-top: 24pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 24pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h2 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 14pt;
+    padding-bottom: 3pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    font-style: italic;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h3 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 13pt;
+    padding-bottom: 3pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h4 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 12pt;
+    padding-bottom: 2pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h5 {
+    padding-top: 11pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 11pt;
+    padding-bottom: 2pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h6 {
+    padding-top: 10pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 10pt;
+    padding-bottom: 2pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }</style>
+</head>
+<body class="c34">
+
+<p class=MsoNormal align="left" style='margin-left:0cm;text-align:left;
+text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
+  height=57 id=logo.png src="recall-summary-logo.png"
+  alt="A picture containing text, linedrawing&#10;&#10;Description automatically generated"></span></p>
+
+<p class="c0 c11"><span class="c6 c7"></span></p><a
+  id="t.ae458ec524dbdf35c2243c133031c7677b17086f"></a><a id="t.0"></a>
+<table class="c50">
+  <tbody>
+  <tr class="c72">
+    <td class="c37" colspan="4" rowspan="1"><p class="c58"><span class="c1 c17">INFORMATION ONLY &ndash; OFFENDER IS IN CUSTODY</span>
+    </p></td>
+  </tr>
+  <tr class="c68">
+    <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">To</span></p></td>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7">PNCB &ndash; Referencing &amp; Vetting Services/&laquo;SPOC&raquo;</span>
+    </p></td>
+    <td class="c42" colspan="1" rowspan="1"><p class="c0 c11"><span class="c25 c1 c7"></span></p></td>
+    <td class="c9" colspan="1" rowspan="1"><p class="c0 c11"><span class="c25 c1 c7"></span></p></td>
+  </tr>
+  <tr class="c45">
+    <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c1 c7 c25">From</span></p></td>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7">&laquo;MANAGER_NAME&raquo;, Public Protection Casework Section</span>
+    </p></td>
+    <td class="c42" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">No. of pages</span></p></td>
+    <td class="c9" colspan="1" rowspan="1"><p class="c0"><span class="c1">&nbsp;</span><span class="c3">n</span><span
+      class="c1">&nbsp;(includes this one)</span></p></td>
+  </tr>
+  <tr class="c61">
+    <td class="c40" colspan="1" rowspan="1"><p class="c0" id="h.30j0zll"><span class="c25 c1 c7">Email</span></p></td>
+    <td class="c54" colspan="3" rowspan="1"><p class="c0"><span class="c6 c7">&laquo;manager_email&raquo;</span></p>
+      <p class="c0 c11"><span class="c6 c7"></span></p></td>
+  </tr>
+  <tr class="c33">
+    <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">Date</span></p></td>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0 c28"><span class="c13">&nbsp;[insert date]</span></p>
+      <p class="c0 c28 c11"><span class="c20 c13"></span></p>
+      <p class="c0 c11"><span class="c6 c7"></span></p></td>
+    <td class="c47" colspan="2" rowspan="2"><p class="c0"><span
+      class="c6 c7">If any part of this document is unclear <br>please telephone: &laquo;MANAGER_PHONE&raquo;</span></p>
+    </td>
+  </tr>
+  <tr class="c30">
+    <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">Time</span></p></td>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c1 c59">[INSERT TIME]</span></p></td>
+  </tr>
+  </tbody>
+</table>
+<p class="c0 c11"><span class="c6 c7"></span></p><a id="t.2f26c6cd914bb51e0e67466b61d5bd373cb05f0c"></a><a id="t.1"></a>
+<table class="c57">
+  <tbody>
+  <tr class="c49">
+    <td class="c52" colspan="1" rowspan="1"><p class="c27"><span class="c1">RECALL TYPE</span></p>
+      <p class="c27 c11"><span class="c6 c7"></span></p></td>
+    <td class="c31" colspan="1" rowspan="1"><p class="c27"><span class="c1">EMERGENCY RECALL</span></p></td>
+    <td class="c46" colspan="1" rowspan="1"><p class="c27"><span class="c1">MAPPA LEVEL</span></p>
+      <p class="c11 c27"><span class="c6 c7"></span></p></td>
+  </tr>
+  <tr class="c49">
+    <td class="c21" colspan="1" rowspan="1"><a id="id.1fob9te"></a>
+      <p class="c0"><span class="c1">HDC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9744; <br></span>
+      </p>
+      <p class="c0"><span class="c1">DETERMINATE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &#9744;</span>
+      </p></td>
+    <td class="c69" colspan="1" rowspan="1"><p class="c27"><span class="c1">NO</span></p>
+      <p class="c0 c11"><span class="c6 c7"></span></p></td>
+    <td class="c67" colspan="1" rowspan="1"><a id="id.3znysh7"></a>
+      <p class="c0"><span class="c1">LEVEL 1 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#9744; <br></span>
+      </p><a id="id.2et92p0"></a>
+      <p class="c0"><span class="c1">LEVEL 2 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#9744; <br></span>
+      </p><a id="id.tyjcwt"></a>
+      <p class="c0"><span class="c1">LEVEL 3 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9744;</span>
+      </p></td>
+  </tr>
+  </tbody>
+</table>
+<p class="c27"><span class="c1 c35">OFFENDER DETAILS</span></p><a id="t.afc5713055a40b9480d7876b7178c173c7b8d86e"></a><a
+  id="t.2"></a>
+<table class="c57">
+  <tbody>
+  <tr class="c49">
+    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">FORENAME: &laquo;FIRST_NAMES&raquo;</span>
+    </p>
+      <p class="c0"><span class="c1">SURNAME: &laquo;FAMILY_NAME&raquo;</span></p>
+      <p class="c0"><span class="c1">DATE OF BIRTH: &laquo;DOB&raquo;</span></p>
+      <p class="c0"><span class="c1">POLICE FILE NAME: </span></p>
+      <p class="c0"><span class="c1">PRISON NUMBER: &laquo;PRISON_NUMBER&raquo;</span></p>
+      <p class="c0"><span class="c1">PNOMIS NUMBER: </span></p>
+      <p class="c0"><span class="c1">RELEASING PRISON: &laquo;RELEASE_FROM&raquo;</span></p>
+      <p class="c0"><span class="c1">RELEASE DATE: &laquo;release_date&raquo;</span></p>
+      <p class="c0"><span class="c1">LENGTH OF SENTENCE: &laquo;SENTENCE&raquo;</span></p>
+      <p class="c0"><span class="c1">INDEX OFFENCE: &laquo;INDEX_OFFENCE_DESCRIPTION&raquo;</span></p><a
+        id="id.3dy6vkm"></a>
+      <p class="c0"><span class="c1">BREACH: LICENCE CONDITIONS &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &#9744;<br></span>
+      </p><a id="id.1t3h5sf"></a>
+      <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FURTHER CHARGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &#9744;<br></span>
+      </p>
+      <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+      <p class="c0 c11"><span class="c6 c7"></span></p></td>
+    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">PNC/CRO NUMBER: &laquo;CRO_PNC&raquo;</span>
+    </p>
+      <p class="c0"><span class="c1">NPS LDU / CRC: &laquo;probation_area&raquo;</span></p>
+      <p class="c0"><span class="c1">OFFENDER MANAGER NAME:<br>&laquo;OFF_MANAGER&raquo;</span><span
+        class="c13"><br></span><span class="c1">OFFENDER MANAGER CONTACT NUMBER: &laquo;OM_PHONE&raquo;</span></p>
+      <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13">&laquo;SPOC&raquo;</span></p>
+      <p class="c0 c11"><span class="c6 c7"></span></p>
+      <p class="c0"><span class="c1">CURRENT PRISON:</span></p>
+      <p class="c0"><span class="c1">&laquo;CURRENT_ESTABLISHMENT_DESCRIPTION&raquo;</span></p>
+      <p class="c0 c11"><span class="c6 c7"></span></p>
+      <p class="c0"><span
+        class="c1">SENTENCING COURT &amp; DATE: &nbsp;&laquo;SENTENCING_COURT&raquo; &laquo;DOS&raquo;</span></p>
+      <p class="c0 c11"><span class="c6 c7"></span></p>
+      <p class="c0"><span class="c1">SED: &laquo;SED&raquo;</span></p></td>
+  </tr>
+  </tbody>
+</table>
+<p class="c24"><span class="c1">VULNERABILITY ISSUES: </span></p><a id="t.70eb63f9bfbf6594c12ffe820b4a972af79a5675"></a><a
+  id="t.3"></a>
+<table class="c57">
+  <tbody>
+  <tr class="c49">
+    <td class="c39" colspan="1" rowspan="1"><p class="c0"><span class="c1">IS IT BELIEVED THAT THE OFFENDER MAY BE USING RECALL TO BRING CONTRABAND </span><span
+      class="c3">INTO</span><span class="c1">&nbsp;THE PRISON ESTATE? </span><span class="c6 c7">YES/NO [RECALL TEAM &ndash; IF YES, INSERT ANY REASONS PROVIDED ON PART A REPORT]</span>
+    </p></td>
+  </tr>
+  </tbody>
+</table>
+<br><br><br><br>
+<p class="c29"><span class="c370">This message is intended for the individual or entity to which it is addressed and may contain information which is private and confidential. If you are not the intended recipient, employee or agent responsible for delivering this message to the intended recipient, you are hereby notified that any dissemination, distribution or copying of this communication and its attachments is strictly prohibited. If you have received this communication and its attachments in error, please notify us by telephone and destroy the original documentation securely / delete the original e-mail.</span>
+</p>
+
+</body>
+</html>
