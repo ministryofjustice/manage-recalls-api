@@ -15,8 +15,8 @@ import org.springframework.test.context.ActiveProfiles
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -44,10 +44,10 @@ class PdfDocumentGeneratorGotenbergIntegrationTest {
   fun `should return byte array when generating pdf from html`() {
     val stubResponseAsString = randomString()
     val textOfHtml = randomString()
-    gotenbergMockServer.stubPdfGeneration(stubResponseAsString.toByteArray(), textOfHtml)
+    gotenbergMockServer.stubPdfGeneration(stubResponseAsString.toByteArray(), textOfHtml, "revocation-order-logo")
 
     val details = listOf(
-      HtmlDocumentDetail("index.html", "<body><span>$textOfHtml</span></body>"),
+      StringDocumentDetail("index.html", "<body><span>$textOfHtml</span></body>"),
       ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
     )
 

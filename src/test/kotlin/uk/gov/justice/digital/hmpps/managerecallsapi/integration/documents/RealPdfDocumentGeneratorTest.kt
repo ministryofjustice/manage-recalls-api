@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
 
 class RealPdfDocumentGeneratorTest {
 
@@ -19,7 +19,7 @@ class RealPdfDocumentGeneratorTest {
   @Test
   fun `should return byte array when requesting pdf`() {
     val details = listOf(
-      HtmlDocumentDetail("index.html", "<html><body></body></html>"),
+      StringDocumentDetail("index.html", "<html><body></body></html>"),
       ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
     )
 

@@ -8,8 +8,8 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
@@ -26,7 +26,7 @@ class RevocationOrderService(
   @Autowired private val recallRepository: RecallRepository
 ) {
 
-  fun getRevocationOrder(recallId: RecallId): Mono<ByteArray> {
+  fun getPdf(recallId: RecallId): Mono<ByteArray> {
     val recall = recallRepository.getByRecallId(recallId)
     if (recall.revocationOrderId == null) {
       return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
@@ -44,7 +44,7 @@ class RevocationOrderService(
           val populatedHtml = templateEngine.process("revocation-order", ctx)
 
           val details = listOf(
-            HtmlDocumentDetail("index.html", populatedHtml),
+            StringDocumentDetail("index.html", populatedHtml),
             ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
           )
 

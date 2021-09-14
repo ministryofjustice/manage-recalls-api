@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
-  fun stubPdfGeneration(generatedPdf: ByteArray, textOfHtml: String) {
+  fun stubPdfGeneration(generatedPdf: ByteArray, textOfHtml: String, logoFileName: String) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html"))
         .withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
@@ -30,8 +30,8 @@ class GotenbergMockServer : WireMockServer(9093) {
         .withMultipartRequestBody(
           aMultipart()
             .withName("files")
-            .withHeader("Content-Disposition", equalTo("form-data; name=revocation-order-logo.png; filename=revocation-order-logo.png"))
-            .withBody(equalTo(ClassPathResource("/templates/images/revocation-order-logo.png").file.readText()))
+            .withHeader("Content-Disposition", equalTo("form-data; name=$logoFileName.png; filename=$logoFileName.png"))
+            .withBody(equalTo(ClassPathResource("/templates/images/$logoFileName.png").file.readText()))
         )
         .willReturn(aResponse().withBody(generatedPdf))
     )

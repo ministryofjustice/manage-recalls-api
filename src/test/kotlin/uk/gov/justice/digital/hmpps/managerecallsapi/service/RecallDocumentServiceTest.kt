@@ -142,23 +142,22 @@ internal class RecallDocumentServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
     every { s3Service.downloadFile(documentId) } returns fileBytes
 
-    val (actualDocument, actualBytes) = underTest.getDocumentWithCategory(recallId, aDocumentCategory)
+    val actualBytes = underTest.getDocumentContentWithCategory(recallId, aDocumentCategory)
 
-    assertThat(actualDocument, equalTo(aDocument))
     assertThat(actualBytes, equalTo(fileBytes))
   }
 
   @Test
-  fun `getDocumentWithCategory throws a custom 'document with category not found' error if no document of category is found for recall`() {
+  fun `getDocumentContentWithCategory throws a custom 'document with category not found' error if no document of category is found for recall`() {
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
 
     assertThrows<RecallDocumentWithCategoryNotFoundException> {
-      underTest.getDocumentWithCategory(recallId, randomDocumentCategory())
+      underTest.getDocumentContentWithCategory(recallId, randomDocumentCategory())
     }
   }
 
   @Test
-  fun `getDocumentWithCategory ignores all but one document matching recall ID and document category`() {
+  fun `getDocumentContentWithCategory ignores all but one document matching recall ID and document category`() {
     val theDocumentCategory = randomDocumentCategory()
     val documentOne = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = theDocumentCategory, fileName = randomString())
     val documentTwo = RecallDocument(id = UUID.randomUUID(), recallId = recallId.value, category = theDocumentCategory, fileName = randomString())
@@ -168,9 +167,8 @@ internal class RecallDocumentServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
     every { s3Service.downloadFile(any()) } returns fileBytes
 
-    val (actualDocument, actualBytes) = underTest.getDocumentWithCategory(recallId, theDocumentCategory)
+    val actualBytes = underTest.getDocumentContentWithCategory(recallId, theDocumentCategory)
 
-    assertThat(actualDocument.recallId, equalTo(recallId.value))
     assertThat(actualBytes, equalTo(fileBytes))
   }
 }

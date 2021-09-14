@@ -23,7 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotificationService
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.Base64
@@ -33,12 +33,12 @@ class RecallsControllerTest {
   private val advertisedBaseUri = "https://api"
 
   private val recallRepository = mockk<RecallRepository>()
-  private val revocationOrderService = mockk<RevocationOrderService>()
+  private val recallNotificationService = mockk<RecallNotificationService>()
   private val recallDocumentService = mockk<RecallDocumentService>()
   private val dossierService = mockk<DossierService>()
 
   private val underTest =
-    RecallsController(recallRepository, revocationOrderService, recallDocumentService, dossierService, advertisedBaseUri)
+    RecallsController(recallRepository, recallNotificationService, recallDocumentService, dossierService, advertisedBaseUri)
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
@@ -112,14 +112,14 @@ class RecallsControllerTest {
 
   @Suppress("ReactiveStreamsUnusedPublisher")
   @Test
-  fun `get revocation order returns RevocationOrder PDF`() {
+  fun `get recall notification returns Recall Notification PDF`() {
     val recall = recallRequest.toRecall()
     val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    every { revocationOrderService.getRevocationOrder(recall.recallId()) } returns Mono.just(expectedPdf)
+    every { recallNotificationService.getDocument(recall.recallId()) } returns Mono.just(expectedPdf)
 
-    val result = underTest.getRevocationOrder(recall.recallId())
+    val result = underTest.getRecallNotification(recall.recallId())
 
     StepVerifier
       .create(result)

@@ -56,7 +56,7 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun getRevocationOrder(recallId: RecallId): Pdf =
+  fun getRecallNotification(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/recallNotification", Pdf::class.java)
 
   // TODO PUD-521: un-used for now ... for starters just return the revocation order

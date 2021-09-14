@@ -53,7 +53,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
     Base64.getEncoder().encodeToString(ClassPathResource(fileName).file.readBytes())
 
   private fun expectTheRevocationOrderWillBeGenerated(expectedPdf: ByteArray, firstName: String) {
-    gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName)
+    gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName, "revocation-order-logo")
   }
 
   private fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, firstName: String) {
