@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -13,7 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchReques
 import java.time.LocalDate
 import java.util.Base64
 
-class GetRevocationOrderComponentTest : ComponentTestBase() {
+class GetRecallNotificationComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val firstName = "Natalia"
@@ -21,37 +20,23 @@ class GetRevocationOrderComponentTest : ComponentTestBase() {
   private val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
   @Test
-  fun `get revocation order generates a Pdf and uploads to S3 if it does not already exist`() {
+  fun `get recall notification returns merged recall summary and revocation order`() {
     val recallId = ::RecallId.random()
     recallRepository.save(Recall(recallId, nomsNumber))
 
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
-    expectAPdfWillBeGenerated(expectedPdf, firstName)
+    gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName, "revocation-order-logo")
+    gotenbergMockServer.stubPdfGeneration(expectedPdf, "OFFENDER IS IN CUSTODY", "recall-summary-logo")
 
-    val response = authenticatedClient.getRevocationOrder(recallId)
+    gotenbergMockServer.stubMergePdfs(
+      expectedPdf,
+      "1-recallSummary.pdf" to expectedPdf.decodeToString(),
+      "2-revocationOrder.pdf" to expectedPdf.decodeToString(),
+    )
 
-    assertThat(response.content, equalTo(expectedBase64Pdf))
-  }
-
-  @Test
-  fun `get revocation order downloads the document from S3 if it already exists`() {
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-
-    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
-    expectAPdfWillBeGenerated(expectedPdf, firstName)
-
-    authenticatedClient.getRevocationOrder(recall.recallId)
-
-    prisonerOffenderSearch.resetAll()
-    gotenbergMockServer.resetAll()
-
-    val response = authenticatedClient.getRevocationOrder(recall.recallId)
+    val response = authenticatedClient.getRecallNotification(recallId)
 
     assertThat(response.content, equalTo(expectedBase64Pdf))
-  }
-
-  private fun expectAPdfWillBeGenerated(expectedPdf: ByteArray, firstName: String) {
-    gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName)
   }
 
   private fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, firstName: String) {

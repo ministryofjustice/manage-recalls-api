@@ -40,6 +40,10 @@ class PdfDocumentGenerator(
           .part(documentDetail.name, documentDetail.data())
           .header(CONTENT_DISPOSITION, "form-data; name=${documentDetail.name}; filename=${documentDetail.name}")
       }
+      this.part("marginTop", 0.0)
+      this.part("marginBottom", 0.0)
+      this.part("marginLeft", 0.0)
+      this.part("marginRight", 0.0)
     }.build()
 
   private fun gotenbergResponse(
@@ -69,12 +73,10 @@ data class InputStreamDocumentDetail(override val name: String, val inputStream:
   override fun data() = MultipartInputStreamFileResource(inputStream, name)
 }
 
-// TODO: rename `HtmlDocumentDetail` as simply `StringDocumentDetail`?
-data class HtmlDocumentDetail(override val name: String, val html: String) : DocumentDetail<String> {
-  override fun data() = html
+data class StringDocumentDetail(override val name: String, val value: String) : DocumentDetail<String> {
+  override fun data() = value
 }
 
-// TODO: rename - remove 'file'
 class MultipartInputStreamFileResource(inputStream: InputStream, private val filename: String) :
   InputStreamResource(inputStream) {
   override fun getFilename(): String {

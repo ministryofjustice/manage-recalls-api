@@ -122,7 +122,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @Suppress("ReactiveStreamsUnusedPublisher")
   @State("a recall notification can be downloaded")
   fun `a recall notification can be downloaded`() {
-    every { revocationOrderService.getRevocationOrder(any()) } returns Mono.just("some pdf contents".toByteArray())
+    every { revocationOrderService.getPdf(any()) } returns Mono.just("some pdf contents".toByteArray())
   }
 
   @Suppress("ReactiveStreamsUnusedPublisher")

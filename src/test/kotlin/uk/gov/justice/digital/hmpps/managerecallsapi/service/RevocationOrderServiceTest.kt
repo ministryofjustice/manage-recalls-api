@@ -66,7 +66,7 @@ internal class RevocationOrderServiceTest {
     every { s3Service.uploadFile(capture(revocationOrderIdSlot), expectedBytes) } just runs
     every { recallRepository.save(capture(savedRecallSlot)) } returns mockk()
 
-    val result = underTest.getRevocationOrder(recallId).block()!!
+    val result = underTest.getPdf(recallId).block()!!
 
     assertThat(result, equalTo(expectedBytes))
     assertThat(contextSlot.captured.getVariable("licenseRevocationDate").toString(), equalTo(LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy"))))
@@ -83,7 +83,7 @@ internal class RevocationOrderServiceTest {
     every { recallRepository.save(theRecallWithRevocationOrder) } returns theRecallWithRevocationOrder
     every { s3Service.downloadFile(revocationOrderId) } returns expectedBytes
 
-    val result = underTest.getRevocationOrder(recallId)
+    val result = underTest.getPdf(recallId)
 
     StepVerifier
       .create(result)
