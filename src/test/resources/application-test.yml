@@ -16,16 +16,6 @@ spring:
     hibernate:
       ddl-auto: none
 
-pactbroker:
-  host: pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
-  scheme: https
-  consumerversionselectors:
-    tags: main
-
-pact:
-  verifier:
-    publishResults: false
-
 aws:
   region: eu-west-1
   credentials:

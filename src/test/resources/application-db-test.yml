@@ -14,3 +14,13 @@ aws:
     bucketName: test-manage-recalls-api
   local:
     endpoint: http://localhost:4566
+
+pactbroker:
+  host: pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
+  scheme: https
+  consumerversionselectors:
+    tags: main
+
+pact:
+  verifier:
+    publishResults: false

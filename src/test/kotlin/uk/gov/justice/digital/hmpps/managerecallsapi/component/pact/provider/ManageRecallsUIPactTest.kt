@@ -33,7 +33,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RevocationOrderService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotificationService
 import java.time.LocalDate
 import java.util.Base64
 import java.util.UUID
@@ -45,7 +45,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
 
   @MockkBean
-  private lateinit var revocationOrderService: RevocationOrderService
+  private lateinit var recallNotificationService: RecallNotificationService
 
   @MockkBean
   private lateinit var dossierService: DossierService
@@ -122,7 +122,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @Suppress("ReactiveStreamsUnusedPublisher")
   @State("a recall notification can be downloaded")
   fun `a recall notification can be downloaded`() {
-    every { revocationOrderService.getPdf(any()) } returns Mono.just("some pdf contents".toByteArray())
+    every { recallNotificationService.getDocument(any()) } returns Mono.just("some pdf contents".toByteArray())
   }
 
   @Suppress("ReactiveStreamsUnusedPublisher")
