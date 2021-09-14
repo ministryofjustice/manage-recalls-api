@@ -18,8 +18,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -63,7 +63,7 @@ internal class RevocationOrderServiceTest {
     every {
       pdfDocumentGenerator.makePdf(
         listOf(
-          HtmlDocumentDetail("index.html", generatedHtml),
+          StringDocumentDetail("index.html", generatedHtml),
           ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
         )
       )
