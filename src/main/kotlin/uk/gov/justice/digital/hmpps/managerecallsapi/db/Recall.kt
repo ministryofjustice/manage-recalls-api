@@ -32,75 +32,47 @@ import javax.persistence.Table
 data class Recall(
   @Id
   val id: UUID,
-
   @Column(nullable = false)
   @Convert(converter = NomsNumberJpaConverter::class)
   val nomsNumber: NomsNumber,
-
   val revocationOrderId: UUID? = null,
-
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val documents: Set<RecallDocument> = emptySet(),
-
   @Enumerated(STRING)
   val recallType: RecallType? = null,
-
   @Enumerated(STRING)
   val recallLength: RecallLength? = null,
-
   val lastReleasePrison: String? = null,
-
   val lastReleaseDate: LocalDate? = null,
-
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
-
   val localPoliceForce: String? = null,
-
   val contrabandDetail: String? = null,
-
   val vulnerabilityDiversityDetail: String? = null,
-
   @Enumerated(STRING)
   val mappaLevel: MappaLevel? = null,
-
   val sentencingInfo: SentencingInfo? = null,
-
   val bookingNumber: String? = null,
-
   val probationInfo: ProbationInfo? = null,
-
   val licenceConditionsBreached: String? = null,
-
   @ElementCollection(targetClass = ReasonForRecall::class)
   @JoinTable(name = "recall_reason", joinColumns = [JoinColumn(name = "recall_id")])
   @Column(name = "reason_for_recall", nullable = false)
   @Enumerated(STRING)
   val reasonsForRecall: Set<ReasonForRecall> = emptySet(),
-
   val reasonsForRecallOtherDetail: String? = null,
-
   @Enumerated(STRING)
   val agreeWithRecall: AgreeWithRecall? = null,
-
   val agreeWithRecallDetail: String? = null,
-
   val currentPrison: String? = null,
-
   val additionalLicenceConditions: Boolean? = null,
-
   val additionalLicenceConditionsDetail: String? = null,
-
   val differentNomsNumber: Boolean? = null,
-
   val differentNomsNumberDetail: String? = null,
-
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
-
   val dossierEmailSentDate: LocalDate? = null,
-
   val hasOtherPreviousConvictionMainName: Boolean? = null,
-
+  val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
 ) {
   constructor(
@@ -133,6 +105,7 @@ data class Recall(
     recallNotificationEmailSentDateTime: OffsetDateTime? = null,
     dossierEmailSentDate: LocalDate? = null,
     hasOtherPreviousConvictionMainName: Boolean? = null,
+    hasDossierBeenChecked: Boolean? = null,
     previousConvictionMainName: String? = null,
   ) :
     this(
@@ -165,6 +138,7 @@ data class Recall(
       recallNotificationEmailSentDateTime,
       dossierEmailSentDate,
       hasOtherPreviousConvictionMainName,
+      hasDossierBeenChecked,
       previousConvictionMainName
     )
 

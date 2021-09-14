@@ -92,6 +92,7 @@ fun recallWithPopulatedFields(
   recallNotificationEmailSentDateTime = dateTimeNow(),
   dossierEmailSentDate = dateNow(),
   hasOtherPreviousConvictionMainName = randomBoolean(),
+  hasDossierBeenChecked = randomBoolean(),
   previousConvictionMainName = randomString()
 )
 

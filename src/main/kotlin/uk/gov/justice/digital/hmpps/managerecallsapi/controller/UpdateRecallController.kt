@@ -68,6 +68,7 @@ data class UpdateRecallRequest(
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
   val hasOtherPreviousConvictionMainName: Boolean? = null,
+  val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
 )
 
