@@ -24,5 +24,4 @@ class RecallSummaryService(
 
     return pdfDocumentGenerator.makePdf(details)
   }
-
 }
