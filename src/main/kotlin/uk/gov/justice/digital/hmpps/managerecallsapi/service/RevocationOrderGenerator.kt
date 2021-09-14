@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale.ENGLISH
 
 @Component
 class RevocationOrderGenerator(
@@ -16,7 +17,7 @@ class RevocationOrderGenerator(
   @Autowired private val clock: Clock
 ) {
 
-  private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+  private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
 
   fun generateHtml(prisoner: Prisoner, recall: Recall): String =
     Context().apply {

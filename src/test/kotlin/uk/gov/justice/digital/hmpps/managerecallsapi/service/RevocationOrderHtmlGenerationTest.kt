@@ -16,7 +16,7 @@ import java.time.ZoneId
 
 class RevocationOrderHtmlGenerationTest(
   @Autowired private val templateEngine: SpringTemplateEngine
-): HtmlGenerationTestCase() {
+) : HtmlGenerationTestCase() {
 
   private val fixedClock = Clock.fixed(Instant.parse("2021-09-01T16:48:30.00Z"), ZoneId.of("UTC"))
   private val underTest = RevocationOrderGenerator(templateEngine, fixedClock)
@@ -35,7 +35,7 @@ class RevocationOrderHtmlGenerationTest(
       Recall(
         ::RecallId.random(),
         randomNoms(),
-        lastReleaseDate = LocalDate.of(2020, 9, 1)
+        lastReleaseDate = LocalDate.of(2020, 9, 30)
       )
     )
 
