@@ -36,10 +36,6 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-traefikProxy:
-  # TODO: remove and calc from whether we have an ingress or not?
-  enabled: false
-
 # Additional tags to add to your grafana dashboards - i.e. your project name
 # Your dashboards will already be tagged with your application/release name.
 extraDashboardTags: []

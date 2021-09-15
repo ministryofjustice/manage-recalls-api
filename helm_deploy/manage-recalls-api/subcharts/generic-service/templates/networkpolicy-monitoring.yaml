@@ -1,8 +1,8 @@
-{{- if .Values.traefikProxy.enabled -}}
+{{- if eq .Values.ingress.enabled false -}}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: {{ include "generic-service.fullname" . }}
+  name: {{ include "generic-service.fullname" . }}-monitoring
 spec:
   podSelector:
     matchLabels:

@@ -1,8 +1,8 @@
-{{- if .Values.traefikProxy.enabled -}}
+{{- if eq .Values.ingress.enabled false -}}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "generic-service.fullname" . }}
+  name: {{ include "generic-service.fullname" . }}-traefik
 spec:
   selector:
     matchLabels:
