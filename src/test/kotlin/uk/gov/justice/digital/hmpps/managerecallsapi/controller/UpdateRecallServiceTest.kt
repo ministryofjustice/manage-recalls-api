@@ -96,7 +96,7 @@ class UpdateRecallServiceTest {
 
   @Test
   fun `cannot reset recall properties to null with update recall`() {
-    val fullyPopulatedRecall: Recall = fullyPopulatedRecall()
+    val fullyPopulatedRecall: Recall = fullyPopulatedRecall(recallId)
     every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecall
     every { recallRepository.save(fullyPopulatedRecall) } returns fullyPopulatedRecall
 

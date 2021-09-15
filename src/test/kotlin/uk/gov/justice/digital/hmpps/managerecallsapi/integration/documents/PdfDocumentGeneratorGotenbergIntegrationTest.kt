@@ -13,11 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDO
 import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.ActiveProfiles
 import reactor.test.StepVerifier
-import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")

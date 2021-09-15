@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.random
 
 import org.apache.commons.lang3.RandomStringUtils
-import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
+import java.util.concurrent.ThreadLocalRandom
 import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -14,9 +17,13 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
-internal fun fullyPopulatedRecall(): Recall = fullyPopulatedInstance<Recall>().let {
+internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random()): Recall = fullyPopulatedInstance<Recall>().let {
   // ensure recall length is valid for the random sentencing info as it is calculated on the fly
-  it.copy(recallLength = it.sentencingInfo?.calculateRecallLength())
+  it.copy(
+    id = recallId.value,
+    recallLength = it.sentencingInfo?.calculateRecallLength(),
+    documents = it.documents.map { it.copy(recallId = recallId.value) }.toSet()
+  )
 }
 
 internal inline fun <reified T : Any> fullyPopulatedInstance(): T =
@@ -37,8 +44,7 @@ private fun createRandomInstanceForParameter(paramType: KType, kclass: KClass<*>
   when (val classifier = paramType.classifier) {
     is KClass<*> -> classifier.createRandomInstance(paramType)
     is KTypeParameter -> {
-      val typeParameterName = classifier.name
-      val typeParameterId = kclass.typeParameters.indexOfFirst { it.name == typeParameterName }
+      val typeParameterId = kclass.typeParameters.indexOfFirst { it.name == classifier.name }
       val parameterType = type.arguments[typeParameterId].type ?: Any::class.createType()
       (parameterType.classifier as KClass<*>).createRandomInstance(paramType)
     }
@@ -64,4 +70,16 @@ private fun KClass<*>.createStandardInstance(type: KType): Any? =
 private fun makeRandomSet(kclass: KClass<*>, type: KType): Set<Any> {
   val elemType = type.arguments[0].type!!
   return setOf(createRandomInstanceForParameter(elemType, kclass, type))
+}
+
+fun ((UUID) -> RecallId).zeroes() = this(UUID(0, 0))
+fun randomString() = RandomStringUtils.randomAlphanumeric(10)
+fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
+fun randomDocumentCategory() = RecallDocumentCategory.values().random()
+fun randomAdultDateOfBirth(): LocalDate? {
+  val age18 = LocalDate.now().minusYears(18)
+  val endEpochDay = age18.toEpochDay()
+  val startEpochDay = age18.minusYears(80).toEpochDay()
+  val randomDay = ThreadLocalRandom.current().nextLong(startEpochDay, endEpochDay)
+  return LocalDate.ofEpochDay(randomDay)
 }
