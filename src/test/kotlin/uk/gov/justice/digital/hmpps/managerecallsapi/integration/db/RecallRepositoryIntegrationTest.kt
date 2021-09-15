@@ -11,25 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
-import java.time.LocalDate
-import java.time.OffsetDateTime
 import java.util.UUID
 import javax.transaction.Transactional
 
@@ -59,45 +49,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
     assertThat(repository.getByRecallId(recallId), equalTo(recall))
 
-    val localDate = LocalDate.now()
-    val recallToUpdate = recall.copy(
-      recallType = FIXED,
-      revocationOrderId = UUID.randomUUID(),
-      documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, randomString())),
-      recallLength = TWENTY_EIGHT_DAYS,
-      recallEmailReceivedDateTime = OffsetDateTime.now(),
-      lastReleasePrison = "WIN",
-      lastReleaseDate = localDate,
-      localPoliceForce = "London",
-      contrabandDetail = "i am worried...",
-      vulnerabilityDiversityDetail = "has the following needs",
-      mappaLevel = MappaLevel.NOT_KNOWN,
-      sentencingInfo = SentencingInfo(
-        localDate,
-        localDate,
-        localDate,
-        "A Court",
-        "Some Offence",
-        SentenceLength(2, 4, 6),
-        localDate
-      ),
-      bookingNumber = "BN12345",
-      probationInfo = ProbationInfo(
-        "Probation Officer Name",
-        "07111111111",
-        "email@email.com",
-        ProbationDivision.NORTH_EAST,
-        "Assistant Chief Officer"
-      ),
-      licenceConditionsBreached = "Breached by blah blah blah",
-      reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
-      reasonsForRecallOtherDetail = "Because of something else",
-      currentPrison = "MWI",
-      additionalLicenceConditions = true,
-      additionalLicenceConditionsDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      differentNomsNumber = false,
-      differentNomsNumberDetail = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    )
+    val recallToUpdate = fullyPopulatedRecall(recallId)
     repository.save(recallToUpdate)
 
     val updatedRecall = repository.getByRecallId(recallId)

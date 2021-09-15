@@ -5,14 +5,13 @@ import com.natpryce.hamkrest.equalTo
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.NOT_FOUND
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import java.time.LocalDate
 
 class GetRecallComponentTest : ComponentTestBase() {
@@ -32,15 +31,15 @@ class GetRecallComponentTest : ComponentTestBase() {
   @Test
   fun `get a fully populated recall`() {
     val recallId = ::RecallId.random()
-    val fullyPopulatedRecall = recallWithPopulatedFields(recallId, nomsNumber)
+    val fullyPopulatedRecall = fullyPopulatedRecall(recallId)
     recallRepository.save(fullyPopulatedRecall)
 
     // TODO:  MD Fix assertions, or move somewhere more sensible.
     authenticatedClient.get("/recalls/$recallId")
       .expectBody()
       .jsonPath("$.recallId").isEqualTo(recallId.toString())
-      .jsonPath("$.nomsNumber").isEqualTo(nomsNumber.value)
-      .jsonPath("$.documents.length()").isEqualTo(2)
+      .jsonPath("$.nomsNumber").isEqualTo(fullyPopulatedRecall.nomsNumber.value)
+      .jsonPath("$.documents.length()").isEqualTo(1)
       .jsonPath("$.revocationOrderId").isNotEmpty
       .jsonPath("$.recallLength").isEqualTo(fullyPopulatedRecall.recallLength!!.name)
       .jsonPath("$.lastReleasePrison").isEqualTo(fullyPopulatedRecall.lastReleasePrison!!)
@@ -48,7 +47,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.localPoliceForce").isEqualTo(fullyPopulatedRecall.localPoliceForce!!)
       .jsonPath("$.contrabandDetail").isEqualTo(fullyPopulatedRecall.contrabandDetail!!)
       .jsonPath("$.vulnerabilityDiversityDetail").isEqualTo(fullyPopulatedRecall.vulnerabilityDiversityDetail!!)
-      .jsonPath("$.mappaLevel").isEqualTo(MappaLevel.NA.name)
+      .jsonPath("$.mappaLevel").isEqualTo(fullyPopulatedRecall.mappaLevel!!.name)
       .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.licenceExpiryDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.sentenceExpiryDate").isEqualTo(LocalDate.now().toString())
@@ -64,7 +63,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.authorisingAssistantChiefOfficer")
       .isEqualTo(fullyPopulatedRecall.probationInfo!!.authorisingAssistantChiefOfficer)
       .jsonPath("$.licenceConditionsBreached").isEqualTo(fullyPopulatedRecall.licenceConditionsBreached!!)
-      .jsonPath("$.reasonsForRecall.length()").isEqualTo(ReasonForRecall.values().size)
+      .jsonPath("$.reasonsForRecall.length()").isEqualTo(1)
       .jsonPath("$.reasonsForRecallOtherDetail").isEqualTo(fullyPopulatedRecall.reasonsForRecallOtherDetail!!)
       .jsonPath("$.agreeWithRecall").isEqualTo(fullyPopulatedRecall.agreeWithRecall!!.name)
       .jsonPath("$.agreeWithRecallDetail").isEqualTo(fullyPopulatedRecall.agreeWithRecallDetail!!)
