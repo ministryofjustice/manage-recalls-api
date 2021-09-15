@@ -3,7 +3,7 @@
 Environment variables for web and worker containers
 */}}
 {{- define "deployment.envs" -}}
-{{- $appName := include "generic-service-with-traefik.name" . -}}
+{{- $appName := include "generic-service.name" . -}}
 {{- if .Values.namespace_secrets -}}
 env:
 {{- range $secret, $envs := .Values.namespace_secrets }}

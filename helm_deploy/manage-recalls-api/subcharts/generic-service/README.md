@@ -1,4 +1,4 @@
-# generic-service-with-traefik helm chart
+# generic-service helm chart
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ helm_deploy/[project name]/values.yaml
 helm_deploy/[project name]/templates/ (* optional)
 ```
 
-(_\* optionally include the `templates/` folder containing project specific resources not installed by generic-service-with-traefik chart e.g. cronjobs_)
+(_\* optionally include the `templates/` folder containing project specific resources not installed by generic-service chart e.g. cronjobs_)
 
 Example `Chart.yaml`
 
@@ -55,7 +55,7 @@ name: [PROJECT NAME HERE]
 version: 0.1.0
 
 dependencies:
-  - name: generic-service-with-traefik
+  - name: generic-service
     version: 1.0.5
     repository: https://ministryofjustice.github.io/hmpps-helm-charts
 ```
@@ -64,7 +64,7 @@ dependencies:
 
 `helm_deploy/[project name]/values.yaml`
 
-The values here override the default values set in the `generic-service-with-traefik` chart - see the _values.yaml_ in this repo/folder.
+The values here override the default values set in the `generic-service` chart - see the _values.yaml_ in this repo/folder.
 
 This file will contain values that are the same across all environments.
 
@@ -72,7 +72,7 @@ Example project `values.yaml` file:
 
 ```yaml
 ---
-generic-service-with-traefik:
+generic-service:
   nameOverride: project-name
 
   image:
@@ -141,7 +141,7 @@ Example of `helm_deploy/values-[environment].yaml` file:
 
 ```yaml
 ---
-generic-service-with-traefik:
+generic-service:
   replicaCount: 2
 
   ingress:

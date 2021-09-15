@@ -3,7 +3,7 @@
 Volume mounts for containers
 */}}
 {{- define "deployment.volume_mounts" -}}
-{{- $appName := include "generic-service-with-traefik.name" . -}}
+{{- $appName := include "generic-service.name" . -}}
 {{- if .Values.namespace_secrets_to_file -}}
 volumeMounts:
 {{- range $secret, $envs := .Values.namespace_secrets_to_file }}

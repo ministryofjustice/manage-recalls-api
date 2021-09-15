@@ -1,13 +1,13 @@
-{{- if .Values.traefikProxy.enabled -}}
-{{- $targetApplication := include "generic-service-with-traefik.fullname" . -}}
+{{- if .Values.ingress.enabled -}}
+{{- $targetApplication := include "generic-service.fullname" . -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $targetApplication }}-traefik-golden-signals-dashboard
+  name: {{ $targetApplication }}-ingress-golden-signals-dashboard
   labels:
-    {{- include "generic-service-with-traefik.dashboardLabels" . | nindent 4 }}
+    {{- include "generic-service.dashboardLabels" . | nindent 4 }}
 data:
-  {{ $targetApplication }}-traefik-golden-signals-dashboard.json: |
+  {{ $targetApplication }}-ingress-golden-signals-dashboard.json: |
     {
       "annotations": {
         "list": [
@@ -36,7 +36,7 @@ data:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Thanos",
-          "description": "The number of HTTP requests per second received.",
+          "description": "The number of HTTP requests per second received via the ingress.",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -78,15 +78,15 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(\n  irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[1m])\n)",
+              "expr": "sum(\n  irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n)",
               "interval": "",
               "legendFormat": "Requests",
               "refId": "A"
             },
             {
-              "expr": "sum(\n  irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[1m])\n) by (code)",
+              "expr": "sum(\n  irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n) by (status)",
               "interval": "",
-              "legendFormat": "{{ "{{code}}" }}",
+              "legendFormat": "{{ "{{status}}" }}",
               "refId": "B"
             }
           ],
@@ -179,7 +179,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(\n  irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\", code!~\"5.*|499\"}[1m])\n)\n/ \nsum(\n  irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[1m])\n) * 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status!~\"5.*|499\"}[1m]))\n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m]))\n* 100",
               "interval": "",
               "legendFormat": "Request Success Rate",
               "refId": "A"
@@ -233,7 +233,7 @@ data:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Thanos",
-          "description": "Recorded request duration in percentiles.",
+          "description": "Recorded request duration from the ingress controllers in percentiles.",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -275,19 +275,19 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.5,\n  max(\n    irate(traefik_entrypoint_request_duration_seconds_bucket{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
+              "expr": "histogram_quantile(\n  0.5,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
               "interval": "",
               "legendFormat": "p50",
               "refId": "A"
             },
             {
-              "expr": "histogram_quantile(\n  0.95,\n  max(\n    irate(traefik_entrypoint_request_duration_seconds_bucket{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
+              "expr": "histogram_quantile(\n  0.95,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
               "interval": "",
               "legendFormat": "p95",
               "refId": "B"
             },
             {
-              "expr": "histogram_quantile(\n  1,\n  max(\n    irate(traefik_entrypoint_request_duration_seconds_bucket{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
+              "expr": "histogram_quantile(\n  1,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
               "interval": "",
               "legendFormat": "p100",
               "refId": "C"
@@ -383,31 +383,31 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\", code=\"500\"}[1m])) \n/ \nsum(irate(traefik_backend_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"500\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "500",
               "refId": "A"
             },
             {
-              "expr": "sum(irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\", code=\"501\"}[1m])) \n/ \nsum(irate(traefik_backend_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"501\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "501",
               "refId": "B"
             },
             {
-              "expr": "sum(irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\", code=\"502\"}[1m])) \n/ \nsum(irate(traefik_backend_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"502\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "502",
               "refId": "C"
             },
             {
-              "expr": "sum(irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\", code=\"503\"}[1m])) \n/ \nsum(irate(traefik_backend_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"503\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "503",
               "refId": "D"
             },
             {
-              "expr": "sum(irate(traefik_entrypoint_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\", code=\"504\"}[1m])) \n/ \nsum(irate(traefik_backend_requests_total{entrypoint=\"web\", job=\"{{ $targetApplication }}\", namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"504\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "504",
               "refId": "E"
@@ -938,11 +938,118 @@ data:
             "align": false,
             "alignLevel": null
           }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Thanos",
+          "description": "The amount of data being sent to and from the ingress.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 16,
+            "y": 24
+          },
+          "hiddenSeries": false,
+          "id": 24,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "nullPointMode": "connected",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Request",
+              "transform": "negative-Y"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(\n  irate(nginx_ingress_controller_request_size_sum{exported_namespace=\"{{ .Release.Namespace }}\"}[2m])\n)",
+              "interval": "",
+              "legendFormat": "Request",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(\n  irate(nginx_ingress_controller_response_size_sum{exported_namespace=\"{{ .Release.Namespace }}\"}[2m])\n)",
+              "interval": "",
+              "legendFormat": "Response",
+              "refId": "C"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Network I/O",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": null,
+              "format": "decbytes",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "decbytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         }
       ],
       "schemaVersion": 25,
       "style": "dark",
-      "tags": {{ include "generic-service-with-traefik.dashboardTagsTraefik" . }},
+      "tags": {{ include "generic-service.dashboardTagsIngress" . }},
       "templating": {
         "list": []
       },
@@ -975,7 +1082,7 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "{{ .Release.Namespace }} / {{ .Release.Name }} / Golden Signals (Traefik)",
+      "title": "{{ .Release.Namespace }} / {{ .Release.Name }} / Golden Signals (Ingress)",
       "uid": "",
       "version": 1
     }

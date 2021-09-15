@@ -1,5 +1,5 @@
 ---
-generic-service-with-traefik:
+generic-service:
   nameOverride: manage-recalls-api
 
   replicaCount: 4

@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "generic-service-with-traefik.fullname" . }}
+  name: {{ include "generic-service.fullname" . }}
   labels:
-    {{- include "generic-service-with-traefik.labels" . | nindent 4 }}
+    {{- include "generic-service.labels" . | nindent 4 }}
 data:
   traefik.yaml: |
     ---
@@ -14,11 +14,11 @@ data:
 
     entryPoints:
       web:
-        address: :{{ include "generic-service-with-traefik.traefikProxyPort" . }}
+        address: :{{ include "generic-service.traefikProxyPort" . }}
       metrics:
-        address: :{{ include "generic-service-with-traefik.traefikProxyMetricsPort" . }}
+        address: :{{ include "generic-service.traefikProxyMetricsPort" . }}
       ping:
-        address: :{{ include "generic-service-with-traefik.traefikProxyPingPort" . }}
+        address: :{{ include "generic-service.traefikProxyPingPort" . }}
 
     log:
       level: DEBUG
@@ -43,14 +43,14 @@ data:
     ---
     http:
       routers:
-        {{ include "generic-service-with-traefik.fullname" . }}:
+        {{ include "generic-service.fullname" . }}:
           entryPoints:
             - web
           rule: PathPrefix(`/`)
-          service: {{ include "generic-service-with-traefik.fullname" . }}
+          service: {{ include "generic-service.fullname" . }}
 
       services:
-        {{ include "generic-service-with-traefik.fullname" . }}:
+        {{ include "generic-service.fullname" . }}:
           loadBalancer:
             servers:
               - url: http://127.0.0.1:{{ .Values.image.port }}

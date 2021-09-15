@@ -2,11 +2,11 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "generic-service-with-traefik.fullname" . }}
+  name: {{ include "generic-service.fullname" . }}
 spec:
   selector:
     matchLabels:
-      {{- include "generic-service-with-traefik.selectorLabels" . | nindent 6 }}
+      {{- include "generic-service.selectorLabels" . | nindent 6 }}
   endpoints:
   - port: proxy-metrics
     path: /metrics
