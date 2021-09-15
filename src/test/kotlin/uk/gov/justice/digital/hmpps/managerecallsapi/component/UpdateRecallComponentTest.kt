@@ -219,4 +219,20 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       .expectStatus().isBadRequest
       .expectBody().jsonPath("$.message").value(Matchers.startsWith("JSON parse error"))
   }
+
+  @Suppress("unused")
+  private fun invalidTimestampFields(): Stream<String> {
+    return Stream.of(
+      """{"recallEmailReceivedDateTime": "2222-99-99T99:99:00.000Z"}""",
+      """{"recallNotificationEmailSentDateTime": "2222-99-99T99:99:00.000Z"}"""
+    )
+  }
+
+  @ParameterizedTest
+  @MethodSource("invalidTimestampFields")
+  fun `validates timstamp fields`(requestJson: String) {
+    authenticatedClient.patch(recallPath, requestJson)
+      .expectStatus().isBadRequest
+      .expectBody().jsonPath("$.message").value(Matchers.startsWith("JSON parse error"))
+  }
 }
