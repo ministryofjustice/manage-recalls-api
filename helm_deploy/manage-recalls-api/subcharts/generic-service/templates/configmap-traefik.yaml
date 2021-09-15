@@ -1,8 +1,8 @@
-{{- if .Values.traefikProxy.enabled -}}
+{{- if eq .Values.ingress.enabled false -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "generic-service.fullname" . }}
+  name: {{ include "generic-service.fullname" . }}-traefik
   labels:
     {{- include "generic-service.labels" . | nindent 4 }}
 data:

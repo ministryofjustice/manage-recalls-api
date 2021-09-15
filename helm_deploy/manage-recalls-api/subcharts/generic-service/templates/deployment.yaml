@@ -36,7 +36,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        {{- if .Values.traefikProxy.enabled }}
+        {{- if eq .Values.ingress.enabled false }}
         - name: traefik
           image: traefik:v2.5.2
           imagePullPolicy: IfNotPresent

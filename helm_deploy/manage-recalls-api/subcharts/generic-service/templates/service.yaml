@@ -8,7 +8,7 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    {{- if .Values.traefikProxy.enabled }}
+    {{ if eq .Values.ingress.enabled false -}}
     - port: {{ .Values.service.port }}
       targetPort: proxy-http
       protocol: TCP
