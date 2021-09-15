@@ -49,7 +49,7 @@ services:
     build: ./fake-prison-register-api
     networks:
       - manage-recalls-api
-    container_name: fake-prison-register-api
+    container_name: fake-prison-register-api_manage-recalls-api
     ports:
       - "9094:8080"
     healthcheck:
