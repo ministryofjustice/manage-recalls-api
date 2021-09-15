@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.L
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.DocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 
@@ -15,6 +16,7 @@ class DossierService(
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
   @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val pdfDecorator: PdfDecorator,
 ) {
 
   fun getDossier(recallId: RecallId): Mono<ByteArray> {
@@ -31,6 +33,8 @@ class DossierService(
       docs.add(InputStreamDocumentDetail("9-revocationOrder.pdf", it.inputStream()))
     }.flatMap {
       pdfDocumentGenerator.mergePdfs(docs)
+    }.map { mergedPdfBytes ->
+      pdfDecorator.numberPages(mergedPdfBytes)
     }
   }
 }

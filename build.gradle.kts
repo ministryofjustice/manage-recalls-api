@@ -34,6 +34,8 @@ dependencies {
 
   implementation("io.sentry:sentry-spring-boot-starter:5.1.2")
   implementation("io.sentry:sentry-logback:5.1.2")
+  implementation("com.github.librepdf:openpdf:1.3.26")
+  implementation("com.github.librepdf:openpdf-fonts-extra:1.3.26")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 
