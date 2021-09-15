@@ -4,17 +4,13 @@ Volumes for deployments
 */}}
 {{- define "deployment.volumes" -}}
 {{- $appName := include "generic-service.name" . -}}
-{{- if or .Values.traefikProxy.enabled .Values.namespace_secrets_to_file -}}
+{{- $useTraefik := eq .Values.ingress.enabled false -}}
+{{- if or $useTraefik .Values.namespace_secrets_to_file -}}
 volumes:
-{{- if .Values.traefikProxy.enabled }}
+{{- if $useTraefik }}
   - name: traefik-config
     configMap:
-      name: {{ include "generic-service.fullname" . }}
-      items:
-        - key: traefik.yaml
-          path: traefik.yaml
-        - key: traefik-conf.yaml
-          path: traefik-conf.yaml
+      name: {{ include "generic-service.fullname" . }}-traefik
 {{- end }}
 {{- range $secret, $envs := .Values.namespace_secrets_to_file }}
   - name: vol-{{ $secret }}

@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $targetApplication }}-ingress-golden-signals-dashboard
+  name: {{ $targetApplication }}-golden-signals-dashboard-ingress
   labels:
     {{- include "generic-service.dashboardLabels" . | nindent 4 }}
 data:
@@ -437,7 +437,7 @@ data:
               "format": "percent",
               "label": "Percentage",
               "logBase": 1,
-              "max": "30",
+              "max": "100",
               "min": "0",
               "show": true
             },
@@ -1049,7 +1049,7 @@ data:
       ],
       "schemaVersion": 25,
       "style": "dark",
-      "tags": {{ include "generic-service.dashboardTagsIngress" . }},
+      "tags": {{ include "generic-service.dashboardTags" . }},
       "templating": {
         "list": []
       },
@@ -1082,7 +1082,7 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "{{ .Release.Namespace }} / {{ .Release.Name }} / Golden Signals (Ingress)",
+      "title": "{{ .Release.Namespace }} / {{ .Release.Name }} / Golden Signals",
       "uid": "",
       "version": 1
     }

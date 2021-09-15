@@ -93,19 +93,15 @@ Define the port to use for the traefik healthcheck
 {{- end -}}
 
 {{/*
-Tags for the grafana dashboards from Traefik data
+Tags for the grafana dashboards
 */}}
-{{- define "generic-service.dashboardTagsTraefik" -}}
-{{- list .Release.Name "traefik" | concat .Values.extraDashboardTags | toJson -}}
+{{- define "generic-service.dashboardTags" -}}
+{{- .Release.Name | append .Values.extraDashboardTags | toJson -}}
 {{- end }}
 
 {{/*
-Tags for the grafana dashboards from Ingress data
+Labels for the grafana dashboard configmaps
 */}}
-{{- define "generic-service.dashboardTagsIngress" -}}
-{{- list .Release.Name "ingress" | concat .Values.extraDashboardTags | toJson -}}
-{{- end }}
-
 {{- define "generic-service.dashboardLabels" -}}
 grafana_dashboard: ""
 {{ include "generic-service.labels" . }}
