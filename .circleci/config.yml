@@ -133,10 +133,10 @@ workflows:
           name: build_fake_prison_register_api
           image_name: quay.io/hmpps/ppud-fake-prison-register-api
           dockerfile_dir: fake-prison-register-api
-          filters:
-            branches:
-              only:
-                - main
+#          filters:
+#            branches:
+#              only:
+#                - main
 
   build-test-and-deploy:
     unless: << pipeline.parameters.only_run_pact_workflow >>
