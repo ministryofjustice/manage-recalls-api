@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import org.thymeleaf.context.Context
-import org.thymeleaf.spring5.SpringTemplateEngine
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -13,17 +11,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDet
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
 class RevocationOrderService(
   @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
-  @Autowired private val templateEngine: SpringTemplateEngine,
   @Autowired private val s3Service: S3Service,
-  @Autowired private val recallRepository: RecallRepository
+  @Autowired private val recallRepository: RecallRepository,
+  @Autowired private val revocationOrderGenerator: RevocationOrderGenerator
 ) {
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> {
@@ -31,20 +27,10 @@ class RevocationOrderService(
     if (recall.revocationOrderId == null) {
       return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
         .flatMap { prisoners ->
-          val firstPrisoner = prisoners.first()
-          val ctx = Context()
-
-          val firstAndMiddleNames = String.format("%s %s", firstPrisoner.firstName, firstPrisoner.middleNames).trim()
-          ctx.setVariable("firstNames", firstAndMiddleNames)
-          ctx.setVariable("lastName", firstPrisoner.lastName)
-          ctx.setVariable("dateOfBirth", firstPrisoner.dateOfBirth)
-          ctx.setVariable("prisonNumber", firstPrisoner.bookNumber)
-          ctx.setVariable("croNumber", firstPrisoner.croNumber)
-          ctx.setVariable("licenseRevocationDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
-          val populatedHtml = templateEngine.process("revocation-order", ctx)
+          val revocationOrderHtml = revocationOrderGenerator.generateHtml(prisoners.first(), recall)
 
           val details = listOf(
-            StringDocumentDetail("index.html", populatedHtml),
+            StringDocumentDetail("index.html", revocationOrderHtml),
             ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
           )
 

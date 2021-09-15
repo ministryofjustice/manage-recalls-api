@@ -90,7 +90,7 @@ prisonerSearch:
 
 prisonRegister:
   endpoint:
-    url: http://localhost:9094
+    url: https://prison-register-dev.hmpps.service.justice.gov.uk
 
 gotenberg:
   endpoint:

@@ -9,17 +9,17 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDet
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 
 @Service
-class RecallSummaryService(
+class LetterToProbationService(
   @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
-  @Autowired private val recallSummaryGenerator: RecallSummaryGenerator,
+  @Autowired private val letterToProbationGenerator: LetterToProbationGenerator,
 ) {
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> {
-    val populatedHtml = recallSummaryGenerator.generateHtml()
+    val populatedHtml = letterToProbationGenerator.generateHtml()
 
     val details = listOf(
       StringDocumentDetail("index.html", populatedHtml),
-      ClassPathDocumentDetail("recall-summary-logo.png", "/templates/images/recall-summary-logo.png")
+      ClassPathDocumentDetail("letter-to-probation-logo.png", "/templates/images/letter-to-probation-logo.png")
     )
 
     return pdfDocumentGenerator.makePdf(details)

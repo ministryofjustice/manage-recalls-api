@@ -48,13 +48,13 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
 
   <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
 text-indent:-.1pt'><b><span style='font-size:11.0pt'> Prison No:
-<span th:text="${prisonNumber}"></span></span></b></p>
+<span>PrisonerBookNumber</span></span></b></p>
 
   <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-text-indent:-.1pt'><b><span style='font-size:11.0pt'> D.O.B: <span th:text="${dateOfBirth}"></span> </span></b></p>
+text-indent:-.1pt'><b><span style='font-size:11.0pt'> D.O.B: <span>1999-12-31</span> </span></b></p>
 
   <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-text-indent:-.1pt'><b><span style='font-size:11.0pt'> CRO No: <span th:text="${croNumber}"></span></span></b></p>
+text-indent:-.1pt'><b><span style='font-size:11.0pt'> CRO No: <span>PrisonerCroNumber</span></span></b></p>
 
   <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
 text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'>&nbsp;</span></p>
@@ -82,15 +82,15 @@ page-break-after:avoid'><span style='font-size:11.0pt'>&nbsp;</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span
     style='font-size:11.0pt'>commencing on                                 
-<span th:text="${lastReleaseDate}"></span></span></b></p>
+<span>30 Sep 2020</span></span></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 page-break-after:avoid'><b><span style='font-size:11.0pt'> </span></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span
     style='font-size:11.0pt'>in respect of                            
-  <span th:text="${firstNames}"></span>
-<span th:text="${lastName}"></span></span></b></p>
+  <span>PrisonerFirstName PrisonerMiddleNames</span>
+<span>PrisonerLastName</span></span></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 page-break-after:avoid'><b><span style='font-size:11.0pt'>                 </span></b></p>
@@ -131,7 +131,7 @@ text-indent:-.1pt;page-break-after:avoid'><b><span style='font-size:11.0pt'>for
 Secretary of State for Justice</span></b></p>
 
   <p class=MsoNormal align=center style='margin-left:0cm;text-align:center;
-text-indent:-.1pt;page-break-after:avoid'><b><span style='font-size:11.0pt' th:text="${licenseRevocationDate}"></span></b></p>
+text-indent:-.1pt;page-break-after:avoid'><b><span style='font-size:11.0pt'>01 Sep 2021</span></b></p>
 
   <p class=MsoNormal align=center style='margin-left:0cm;text-align:center;
 text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'>&nbsp;</span></p>

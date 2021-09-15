@@ -30,7 +30,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
   implementation("software.amazon.awssdk:s3:2.16.101")
-  implementation("org.http4k:http4k-format-jackson:4.10.0.1")
+  implementation("org.http4k:http4k-format-jackson:4.12.1.0")
 
   implementation("io.sentry:sentry-spring-boot-starter:5.1.2")
   implementation("io.sentry:sentry-logback:5.1.2")
@@ -54,6 +54,7 @@ dependencies {
 
   testImplementation("au.com.dius.pact.provider:junit5:4.2.7")
   testImplementation("au.com.dius.pact.provider:junit5spring:4.2.7")
+  testImplementation("org.http4k:http4k-testing-approval:4.12.1.0")
 }
 
 tasks {

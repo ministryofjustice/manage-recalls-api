@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.config
 
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.time.ZoneOffset
+import java.time.Clock
+import java.time.ZoneOffset.UTC
 import java.util.TimeZone
 import javax.annotation.PostConstruct
 
@@ -9,6 +11,9 @@ import javax.annotation.PostConstruct
 class LocaleConfig {
   @PostConstruct
   fun init() {
-    TimeZone.setDefault(TimeZone.getTimeZone(ZoneOffset.UTC))
+    TimeZone.setDefault(TimeZone.getTimeZone(UTC))
   }
+
+  @Bean
+  fun clock(): Clock = Clock.systemUTC()
 }
