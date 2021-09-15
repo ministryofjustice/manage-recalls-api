@@ -1,0 +1,14 @@
+{{- if .Values.traefikProxy.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "generic-service-with-traefik.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "generic-service-with-traefik.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: proxy-metrics
+    path: /metrics
+    interval: 15s
+{{- end -}}
