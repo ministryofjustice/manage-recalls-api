@@ -26,7 +26,7 @@ import kotlin.random.Random
 
 fun ((UUID) -> RecallId).zeroes() = this(UUID(0, 0))
 
-fun randomString() = randomAlphanumeric(500)
+fun randomString() = randomAlphanumeric(10)
 
 fun randomBoolean() = RandomUtils.nextBoolean()
 
