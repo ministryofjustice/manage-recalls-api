@@ -8,9 +8,9 @@ dependencies:
   - name: gotenberg
     version: 0.1.0
     repository: file://subcharts/gotenberg
-  - name: generic-service
-    version: 1.0.9
-    repository: https://ministryofjustice.github.io/hmpps-helm-charts
+  - name: generic-service-with-traefik
+    version: 1.0.0
+    repository: file://subcharts/generic-service-with-traefik
   - name: generic-prometheus-alerts
     version: 0.1.2
     repository: https://ministryofjustice.github.io/hmpps-helm-charts

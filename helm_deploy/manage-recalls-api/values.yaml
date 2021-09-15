@@ -1,5 +1,5 @@
 ---
-generic-service:
+generic-service-with-traefik:
   nameOverride: manage-recalls-api
 
   replicaCount: 4
@@ -8,6 +8,13 @@ generic-service:
     repository: quay.io/hmpps/manage-recalls-api
     tag: app_version    # override at deployment time
     port: 8080
+
+  traefikProxy:
+    enabled: true
+
+  extraDashboardTags:
+    - ppud-replacement
+    - manage-recalls
 
   ingress:
     enabled: true
