@@ -80,10 +80,6 @@ management:
       cache:
         time-to-live: 2000ms
 
-sentry:
-  dsn: https://ea6c4e03abe840319aee1bc1b2a6a58a@o345774.ingest.sentry.io/5940644
-  environment: ${SENTRY_ENVIRONMENT:LOCAL}
-
 prisonerSearch:
   endpoint:
     url: http://localhost:9092
