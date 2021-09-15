@@ -9,6 +9,13 @@ generic-service:
     tag: app_version    # override at deployment time
     port: 8080
 
+  traefikProxy:
+    enabled: true
+
+  extraDashboardTags:
+    - ppud-replacement
+    - manage-recalls
+
   ingress:
     enabled: true
     host: app-hostname.local    # override per environment
