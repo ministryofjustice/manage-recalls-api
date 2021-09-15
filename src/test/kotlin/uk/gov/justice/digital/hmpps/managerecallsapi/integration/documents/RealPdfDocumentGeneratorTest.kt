@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 
+import com.lowagie.text.pdf.PdfReader
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
@@ -29,6 +31,7 @@ class RealPdfDocumentGeneratorTest {
       .create(makePdfResult)
       .assertNext {
         assertThat(it.size, greaterThan(0))
+        assertThat(PdfReader(it).numberOfPages, equalTo(1))
         // java.io.File("makePdfTest.pdf").writeBytes(it)   // uncomment to save to temp file for viewing
       }
       .verifyComplete()
@@ -47,6 +50,7 @@ class RealPdfDocumentGeneratorTest {
       .create(pdfResult)
       .assertNext {
         assertThat(it.size, greaterThan(0))
+        assertThat(PdfReader(it).numberOfPages, equalTo(4))
         // java.io.File("mergePdfsTest.pdf").writeBytes(it)   // uncomment to save to temp file for viewing
       }
       .verifyComplete()
