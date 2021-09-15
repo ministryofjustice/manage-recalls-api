@@ -9,22 +9,18 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomBoolean
-import uk.gov.justice.digital.hmpps.managerecallsapi.component.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.util.UUID
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)
@@ -36,28 +32,7 @@ class UpdateRecallServiceTest {
   private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"))
   private val today = LocalDate.now()
 
-  private fun buildFullyPopulatedRecallRequest(): UpdateRecallRequest {
-    val entity = UpdateRecallRequest::class.java
-    val fields = entity.declaredFields
-    val elements = Array<Any>(fields.size) { i ->
-      when (fields[i].type) {
-        java.lang.Boolean::class.java -> randomBoolean()
-        LocalDate::class.java -> LocalDate.now()
-        OffsetDateTime::class.java -> OffsetDateTime.now()
-        MappaLevel::class.java -> MappaLevel.values().random()
-        Api.SentenceLength::class.java -> Api.SentenceLength(1, 2, 3)
-        ProbationDivision::class.java -> ProbationDivision.values().random()
-        Set::class.java -> ReasonForRecall.values().toSet()
-        AgreeWithRecall::class.java -> AgreeWithRecall.values().random()
-        String::class.java -> randomString()
-        else -> throw IllegalArgumentException("Unable to construct UpdateRecallRequest: Unknown field type [${fields[i].type}]")
-      }
-    }
-
-    return entity.constructors.last().newInstance(*elements) as UpdateRecallRequest
-  }
-
-  private val fullyPopulatedUpdateRecallRequest = buildFullyPopulatedRecallRequest()
+  private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance()
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
     fullyPopulatedUpdateRecallRequest.sentenceDate!!,
@@ -109,11 +84,6 @@ class UpdateRecallServiceTest {
     previousConvictionMainName = fullyPopulatedUpdateRecallRequest.previousConvictionMainName
   )
 
-  private val fullyPopulatedRecallWithDocuments = fullyPopulatedRecallWithoutDocuments.copy(
-    revocationOrderId = UUID.randomUUID(),
-    documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, randomString())),
-  )
-
   @Test
   fun `can update recall with all fields populated`() {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
@@ -126,13 +96,14 @@ class UpdateRecallServiceTest {
 
   @Test
   fun `cannot reset recall properties to null with update recall`() {
-    every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecallWithDocuments
-    every { recallRepository.save(fullyPopulatedRecallWithDocuments) } returns fullyPopulatedRecallWithDocuments
+    val fullyPopulatedRecall: Recall = fullyPopulatedRecall()
+    every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecall
+    every { recallRepository.save(fullyPopulatedRecall) } returns fullyPopulatedRecall
 
     val emptyUpdateRecallRequest = UpdateRecallRequest()
     val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
 
-    assertThat(response, equalTo(fullyPopulatedRecallWithDocuments))
+    assertThat(response, equalTo(fullyPopulatedRecall))
   }
 
   @Suppress("unused")
