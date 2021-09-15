@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "generic-service-with-traefik.name" -}}
+{{- define "generic-service.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "generic-service-with-traefik.fullname" -}}
+{{- define "generic-service.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -27,16 +27,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "generic-service-with-traefik.chart" -}}
+{{- define "generic-service.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "generic-service-with-traefik.labels" -}}
-helm.sh/chart: {{ include "generic-service-with-traefik.chart" . }}
-{{ include "generic-service-with-traefik.selectorLabels" . }}
+{{- define "generic-service.labels" -}}
+helm.sh/chart: {{ include "generic-service.chart" . }}
+{{ include "generic-service.selectorLabels" . }}
 {{- if .Values.image.tag }}
 app.kubernetes.io/version: {{ .Values.image.tag | quote }}
 {{- end }}
@@ -46,8 +46,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "generic-service-with-traefik.selectorLabels" -}}
-app: {{ include "generic-service-with-traefik.name" . }}
+{{- define "generic-service.selectorLabels" -}}
+app: {{ include "generic-service.name" . }}
 release: {{ .Release.Name }}
 {{- end }}
 
@@ -62,7 +62,7 @@ Create a string from a list of values joined by a comma
 {{/*
 Define the port to be used for the traefik proxy
 */}}
-{{- define "generic-service-with-traefik.traefikProxyPort" -}}
+{{- define "generic-service.traefikProxyPort" -}}
 {{- if eq .Values.image.port 9090.0 -}}
 9091
 {{- else -}}
@@ -73,7 +73,7 @@ Define the port to be used for the traefik proxy
 {{/*
 Define the port to use for the traefik metrics
 */}}
-{{- define "generic-service-with-traefik.traefikProxyMetricsPort" -}}
+{{- define "generic-service.traefikProxyMetricsPort" -}}
 {{- if eq .Values.image.port 9390.0 -}}
 9391
 {{- else -}}
@@ -84,7 +84,7 @@ Define the port to use for the traefik metrics
 {{/*
 Define the port to use for the traefik healthcheck
 */}}
-{{- define "generic-service-with-traefik.traefikProxyPingPort" -}}
+{{- define "generic-service.traefikProxyPingPort" -}}
 {{- if eq .Values.image.port 9590.0 -}}
 9591
 {{- else -}}
@@ -95,18 +95,18 @@ Define the port to use for the traefik healthcheck
 {{/*
 Tags for the grafana dashboards from Traefik data
 */}}
-{{- define "generic-service-with-traefik.dashboardTagsTraefik" -}}
+{{- define "generic-service.dashboardTagsTraefik" -}}
 {{- list .Release.Name "traefik" | concat .Values.extraDashboardTags | toJson -}}
 {{- end }}
 
 {{/*
 Tags for the grafana dashboards from Ingress data
 */}}
-{{- define "generic-service-with-traefik.dashboardTagsIngress" -}}
+{{- define "generic-service.dashboardTagsIngress" -}}
 {{- list .Release.Name "ingress" | concat .Values.extraDashboardTags | toJson -}}
 {{- end }}
 
-{{- define "generic-service-with-traefik.dashboardLabels" -}}
+{{- define "generic-service.dashboardLabels" -}}
 grafana_dashboard: ""
-{{ include "generic-service-with-traefik.labels" . }}
+{{ include "generic-service.labels" . }}
 {{- end }}

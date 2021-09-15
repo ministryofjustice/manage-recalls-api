@@ -1,7 +1,7 @@
 ---
 # Per environment values which override defaults in manage-recalls-api/values.yaml
 
-generic-service-with-traefik:
+generic-service:
   replicaCount: 2
 
   ingress:
