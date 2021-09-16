@@ -85,7 +85,7 @@ class UpdateRecallServiceTest {
   )
 
   @Test
-  fun `can update recall with all fields populated`() {
+  fun `can update recall with all UpdateRecallRequest fields populated`() {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     every { recallRepository.save(fullyPopulatedRecallWithoutDocuments) } returns fullyPopulatedRecallWithoutDocuments
 

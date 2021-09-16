@@ -102,8 +102,11 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `no state required`() {
   }
 
-  @State("a recall exists")
-  fun `a recall exists`() {
+  @State(
+    "a recall exists",
+    "a fully populated recall exists"
+  )
+  fun `a fully populated recall exists without documents`() {
     recallRepository.save(fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet()))
   }
 
