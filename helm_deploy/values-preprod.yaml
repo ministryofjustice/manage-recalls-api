@@ -4,6 +4,11 @@
 generic-service:
   replicaCount: 2
 
+  extraDashboardTags:
+    - ppud-replacement
+    - manage-recalls
+    - pre-prod
+
   ingress:
     host: manage-recalls-api-preprod.hmpps.service.justice.gov.uk
     tlsSecretName: ppud-replacement-preprod-cert
