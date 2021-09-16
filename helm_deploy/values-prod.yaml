@@ -2,7 +2,12 @@
 # Per environment values which override defaults in manage-recalls-api/values.yaml
 
 generic-service:
-  replicaCount: 2
+  replicaCount: 4
+
+  extraDashboardTags:
+    - ppud-replacement
+    - manage-recalls
+    - prod
 
   ingress:
     host: manage-recalls-api.hmpps.service.justice.gov.uk
