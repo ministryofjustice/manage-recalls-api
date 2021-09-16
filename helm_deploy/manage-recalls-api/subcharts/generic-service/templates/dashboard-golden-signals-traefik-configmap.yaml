@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "generic-service.dashboardLabels" . | nindent 4 }}
 data:
-  {{ $targetApplication }}-traefik-golden-signals-dashboard.json: |
+  {{ .Release.Namespace }}-{{ $targetApplication }}-traefik-golden-signals-dashboard.json: |
     {
       "annotations": {
         "list": [

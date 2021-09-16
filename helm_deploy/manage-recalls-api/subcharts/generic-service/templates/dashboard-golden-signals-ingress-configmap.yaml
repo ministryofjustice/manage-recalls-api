@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "generic-service.dashboardLabels" . | nindent 4 }}
 data:
-  {{ $targetApplication }}-ingress-golden-signals-dashboard.json: |
+  {{ .Release.Namespace }}-{{ $targetApplication }}-ingress-golden-signals-dashboard.json: |
     {
       "annotations": {
         "list": [
