@@ -945,7 +945,7 @@ data:
           "dashLength": 10,
           "dashes": false,
           "datasource": "Thanos",
-          "description": "The amount of data being sent to and from the ingress.",
+          "description": "The amount of data being sent to and from the pods.",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -983,7 +983,7 @@ data:
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "alias": "Request",
+              "alias": "Receive",
               "transform": "negative-Y"
             }
           ],
@@ -992,15 +992,15 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(\n  irate(nginx_ingress_controller_request_size_sum{exported_namespace=\"{{ .Release.Namespace }}\"}[2m])\n)",
+              "expr": "sum(irate(container_network_receive_bytes_total{namespace=\"{{ .Release.Namespace }}\", pod=~\"{{ $targetApplication }}-.+\"}[2m]))"
               "interval": "",
-              "legendFormat": "Request",
+              "legendFormat": "Receive",
               "refId": "A"
             },
             {
-              "expr": "sum(\n  irate(nginx_ingress_controller_response_size_sum{exported_namespace=\"{{ .Release.Namespace }}\"}[2m])\n)",
+              "expr": "sum(irate(container_network_transmit_bytes_total{namespace=\"{{ .Release.Namespace }}\", pod=~\"{{ $targetApplication }}-.+\"}[2m]))"
               "interval": "",
-              "legendFormat": "Response",
+              "legendFormat": "Transmit",
               "refId": "C"
             }
           ],
