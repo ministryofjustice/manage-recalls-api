@@ -1083,7 +1083,7 @@ data:
       },
       "timezone": "browser",
       "title": "{{ .Release.Namespace }} / {{ .Release.Name }} / Golden Signals",
-      "uid": "{{ .Release.Namespace }}-{{ .Release.Name }}-gs",
+      "uid": "{{ include "generic-service.dashboardUIDPrefix" . }}-gs",
       "version": 1
     }
 {{- end -}}
