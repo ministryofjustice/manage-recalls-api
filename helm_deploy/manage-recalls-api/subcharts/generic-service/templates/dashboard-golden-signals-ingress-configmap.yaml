@@ -165,7 +165,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -261,7 +261,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -369,7 +369,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -489,7 +489,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -586,7 +586,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -683,7 +683,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -779,7 +779,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -876,7 +876,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },
@@ -973,7 +973,7 @@ data:
           },
           "lines": true,
           "linewidth": 2,
-          "nullPointMode": "connected",
+          "nullPointMode": "null",
           "options": {
             "dataLinks": []
           },

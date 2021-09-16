@@ -1,0 +1,6 @@
+dependencies:
+- name: generic-service
+  repository: file://subcharts/generic-service
+  version: 1.0.0
+digest: sha256:c5933a0d648ebd63e7ab2358b2dad38ee67910517f2aede76d0a8b4f7b7449ba
+generated: "2021-09-16T16:21:30.667257+01:00"
