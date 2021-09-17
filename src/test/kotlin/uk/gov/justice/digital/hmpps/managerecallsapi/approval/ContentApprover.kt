@@ -4,9 +4,13 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.testing.ApprovalFailed
 import org.http4k.testing.ApprovalSource
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson
 
 interface ContentApprover {
   fun assertApproved(content: String)
+  fun <T> assertApproved(expectedStatus: HttpStatus, action: () -> ResponseEntity<T>)
 }
 
 class NamedResourceContentApprover(
@@ -39,6 +43,13 @@ class NamedResourceContentApprover(
           throw AssertionError(ApprovalFailed("Mismatch", actualSource, approved).message + "\n" + e.message)
         }
       }
+    }
+  }
+
+  override fun <T> assertApproved(expectedStatus: HttpStatus, action: () -> ResponseEntity<T>) {
+    with(action()) {
+      assertThat(this.statusCode, equalTo(expectedStatus))
+      assertApproved(ManageRecallsApiJackson.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this.body))
     }
   }
 }

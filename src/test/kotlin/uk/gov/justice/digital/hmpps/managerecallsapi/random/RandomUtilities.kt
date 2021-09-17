@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -72,7 +73,7 @@ private fun makeRandomSet(kclass: KClass<*>, type: KType): Set<Any> {
   return setOf(createRandomInstanceForParameter(elemType, kclass, type))
 }
 
-fun ((UUID) -> RecallId).zeroes() = this(UUID(0, 0))
+fun <T : Validated<UUID>> ((UUID) -> T).zeroes() = this(UUID(0, 0))
 fun randomString() = RandomStringUtils.randomAlphanumeric(10)
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomDocumentCategory() = RecallDocumentCategory.values().random()
