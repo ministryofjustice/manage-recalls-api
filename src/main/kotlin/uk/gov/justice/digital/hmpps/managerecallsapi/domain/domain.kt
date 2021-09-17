@@ -6,6 +6,7 @@ import java.util.UUID
 
 /*
   If the type will be used json it will need custom Jackson serializer/deserializer:   RestConfiguration
+  It will also need adding to the SpringFoxConfig to ensure it is displayed correctly in the swagger docs (until we can figure out how to get SpringFox to use the correct ObjectMapper)
   If it is to be used as a PathVariable it will need a customer Converter:  DomainConverters
  */
 

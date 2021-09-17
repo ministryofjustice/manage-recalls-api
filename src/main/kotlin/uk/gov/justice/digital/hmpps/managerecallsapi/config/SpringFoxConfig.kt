@@ -7,8 +7,11 @@ import springfox.documentation.builders.RequestHandlerSelectors
 import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.util.UUID
 
 @Configuration
@@ -23,6 +26,9 @@ class SpringFoxConfig {
       .paths(PathSelectors.any())
       .build()
       .directModelSubstitute(NomsNumber::class.java, String::class.java)
+      .directModelSubstitute(FirstName::class.java, String::class.java)
+      .directModelSubstitute(LastName::class.java, String::class.java)
       .directModelSubstitute(RecallId::class.java, UUID::class.java)
+      .directModelSubstitute(UserId::class.java, UUID::class.java)
   }
 }
