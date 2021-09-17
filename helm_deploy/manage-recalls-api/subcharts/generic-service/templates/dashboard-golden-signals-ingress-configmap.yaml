@@ -992,13 +992,13 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(container_network_receive_bytes_total{namespace=\"{{ .Release.Namespace }}\", pod=~\"{{ $targetApplication }}-.+\"}[2m]))"
+              "expr": "sum(irate(container_network_receive_bytes_total{namespace=\"{{ .Release.Namespace }}\", pod=~\"{{ $targetApplication }}-.+\"}[2m]))",
               "interval": "",
               "legendFormat": "Receive",
               "refId": "A"
             },
             {
-              "expr": "sum(irate(container_network_transmit_bytes_total{namespace=\"{{ .Release.Namespace }}\", pod=~\"{{ $targetApplication }}-.+\"}[2m]))"
+              "expr": "sum(irate(container_network_transmit_bytes_total{namespace=\"{{ .Release.Namespace }}\", pod=~\"{{ $targetApplication }}-.+\"}[2m]))",
               "interval": "",
               "legendFormat": "Transmit",
               "refId": "C"
