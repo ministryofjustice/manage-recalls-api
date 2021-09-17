@@ -106,3 +106,10 @@ Labels for the grafana dashboard configmaps
 grafana_dashboard: ""
 {{ include "generic-service.labels" . }}
 {{- end }}
+
+{{/*
+Generate a UID prefix for the dashboards
+*/}}
+{{- define "generic-service.dashboardUIDPrefix" -}}
+{{- cat .Release.Namespace .Release.Name | b64enc | trunc 30 | trimSuffix "=" }}
+{{- end }}
