@@ -11,6 +11,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
@@ -18,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.util.UUID
 
@@ -86,6 +88,9 @@ class AuthenticatedClient(
       .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
       .returnResult()
       .responseBody!!
+
+  fun addUserDetails(addUserDetailsRequest: AddUserDetailsRequest) =
+    postRequest("/users", addUserDetailsRequest, UserDetailsResponse::class.java)
 
   private fun patchRequest(path: String, request: Any, responseClass: Class<RecallResponse>): RecallResponse =
     sendPatchRequest(path, request)

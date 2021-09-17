@@ -31,6 +31,8 @@ data class UserDetails(
   val lastName: LastName,
 ) {
   constructor(userId: UserId, firstName: FirstName, lastName: LastName) : this(userId.value, firstName, lastName)
+
+  fun userId() = UserId(id)
 }
 
 data class UserDetailsNotFoundException(val userId: UserId) : NotFoundException()
