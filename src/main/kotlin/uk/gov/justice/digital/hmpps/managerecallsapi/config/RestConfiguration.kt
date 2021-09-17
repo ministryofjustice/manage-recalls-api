@@ -16,8 +16,11 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
 
 @Configuration
@@ -46,7 +49,10 @@ object ManageRecallsApiJackson : ConfigurableJackson(
 
 private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply {
   text(::NomsNumber)
+  text(::FirstName)
+  text(::LastName)
   text(StringBiDiMappings.uuid().map(::RecallId, RecallId::value))
+  text(StringBiDiMappings.uuid().map(::UserId, UserId::value))
 }
 
 inline fun <reified T : Validated<*>> AutoMappingConfiguration<ObjectMapper>.text(

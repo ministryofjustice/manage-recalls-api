@@ -126,6 +126,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     every { recallNotificationService.getDocument(any()) } returns Mono.just("some pdf contents".toByteArray())
   }
 
+  @State("a user can store their details")
+  fun `a user can store their details`() {
+  }
+
   @Suppress("ReactiveStreamsUnusedPublisher")
   @State("a dossier can be downloaded")
   fun `a dossier can be downloaded`() {
