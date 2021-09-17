@@ -12,6 +12,18 @@ class DomainTest {
     assertInvalid(::NomsNumber, "", " ", "-", "@")
   }
 
+  @Test
+  fun `FirstName should be not blank`() {
+    assertValid(::FirstName, "Mr. Smith", "1", "A")
+    assertInvalid(::FirstName, "", " ", "      ")
+  }
+
+  @Test
+  fun `LastName should be not blank`() {
+    assertValid(::LastName, "Mr. O'Badger", "1", "A")
+    assertInvalid(::LastName, "", " ", "      ")
+  }
+
   private fun <V, T : Validated<V>> assertValid(fn: (V) -> T, vararg valid: V) = valid.map(fn)
   private fun <V, T : Validated<V>> assertInvalid(fn: (V) -> T, vararg invalid: V) = invalid.forEach {
     assertThat("$it", { fn(it) }, throws<IllegalArgumentException>())
