@@ -20,12 +20,12 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
@@ -61,6 +61,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @BeforeEach
   fun `delete all recalls`() {
+    // TODO Multiple tests below use Recalls "WithoutDocuments" because deletion of documents on deletion of recalls is not functioning
     recallRepository.deleteAll()
   }
 
@@ -110,12 +111,16 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     recallRepository.save(fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet()))
   }
 
-  @State("a list of recalls exists")
+  @State(
+    "a list of recalls exists",
+    "a list of recalls exists for NOMS number"
+  )
   fun `a list of recalls exists`() {
     recallRepository.saveAll(
       listOf(
-        Recall(::RecallId.random(), nomsNumber),
-        Recall(::RecallId.random(), NomsNumber("Z9876ZZ"))
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = nomsNumber, documents = emptySet()),
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet()),
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet())
       )
     )
   }

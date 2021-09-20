@@ -6,6 +6,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -22,6 +23,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
   private val addDocumentRequest = AddDocumentRequest(category, Base64.getEncoder().encodeToString(fileBytes), "fileName")
   private val updateRecallRequest = UpdateRecallRequest()
+  private val recallSearchRequest = RecallSearchRequest(nomsNumber)
   private val apiSearchRequest = SearchRequest(nomsNumber)
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
@@ -37,6 +39,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents").bodyValue(addDocumentRequest),
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents/${UUID.randomUUID()}"),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
+      webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
       webTestClient.post().uri("/search").bodyValue(apiSearchRequest)
     )
   }
