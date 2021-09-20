@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -35,5 +37,18 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     approver(CREATED) {
       userController.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName))
     }
+  }
+
+  @Test
+  fun `can get user details`() {
+    val userId = ::UserId.zeroes()
+    val firstName = FirstName("Jimmy")
+    val lastName = LastName("Ppud")
+    val userDetails = UserDetails(userId, firstName, lastName)
+
+    every { userDetailsService.get(userId) } returns userDetails
+
+    val result = userController.getUserDetails(userId)
+    assertThat(result, equalTo(UserDetailsResponse(userId, firstName, lastName)))
   }
 }
