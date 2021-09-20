@@ -18,8 +18,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.stream.Stream
 
 class UpdateRecallComponentTest : ComponentTestBase() {
@@ -174,6 +176,29 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           recallId, nomsNumber,
           agreeWithRecall = AgreeWithRecall.YES,
           agreeWithRecallDetail = "Other reasons"
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `complete assessment of a recall updates recallNotificationEmailSentDateTime and assessedByUserId`() {
+    val updateRecallRequest = UpdateRecallRequest(
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assessedByUserId = ::UserId.random()
+    )
+    val response = authenticatedClient.updateRecall(
+      recallId,
+      updateRecallRequest
+    )
+
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber,
+          recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
+          assessedByUserId = updateRecallRequest.assessedByUserId
         )
       )
     )

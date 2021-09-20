@@ -5,15 +5,12 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
-@TestInstance(PER_CLASS)
 class UpdateRecallControllerTest {
   private val updateRecallService = mockk<UpdateRecallService>()
   private val prisonValidateService = mockk<PrisonValidationService>()
