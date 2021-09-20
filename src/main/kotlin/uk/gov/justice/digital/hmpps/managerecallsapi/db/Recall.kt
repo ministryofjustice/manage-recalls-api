@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -73,6 +74,8 @@ data class Recall(
   val hasOtherPreviousConvictionMainName: Boolean? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
+  // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
+  val assessedByUserId: UUID? = null
 ) {
   constructor(
     recallId: RecallId,
@@ -106,6 +109,7 @@ data class Recall(
     hasOtherPreviousConvictionMainName: Boolean? = null,
     hasDossierBeenChecked: Boolean? = null,
     previousConvictionMainName: String? = null,
+    assessedByUserId: UserId? = null
   ) :
     this(
       recallId.value,
@@ -138,10 +142,12 @@ data class Recall(
       dossierEmailSentDate,
       hasOtherPreviousConvictionMainName,
       hasDossierBeenChecked,
-      previousConvictionMainName
+      previousConvictionMainName,
+      assessedByUserId?.value
     )
 
   fun recallId() = RecallId(id)
+  fun assessedByUserId() = assessedByUserId?.let { UserId(it) }
 }
 
 @Embeddable
