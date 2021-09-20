@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.util.UUID
 
 class AuthenticatedClient(
@@ -91,6 +92,9 @@ class AuthenticatedClient(
 
   fun addUserDetails(addUserDetailsRequest: AddUserDetailsRequest) =
     postRequest("/users", addUserDetailsRequest, UserDetailsResponse::class.java)
+
+  fun getUserDetails(userId: UserId) =
+    getRequest("/users/${userId.value}", UserDetailsResponse::class.java)
 
   private fun patchRequest(path: String, request: Any, responseClass: Class<RecallResponse>): RecallResponse =
     sendPatchRequest(path, request)

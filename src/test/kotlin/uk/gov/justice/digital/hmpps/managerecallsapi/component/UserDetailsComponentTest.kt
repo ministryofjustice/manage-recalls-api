@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
-class SaveUserDetailsComponentTest : ComponentTestBase() {
+class UserDetailsComponentTest : ComponentTestBase() {
 
   @Test
   fun `can save user details`() {
@@ -38,5 +38,16 @@ class SaveUserDetailsComponentTest : ComponentTestBase() {
   fun `save user details with blank lastName returns 400`() {
     authenticatedClient.post("/users", "{\"userId\":\"${::UserId.random()}\",\"firstName\": \"firstName\",\"lastName\": \"\"}")
       .expectStatus().isBadRequest
+  }
+
+  @Test
+  fun `can get saved user details`() {
+    val userId = ::UserId.random()
+    val firstName = FirstName("PPUD")
+    val lastName = LastName("USER")
+    authenticatedClient.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName))
+
+    val response = authenticatedClient.getUserDetails(userId)
+    assertThat(response, equalTo(UserDetailsResponse(userId, firstName, lastName)))
   }
 }
