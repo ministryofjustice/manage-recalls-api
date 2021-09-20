@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -62,7 +63,6 @@ class AuthenticatedClient(
   fun getRecallNotification(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/recallNotification", Pdf::class.java)
 
-  // TODO PUD-521: un-used for now ... for starters just return the revocation order
   fun getDossier(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/dossier", Pdf::class.java)
 
@@ -87,6 +87,13 @@ class AuthenticatedClient(
     sendPostRequest("/search", searchRequest, OK)
       .expectStatus().isOk
       .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
+      .returnResult()
+      .responseBody!!
+
+  fun searchRecalls(searchRequest: RecallSearchRequest): List<RecallResponse> =
+    sendPostRequest("/recalls/search", searchRequest, OK)
+      .expectStatus().isOk
+      .expectBody(object : ParameterizedTypeReference<List<RecallResponse>>() {})
       .returnResult()
       .responseBody!!
 

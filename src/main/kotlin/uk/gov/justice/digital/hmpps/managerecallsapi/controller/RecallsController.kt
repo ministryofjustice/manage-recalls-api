@@ -52,6 +52,10 @@ class RecallsController(
   @GetMapping("/recalls")
   fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
 
+  @PostMapping("/recalls/search")
+  fun recallSearch(@RequestBody searchRequest: RecallSearchRequest): List<RecallResponse> =
+    recallRepository.search(searchRequest).map { it.toResponse() }
+
   @GetMapping("/recalls/{recallId}")
   fun getRecall(@PathVariable("recallId") recallId: RecallId): RecallResponse =
     recallRepository.getByRecallId(recallId).toResponse()
@@ -225,6 +229,8 @@ data class Pdf(val content: String)
 data class AddDocumentRequest(val category: RecallDocumentCategory, val fileContent: String, val fileName: String?)
 
 data class AddDocumentResponse(val documentId: UUID)
+
+data class RecallSearchRequest(val nomsNumber: NomsNumber)
 
 data class GetDocumentResponse(
   val documentId: UUID,

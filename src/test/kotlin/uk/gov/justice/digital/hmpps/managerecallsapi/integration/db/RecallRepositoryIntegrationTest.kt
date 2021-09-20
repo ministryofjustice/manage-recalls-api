@@ -11,14 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.util.UUID
 import javax.transaction.Transactional
@@ -28,7 +29,8 @@ import javax.transaction.Transactional
 @ActiveProfiles("db-test")
 class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallRepository) {
 
-  private val nomsNumber = NomsNumber("A12345F")
+  // TODO QQ: what mechanism gives us new values here for execution of each @Test?
+  private val nomsNumber = randomNoms()
   private val recallId = ::RecallId.random()
   private val recall = Recall(recallId, nomsNumber)
 
@@ -77,6 +79,21 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
   @Test
   fun `find by recallId returns null if a recall does not exist`() {
     assertThat(repository.findByRecallId(::RecallId.random()), absent())
+  }
+
+  @Test
+  @Transactional
+  fun `can find existing recalls by nomsNumber`() {
+    repository.save(recall)
+
+    val retrieved = repository.search(RecallSearchRequest(nomsNumber))
+
+    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber))))
+  }
+
+  @Test
+  fun `search returns empty list given no matching recalls`() {
+    assertThat(repository.search(RecallSearchRequest(randomNoms())), equalTo(emptyList()))
   }
 
   @Test
