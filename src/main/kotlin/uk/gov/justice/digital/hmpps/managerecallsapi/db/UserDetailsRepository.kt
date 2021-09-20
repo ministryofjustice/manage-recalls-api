@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -50,9 +49,5 @@ class UserDetailsRepository(
   @Qualifier("jpaUserDetailsRepository") @Autowired private val jpaRepository: JpaUserDetailsRepository
 ) : JpaUserDetailsRepository by jpaRepository, ExtendedUserDetailsRepository {
   override fun getByUserId(userId: UserId): UserDetails =
-    try {
-      getById(userId.value)
-    } catch (e: JpaObjectRetrievalFailureException) {
-      throw UserDetailsNotFoundException(userId)
-    }
+    findById(userId.value).orElseThrow { UserDetailsNotFoundException(userId) }
 }

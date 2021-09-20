@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
@@ -156,7 +157,8 @@ fun Recall.toResponse() = RecallResponse(
   dossierEmailSentDate = this.dossierEmailSentDate,
   hasOtherPreviousConvictionMainName = this.hasOtherPreviousConvictionMainName,
   hasDossierBeenChecked = this.hasDossierBeenChecked,
-  previousConvictionMainName = this.previousConvictionMainName
+  previousConvictionMainName = this.previousConvictionMainName,
+  assessedByUserId = this.assessedByUserId()
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -202,6 +204,7 @@ data class RecallResponse(
   val hasOtherPreviousConvictionMainName: Boolean? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
+  val assessedByUserId: UserId? = null
 ) {
   val status: Status? = calculateStatus()
 
