@@ -3,7 +3,13 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -22,7 +28,38 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   @Test
   fun `get recall notification returns merged recall summary and revocation order`() {
     val recallId = ::RecallId.random()
-    recallRepository.save(Recall(recallId, nomsNumber))
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      mappaLevel = MappaLevel.LEVEL_3,
+      contrabandDetail = "Some contraband detail",
+      previousConvictionMainName = "Bryan Badger",
+      bookingNumber = "B1234",
+      lastReleaseDate = LocalDate.of(2020, 10, 1),
+      reasonsForRecall = setOf(
+        ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
+      ),
+      sentencingInfo = SentencingInfo(
+        LocalDate.of(2020, 10, 1),
+        LocalDate.of(2020, 11, 1),
+        LocalDate.of(2020, 10, 29),
+        "High Court",
+        "Some offence",
+        SentenceLength(2, 3, 10),
+      ),
+      probationInfo = ProbationInfo(
+        "Mr Probation Officer",
+        "01234567890",
+        "officer@myprobation.com",
+        ProbationDivision.LONDON,
+        "Ms Authoriser"
+      ),
+      localPoliceForce = "London",
+      vulnerabilityDiversityDetail = "Some stuff",
+      currentPrison = "AKI",
+      lastReleasePrison = "BMI"
+    )
+    recallRepository.save(recall)
 
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName, "revocation-order-logo")

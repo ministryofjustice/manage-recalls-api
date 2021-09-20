@@ -3,25 +3,43 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupService
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 
 @Service
 class RecallSummaryService(
   @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
   @Autowired private val recallSummaryGenerator: RecallSummaryGenerator,
+  @Autowired private val recallRepository: RecallRepository,
+  @Autowired private val prisonLookupService: PrisonLookupService,
+  @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
 ) {
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> {
-    val populatedHtml = recallSummaryGenerator.generateHtml()
+    val recall = recallRepository.getByRecallId(recallId)
+    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison)!!
+    val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison)!!
 
-    val details = listOf(
-      StringDocumentDetail("index.html", populatedHtml),
-      ClassPathDocumentDetail("recall-summary-logo.png", "/templates/images/recall-summary-logo.png")
-    )
+    return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
+      .flatMap { prisoners ->
+        val populatedHtml = recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName))
 
-    return pdfDocumentGenerator.makePdf(details)
+        val details = listOf(
+          StringDocumentDetail("index.html", populatedHtml),
+          ClassPathDocumentDetail("recall-summary-logo.png", "/templates/images/recall-summary-logo.png")
+        )
+
+        pdfDocumentGenerator.makePdf(details)
+      }
   }
 }
+
+data class RecallSummaryContext(val recall: Recall, val prisoner: Prisoner, val lastReleasePrisonName: String, val currentPrisonName: String)

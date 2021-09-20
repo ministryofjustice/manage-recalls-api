@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 
-class PrisonRegisterTest : ComponentTestBase() {
+class PrisonRegisterComponentTest : ComponentTestBase() {
 
   private val prisonRegister = mockk<PrisonRegisterClient>()
   private val prisonValidationService = PrisonValidationService(prisonRegister)
