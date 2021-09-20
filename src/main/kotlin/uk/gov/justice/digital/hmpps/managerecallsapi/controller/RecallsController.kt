@@ -78,7 +78,7 @@ class RecallsController(
     @RequestBody body: AddDocumentRequest
   ): ResponseEntity<AddDocumentResponse> {
     val documentId = try {
-      recallDocumentService.addDocumentToRecall(
+      recallDocumentService.uploadAndAddDocumentForRecall(
         recallId = recallId,
         documentBytes = Base64.getDecoder().decode(body.fileContent),
         documentCategory = body.category,
