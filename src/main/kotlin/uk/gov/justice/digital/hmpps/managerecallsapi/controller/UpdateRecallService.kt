@@ -16,7 +16,6 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       .updateWithRequestDetails(updateRecallRequest)
       .let(recallRepository::save)
 
-  // FIXME - need a test to ensure that we test the preservation of ALL existing values, currently only those added to `fullyPopulatedRecall`
   protected fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
@@ -48,7 +47,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate ?: dossierEmailSentDate,
       hasOtherPreviousConvictionMainName = updateRecallRequest.hasOtherPreviousConvictionMainName ?: hasOtherPreviousConvictionMainName,
       hasDossierBeenChecked = updateRecallRequest.hasDossierBeenChecked ?: hasDossierBeenChecked,
-      previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName
+      previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
+      assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId
     )
   }
 }
