@@ -34,7 +34,6 @@ abstract class ComponentTestBase {
   @Autowired
   private lateinit var hmppsAuthMockServer: HmppsAuthMockServer
 
-  @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
   lateinit var webTestClient: WebTestClient
 

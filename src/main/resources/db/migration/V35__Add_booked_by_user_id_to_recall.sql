@@ -1,0 +1,1 @@
+ALTER TABLE recall ADD COLUMN booked_by_user_id UUID;

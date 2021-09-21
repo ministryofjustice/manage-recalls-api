@@ -48,7 +48,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       hasOtherPreviousConvictionMainName = updateRecallRequest.hasOtherPreviousConvictionMainName ?: hasOtherPreviousConvictionMainName,
       hasDossierBeenChecked = updateRecallRequest.hasDossierBeenChecked ?: hasDossierBeenChecked,
       previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
-      assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId
+      assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
+      bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId
     )
   }
 }

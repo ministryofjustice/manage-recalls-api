@@ -1,5 +1,3 @@
-@file:Suppress("SpringDataMethodInconsistencyInspection")
-
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import org.springframework.beans.factory.annotation.Autowired

@@ -82,7 +82,8 @@ class UpdateRecallServiceTest {
     hasOtherPreviousConvictionMainName = fullyPopulatedUpdateRecallRequest.hasOtherPreviousConvictionMainName,
     hasDossierBeenChecked = fullyPopulatedUpdateRecallRequest.hasDossierBeenChecked,
     previousConvictionMainName = fullyPopulatedUpdateRecallRequest.previousConvictionMainName,
-    assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value
+    assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
+    bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
   )
 
   @Test
