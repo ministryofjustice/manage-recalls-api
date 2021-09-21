@@ -10,6 +10,7 @@ import io.mockk.slot
 import org.junit.jupiter.api.Test
 import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
@@ -67,6 +68,7 @@ class RecallSummaryGeneratorTest {
             "01234567890",
             "officer@myprobation.com",
             ProbationDivision.LONDON,
+            LocalDeliveryUnit.PS_BARKING_DAGENHAM_HAVERING,
             "Ms Authoriser"
           ),
           localPoliceForce = "London",
