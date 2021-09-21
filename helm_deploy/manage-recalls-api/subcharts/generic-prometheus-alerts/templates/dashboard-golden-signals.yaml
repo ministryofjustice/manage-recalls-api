@@ -1,13 +1,14 @@
-{{- if .Values.ingress.enabled -}}
-{{- $targetApplication := include "generic-service.fullname" . -}}
+{{- if .Values.dashboardsEnabled -}}
+{{- $targetApplication := required "A value for targetApplication must be set" .Values.targetApplication }}
+{{- $targetIngress := default .Values.targetApplication .Values.ingressTargetOverride }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $targetApplication }}-golden-signals-dashboard-ingress
+  name: {{ $targetApplication }}-golden-signals-dashboard
   labels:
-    {{- include "generic-service.dashboardLabels" . | nindent 4 }}
+    {{- include "generic-prometheus-alerts.dashboardLabels" . | nindent 4 }}
 data:
-  {{ .Release.Namespace }}-{{ $targetApplication }}-ingress-golden-signals-dashboard.json: |
+  {{ .Release.Namespace }}-{{ $targetApplication }}-golden-signals-dashboard.json: |
     {
       "annotations": {
         "list": [
@@ -78,13 +79,13 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(\n  irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n)",
+              "expr": "sum(\n  irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n)",
               "interval": "",
               "legendFormat": "Requests",
               "refId": "A"
             },
             {
-              "expr": "sum(\n  irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n) by (status)",
+              "expr": "sum(\n  irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n) by (status)",
               "interval": "",
               "legendFormat": "{{ "{{status}}" }}",
               "refId": "B"
@@ -179,7 +180,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status!~\"5.*|499\"}[1m]))\n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\", status!~\"5.*|499\"}[1m]))\n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m]))\n* 100",
               "interval": "",
               "legendFormat": "Request Success Rate",
               "refId": "A"
@@ -275,19 +276,19 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(\n  0.5,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
+              "expr": "histogram_quantile(\n  0.5,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
               "interval": "",
               "legendFormat": "p50",
               "refId": "A"
             },
             {
-              "expr": "histogram_quantile(\n  0.95,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
+              "expr": "histogram_quantile(\n  0.95,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
               "interval": "",
               "legendFormat": "p95",
               "refId": "B"
             },
             {
-              "expr": "histogram_quantile(\n  1,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
+              "expr": "histogram_quantile(\n  1,\n  max(\n    irate(nginx_ingress_controller_request_duration_seconds_bucket{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[1m])\n  ) by (le)\n)",
               "interval": "",
               "legendFormat": "p100",
               "refId": "C"
@@ -383,31 +384,31 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"500\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"500\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "500",
               "refId": "A"
             },
             {
-              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"501\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"501\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "501",
               "refId": "B"
             },
             {
-              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"502\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"502\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "502",
               "refId": "C"
             },
             {
-              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"503\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"503\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "503",
               "refId": "D"
             },
             {
-              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"504\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetApplication }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
+              "expr": "sum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\", status=\"504\"}[1m])) \n/ \nsum(irate(nginx_ingress_controller_requests{ingress=\"{{ $targetIngress }}\", exported_namespace=\"{{ .Release.Namespace }}\"}[5m]))\n* 100",
               "interval": "",
               "legendFormat": "504",
               "refId": "E"
@@ -1049,7 +1050,7 @@ data:
       ],
       "schemaVersion": 25,
       "style": "dark",
-      "tags": {{ include "generic-service.dashboardTags" . }},
+      "tags": {{ include "generic-prometheus-alerts.dashboardTags" . }},
       "templating": {
         "list": []
       },
@@ -1083,7 +1084,7 @@ data:
       },
       "timezone": "browser",
       "title": "{{ .Release.Namespace }} / {{ .Release.Name }} / Golden Signals",
-      "uid": "{{ include "generic-service.dashboardUIDPrefix" . }}-gs",
+      "uid": "{{ include "generic-prometheus-alerts.dashboardUIDPrefix" . }}-gs",
       "version": 1
     }
 {{- end -}}

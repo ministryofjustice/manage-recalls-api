@@ -2,8 +2,6 @@
 # This supports shell glob matching, relative path matching, and
 # negation (prefixed with !). Only one pattern per line.
 .DS_Store
-.helmignore
-README.md
 # Common VCS dirs
 .git/
 .gitignore
@@ -23,3 +21,4 @@ README.md
 .idea/
 *.tmproj
 .vscode/
+ci/*

@@ -9,8 +9,8 @@ dependencies:
     version: 0.1.0
     repository: file://subcharts/gotenberg
   - name: generic-service
-    version: 1.0.0
-    repository: file://subcharts/generic-service
-  - name: generic-prometheus-alerts
-    version: 0.1.2
+    version: 1.0.12
     repository: https://ministryofjustice.github.io/hmpps-helm-charts
+  - name: generic-prometheus-alerts
+    version: 0.1.5
+    repository: file://subcharts/generic-prometheus-alerts

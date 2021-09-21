@@ -4,11 +4,6 @@
 generic-service:
   replicaCount: 2
 
-  extraDashboardTags:
-    - ppud-replacement
-    - manage-recalls
-    - dev
-
   ingress:
     host: manage-recalls-api-dev.hmpps.service.justice.gov.uk
     tlsSecretName: ppud-replacement-dev-cert
@@ -20,3 +15,9 @@ generic-service:
     MANAGE_RECALLS_API_BASE_URI: https://manage-recalls-api-dev.hmpps.service.justice.gov.uk
     PRISONREGISTER_ENDPOINT_URL:  https://prison-register-dev.hmpps.service.justice.gov.uk
     SENTRY_ENVIRONMENT: DEV
+
+generic-prometheus-alerts:
+  extraDashboardTags:
+    - ppud-replacement
+    - manage-recalls
+    - dev
