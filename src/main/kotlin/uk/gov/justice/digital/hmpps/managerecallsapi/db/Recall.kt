@@ -170,7 +170,9 @@ data class SentencingInfo(
 }
 
 @Embeddable
-data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val sentenceDays: Int)
+data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val sentenceDays: Int) {
+  fun prettyPrint(): String = "$sentenceYears years $sentenceMonths months $sentenceDays days".format(this)
+}
 
 @Embeddable
 data class ProbationInfo(

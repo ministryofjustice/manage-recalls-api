@@ -948,7 +948,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c33">
     <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">Date</span></p></td>
-    <td class="c12" colspan="1" rowspan="1"><p class="c0 c28"><span class="c13">&nbsp;[insert date]</span></p>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0 c28"><span class="c13">01 Sep 2021</span></p>
       <p class="c0 c28 c11"><span class="c20 c13"></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
     <td class="c47" colspan="2" rowspan="2"><p class="c0"><span
@@ -957,7 +957,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c30">
     <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">Time</span></p></td>
-    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c1 c59">[INSERT TIME]</span></p></td>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c1 c59">17:48</span></p></td>
   </tr>
   </tbody>
 </table>
@@ -973,18 +973,18 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c49">
     <td class="c21" colspan="1" rowspan="1"><a id="id.1fob9te"></a>
-      <p class="c0"><span class="c1">HDC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9744; <br></span>
+      <p class="c0"><span class="c1">HDC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox"/> <br></span>
       </p>
-      <p class="c0"><span class="c1">DETERMINATE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &#9744;</span>
+      <p class="c0"><span class="c1">DETERMINATE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; <input type="checkbox" checked="true"/></span>
       </p></td>
     <td class="c69" colspan="1" rowspan="1"><p class="c27"><span class="c1">NO</span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
     <td class="c67" colspan="1" rowspan="1"><a id="id.3znysh7"></a>
-      <p class="c0"><span class="c1">LEVEL 1 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#9744; <br></span>
+      <p class="c0"><span class="c1">LEVEL 1 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="checkbox"/><br></span>
       </p><a id="id.2et92p0"></a>
-      <p class="c0"><span class="c1">LEVEL 2 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#9744; <br></span>
+      <p class="c0"><span class="c1">LEVEL 2 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <input type="checkbox"/><br></span>
       </p><a id="id.tyjcwt"></a>
-      <p class="c0"><span class="c1">LEVEL 3 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9744;</span>
+      <p class="c0"><span class="c1">LEVEL 3 &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" checked="checked"/></span>
       </p></td>
   </tr>
   </tbody>
@@ -994,48 +994,48 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
 <table class="c57">
   <tbody>
   <tr class="c49">
-    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">FORENAME: &laquo;FIRST_NAMES&raquo;</span>
+    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">FORENAME: <span>Bertie Basset</span></span>
     </p>
-      <p class="c0"><span class="c1">SURNAME: &laquo;FAMILY_NAME&raquo;</span></p>
-      <p class="c0"><span class="c1">DATE OF BIRTH: &laquo;DOB&raquo;</span></p>
-      <p class="c0"><span class="c1">POLICE FILE NAME: </span></p>
-      <p class="c0"><span class="c1">PRISON NUMBER: &laquo;PRISON_NUMBER&raquo;</span></p>
-      <p class="c0"><span class="c1">PNOMIS NUMBER: </span></p>
-      <p class="c0"><span class="c1">RELEASING PRISON: &laquo;RELEASE_FROM&raquo;</span></p>
-      <p class="c0"><span class="c1">RELEASE DATE: &laquo;release_date&raquo;</span></p>
-      <p class="c0"><span class="c1">LENGTH OF SENTENCE: &laquo;SENTENCE&raquo;</span></p>
-      <p class="c0"><span class="c1">INDEX OFFENCE: &laquo;INDEX_OFFENCE_DESCRIPTION&raquo;</span></p><a
+      <p class="c0"><span class="c1">SURNAME: <span>Badger</span></span></p>
+      <p class="c0"><span class="c1">DATE OF BIRTH: <span>03 Oct 1995</span></span></p>
+      <p class="c0"><span class="c1">POLICE FILE NAME: <span>Bryan Badger</span></span></p>
+      <p class="c0"><span class="c1">PRISON NUMBER: <span>B1234</span></span></p>
+      <p class="c0"><span class="c1">PNOMIS NUMBER: <span>AA1234A</span></span></p>
+      <p class="c0"><span class="c1">RELEASING PRISON: <span>Prison A</span></span></p>
+      <p class="c0"><span class="c1">RELEASE DATE: <span>01 Oct 2020</span></span></p>
+      <p class="c0"><span class="c1">LENGTH OF SENTENCE: <span>2 years 3 months 10 days</span></span></p>
+      <p class="c0"><span class="c1">INDEX OFFENCE: <span>Some offence</span></span></p><a
         id="id.3dy6vkm"></a>
-      <p class="c0"><span class="c1">BREACH: LICENCE CONDITIONS &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &#9744;<br></span>
+      <p class="c0"><span class="c1">BREACH: LICENCE CONDITIONS &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" checked="true"/><br></span>
       </p><a id="id.1t3h5sf"></a>
-      <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FURTHER CHARGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &#9744;<br></span>
+      <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FURTHER CHARGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" checked="checked"/><br></span>
       </p>
       <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
-    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">PNC/CRO NUMBER: &laquo;CRO_PNC&raquo;</span>
+    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">PNC/CRO NUMBER: <span>croNumber</span></span>
     </p>
-      <p class="c0"><span class="c1">NPS LDU / CRC: &laquo;probation_area&raquo;</span></p>
-      <p class="c0"><span class="c1">OFFENDER MANAGER NAME:<br>&laquo;OFF_MANAGER&raquo;</span><span
-        class="c13"><br></span><span class="c1">OFFENDER MANAGER CONTACT NUMBER: &laquo;OM_PHONE&raquo;</span></p>
-      <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13">&laquo;SPOC&raquo;</span></p>
+      <p class="c0"><span class="c1">NPS LDU / CRC: «probation_area»</span></p>
+      <p class="c0"><span class="c1">OFFENDER MANAGER NAME:<br><span>Mr Probation Officer</span></span><span
+        class="c13"><br></span><span class="c1">OFFENDER MANAGER CONTACT NUMBER: <span>01234567890</span></span></p>
+      <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13"><span>London</span></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
       <p class="c0"><span class="c1">CURRENT PRISON:</span></p>
-      <p class="c0"><span class="c1">&laquo;CURRENT_ESTABLISHMENT_DESCRIPTION&raquo;</span></p>
+      <p class="c0"><span class="c1"><span>Prison B</span></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
       <p class="c0"><span
-        class="c1">SENTENCING COURT &amp; DATE: &nbsp;&laquo;SENTENCING_COURT&raquo; &laquo;DOS&raquo;</span></p>
+        class="c1">SENTENCING COURT &amp; DATE: &nbsp;<span>High Court</span> <span></span></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
-      <p class="c0"><span class="c1">SED: &laquo;SED&raquo;</span></p></td>
+      <p class="c0"><span class="c1">SED: <span>29 Oct 2020</span></span></p></td>
   </tr>
   </tbody>
 </table>
-<p class="c24"><span class="c1">VULNERABILITY ISSUES: </span></p><a id="t.70eb63f9bfbf6594c12ffe820b4a972af79a5675"></a><a
-  id="t.3"></a>
+<p class="c24"><span class="c1">VULNERABILITY ISSUES: <span>Some stuff</span></p>
 <table class="c57">
   <tbody>
   <tr class="c49">
-    <td class="c39" colspan="1" rowspan="1"><p class="c0"><span class="c1">IS IT BELIEVED THAT THE OFFENDER MAY BE USING RECALL TO BRING CONTRABAND </span><span
-      class="c3">INTO</span><span class="c1">&nbsp;THE PRISON ESTATE? </span><span class="c6 c7">YES/NO [RECALL TEAM &ndash; IF YES, INSERT ANY REASONS PROVIDED ON PART A REPORT]</span>
+    <td class="c39" colspan="1" rowspan="1"><p class="c0">
+      <span class="c1">IS IT BELIEVED THAT THE OFFENDER MAY BE USING RECALL TO BRING CONTRABAND INTO THE PRISON ESTATE? </span>
+      <span class="c6 c7">YES</span>. <span>I believe that they will bring contraband to prison</span>
     </p></td>
   </tr>
   </tbody>

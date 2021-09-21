@@ -21,8 +21,10 @@ class SentenceLengthTest {
     recallLength: RecallLength,
     sentenceYears: Int,
     sentenceMonths: Int,
-    sentenceDays: Int
+    sentenceDays: Int,
+    prettyPrint: String
   ) {
+    val sentenceLength = SentenceLength(sentenceYears, sentenceMonths, sentenceDays)
     assertThat(
       recallLength,
       equalTo(
@@ -32,21 +34,22 @@ class SentenceLengthTest {
           LocalDate.now(),
           "court",
           "offence",
-          SentenceLength(sentenceYears, sentenceMonths, sentenceDays)
+          sentenceLength
         ).calculateRecallLength()
       )
     )
+    assertThat(sentenceLength.prettyPrint(), equalTo(prettyPrint))
   }
 
   fun parameterArrays(): Stream<Arguments>? {
     return Stream.of(
-      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 1, 0, 0),
-      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 0, 12, 0),
-      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 0, 0, 366),
-      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 1, 1, 1),
-      Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 11, 0),
-      Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 0, 365),
-      Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 11, 30),
+      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 1, 0, 0, "1 years 0 months 0 days"),
+      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 0, 12, 0, "0 years 12 months 0 days"),
+      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 0, 0, 366, "0 years 0 months 366 days"),
+      Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 1, 1, 1, "1 years 1 months 1 days"),
+      Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 11, 0, "0 years 11 months 0 days"),
+      Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 0, 365, "0 years 0 months 365 days"),
+      Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 11, 30, "0 years 11 months 30 days"),
     )
   }
 }
