@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
@@ -185,5 +186,7 @@ data class ProbationInfo(
   val probationOfficerEmail: String,
   @Enumerated(STRING)
   val probationDivision: ProbationDivision,
+  @Enumerated(STRING)
+  val localDeliveryUnit: LocalDeliveryUnit,
   val authorisingAssistantChiefOfficer: String
 )

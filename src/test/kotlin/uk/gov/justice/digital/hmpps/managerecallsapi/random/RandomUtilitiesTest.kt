@@ -94,6 +94,7 @@ class RandomUtilitiesTest {
         has(UpdateRecallRequest::probationOfficerPhoneNumber, present()),
         has(UpdateRecallRequest::probationOfficerEmail, present()),
         has(UpdateRecallRequest::probationDivision, present()),
+        has(UpdateRecallRequest::localDeliveryUnit, present()),
         has(UpdateRecallRequest::authorisingAssistantChiefOfficer, present()),
         has(UpdateRecallRequest::licenceConditionsBreached, present()),
         has(UpdateRecallRequest::reasonsForRecall, present()),

@@ -84,6 +84,7 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
     probationOfficerPhoneNumber != null &&
     probationOfficerEmail != null &&
     probationDivision != null &&
+    localDeliveryUnit != null &&
     authorisingAssistantChiefOfficer != null
   ) {
     ProbationInfo(
@@ -91,6 +92,7 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
       probationOfficerPhoneNumber,
       probationOfficerEmail,
       probationDivision,
+      localDeliveryUnit,
       authorisingAssistantChiefOfficer,
     )
   } else {

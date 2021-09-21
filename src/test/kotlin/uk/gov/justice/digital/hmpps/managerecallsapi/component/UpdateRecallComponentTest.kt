@@ -53,6 +53,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       """{"mappaLevel":"INVALID"}""",
       """{"probationDivision":""}""",
       """{"probationDivision":"INVALID"}""",
+      """{"localDeliveryUnit":""}""",
+      """{"localDeliveryUnit":"INVALID"}""",
       """{"reasonsForRecall": '"}""",
       """{"reasonsForRecall":["INVALID"]}""",
       """{"agreeWithRecall": '"}""",
