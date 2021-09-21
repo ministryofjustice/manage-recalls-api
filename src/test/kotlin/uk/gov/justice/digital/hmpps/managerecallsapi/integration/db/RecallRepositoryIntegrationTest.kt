@@ -29,7 +29,7 @@ import javax.transaction.Transactional
 @ActiveProfiles("db-test")
 class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallRepository) {
 
-  // TODO QQ: what mechanism gives us new values here for execution of each @Test?
+  // JUnit5 default @TestInstance(TestInstance.Lifecycle.PER_METHOD) gives us new values per test
   private val nomsNumber = randomNoms()
   private val recallId = ::RecallId.random()
   private val recall = Recall(recallId, nomsNumber)
@@ -83,6 +83,24 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
   @Test
   @Transactional
+  fun `can find existing recalls by nomsNumber alone`() {
+    repository.save(recall)
+
+    val retrieved = repository.findByNomsNumber(nomsNumber)
+
+    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber))))
+  }
+
+  @Test
+  @Transactional
+  fun `search by nomsNumber returns empty list given no matching recalls`() {
+    repository.save(recall)
+
+    assertThat(repository.findByNomsNumber(randomNoms()), equalTo(emptyList()))
+  }
+
+  @Test
+  @Transactional
   fun `can find existing recalls by nomsNumber`() {
     repository.save(recall)
 
@@ -92,7 +110,10 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
   }
 
   @Test
+  @Transactional
   fun `search returns empty list given no matching recalls`() {
+    repository.save(recall)
+
     assertThat(repository.search(RecallSearchRequest(randomNoms())), equalTo(emptyList()))
   }
 
