@@ -84,7 +84,6 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
     probationOfficerName != null &&
     probationOfficerPhoneNumber != null &&
     probationOfficerEmail != null &&
-    probationDivision != null &&
     localDeliveryUnit != null &&
     authorisingAssistantChiefOfficer != null
   ) {
@@ -92,10 +91,13 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
       probationOfficerName,
       probationOfficerPhoneNumber,
       probationOfficerEmail,
-      probationDivision,
+      existingRecall.probationInfo?.probationDivision,
       localDeliveryUnit,
       authorisingAssistantChiefOfficer,
     )
   } else {
     existingRecall.probationInfo
   }
+/*
+{"probationOfficerName":"Dave Angel","probationOfficerEmail":"dave.angel@probation.gov.uk","probationOfficerPhoneNumber":"07393739393","localDeliveryUnit":"CENTRAL_AUDIT_TEAM","authorisingAssistantChiefOfficer":"Bob Monkfish"}
+ */
