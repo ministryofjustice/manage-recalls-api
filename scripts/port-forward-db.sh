@@ -11,6 +11,7 @@ function check_dep {
 # Check dependencies
 check_dep "psql" "brew install postgresql"
 check_dep "jq" "brew install jq"
+check_dep "kubectl" "asdf install kubectl 1.19.15"
 
 # check for the ENV variable
 set +u
