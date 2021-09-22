@@ -63,6 +63,8 @@ services:
     container_name: gotenberg_manage-recalls-api
     ports:
       - "9093:3000"
+    environment:
+      - LOG_LEVEL=DEBUG
 
   localstack:
     build: ./localstack-docker

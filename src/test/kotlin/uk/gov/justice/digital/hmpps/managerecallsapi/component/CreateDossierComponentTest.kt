@@ -1,18 +1,15 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
-import com.lowagie.text.pdf.PdfReader
-import com.natpryce.hamkrest.MatchResult
-import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
@@ -72,13 +69,3 @@ class CreateDossierComponentTest : ComponentTestBase() {
     )
   }
 }
-
-fun hasNumberOfPages(numberOfPagesMatcher: Matcher<Int>): Matcher<Pdf> =
-  object : Matcher<Pdf> {
-    override val description: String = numberOfPagesMatcher.description
-
-    override fun invoke(actual: Pdf): MatchResult =
-      PdfReader(Base64.getDecoder().decode(actual.content.toByteArray())).use { pdfReader ->
-        numberOfPagesMatcher(pdfReader.numberOfPages)
-      }
-  }
