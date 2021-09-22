@@ -15,8 +15,8 @@ check_dep "kubectl" "asdf install kubectl 1.19.15"
 
 # check for the ENV variable
 set +u
-if [[ -z "${ENV}" ]]; then
-  echo "You must set the ENV variable - allowed values: [dev, preprod, prod]"
+if [[ ! "${ENV}" =~ ^(dev|preprod)$ ]]; then
+  echo "You must set the ENV variable - allowed values: 'dev' or 'preprod'"
   exit 1
 fi
 set -u
