@@ -15,7 +15,7 @@ check_dep "jq" "brew install jq"
 # check for the ENV variable
 set +u
 if [[ -z "${ENV}" ]]; then
-  echo "You must set the ENV K8S_NAMESPACE variable - allowed values: [dev, preprod, prod]"
+  echo "You must set the ENV variable - allowed values: [dev, preprod, prod]"
   exit 1
 fi
 set -u

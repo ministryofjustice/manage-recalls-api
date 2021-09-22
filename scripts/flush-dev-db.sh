@@ -17,7 +17,7 @@ check_dep "kubectl" "asdf install kubectl 1.19.15"
 # check for the ENV variable
 set +u
 if [[ -z "${ENV}" ]]; then
-  echo "You must set the ENV K8S_NAMESPACE variable - allowed values: [dev, preprod, prod]"
+  echo "You must set the ENV variable - allowed values: [dev, preprod, prod]"
   exit 1
 fi
 set -u
