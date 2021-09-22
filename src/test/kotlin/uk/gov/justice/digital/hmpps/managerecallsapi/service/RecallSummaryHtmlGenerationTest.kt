@@ -6,7 +6,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -54,7 +53,6 @@ class RecallSummaryHtmlGenerationTest(
               "Mr Probation Officer",
               "01234567890",
               "officer@myprobation.com",
-              ProbationDivision.LONDON,
               LocalDeliveryUnit.PS_TOWER_HAMLETS,
               "Ms Authoriser"
             ),

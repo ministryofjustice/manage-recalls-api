@@ -51,8 +51,6 @@ class UpdateRecallComponentTest : ComponentTestBase() {
     return Stream.of(
       """{"mappaLevel":""}""",
       """{"mappaLevel":"INVALID"}""",
-      """{"probationDivision":""}""",
-      """{"probationDivision":"INVALID"}""",
       """{"localDeliveryUnit":""}""",
       """{"localDeliveryUnit":"INVALID"}""",
       """{"reasonsForRecall": '"}""",

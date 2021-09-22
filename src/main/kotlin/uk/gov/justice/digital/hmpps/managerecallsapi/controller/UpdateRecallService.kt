@@ -91,7 +91,6 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
       probationOfficerName,
       probationOfficerPhoneNumber,
       probationOfficerEmail,
-      existingRecall.probationInfo?.probationDivision,
       localDeliveryUnit,
       authorisingAssistantChiefOfficer,
     )
