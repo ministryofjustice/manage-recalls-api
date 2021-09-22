@@ -1,16 +1,17 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
+import com.lowagie.text.pdf.PdfReader
+import com.natpryce.hamkrest.MatchResult
+import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
@@ -22,20 +23,13 @@ class CreateDossierComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
   private val firstName = "Natalia"
   private val expectedMergedPdf = ClassPathResource("/document/recall-notification.pdf").file.readBytes()
-  private val expectedNumberedPdf = ClassPathResource("/document/recall-notification-numbered.pdf").file.readBytes()
-  private val expectedBase64NumberedPdf = Base64.getEncoder().encodeToString(expectedNumberedPdf)
-
-  @MockkBean
-  lateinit var pdfDecorator: PdfDecorator
 
   @Test
   fun `can generate the dossier sending the correct documents to gotenberg`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
-    every { pdfDecorator.numberPages(any()) } returns expectedNumberedPdf
 
     val revocationOrderFile = ClassPathResource("/document/revocation-order.pdf").file
     gotenbergMockServer.stubPdfGeneration(revocationOrderFile.readBytes(), firstName, "revocation-order-logo")
-    // Note: for PDF input docs, gotenberg API requires names to be "*.pdf"
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
       "3-license.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
@@ -55,7 +49,8 @@ class CreateDossierComponentTest : ComponentTestBase() {
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
-    assertThat(dossier.content, equalTo(expectedBase64NumberedPdf))
+//    File("test-results.pdf").writeBytes(Base64.getDecoder().decode(dossier.content))
+    assertThat(dossier, hasNumberOfPages(equalTo(3)))
   }
 
   private fun base64EncodedFile(fileName: String) =
@@ -77,3 +72,13 @@ class CreateDossierComponentTest : ComponentTestBase() {
     )
   }
 }
+
+fun hasNumberOfPages(numberOfPagesMatcher: Matcher<Int>): Matcher<Pdf> =
+  object : Matcher<Pdf> {
+    override val description: String = numberOfPagesMatcher.description
+
+    override fun invoke(actual: Pdf): MatchResult =
+      PdfReader(Base64.getDecoder().decode(actual.content.toByteArray())).use { pdfReader ->
+        numberOfPagesMatcher(pdfReader.numberOfPages)
+      }
+  }
