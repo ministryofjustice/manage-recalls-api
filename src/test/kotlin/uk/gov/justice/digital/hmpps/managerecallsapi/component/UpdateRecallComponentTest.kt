@@ -189,10 +189,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       recallNotificationEmailSentDateTime = OffsetDateTime.now(),
       assessedByUserId = ::UserId.random()
     )
-    val response = authenticatedClient.updateRecall(
-      recallId,
-      updateRecallRequest
-    )
+    val response = authenticatedClient.updateRecall(recallId, updateRecallRequest)
 
     assertThat(
       response,
@@ -201,6 +198,27 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           recallId, nomsNumber,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = updateRecallRequest.assessedByUserId
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `create dossier updates dossierEmailSentDate and dossierCreatedByUserId`() {
+    val updateRecallRequest = UpdateRecallRequest(
+      dossierEmailSentDate = LocalDate.now(),
+      dossierCreatedByUserId = ::UserId.random()
+    )
+
+    val response = authenticatedClient.updateRecall(recallId, updateRecallRequest)
+
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber,
+          dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
+          dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId
         )
       )
     )
