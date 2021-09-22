@@ -85,6 +85,7 @@ class UpdateRecallServiceTest {
     previousConvictionMainName = fullyPopulatedUpdateRecallRequest.previousConvictionMainName,
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
     bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
+    dossierCreatedByUserId = fullyPopulatedUpdateRecallRequest.dossierCreatedByUserId!!.value,
   )
 
   @Test

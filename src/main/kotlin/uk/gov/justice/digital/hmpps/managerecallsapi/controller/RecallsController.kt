@@ -160,7 +160,8 @@ fun Recall.toResponse() = RecallResponse(
   hasDossierBeenChecked = this.hasDossierBeenChecked,
   previousConvictionMainName = this.previousConvictionMainName,
   assessedByUserId = this.assessedByUserId(),
-  bookedByUserId = this.bookedByUserId()
+  bookedByUserId = this.bookedByUserId(),
+  dossierCreatedByUserId = this.dossierCreatedByUserId()
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -208,7 +209,8 @@ data class RecallResponse(
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
   val assessedByUserId: UserId? = null,
-  val bookedByUserId: UserId? = null
+  val bookedByUserId: UserId? = null,
+  val dossierCreatedByUserId: UserId? = null,
 ) {
   val status: Status? = calculateStatus()
 

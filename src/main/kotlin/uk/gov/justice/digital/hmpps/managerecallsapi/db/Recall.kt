@@ -77,7 +77,8 @@ data class Recall(
   val previousConvictionMainName: String? = null,
   // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
   val assessedByUserId: UUID? = null,
-  val bookedByUserId: UUID? = null
+  val bookedByUserId: UUID? = null,
+  val dossierCreatedByUserId: UUID? = null
 ) {
   constructor(
     recallId: RecallId,
@@ -112,7 +113,8 @@ data class Recall(
     hasDossierBeenChecked: Boolean? = null,
     previousConvictionMainName: String? = null,
     assessedByUserId: UserId? = null,
-    bookedByUserId: UserId? = null
+    bookedByUserId: UserId? = null,
+    dossierCreatedByUserId: UserId? = null
   ) :
     this(
       recallId.value,
@@ -147,12 +149,14 @@ data class Recall(
       hasDossierBeenChecked,
       previousConvictionMainName,
       assessedByUserId?.value,
-      bookedByUserId?.value
+      bookedByUserId?.value,
+      dossierCreatedByUserId?.value
     )
 
   fun recallId() = RecallId(id)
   fun assessedByUserId() = assessedByUserId?.let { UserId(it) }
   fun bookedByUserId() = bookedByUserId?.let { UserId(it) }
+  fun dossierCreatedByUserId() = dossierCreatedByUserId?.let { UserId(it) }
 }
 
 @Embeddable
