@@ -59,7 +59,6 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.probationOfficerPhoneNumber")
       .isEqualTo(fullyPopulatedRecall.probationInfo!!.probationOfficerPhoneNumber)
       .jsonPath("$.probationOfficerEmail").isEqualTo(fullyPopulatedRecall.probationInfo!!.probationOfficerEmail)
-      .jsonPath("$.probationDivision").isEqualTo(fullyPopulatedRecall.probationInfo!!.probationDivision!!.name)
       .jsonPath("$.localDeliveryUnit").isEqualTo(fullyPopulatedRecall.probationInfo!!.localDeliveryUnit.name)
       .jsonPath("$.authorisingAssistantChiefOfficer")
       .isEqualTo(fullyPopulatedRecall.probationInfo!!.authorisingAssistantChiefOfficer)

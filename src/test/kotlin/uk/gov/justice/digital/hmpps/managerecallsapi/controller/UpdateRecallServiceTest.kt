@@ -64,7 +64,6 @@ class UpdateRecallServiceTest {
       fullyPopulatedUpdateRecallRequest.probationOfficerName!!,
       fullyPopulatedUpdateRecallRequest.probationOfficerPhoneNumber!!,
       fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
-      fullyPopulatedUpdateRecallRequest.probationDivision!!,
       fullyPopulatedUpdateRecallRequest.localDeliveryUnit!!,
       fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
     ),
@@ -91,13 +90,11 @@ class UpdateRecallServiceTest {
   @Test
   fun `can update recall with all UpdateRecallRequest fields populated`() {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    val probationInfoWithoutProbationDivision = fullyPopulatedRecallWithoutDocuments.probationInfo?.copy(probationDivision = null) // TODO: PUD-649: bin this
-    val fullyPopulatedRecallWithoutProbationDivisonAndDocuments = fullyPopulatedRecallWithoutDocuments.copy(probationInfo = probationInfoWithoutProbationDivision)
-    every { recallRepository.save(fullyPopulatedRecallWithoutProbationDivisonAndDocuments) } returns fullyPopulatedRecallWithoutProbationDivisonAndDocuments
+    every { recallRepository.save(fullyPopulatedRecallWithoutDocuments) } returns fullyPopulatedRecallWithoutDocuments
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
 
-    assertThat(response, equalTo(fullyPopulatedRecallWithoutProbationDivisonAndDocuments))
+    assertThat(response, equalTo(fullyPopulatedRecallWithoutDocuments))
   }
 
   @Test
@@ -124,7 +121,6 @@ class UpdateRecallServiceTest {
       recallRequestWithProbationInfo(probationOfficerName = null),
       recallRequestWithProbationInfo(probationOfficerPhoneNumber = null),
       recallRequestWithProbationInfo(probationOfficerEmail = null),
-      // recallRequestWithProbationInfo(probationDivision = null),
       recallRequestWithProbationInfo(localDeliveryUnit = null),
       recallRequestWithProbationInfo(authorisingAssistantChiefOfficer = null)
     )
@@ -167,14 +163,12 @@ class UpdateRecallServiceTest {
     probationOfficerName: String? = "PON",
     probationOfficerPhoneNumber: String? = "07111111111",
     probationOfficerEmail: String? = "email@email.com",
-    probationDivision: ProbationDivision? = null,
     localDeliveryUnit: LocalDeliveryUnit? = LocalDeliveryUnit.PS_DURHAM,
     authorisingAssistantChiefOfficer: String? = "AACO"
   ) = UpdateRecallRequest(
     probationOfficerName = probationOfficerName,
     probationOfficerPhoneNumber = probationOfficerPhoneNumber,
     probationOfficerEmail = probationOfficerEmail,
-    probationDivision = probationDivision,
     localDeliveryUnit = localDeliveryUnit,
     authorisingAssistantChiefOfficer = authorisingAssistantChiefOfficer
   )

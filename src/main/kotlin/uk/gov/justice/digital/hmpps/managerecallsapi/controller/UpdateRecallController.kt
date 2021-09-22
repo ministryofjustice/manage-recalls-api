@@ -54,7 +54,6 @@ data class UpdateRecallRequest(
   val probationOfficerName: String? = null,
   val probationOfficerPhoneNumber: String? = null,
   val probationOfficerEmail: String? = null,
-  val probationDivision: ProbationDivision? = null,
   val localDeliveryUnit: LocalDeliveryUnit? = null,
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
@@ -93,18 +92,6 @@ enum class MappaLevel {
 
 enum class RecallType {
   FIXED
-}
-
-@Suppress("unused")
-enum class ProbationDivision {
-  LONDON,
-  MIDLANDS,
-  NORTH_EAST,
-  NORTH_WEST,
-  SOUTH_EAST,
-  SOUTH_WEST,
-  SOUTH_WEST_AND_SOUTH_CENTRAL,
-  WALES
 }
 
 @Suppress("unused")
