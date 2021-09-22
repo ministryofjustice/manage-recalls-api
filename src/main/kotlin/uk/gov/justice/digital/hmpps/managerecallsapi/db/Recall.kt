@@ -189,7 +189,7 @@ data class ProbationInfo(
   val probationOfficerPhoneNumber: String,
   val probationOfficerEmail: String,
   @Enumerated(STRING)
-  val probationDivision: ProbationDivision,
+  val probationDivision: ProbationDivision? = null,
   @Enumerated(STRING)
   val localDeliveryUnit: LocalDeliveryUnit,
   val authorisingAssistantChiefOfficer: String
