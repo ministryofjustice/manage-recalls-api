@@ -58,7 +58,7 @@ function run_psql_cmd() {
 }
 
 echo "Clearing the database..."
-# run_psql_cmd "TRUNCATE recall CASCADE"
+run_psql_cmd "TRUNCATE recall CASCADE"
 echo "done."
 
 ##
