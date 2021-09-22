@@ -1,6 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
+function usage {
+  echo "
+./$(basename $0) [option]
+
+Options:
+    -h --> show usage
+    -e --> environment (REQUIRED) - allowed values: 'dev' or 'preprod'
+  "
+}
+
 function check_dep {
   if ! command -v "${1}" &>/dev/null; then
     echo "You need '${1}' - '${2}'"
@@ -13,10 +23,33 @@ check_dep "psql" "brew install postgresql"
 check_dep "jq" "brew install jq"
 check_dep "kubectl" "asdf install kubectl 1.19.15"
 
+# get cli options
+while getopts :e:h opt; do
+  case ${opt} in
+  e) ENV=${OPTARG} ;;
+  h)
+    usage
+    exit
+    ;;
+  \?)
+    echo "Unknown option: -${OPTARG}" >&2
+    exit 1
+    ;;
+  :)
+    echo "Missing option argument for -${OPTARG}" >&2
+    exit 1
+    ;;
+  *)
+    echo "Unimplemented option: -${OPTARG}" >&2
+    exit 1
+    ;;
+  esac
+done
+
 # check for the ENV variable
 set +u
 if [[ ! "${ENV}" =~ ^(dev|preprod)$ ]]; then
-  echo "You must set the ENV variable - allowed values: 'dev' or 'preprod'"
+  usage
   exit 1
 fi
 set -u
