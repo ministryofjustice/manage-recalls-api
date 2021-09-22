@@ -12,33 +12,33 @@ function check_dep {
 check_dep "psql" "brew install postgresql"
 check_dep "jq" "brew install jq"
 
-# check environment
+# check for the ENV variable
 set +u
 if [[ -z "${ENV}" ]]; then
-  echo "You must set the ENV environment variable - allowed values: [dev, preprod, prod]"
+  echo "You must set the ENV K8S_NAMESPACE variable - allowed values: [dev, preprod, prod]"
   exit 1
 fi
 set -u
 
-ENVIRONMENT="ppud-replacement-${ENV}"
+K8S_NAMESPACE="ppud-replacement-${ENV}"
 PFP_NAME="manage-recalls-api-port-forward-$(whoami | tr ._ -)"
 SECRET=manage-recalls-database
 
-DB_HOST=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.host | @base64d')
-DB_USER=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.username | @base64d')
-DB_PASS=$(kubectl -n "${ENVIRONMENT}" get secret "${SECRET}" -o json | jq -r '.data.password | @base64d')
+DB_HOST=$(kubectl -n "${K8S_NAMESPACE}" get secret "${SECRET}" -o json | jq -r '.data.host | @base64d')
+DB_USER=$(kubectl -n "${K8S_NAMESPACE}" get secret "${SECRET}" -o json | jq -r '.data.username | @base64d')
+DB_PASS=$(kubectl -n "${K8S_NAMESPACE}" get secret "${SECRET}" -o json | jq -r '.data.password | @base64d')
 DB_PORT=5432
 
-echo "Connecting to ${ENVIRONMENT}"
+echo "Connecting to ${K8S_NAMESPACE}"
 
 set +e
-PFP_COUNT=$(kubectl -n "${ENVIRONMENT}" get pods | grep -c "${PFP_NAME}")
+PFP_COUNT=$(kubectl -n "${K8S_NAMESPACE}" get pods | grep -c "${PFP_NAME}")
 set -e
 
 if [ "${PFP_COUNT}" -eq "0" ]; then
   echo "Starting up port forward pod..."
 
-  kubectl -n "${ENVIRONMENT}" run \
+  kubectl -n "${K8S_NAMESPACE}" run \
     "${PFP_NAME}" \
     --image=ministryofjustice/port-forward \
     --port="${DB_PORT}" \
@@ -50,7 +50,7 @@ if [ "${PFP_COUNT}" -eq "0" ]; then
 fi
 
 set +e
-cmd="kubectl -n ${ENVIRONMENT} port-forward ${PFP_NAME} ${DB_PORT}:${DB_PORT}"
+cmd="kubectl -n ${K8S_NAMESPACE} port-forward ${PFP_NAME} ${DB_PORT}:${DB_PORT}"
 pid=$(pgrep -f "${cmd}")
 set -e
 
