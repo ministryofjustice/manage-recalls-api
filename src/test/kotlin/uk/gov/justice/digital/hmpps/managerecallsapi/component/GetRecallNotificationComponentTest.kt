@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ProbationDivision
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
@@ -52,6 +53,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         "01234567890",
         "officer@myprobation.com",
         ProbationDivision.LONDON,
+        LocalDeliveryUnit.PS_BARNET,
         "Ms Authoriser"
       ),
       localPoliceForce = "London",

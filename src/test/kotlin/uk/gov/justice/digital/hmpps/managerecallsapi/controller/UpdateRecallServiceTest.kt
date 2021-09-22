@@ -65,6 +65,7 @@ class UpdateRecallServiceTest {
       fullyPopulatedUpdateRecallRequest.probationOfficerPhoneNumber!!,
       fullyPopulatedUpdateRecallRequest.probationOfficerEmail!!,
       fullyPopulatedUpdateRecallRequest.probationDivision!!,
+      fullyPopulatedUpdateRecallRequest.localDeliveryUnit!!,
       fullyPopulatedUpdateRecallRequest.authorisingAssistantChiefOfficer!!,
     ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
@@ -82,7 +83,8 @@ class UpdateRecallServiceTest {
     hasOtherPreviousConvictionMainName = fullyPopulatedUpdateRecallRequest.hasOtherPreviousConvictionMainName,
     hasDossierBeenChecked = fullyPopulatedUpdateRecallRequest.hasDossierBeenChecked,
     previousConvictionMainName = fullyPopulatedUpdateRecallRequest.previousConvictionMainName,
-    assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value
+    assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
+    bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
   )
 
   @Test
@@ -120,6 +122,7 @@ class UpdateRecallServiceTest {
       recallRequestWithProbationInfo(probationOfficerPhoneNumber = null),
       recallRequestWithProbationInfo(probationOfficerEmail = null),
       recallRequestWithProbationInfo(probationDivision = null),
+      recallRequestWithProbationInfo(localDeliveryUnit = null),
       recallRequestWithProbationInfo(authorisingAssistantChiefOfficer = null)
     )
   }
@@ -162,12 +165,14 @@ class UpdateRecallServiceTest {
     probationOfficerPhoneNumber: String? = "07111111111",
     probationOfficerEmail: String? = "email@email.com",
     probationDivision: ProbationDivision? = ProbationDivision.NORTH_EAST,
+    localDeliveryUnit: LocalDeliveryUnit? = LocalDeliveryUnit.PS_DURHAM,
     authorisingAssistantChiefOfficer: String? = "AACO"
   ) = UpdateRecallRequest(
     probationOfficerName = probationOfficerName,
     probationOfficerPhoneNumber = probationOfficerPhoneNumber,
     probationOfficerEmail = probationOfficerEmail,
     probationDivision = probationDivision,
+    localDeliveryUnit = localDeliveryUnit,
     authorisingAssistantChiefOfficer = authorisingAssistantChiefOfficer
   )
 }

@@ -48,7 +48,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       hasOtherPreviousConvictionMainName = updateRecallRequest.hasOtherPreviousConvictionMainName ?: hasOtherPreviousConvictionMainName,
       hasDossierBeenChecked = updateRecallRequest.hasDossierBeenChecked ?: hasDossierBeenChecked,
       previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
-      assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId
+      assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
+      bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId
     )
   }
 }
@@ -83,6 +84,7 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
     probationOfficerPhoneNumber != null &&
     probationOfficerEmail != null &&
     probationDivision != null &&
+    localDeliveryUnit != null &&
     authorisingAssistantChiefOfficer != null
   ) {
     ProbationInfo(
@@ -90,6 +92,7 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
       probationOfficerPhoneNumber,
       probationOfficerEmail,
       probationDivision,
+      localDeliveryUnit,
       authorisingAssistantChiefOfficer,
     )
   } else {

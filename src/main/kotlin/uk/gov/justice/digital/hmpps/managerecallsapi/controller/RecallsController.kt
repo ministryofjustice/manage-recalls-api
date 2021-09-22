@@ -142,6 +142,7 @@ fun Recall.toResponse() = RecallResponse(
   probationOfficerPhoneNumber = this.probationInfo?.probationOfficerPhoneNumber,
   probationOfficerEmail = this.probationInfo?.probationOfficerEmail,
   probationDivision = this.probationInfo?.probationDivision,
+  localDeliveryUnit = this.probationInfo?.localDeliveryUnit,
   authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer,
   licenceConditionsBreached = this.licenceConditionsBreached,
   reasonsForRecall = this.reasonsForRecall.toList(),
@@ -158,7 +159,8 @@ fun Recall.toResponse() = RecallResponse(
   hasOtherPreviousConvictionMainName = this.hasOtherPreviousConvictionMainName,
   hasDossierBeenChecked = this.hasDossierBeenChecked,
   previousConvictionMainName = this.previousConvictionMainName,
-  assessedByUserId = this.assessedByUserId()
+  assessedByUserId = this.assessedByUserId(),
+  bookedByUserId = this.bookedByUserId()
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -188,6 +190,7 @@ data class RecallResponse(
   val probationOfficerPhoneNumber: String? = null,
   val probationOfficerEmail: String? = null,
   val probationDivision: ProbationDivision? = null,
+  val localDeliveryUnit: LocalDeliveryUnit? = null,
   val authorisingAssistantChiefOfficer: String? = null,
   val licenceConditionsBreached: String? = null,
   val reasonsForRecall: List<ReasonForRecall> = emptyList(),
@@ -204,7 +207,8 @@ data class RecallResponse(
   val hasOtherPreviousConvictionMainName: Boolean? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
-  val assessedByUserId: UserId? = null
+  val assessedByUserId: UserId? = null,
+  val bookedByUserId: UserId? = null
 ) {
   val status: Status? = calculateStatus()
 
