@@ -65,16 +65,14 @@ class RecallsController(
   fun getRecallNotification(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
     recallNotificationService.getDocument(recallId)
       .map {
-        val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)
-        ResponseEntity.ok(Pdf(pdfBase64Encoded))
+        ResponseEntity.ok(Pdf.encode(it))
       }
 
   @GetMapping("/recalls/{recallId}/dossier")
   fun getDossier(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
     dossierService.getDossier(recallId)
       .map {
-        val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)
-        ResponseEntity.ok(Pdf(pdfBase64Encoded))
+        ResponseEntity.ok(Pdf.encode(it))
       }
 
   @PostMapping("/recalls/{recallId}/documents")
@@ -231,7 +229,11 @@ data class ApiRecallDocument(
   val fileName: String?
 )
 
-data class Pdf(val content: String)
+data class Pdf(val content: String) {
+  companion object {
+    fun encode(content: ByteArray): Pdf = Pdf(Base64.getEncoder().encodeToString(content))
+  }
+}
 
 data class AddDocumentRequest(val category: RecallDocumentCategory, val fileContent: String, val fileName: String?)
 
