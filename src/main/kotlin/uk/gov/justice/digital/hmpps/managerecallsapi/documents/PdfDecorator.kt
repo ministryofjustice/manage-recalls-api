@@ -11,23 +11,22 @@ import java.io.ByteArrayOutputStream
 
 @Component
 class PdfDecorator {
+  fun numberPages(pdfContent: ByteArray): ByteArray =
+    ByteArrayOutputStream().use { output ->
+      PdfReader(pdfContent).use { pdfReader ->
+        val pdfStamper = PdfStamper(pdfReader, output)
 
-  fun numberPages(pdfContent: ByteArray): ByteArray {
-    val outputStream = ByteArrayOutputStream()
-    val pdfReader = PdfReader(pdfContent)
-    val pdfStamper = PdfStamper(pdfReader, outputStream)
-    for (i in 1..pdfReader.numberOfPages) {
-      val t = Phrase(i.toString(), Liberation.SERIF.create(10))
-      val xt: Float = pdfReader.getPageSize(i).width / 2
-      val yt: Float = pdfReader.getPageSize(i).getBottom(20f)
-      ColumnText.showTextAligned(
-        pdfStamper.getOverContent(i), Element.ALIGN_CENTER,
-        t, xt, yt, 0f
-      )
+        (1..pdfReader.numberOfPages).forEach { i ->
+          val t = Phrase(i.toString(), Liberation.SERIF.create(10))
+          val xt: Float = pdfReader.getPageSize(i).width / 2
+          val yt: Float = pdfReader.getPageSize(i).getBottom(20f)
+          ColumnText.showTextAligned(
+            pdfStamper.getOverContent(i), Element.ALIGN_CENTER,
+            t, xt, yt, 0f
+          )
+        }
+        pdfStamper.close()
+      }
+      output.toByteArray()
     }
-    pdfStamper.close()
-    pdfReader.close()
-    outputStream.close()
-    return outputStream.toByteArray()
-  }
 }
