@@ -68,9 +68,9 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
 
     gotenbergMockServer.stubMergePdfs(
       expectedPdf,
-      "0.pdf" to expectedPdf.decodeToString(),
-      "1.pdf" to expectedPdf.decodeToString(),
-      "2.pdf" to expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
     )
 
     val response = authenticatedClient.getRecallNotification(recallId)

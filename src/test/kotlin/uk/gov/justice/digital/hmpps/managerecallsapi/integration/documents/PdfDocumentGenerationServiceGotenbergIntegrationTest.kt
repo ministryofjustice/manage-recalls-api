@@ -35,7 +35,7 @@ class PdfDocumentGenerationServiceGotenbergIntegrationTest {
       ClassPathDocumentDetail("revocation-order-logo.png")
     ).block()!!
 
-    java.io.File("generated.pdf").writeBytes(generatedBytes) // uncomment to save to temp file for viewing
+//    java.io.File("generated.pdf").writeBytes(generatedBytes) // uncomment to save to temp file for viewing
     assertThat(generatedBytes, isPdfWithNumberOfPages(equalTo(1)))
   }
 
@@ -49,7 +49,7 @@ class PdfDocumentGenerationServiceGotenbergIntegrationTest {
 
     val mergedBytes = pdfDocumentGenerationService.mergePdfs(details).block()!!
 
-    java.io.File("merged.pdf").writeBytes(mergedBytes) // uncomment to save to temp file for viewing
+//    java.io.File("merged.pdf").writeBytes(mergedBytes) // uncomment to save to temp file for viewing
     assertThat(mergedBytes, isPdfWithNumberOfPages(equalTo(5)))
   }
 }

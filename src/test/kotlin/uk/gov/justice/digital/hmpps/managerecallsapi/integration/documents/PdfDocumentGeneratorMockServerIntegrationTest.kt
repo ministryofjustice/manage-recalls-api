@@ -57,13 +57,13 @@ class PdfDocumentGeneratorMockServerIntegrationTest {
     val expectedMergedPdf = randomString()
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf.toByteArray(),
-      "0.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
-      "1.pdf" to ClassPathResource("/document/revocation-order.pdf").file.readText()
+      ClassPathResource("/document/licence.pdf").file.readText(),
+      ClassPathResource("/document/revocation-order.pdf").file.readText()
     )
 
     val details = listOf(
-      ClassPathDocumentDetail("a.pdf", "/document/licence.pdf"),
-      ClassPathDocumentDetail("b.pdf", "/document/revocation-order.pdf")
+      ClassPathDocumentDetail("licence.pdf", "/document/licence.pdf"),
+      ClassPathDocumentDetail("revocation-order.pdf", "/document/revocation-order.pdf")
     )
 
     val mergedPdf = pdfDocumentGenerationService.mergePdfs(details).block()!!
