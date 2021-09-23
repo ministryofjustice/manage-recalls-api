@@ -15,7 +15,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Base64EncodedImageData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -60,31 +61,22 @@ internal class RevocationOrderServiceTest {
     val prisoner = mockk<Prisoner>()
     val revocationOrderId = UUID.randomUUID()
     val userId = UserId(UUID.randomUUID())
+    val userSignature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
 
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     val generatedHtml = "Some html, honest"
-    every { userDetailsService.get(userId) } returns UserDetails(
-      userId,
-      FirstName("Bob"),
-      LastName("Badger"),
-      Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
-    )
+    every { userDetailsService.get(userId) } returns UserDetails(userId, FirstName("Bob"), LastName("Badger"), userSignature)
     every { revocationOrderGenerator.generateHtml(prisoner, aRecall) } returns generatedHtml
     every {
       pdfDocumentGenerationService.generatePdf(
         generatedHtml,
-        ClassPathDocumentDetail("revocation-order-logo.png"),
-        any()
+        ClassPathImageData("revocation-order-logo.png"),
+        Base64EncodedImageData("signature.jpg", userSignature)
       )
     } returns Mono.just(expectedBytes)
     every {
-      recallDocumentService.uploadAndAddDocumentForRecall(
-        recallId,
-        expectedBytes,
-        REVOCATION_ORDER,
-        null
-      )
+      recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER)
     } returns revocationOrderId
 
     val result = underTest.createPdf(recallId, userId)
@@ -93,7 +85,7 @@ internal class RevocationOrderServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-        verify { recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER, null) }
+        verify { recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER) }
       }.verifyComplete()
   }
 

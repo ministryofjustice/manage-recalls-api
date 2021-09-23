@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 
@@ -18,7 +18,7 @@ class LetterToProbationService(
 
     return pdfDocumentGenerationService.generatePdf(
       letterToProbationHtml,
-      ClassPathDocumentDetail("letter-to-probation-logo.png")
+      ClassPathImageData("letter-to-probation-logo.png")
     )
   }
 }

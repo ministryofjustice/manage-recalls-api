@@ -52,7 +52,6 @@ class CreateDossierComponentTest : ComponentTestBase() {
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
-//    File("test-results.pdf").writeBytes(Base64.getDecoder().decode(dossier.content))
     assertThat(dossier, hasNumberOfPages(equalTo(3)))
   }
 
