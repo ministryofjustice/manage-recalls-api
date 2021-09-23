@@ -30,9 +30,9 @@ class CreateDossierComponentTest : ComponentTestBase() {
     gotenbergMockServer.stubGenerateRevocationOrder(revocationOrderFile.readBytes(), firstName)
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
-      "0.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
-      "1.pdf" to ClassPathResource("/document/part_a.pdf").file.readText(),
-      "2.pdf" to revocationOrderFile.readText(),
+      ClassPathResource("/document/licence.pdf").file.readText(),
+      ClassPathResource("/document/part_a.pdf").file.readText(),
+      revocationOrderFile.readText(),
     )
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))

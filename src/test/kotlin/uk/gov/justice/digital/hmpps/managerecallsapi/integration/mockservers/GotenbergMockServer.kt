@@ -81,24 +81,16 @@ class GotenbergMockServer : WireMockServer(9093) {
 
   fun stubMergePdfs(
     generatedPdf: ByteArray,
-    vararg fileDetails: Pair<String, String>
+    vararg fileContentsToMerge: String
   ) {
     stubFor(
       post(WireMock.urlEqualTo("/merge"))
-        .withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
         .apply {
-          fileDetails.forEach { fileDetails ->
-            this.withMultipartRequestBody(
-              aMultipart()
-                .withHeader(
-                  "Content-Disposition",
-                  equalTo("form-data; name=${fileDetails.first}; filename=${fileDetails.first}")
-                )
-                .withBody(equalTo(fileDetails.second))
-            )
+          withMultipartHeader()
+          fileContentsToMerge.forEachIndexed { index, fileContents ->
+            withMultipartFor("$index.pdf", equalTo(fileContents))
           }
         }.willReturn(aResponse().withBody(generatedPdf))
-
     )
   }
 
