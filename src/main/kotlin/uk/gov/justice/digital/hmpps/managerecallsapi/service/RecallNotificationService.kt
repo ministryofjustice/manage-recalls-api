@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.DocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentDetail

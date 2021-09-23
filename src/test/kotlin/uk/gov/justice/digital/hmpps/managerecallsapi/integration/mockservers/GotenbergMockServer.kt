@@ -32,9 +32,9 @@ class GotenbergMockServer : WireMockServer(9093) {
   }
 
   private fun stubHtmlConversion(
-      expectedTextInHtml: String,
-      logoFileName: String,
-      generatedPdfContents: ByteArray
+    expectedTextInHtml: String,
+    logoFileName: String,
+    generatedPdfContents: ByteArray
   ) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html")).apply {
@@ -43,7 +43,7 @@ class GotenbergMockServer : WireMockServer(9093) {
         withMultipartFor(logoFileName, equalTo(ClassPathResource("/templates/images/$logoFileName").file.readText()))
       }
         .willReturn(aResponse().withBody(generatedPdfContents))
-      )
+    )
   }
 
   private fun MappingBuilder.withMultipartHeader() {
@@ -56,7 +56,7 @@ class GotenbergMockServer : WireMockServer(9093) {
 
   private fun <T> multipartFor(documentName: String, contentPattern: ContentPattern<T>) = aMultipart()
     .withName("files")
-    .withHeader("Content-Disposition", equalTo("form-data; name=${documentName}; filename=${documentName}"))
+    .withHeader("Content-Disposition", equalTo("form-data; name=$documentName; filename=$documentName"))
     .withBody(contentPattern)
 
   fun stubPdfGeneration(generatedPdf: ByteArray, textOfHtml: String, logoFileName: String) {
