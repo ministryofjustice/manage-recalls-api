@@ -9,6 +9,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.io.File
+import java.util.Base64
 
 class UserDetailsComponentTest : ComponentTestBase() {
 
@@ -17,9 +19,10 @@ class UserDetailsComponentTest : ComponentTestBase() {
     val userId = ::UserId.random()
     val firstName = FirstName("PPUD")
     val lastName = LastName("USER")
-    val response = authenticatedClient.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName))
+    val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+    val response = authenticatedClient.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName, signature))
 
-    assertThat(response, equalTo(UserDetailsResponse(userId, firstName, lastName)))
+    assertThat(response, equalTo(UserDetailsResponse(userId, firstName, lastName, signature)))
   }
 
   @Test
@@ -45,9 +48,10 @@ class UserDetailsComponentTest : ComponentTestBase() {
     val userId = ::UserId.random()
     val firstName = FirstName("PPUD")
     val lastName = LastName("USER")
-    authenticatedClient.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName))
+    val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+    authenticatedClient.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName, signature))
 
     val response = authenticatedClient.getUserDetails(userId)
-    assertThat(response, equalTo(UserDetailsResponse(userId, firstName, lastName)))
+    assertThat(response, equalTo(UserDetailsResponse(userId, firstName, lastName, signature)))
   }
 }

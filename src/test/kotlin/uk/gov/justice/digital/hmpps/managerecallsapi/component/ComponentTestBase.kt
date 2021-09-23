@@ -18,10 +18,12 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -41,6 +43,9 @@ abstract class ComponentTestBase {
   protected lateinit var recallRepository: RecallRepository
 
   @Autowired
+  protected lateinit var userDetailsRepository: UserDetailsRepository
+
+  @Autowired
   protected lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
 
   @Autowired
@@ -48,6 +53,9 @@ abstract class ComponentTestBase {
 
   @Autowired
   protected lateinit var gotenbergMockServer: GotenbergMockServer
+
+  @Autowired
+  protected lateinit var s3Service: S3Service
 
   protected val authenticatedClient: AuthenticatedClient by lazy {
     AuthenticatedClient(webTestClient, jwtAuthenticationHelper)

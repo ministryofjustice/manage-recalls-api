@@ -60,8 +60,8 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun getRecallNotification(recallId: RecallId): Pdf =
-    getRequest("/recalls/$recallId/recallNotification", Pdf::class.java)
+  fun getRecallNotification(recallId: RecallId, userId: UserId): Pdf =
+    getRequest("/recalls/$recallId/recallNotification/$userId", Pdf::class.java)
 
   fun getDossier(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/dossier", Pdf::class.java)

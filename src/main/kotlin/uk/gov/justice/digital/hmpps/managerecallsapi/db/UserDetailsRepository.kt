@@ -28,8 +28,10 @@ data class UserDetails(
   @Column(nullable = false)
   @Convert(converter = LastNameJpaConverter::class)
   val lastName: LastName,
+  @Column(nullable = false)
+  val signature: String
 ) {
-  constructor(userId: UserId, firstName: FirstName, lastName: LastName) : this(userId.value, firstName, lastName)
+  constructor(userId: UserId, firstName: FirstName, lastName: LastName, signature: String) : this(userId.value, firstName, lastName, signature)
 
   fun userId() = UserId(id)
 }
