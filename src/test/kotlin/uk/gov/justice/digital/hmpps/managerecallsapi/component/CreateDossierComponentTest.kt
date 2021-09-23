@@ -8,13 +8,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentReque
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 import java.util.Base64
-import java.util.UUID
 
 class CreateDossierComponentTest : ComponentTestBase() {
 
@@ -45,9 +45,10 @@ class CreateDossierComponentTest : ComponentTestBase() {
       recall.recallId,
       AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFile("/document/part_a.pdf"), null)
     )
-    val documentId = UUID.randomUUID()
-    s3Service.uploadFile(documentId, revocationOrderFile.readBytes())
-    recallRepository.save(recallRepository.getByRecallId(recall.recallId).copy(revocationOrderId = documentId))
+    authenticatedClient.uploadRecallDocument(
+      recall.recallId,
+      AddDocumentRequest(REVOCATION_ORDER, base64EncodedFile("/document/revocation-order.pdf"), null)
+    )
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
