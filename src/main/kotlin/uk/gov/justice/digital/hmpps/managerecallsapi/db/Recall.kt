@@ -35,7 +35,6 @@ data class Recall(
   @Column(nullable = false)
   @Convert(converter = NomsNumberJpaConverter::class)
   val nomsNumber: NomsNumber,
-  val revocationOrderId: UUID? = null,
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val documents: Set<RecallDocument> = emptySet(),
@@ -82,7 +81,6 @@ data class Recall(
   constructor(
     recallId: RecallId,
     nomsNumber: NomsNumber,
-    revocationOrderId: UUID? = null,
     documents: Set<RecallDocument> = emptySet(),
     recallType: RecallType? = null,
     recallLength: RecallLength? = null,
@@ -118,7 +116,6 @@ data class Recall(
     this(
       recallId.value,
       nomsNumber,
-      revocationOrderId,
       documents,
       recallType,
       recallLength,

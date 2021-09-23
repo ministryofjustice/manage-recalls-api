@@ -32,7 +32,8 @@ class RecallDocumentService(
   }
 
   fun getDocument(recallId: RecallId, documentId: UUID): Pair<RecallDocument, ByteArray> {
-    val document = recallRepository.getByRecallId(recallId).documents.firstOrNull { it.id == documentId }
+    recallRepository.getByRecallId(recallId)
+    val document = recallDocumentRepository.findByRecallIdAndDocumentId(recallId.value, documentId)
       ?: throw RecallDocumentNotFoundException(recallId, documentId)
     val bytes = s3Service.downloadFile(documentId)
     return Pair(document, bytes)
@@ -45,10 +46,10 @@ class RecallDocumentService(
 
   fun getDocumentContentWithCategoryIfExists(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray? {
     // DB constraint ("UNIQUE (recall_id, category)") disallows > 1 doc matching recallId and category
-    return recallRepository.getByRecallId(recallId).documents
-      .firstOrNull { it.category == documentCategory }?.let { document ->
-        s3Service.downloadFile(document.id)
-      }
+    recallRepository.getByRecallId(recallId)
+    return recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
+      s3Service.downloadFile(it.id)
+    }
   }
 }
 

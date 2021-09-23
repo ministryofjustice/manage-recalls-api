@@ -40,7 +40,6 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.recallId").isEqualTo(recallId.toString())
       .jsonPath("$.nomsNumber").isEqualTo(fullyPopulatedRecall.nomsNumber.value)
       .jsonPath("$.documents.length()").isEqualTo(1)
-      .jsonPath("$.revocationOrderId").isNotEmpty
       .jsonPath("$.recallLength").isEqualTo(fullyPopulatedRecall.recallLength!!.name)
       .jsonPath("$.lastReleasePrison").isEqualTo(fullyPopulatedRecall.lastReleasePrison!!)
       .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))
