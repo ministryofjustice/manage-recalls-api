@@ -20,21 +20,21 @@ import org.springframework.stereotype.Component
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
   fun stubGenerateRevocationOrder(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubHtmlConversion(expectedTextInHtml, "revocation-order-logo.png", generatedPdfContents)
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, "revocation-order-logo.png")
   }
 
   fun stubGetRecallNotification(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubHtmlConversion(expectedTextInHtml, "recall-summary-logo.png", generatedPdfContents)
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, "recall-summary-logo.png")
   }
 
   fun stubLetterToProbation(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubHtmlConversion(expectedTextInHtml, "letter-to-probation-logo.png", generatedPdfContents)
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, "letter-to-probation-logo.png")
   }
 
-  private fun stubHtmlConversion(
+  private fun stubPdfGeneration(
+    generatedPdfContents: ByteArray,
     expectedTextInHtml: String,
-    logoFileName: String,
-    generatedPdfContents: ByteArray
+    logoFileName: String
   ) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html")).apply {
@@ -43,39 +43,6 @@ class GotenbergMockServer : WireMockServer(9093) {
         withMultipartFor(logoFileName, equalTo(ClassPathResource("/templates/images/$logoFileName").file.readText()))
       }
         .willReturn(aResponse().withBody(generatedPdfContents))
-    )
-  }
-
-  private fun MappingBuilder.withMultipartHeader() {
-    this.withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
-  }
-
-  private fun <T> MappingBuilder.withMultipartFor(fileName: String, contentPattern: ContentPattern<T>) {
-    this.withMultipartRequestBody(multipartFor(fileName, contentPattern))
-  }
-
-  private fun <T> multipartFor(documentName: String, contentPattern: ContentPattern<T>) = aMultipart()
-    .withName("files")
-    .withHeader("Content-Disposition", equalTo("form-data; name=$documentName; filename=$documentName"))
-    .withBody(contentPattern)
-
-  fun stubPdfGeneration(generatedPdf: ByteArray, textOfHtml: String, logoFileName: String) {
-    stubFor(
-      post(WireMock.urlEqualTo("/convert/html"))
-        .withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
-        .withMultipartRequestBody(
-          aMultipart()
-            .withName("files")
-            .withHeader("Content-Disposition", equalTo("form-data; name=index.html; filename=index.html"))
-            .withBody(containing(textOfHtml))
-        )
-        .withMultipartRequestBody(
-          aMultipart()
-            .withName("files")
-            .withHeader("Content-Disposition", equalTo("form-data; name=$logoFileName.png; filename=$logoFileName.png"))
-            .withBody(equalTo(ClassPathResource("/templates/images/$logoFileName.png").file.readText()))
-        )
-        .willReturn(aResponse().withBody(generatedPdf))
     )
   }
 
@@ -93,6 +60,19 @@ class GotenbergMockServer : WireMockServer(9093) {
         }.willReturn(aResponse().withBody(generatedPdf))
     )
   }
+
+  private fun MappingBuilder.withMultipartHeader() {
+    this.withHeader(CONTENT_TYPE, containing(MULTIPART_FORM_DATA_VALUE))
+  }
+
+  private fun <T> MappingBuilder.withMultipartFor(fileName: String, contentPattern: ContentPattern<T>) {
+    this.withMultipartRequestBody(multipartFor(fileName, contentPattern))
+  }
+
+  private fun <T> multipartFor(documentName: String, contentPattern: ContentPattern<T>) = aMultipart()
+    .withName("files")
+    .withHeader("Content-Disposition", equalTo("form-data; name=$documentName; filename=$documentName"))
+    .withBody(contentPattern)
 
   fun isHealthy() {
     healthCheck(OK)

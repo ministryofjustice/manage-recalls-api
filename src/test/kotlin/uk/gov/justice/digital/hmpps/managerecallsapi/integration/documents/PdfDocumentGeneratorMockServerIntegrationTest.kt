@@ -42,7 +42,7 @@ class PdfDocumentGeneratorMockServerIntegrationTest {
   fun `should return byte array when generating pdf from html`() {
     val expectedGeneratedPdf = randomString()
     val html = "<body><span>${randomString()}</span></body>"
-    gotenbergMockServer.stubPdfGeneration(expectedGeneratedPdf.toByteArray(), html, "revocation-order-logo")
+    gotenbergMockServer.stubGenerateRevocationOrder(expectedGeneratedPdf.toByteArray(), html)
 
     val generatedPdf = pdfDocumentGenerationService.generatePdf(
       html,
