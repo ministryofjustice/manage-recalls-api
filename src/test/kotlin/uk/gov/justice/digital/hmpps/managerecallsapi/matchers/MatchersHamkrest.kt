@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.matchers
 
 import com.lowagie.text.pdf.PdfReader
 import com.natpryce.hamkrest.MatchResult
+import com.natpryce.hamkrest.MatchResult.Match
+import com.natpryce.hamkrest.MatchResult.Mismatch
 import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.cast
@@ -38,4 +40,23 @@ fun isPdfWithNumberOfPages(numberOfPagesMatcher: Matcher<Int>): Matcher<ByteArra
       PdfReader(actual).use { pdfReader ->
         numberOfPagesMatcher(pdfReader.numberOfPages)
       }
+  }
+
+fun <T> onlyContainsInOrder(expected: List<Matcher<T>>): Matcher<List<T>> =
+  object : Matcher<List<T>> {
+    override val description: String = "contains only the expected items in the same order ${expected.map { it.description }}"
+
+    override fun invoke(actual: List<T>): MatchResult {
+      if (actual.size != expected.size) return Mismatch("size is ${actual.size}, expected ${expected.size}")
+
+      val expectedIterator = expected.iterator()
+      for (actualValue in actual) {
+        expectedIterator.next().let { matcher ->
+          matcher.invoke(actualValue).let { matchResult ->
+            if (matchResult is Mismatch) return matchResult
+          }
+        }
+      }
+      return Match
+    }
   }

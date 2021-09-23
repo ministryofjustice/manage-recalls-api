@@ -7,17 +7,19 @@ import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
+import java.util.Base64
 
 @Component
 class PdfDocumentGenerationService(@Autowired private val gotenbergApi: GotenbergApi) {
 
-  fun generatePdf(html: String, vararg assets: DocumentDetail<out Any>): Mono<ByteArray> =
+  fun generatePdf(html: String, vararg images: ImageData<out Any>): Mono<ByteArray> =
     gotenbergApi.convertHtml(
       toConvertHtmlRequest(
         html,
-        assets,
+        images,
         mapOf(
           "marginTop" to 0.0,
           "marginBottom" to 0.0,
@@ -27,10 +29,14 @@ class PdfDocumentGenerationService(@Autowired private val gotenbergApi: Gotenber
       )
     )
 
-  fun mergePdfs(details: List<DocumentDetail<out Any>>): Mono<ByteArray> =
+  fun mergePdfs(details: List<Data<MultipartInputStreamFileResource>>): Mono<ByteArray> =
     gotenbergApi.merge(details.toMergeRequest())
 
-  private fun toConvertHtmlRequest(html: String, assets: Array<out DocumentDetail<out Any>>, additionalProperties: Map<String, Any> = emptyMap()) =
+  private fun toConvertHtmlRequest(
+    html: String,
+    assets: Array<out ImageData<out Any>>,
+    additionalProperties: Map<String, Any> = emptyMap()
+  ) =
     MultipartBodyBuilder().apply {
       addMultipart("index.html", html)
       assets.forEach { documentDetail ->
@@ -46,7 +52,7 @@ class PdfDocumentGenerationService(@Autowired private val gotenbergApi: Gotenber
     html: Any
   ) = part(name, html).header(CONTENT_DISPOSITION, "form-data; name=$name; filename=$name")
 
-  private fun List<DocumentDetail<out Any>>.toMergeRequest(additionalProperties: Map<String, Any> = emptyMap()) =
+  private fun List<Data<MultipartInputStreamFileResource>>.toMergeRequest(additionalProperties: Map<String, Any> = emptyMap()) =
     MultipartBodyBuilder().apply {
       forEachIndexed { index, documentDetail ->
         val documentName = "$index.pdf"
@@ -59,24 +65,36 @@ class PdfDocumentGenerationService(@Autowired private val gotenbergApi: Gotenber
     }.build()
 }
 
-interface DocumentDetail<T> {
-  val name: String
+interface Data<T> {
   fun data(): T
 }
 
-data class ClassPathDocumentDetail(override val name: String, val path: String = "/templates/images/$name") :
-  DocumentDetail<MultipartInputStreamFileResource> {
-  override fun data() = MultipartInputStreamFileResource(ClassPathResource(path).inputStream, name)
+interface ImageData<T> : Data<T> {
+  val name: String
 }
 
-data class InputStreamDocumentDetail(override val name: String, val inputStream: InputStream) :
-  DocumentDetail<MultipartInputStreamFileResource> {
-  override fun data() = MultipartInputStreamFileResource(inputStream, name)
+data class ClassPathImageData(override val name: String) :
+  ImageData<MultipartInputStreamFileResource> {
+  override fun data() = MultipartInputStreamFileResource(ClassPathResource("/templates/images/$name").inputStream, name)
 }
 
-class MultipartInputStreamFileResource(inputStream: InputStream, private val filename: String) :
+data class Base64EncodedImageData(override val name: String, val base64EncodedContent: String) :
+  ImageData<MultipartInputStreamFileResource> {
+  override fun data() = MultipartInputStreamFileResource(ByteArrayInputStream(Base64.getDecoder().decode(base64EncodedContent.toByteArray())), name)
+}
+
+open class ClassPathDocumentData(private val path: String) :
+  Data<MultipartInputStreamFileResource> {
+  override fun data() = MultipartInputStreamFileResource(ClassPathResource(path).inputStream)
+}
+
+data class InputStreamDocumentData(val inputStream: InputStream) : Data<MultipartInputStreamFileResource> {
+  override fun data() = MultipartInputStreamFileResource(inputStream)
+}
+
+class MultipartInputStreamFileResource(inputStream: InputStream, private val filename: String? = null) :
   InputStreamResource(inputStream) {
-  override fun getFilename(): String {
+  override fun getFilename(): String? {
     return filename
   }
 

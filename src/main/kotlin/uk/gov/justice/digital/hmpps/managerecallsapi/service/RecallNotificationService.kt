@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.DocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -26,17 +25,17 @@ class RecallNotificationService(
     )
 
     if (recallNotification == null) {
-      val docs = mutableListOf<DocumentDetail<out Any>>()
+      val docs = mutableListOf<InputStreamDocumentData>()
       return recallSummaryService.getPdf(recallId).map { recallSummaryBytes ->
-        docs.add(InputStreamDocumentDetail("1-recallSummary.pdf", recallSummaryBytes.inputStream()))
+        docs.add(InputStreamDocumentData(recallSummaryBytes.inputStream()))
       }.flatMap {
         revocationOrderService.createPdf(recallId, userId)
       }.map { revocationOrderBytes ->
-        docs.add(InputStreamDocumentDetail("2-revocationOrder.pdf", revocationOrderBytes.inputStream()))
+        docs.add(InputStreamDocumentData(revocationOrderBytes.inputStream()))
       }.flatMap {
         letterToProbationService.getPdf(recallId)
       }.flatMap { letterToProbationBytes ->
-        docs.add(InputStreamDocumentDetail("3-letterToProbation.pdf", letterToProbationBytes.inputStream()))
+        docs.add(InputStreamDocumentData(letterToProbationBytes.inputStream()))
         pdfDocumentGenerationService.mergePdfs(docs)
       }.map { mergedBytes ->
         recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION)

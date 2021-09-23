@@ -12,7 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.ActiveProfiles
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
@@ -46,7 +47,7 @@ class PdfDocumentGeneratorMockServerIntegrationTest {
 
     val generatedPdf = pdfDocumentGenerationService.generatePdf(
       html,
-      ClassPathDocumentDetail("revocation-order-logo.png")
+      ClassPathImageData("revocation-order-logo.png")
     ).block()!!
 
     assertThat(String(generatedPdf), equalTo(expectedGeneratedPdf))
@@ -62,8 +63,8 @@ class PdfDocumentGeneratorMockServerIntegrationTest {
     )
 
     val details = listOf(
-      ClassPathDocumentDetail("licence.pdf", "/document/licence.pdf"),
-      ClassPathDocumentDetail("revocation-order.pdf", "/document/revocation-order.pdf")
+      ClassPathDocumentData("/document/licence.pdf"),
+      ClassPathDocumentData("/document/revocation-order.pdf")
     )
 
     val mergedPdf = pdfDocumentGenerationService.mergePdfs(details).block()!!
