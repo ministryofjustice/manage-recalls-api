@@ -28,7 +28,7 @@ class PdfDocumentGenerationServiceGotenbergIntegrationTest {
               </center>
           </body>
         </html>
-        """.trimIndent()
+    """.trimIndent()
 
     val generatedBytes = pdfDocumentGenerationService.generatePdf(
       html,

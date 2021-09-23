@@ -42,8 +42,8 @@ class PdfDocumentGenerationService(@Autowired private val gotenbergApi: Gotenber
     }.build()
 
   private fun MultipartBodyBuilder.addMultipart(
-      name: String,
-      html: Any
+    name: String,
+    html: Any
   ) = part(name, html).header(CONTENT_DISPOSITION, "form-data; name=$name; filename=$name")
 
   private fun List<DocumentDetail<out Any>>.toMergeRequest(additionalProperties: Map<String, Any> = emptyMap()) =
