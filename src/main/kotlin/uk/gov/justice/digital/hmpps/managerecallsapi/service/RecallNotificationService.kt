@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.DocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 
 @Service
@@ -14,14 +15,14 @@ class RecallNotificationService(
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val recallSummaryService: RecallSummaryService,
   @Autowired private val letterToProbationService: LetterToProbationService,
-  @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
+  @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val recallDocumentService: RecallDocumentService,
 ) {
 
   fun getDocument(recallId: RecallId): Mono<ByteArray> {
     val recallNotification = recallDocumentService.getDocumentContentWithCategoryIfExists(
       recallId,
-      RecallDocumentCategory.RECALL_NOTIFICATION
+      RECALL_NOTIFICATION
     )
 
     if (recallNotification == null) {
@@ -36,9 +37,9 @@ class RecallNotificationService(
         letterToProbationService.getPdf(recallId)
       }.flatMap { letterToProbationBytes ->
         docs.add(InputStreamDocumentDetail("3-letterToProbation.pdf", letterToProbationBytes.inputStream()))
-        pdfDocumentGenerator.mergePdfs(docs)
+        pdfDocumentGenerationService.mergePdfs(docs)
       }.map { mergedBytes ->
-        recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RecallDocumentCategory.RECALL_NOTIFICATION)
+        recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION)
         mergedBytes
       }
     } else {
