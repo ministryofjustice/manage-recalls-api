@@ -5,21 +5,21 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.GotenbergApi
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.isPdfWithNumberOfPages
 
-class RealPdfDocumentGeneratorTest {
+class PdfDocumentGenerationServiceGotenbergIntegrationTest {
 
-  private val pdfDocumentGenerator = PdfDocumentGenerator(
+  private val gotenbergApi = GotenbergApi(
     WebClient.builder().build(),
-    System.getenv("GOTENBERG_ENDPOINT_URL") ?: "http://localhost:9093",
+    System.getenv("GOTENBERG_ENDPOINT_URL") ?: "http://localhost:9093"
   )
+  private val pdfDocumentGenerationService = PdfDocumentGenerationService(gotenbergApi)
 
   @Test
-  fun `should return byte array when requesting pdf`() {
-    val details = listOf(
-      StringDocumentDetail("index.html", """
+  fun `should return byte array when generating a pdf`() {
+    val html = """
         <html>
           <body>
               <center>
@@ -28,13 +28,14 @@ class RealPdfDocumentGeneratorTest {
               </center>
           </body>
         </html>
-      """.trimIndent()),
-      ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
-    )
+        """.trimIndent()
 
-    val generatedBytes = pdfDocumentGenerator.makePdf(details).block()!!
+    val generatedBytes = pdfDocumentGenerationService.generatePdf(
+      html,
+      ClassPathDocumentDetail("revocation-order-logo.png")
+    ).block()!!
 
-    java.io.File("generated.pdf").writeBytes(generatedBytes)   // uncomment to save to temp file for viewing
+    java.io.File("generated.pdf").writeBytes(generatedBytes) // uncomment to save to temp file for viewing
     assertThat(generatedBytes, isPdfWithNumberOfPages(equalTo(1)))
   }
 
@@ -46,9 +47,9 @@ class RealPdfDocumentGeneratorTest {
       ClassPathDocumentDetail("3.pdf", "/document/landscape.pdf")
     )
 
-    val mergedBytes = pdfDocumentGenerator.mergePdfs(details).block()!!
+    val mergedBytes = pdfDocumentGenerationService.mergePdfs(details).block()!!
 
-    java.io.File("merged.pdf").writeBytes(mergedBytes)   // uncomment to save to temp file for viewing
+    java.io.File("merged.pdf").writeBytes(mergedBytes) // uncomment to save to temp file for viewing
     assertThat(mergedBytes, isPdfWithNumberOfPages(equalTo(5)))
   }
 }

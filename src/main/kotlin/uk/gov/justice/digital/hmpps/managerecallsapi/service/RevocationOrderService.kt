@@ -6,8 +6,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
@@ -15,7 +14,7 @@ import java.util.UUID
 
 @Service
 class RevocationOrderService(
-  @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
+  @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
   @Autowired private val s3Service: S3Service,
   @Autowired private val recallRepository: RecallRepository,
@@ -29,12 +28,10 @@ class RevocationOrderService(
         .flatMap { prisoners ->
           val revocationOrderHtml = revocationOrderGenerator.generateHtml(prisoners.first(), recall)
 
-          val details = listOf(
-            StringDocumentDetail("index.html", revocationOrderHtml),
-            ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
-          )
-
-          pdfDocumentGenerator.makePdf(details).map { bytes ->
+          pdfDocumentGenerationService.generatePdf(
+            revocationOrderHtml,
+            ClassPathDocumentDetail("revocation-order-logo.png")
+          ).map { bytes ->
             UUID.randomUUID().let { revocationOrderId ->
               s3Service.uploadFile(revocationOrderId, bytes)
               recallRepository.save(recall.copy(revocationOrderId = revocationOrderId))

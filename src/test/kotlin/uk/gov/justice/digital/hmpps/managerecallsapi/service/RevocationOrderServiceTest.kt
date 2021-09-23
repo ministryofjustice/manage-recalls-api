@@ -16,8 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
@@ -30,14 +29,14 @@ import java.util.UUID
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class RevocationOrderServiceTest {
 
-  private val pdfDocumentGenerator = mockk<PdfDocumentGenerator>()
+  private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val s3Service = mockk<S3Service>()
   private val recallRepository = mockk<RecallRepository>()
   private val revocationOrderGenerator = mockk<RevocationOrderGenerator>()
 
   private val underTest = RevocationOrderService(
-    pdfDocumentGenerator,
+    pdfDocumentGenerationService,
     prisonerOffenderSearchClient,
     s3Service,
     recallRepository,
@@ -61,11 +60,9 @@ internal class RevocationOrderServiceTest {
     val generatedHtml = "Some html, honest"
     every { revocationOrderGenerator.generateHtml(prisoner, aRecall) } returns generatedHtml
     every {
-      pdfDocumentGenerator.makePdf(
-        listOf(
-          StringDocumentDetail("index.html", generatedHtml),
-          ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
-        )
+      pdfDocumentGenerationService.generatePdf(
+        generatedHtml,
+        ClassPathDocumentDetail("revocation-order-logo.png")
       )
     } returns Mono.just(expectedBytes)
     every { s3Service.uploadFile(capture(revocationOrderIdSlot), expectedBytes) } just runs
@@ -94,7 +91,7 @@ internal class RevocationOrderServiceTest {
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
         verify { prisonerOffenderSearchClient wasNot Called }
-        verify { pdfDocumentGenerator wasNot Called }
+        verify { pdfDocumentGenerationService wasNot Called }
         verify { revocationOrderGenerator wasNot Called }
         verify(exactly = 0) { recallRepository.save(theRecallWithRevocationOrder) }
         verify(exactly = 0) { s3Service.uploadFile(any(), any()) }

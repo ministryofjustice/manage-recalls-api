@@ -12,23 +12,21 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.ActiveProfiles
-import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 @TestInstance(PER_CLASS)
-class PdfDocumentGeneratorGotenbergIntegrationTest {
+class PdfDocumentGeneratorMockServerIntegrationTest {
 
   @Autowired
   lateinit var gotenbergMockServer: GotenbergMockServer
 
   @Autowired
-  lateinit var pdfDocumentGenerator: PdfDocumentGenerator
+  lateinit var pdfDocumentGenerationService: PdfDocumentGenerationService
 
   @BeforeAll
   fun startMocks() {
@@ -42,32 +40,25 @@ class PdfDocumentGeneratorGotenbergIntegrationTest {
 
   @Test
   fun `should return byte array when generating pdf from html`() {
-    val stubResponseAsString = randomString()
-    val textOfHtml = randomString()
-    gotenbergMockServer.stubPdfGeneration(stubResponseAsString.toByteArray(), textOfHtml, "revocation-order-logo")
+    val expectedGeneratedPdf = randomString()
+    val html = "<body><span>${randomString()}</span></body>"
+    gotenbergMockServer.stubPdfGeneration(expectedGeneratedPdf.toByteArray(), html, "revocation-order-logo")
 
-    val details = listOf(
-      StringDocumentDetail("index.html", "<body><span>$textOfHtml</span></body>"),
-      ClassPathDocumentDetail("revocation-order-logo.png", "/templates/images/revocation-order-logo.png")
-    )
+    val generatedPdf = pdfDocumentGenerationService.generatePdf(
+      html,
+      ClassPathDocumentDetail("revocation-order-logo.png")
+    ).block()!!
 
-    val pdfResult = pdfDocumentGenerator.makePdf(details)
-
-    StepVerifier
-      .create(pdfResult)
-      .assertNext {
-        assertThat(String(it), equalTo(stubResponseAsString))
-      }
-      .verifyComplete()
+    assertThat(String(generatedPdf), equalTo(expectedGeneratedPdf))
   }
 
   @Test
   fun `should return byte array when merging many pdfs to one`() {
-    val stubResponseAsString = randomString()
+    val expectedMergedPdf = randomString()
     gotenbergMockServer.stubMergePdfs(
-      stubResponseAsString.toByteArray(),
-      "a.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
-      "b.pdf" to ClassPathResource("/document/revocation-order.pdf").file.readText()
+      expectedMergedPdf.toByteArray(),
+      "0.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
+      "1.pdf" to ClassPathResource("/document/revocation-order.pdf").file.readText()
     )
 
     val details = listOf(
@@ -75,13 +66,8 @@ class PdfDocumentGeneratorGotenbergIntegrationTest {
       ClassPathDocumentDetail("b.pdf", "/document/revocation-order.pdf")
     )
 
-    val pdfResult = pdfDocumentGenerator.mergePdfs(details)
+    val mergedPdf = pdfDocumentGenerationService.mergePdfs(details).block()!!
 
-    StepVerifier
-      .create(pdfResult)
-      .assertNext {
-        assertThat(String(it), equalTo(stubResponseAsString))
-      }
-      .verifyComplete()
+    assertThat(String(mergedPdf), equalTo(expectedMergedPdf))
   }
 }

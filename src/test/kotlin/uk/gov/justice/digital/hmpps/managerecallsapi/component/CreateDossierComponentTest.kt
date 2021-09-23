@@ -26,12 +26,13 @@ class CreateDossierComponentTest : ComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
 
     val revocationOrderFile = ClassPathResource("/document/revocation-order.pdf").file
-    gotenbergMockServer.stubPdfGeneration(revocationOrderFile.readBytes(), firstName, "revocation-order-logo")
+
+    gotenbergMockServer.stubGenerateRevocationOrder(revocationOrderFile.readBytes(), firstName)
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
-      "3-license.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
-      "6-partA_RecallReport.pdf" to ClassPathResource("/document/part_a.pdf").file.readText(),
-      "9-revocationOrder.pdf" to revocationOrderFile.readText(),
+      "0.pdf" to ClassPathResource("/document/licence.pdf").file.readText(),
+      "1.pdf" to ClassPathResource("/document/part_a.pdf").file.readText(),
+      "2.pdf" to revocationOrderFile.readText(),
     )
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))

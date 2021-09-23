@@ -62,15 +62,15 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     recallRepository.save(recall)
 
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
-    gotenbergMockServer.stubPdfGeneration(expectedPdf, firstName, "revocation-order-logo")
-    gotenbergMockServer.stubPdfGeneration(expectedPdf, "OFFENDER IS IN CUSTODY", "recall-summary-logo")
-    gotenbergMockServer.stubPdfGeneration(expectedPdf, "licence was revoked today as a Fixed Term Recall", "letter-to-probation-logo")
+    gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
+    gotenbergMockServer.stubGetRecallNotification(expectedPdf, "OFFENDER IS IN CUSTODY")
+    gotenbergMockServer.stubLetterToProbation(expectedPdf, "licence was revoked today as a Fixed Term Recall")
 
     gotenbergMockServer.stubMergePdfs(
       expectedPdf,
-      "1-recallSummary.pdf" to expectedPdf.decodeToString(),
-      "2-revocationOrder.pdf" to expectedPdf.decodeToString(),
-      "3-letterToProbation.pdf" to expectedPdf.decodeToString(),
+      "0.pdf" to expectedPdf.decodeToString(),
+      "1.pdf" to expectedPdf.decodeToString(),
+      "2.pdf" to expectedPdf.decodeToString(),
     )
 
     val response = authenticatedClient.getRecallNotification(recallId)

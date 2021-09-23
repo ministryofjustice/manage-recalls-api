@@ -8,13 +8,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.P
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.DocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 
 @Service
 class DossierService(
   @Autowired private val revocationOrderService: RevocationOrderService,
-  @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
+  @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val recallDocumentService: RecallDocumentService,
   @Autowired private val pdfDecorator: PdfDecorator,
 ) {
@@ -22,7 +22,6 @@ class DossierService(
   fun getDossier(recallId: RecallId): Mono<ByteArray> {
     val docs = mutableListOf<DocumentDetail<out Any>>()
 
-    // For PUD-163 handling license or partA_RecallReport not present is out of scope
     val license = recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE)
     val partARecallReport = recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
 
@@ -32,7 +31,7 @@ class DossierService(
     return revocationOrderService.getPdf(recallId).map {
       docs.add(InputStreamDocumentDetail("9-revocationOrder.pdf", it.inputStream()))
     }.flatMap {
-      pdfDocumentGenerator.mergePdfs(docs)
+      pdfDocumentGenerationService.mergePdfs(docs)
     }.map { mergedPdfBytes ->
       pdfDecorator.numberPages(mergedPdfBytes)
     }

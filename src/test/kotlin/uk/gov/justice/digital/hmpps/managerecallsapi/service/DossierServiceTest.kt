@@ -10,7 +10,7 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
@@ -19,11 +19,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 internal class DossierServiceTest {
 
   private val revocationOrderService = mockk<RevocationOrderService>()
-  private val pdfDocumentGenerator = mockk<PdfDocumentGenerator>()
+  private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val recallDocumentService = mockk<RecallDocumentService>()
   private val pdfDecorator = mockk<PdfDecorator>()
 
-  private val underTest = DossierService(revocationOrderService, pdfDocumentGenerator, recallDocumentService, pdfDecorator)
+  private val underTest = DossierService(revocationOrderService, pdfDocumentGenerationService, recallDocumentService, pdfDecorator)
 
   @Test
   fun `get dossier returns part A, license and revocation order as dossier when all present for recall`() {
@@ -37,7 +37,7 @@ internal class DossierServiceTest {
     every { recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE) } returns licenseBytes
     every { recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportBytes
     every { revocationOrderService.getPdf(recallId) } returns Mono.just(revocationOrderBytes)
-    every { pdfDocumentGenerator.mergePdfs(any()) } returns Mono.just(mergedBytes) // TODO: test that the argument list has 3 entries; the correct entries; but note likely to change call to decouple from Gotenberg
+    every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes) // TODO: test that the argument list has 3 entries; the correct entries; but note likely to change call to decouple from Gotenberg
     every { pdfDecorator.numberPages(mergedBytes) } returns numberedMergedBytes
 
     val result = underTest.getDossier(recallId)

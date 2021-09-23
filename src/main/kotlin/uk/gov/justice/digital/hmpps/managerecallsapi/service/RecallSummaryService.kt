@@ -8,15 +8,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerator
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.StringDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 
 @Service
 class RecallSummaryService(
-  @Autowired private val pdfDocumentGenerator: PdfDocumentGenerator,
+  @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val recallSummaryGenerator: RecallSummaryGenerator,
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val prisonLookupService: PrisonLookupService,
@@ -30,14 +29,12 @@ class RecallSummaryService(
 
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .flatMap { prisoners ->
-        val populatedHtml = recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName))
+        val recallSummaryHtml = recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName))
 
-        val details = listOf(
-          StringDocumentDetail("index.html", populatedHtml),
-          ClassPathDocumentDetail("recall-summary-logo.png", "/templates/images/recall-summary-logo.png")
+        pdfDocumentGenerationService.generatePdf(
+          recallSummaryHtml,
+          ClassPathDocumentDetail("recall-summary-logo.png")
         )
-
-        pdfDocumentGenerator.makePdf(details)
       }
   }
 }
