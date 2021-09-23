@@ -35,8 +35,8 @@ class UserController(
   fun getUserDetails(@PathVariable("userId") userId: UserId) = userDetailsService.get(userId).toResponse()
 }
 
-fun AddUserDetailsRequest.toUserDetails() = UserDetails(userId, firstName, lastName)
-fun UserDetails.toResponse() = UserDetailsResponse(this.userId(), this.firstName, this.lastName)
+fun AddUserDetailsRequest.toUserDetails() = UserDetails(userId, firstName, lastName, signature)
+fun UserDetails.toResponse() = UserDetailsResponse(this.userId(), this.firstName, this.lastName, this.signature)
 
-data class AddUserDetailsRequest(val userId: UserId, val firstName: FirstName, val lastName: LastName)
-data class UserDetailsResponse(val userId: UserId, val firstName: FirstName, val lastName: LastName)
+data class AddUserDetailsRequest(val userId: UserId, val firstName: FirstName, val lastName: LastName, val signature: String)
+data class UserDetailsResponse(val userId: UserId, val firstName: FirstName, val lastName: LastName, val signature: String)

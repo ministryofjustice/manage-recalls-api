@@ -18,6 +18,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
+import java.io.File
+import java.util.Base64
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [UserController::class])
@@ -30,12 +32,13 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val userId = ::UserId.zeroes()
     val firstName = FirstName("Jimmy")
     val lastName = LastName("Ppud")
-    val userDetails = UserDetails(userId, firstName, lastName)
+    val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+    val userDetails = UserDetails(userId, firstName, lastName, signature)
 
     every { userDetailsService.save(userDetails) } returns userDetails
 
     approver(CREATED) {
-      userController.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName))
+      userController.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName, signature))
     }
   }
 
@@ -44,11 +47,12 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val userId = ::UserId.zeroes()
     val firstName = FirstName("Jimmy")
     val lastName = LastName("Ppud")
-    val userDetails = UserDetails(userId, firstName, lastName)
+    val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+    val userDetails = UserDetails(userId, firstName, lastName, signature)
 
     every { userDetailsService.get(userId) } returns userDetails
 
     val result = userController.getUserDetails(userId)
-    assertThat(result, equalTo(UserDetailsResponse(userId, firstName, lastName)))
+    assertThat(result, equalTo(UserDetailsResponse(userId, firstName, lastName, signature)))
   }
 }

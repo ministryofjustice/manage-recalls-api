@@ -11,6 +11,7 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import java.util.UUID
@@ -40,15 +41,16 @@ internal class RecallNotificationServiceTest {
     val letterToProbationBytes = randomString().toByteArray()
     val mergedBytes = randomString().toByteArray()
     val documentId = UUID.randomUUID()
+    val userId = UserId(UUID.randomUUID())
 
     every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RecallDocumentCategory.RECALL_NOTIFICATION) } returns null
     every { recallSummaryService.getPdf(recallId) } returns Mono.just(recallSummaryBytes)
-    every { revocationOrderService.getPdf(recallId) } returns Mono.just(revocationOrderBytes)
+    every { revocationOrderService.createPdf(recallId, userId) } returns Mono.just(revocationOrderBytes)
     every { letterToProbationService.getPdf(recallId) } returns Mono.just(letterToProbationBytes)
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes) // TODO: test that the argument list has 3 entries; the correct entries; but note likely to change call to decouple from Gotenberg
     every { recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RecallDocumentCategory.RECALL_NOTIFICATION) } returns documentId
 
-    val result = underTest.getDocument(recallId)
+    val result = underTest.getDocument(recallId, userId)
 
     StepVerifier.create(result).assertNext { assertThat(it, equalTo(mergedBytes)) }.verifyComplete()
   }
@@ -57,13 +59,14 @@ internal class RecallNotificationServiceTest {
   fun `get recall notification returns existing recall notification`() {
     val recallId = ::RecallId.random()
     val recallNotificationBytes = randomString().toByteArray()
+    val userId = UserId(UUID.randomUUID())
 
     every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RecallDocumentCategory.RECALL_NOTIFICATION) } returns recallNotificationBytes
 
-    val result = underTest.getDocument(recallId)
+    val result = underTest.getDocument(recallId, userId)
 
     verify(exactly = 0) { recallSummaryService.getPdf(recallId) }
-    verify(exactly = 0) { revocationOrderService.getPdf(recallId) }
+    verify(exactly = 0) { revocationOrderService.createPdf(recallId, userId) }
     verify(exactly = 0) { letterToProbationService.getPdf(recallId) }
     verify(exactly = 0) { pdfDocumentGenerationService.mergePdfs(any()) }
 

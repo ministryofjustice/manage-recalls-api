@@ -16,6 +16,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.io.File
+import java.util.Base64
 import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
@@ -26,7 +28,8 @@ class UserDetailsRepositoryIntegrationTest(@Autowired private val repository: Us
   private val userId = ::UserId.random()
   private val firstName = FirstName("Bertie")
   private val lastName = LastName("Badger")
-  private val userDetails = UserDetails(userId, firstName, lastName)
+  private val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+  private val userDetails = UserDetails(userId, firstName, lastName, signature)
 
   @Test
   @Transactional

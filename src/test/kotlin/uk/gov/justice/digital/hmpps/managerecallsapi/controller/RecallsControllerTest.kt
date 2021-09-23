@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
@@ -116,10 +117,11 @@ class RecallsControllerTest {
     val recall = recallRequest.toRecall()
     val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+    val userId = UserId(UUID.randomUUID())
 
-    every { recallNotificationService.getDocument(recall.recallId()) } returns Mono.just(expectedPdf)
+    every { recallNotificationService.getDocument(recall.recallId(), userId) } returns Mono.just(expectedPdf)
 
-    val result = underTest.getRecallNotification(recall.recallId())
+    val result = underTest.getRecallNotification(recall.recallId(), userId)
 
     StepVerifier
       .create(result)

@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.DocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentDetail
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 
 @Service
 class RecallNotificationService(
@@ -18,7 +19,7 @@ class RecallNotificationService(
   @Autowired private val recallDocumentService: RecallDocumentService,
 ) {
 
-  fun getDocument(recallId: RecallId): Mono<ByteArray> {
+  fun getDocument(recallId: RecallId, userId: UserId): Mono<ByteArray> {
     val recallNotification = recallDocumentService.getDocumentContentWithCategoryIfExists(
       recallId,
       RECALL_NOTIFICATION
@@ -29,7 +30,7 @@ class RecallNotificationService(
       return recallSummaryService.getPdf(recallId).map { recallSummaryBytes ->
         docs.add(InputStreamDocumentDetail("1-recallSummary.pdf", recallSummaryBytes.inputStream()))
       }.flatMap {
-        revocationOrderService.getPdf(recallId)
+        revocationOrderService.createPdf(recallId, userId)
       }.map { revocationOrderBytes ->
         docs.add(InputStreamDocumentDetail("2-revocationOrder.pdf", revocationOrderBytes.inputStream()))
       }.flatMap {

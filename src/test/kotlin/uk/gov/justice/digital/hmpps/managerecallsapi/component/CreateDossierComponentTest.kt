@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 import java.util.Base64
+import java.util.UUID
 
 class CreateDossierComponentTest : ComponentTestBase() {
 
@@ -44,6 +45,9 @@ class CreateDossierComponentTest : ComponentTestBase() {
       recall.recallId,
       AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFile("/document/part_a.pdf"), null)
     )
+    val documentId = UUID.randomUUID()
+    s3Service.uploadFile(documentId, revocationOrderFile.readBytes())
+    recallRepository.save(recallRepository.getByRecallId(recall.recallId).copy(revocationOrderId = documentId))
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
