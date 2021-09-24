@@ -12,6 +12,7 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -61,9 +62,9 @@ internal class RecallNotificationServiceTest {
       documentsToMergeSlot.captured,
       onlyContainsInOrder(
         listOf(
-          inputStreamDocumentDataFor(recallSummaryContent),
-          inputStreamDocumentDataFor(revocationOrderContent),
-          inputStreamDocumentDataFor(letterToProbationContent)
+          byteArrayDocumentDataFor(recallSummaryContent),
+          byteArrayDocumentDataFor(revocationOrderContent),
+          byteArrayDocumentDataFor(letterToProbationContent)
         )
       )
     )

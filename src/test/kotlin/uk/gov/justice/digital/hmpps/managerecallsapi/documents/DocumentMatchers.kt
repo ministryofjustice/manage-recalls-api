@@ -1,18 +1,15 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.service
+package uk.gov.justice.digital.hmpps.managerecallsapi.documents
 
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.isA
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathResource
 
-fun inputStreamDocumentDataFor(recallClassPathResource: RecallClassPathResource) =
-  inputStreamDocumentDataFor(String(recallClassPathResource.inputStream().readAllBytes()))
+fun byteArrayDocumentDataFor(recallClassPathResource: RecallClassPathResource) =
+  byteArrayDocumentDataFor(String(recallClassPathResource.inputStream().readAllBytes()))
 
-fun inputStreamDocumentDataFor(documentContent: String) =
-  isA<InputStreamDocumentData>(
-    has("data", { String(it.inputStream.readAllBytes()) }, equalTo(documentContent))
-  )
+fun byteArrayDocumentDataFor(documentContent: ByteArray) =
+  byteArrayDocumentDataFor(String(documentContent))
 
 fun byteArrayDocumentDataFor(documentContent: String) =
   isA<ByteArrayDocumentData>(

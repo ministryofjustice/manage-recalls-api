@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -37,7 +37,7 @@ class TableOfContentsService(
 
         pdfDocumentGenerationService.generatePdf(
           tocHtml,
-          ClassPathImageData(TableOfContentsLogo)
+          recallImage(TableOfContentsLogo)
         )
       }
   }

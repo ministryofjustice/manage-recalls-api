@@ -12,13 +12,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.TableOfContentsLogo
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class TableOfContentsServiceTest {
@@ -59,7 +60,7 @@ internal class TableOfContentsServiceTest {
     every {
       pdfDocumentGenerationService.generatePdf(
         someHtml,
-        ClassPathImageData(RecallImage.TableOfContentsLogo)
+        ImageData.recallImage(TableOfContentsLogo)
       )
     } returns Mono.just(tocBytes)
 
