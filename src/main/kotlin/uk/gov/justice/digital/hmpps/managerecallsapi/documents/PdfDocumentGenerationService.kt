@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
@@ -34,13 +35,13 @@ class PdfDocumentGenerationService(@Autowired private val gotenbergApi: Gotenber
 
   private fun toConvertHtmlRequest(
     html: String,
-    assets: Array<out ImageData<out Any>>,
+    images: Array<out ImageData<out Any>>,
     additionalProperties: Map<String, Any> = emptyMap()
   ) =
     MultipartBodyBuilder().apply {
       addMultipart("index.html", html)
-      assets.forEach { documentDetail ->
-        addMultipart(documentDetail.name, documentDetail.data())
+      images.forEach { image ->
+        addMultipart(image.fileName, image.data())
       }
       additionalProperties.forEach {
         this.part(it.key, it.value)
@@ -70,17 +71,17 @@ interface Data<T> {
 }
 
 interface ImageData<T> : Data<T> {
-  val name: String
+  val fileName: String
 }
 
-data class ClassPathImageData(override val name: String) :
+data class ClassPathImageData(val recallImage: RecallImage, override val fileName: String = recallImage.fileName) :
   ImageData<MultipartInputStreamFileResource> {
-  override fun data() = MultipartInputStreamFileResource(ClassPathResource("/templates/images/$name").inputStream, name)
+  override fun data() = MultipartInputStreamFileResource(ClassPathResource(recallImage.path).inputStream, fileName)
 }
 
-data class Base64EncodedImageData(override val name: String, val base64EncodedContent: String) :
+data class Base64EncodedImageData(override val fileName: String, val base64EncodedContent: String) :
   ImageData<MultipartInputStreamFileResource> {
-  override fun data() = MultipartInputStreamFileResource(ByteArrayInputStream(Base64.getDecoder().decode(base64EncodedContent.toByteArray())), name)
+  override fun data() = MultipartInputStreamFileResource(ByteArrayInputStream(Base64.getDecoder().decode(base64EncodedContent.toByteArray())), fileName)
 }
 
 open class ClassPathDocumentData(private val path: String) :

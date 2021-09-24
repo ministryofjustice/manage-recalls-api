@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenera
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 
 @Service
 class RevocationOrderService(
@@ -33,7 +34,7 @@ class RevocationOrderService(
 
         pdfDocumentGenerationService.generatePdf(
           revocationOrderHtml,
-          ClassPathImageData("revocation-order-logo.png"),
+          ClassPathImageData(RevocationOrderLogo),
           Base64EncodedImageData("signature.jpg", userDetails.signature)
         ).map { bytes ->
           recallDocumentService.uploadAndAddDocumentForRecall(recallId, bytes, REVOCATION_ORDER)

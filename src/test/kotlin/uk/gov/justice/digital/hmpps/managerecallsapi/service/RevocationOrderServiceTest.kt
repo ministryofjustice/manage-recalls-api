@@ -4,7 +4,6 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.mockk.Called
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
@@ -27,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -71,7 +71,7 @@ internal class RevocationOrderServiceTest {
     every {
       pdfDocumentGenerationService.generatePdf(
         generatedHtml,
-        ClassPathImageData("revocation-order-logo.png"),
+        ClassPathImageData(RevocationOrderLogo),
         Base64EncodedImageData("signature.jpg", userSignature)
       )
     } returns Mono.just(expectedBytes)

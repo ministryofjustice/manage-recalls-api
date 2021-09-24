@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenera
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RecallSummaryLogo
 
 @Service
 class RecallSummaryService(
@@ -33,7 +34,7 @@ class RecallSummaryService(
 
         pdfDocumentGenerationService.generatePdf(
           recallSummaryHtml,
-          ClassPathImageData("recall-summary-logo.png")
+          ClassPathImageData(RecallSummaryLogo)
         )
       }
   }
