@@ -28,7 +28,6 @@ class CreateDossierComponentTest : ComponentTestBase() {
 
     val revocationOrderFile = ClassPathResource("/document/revocation-order.pdf").file
 
-    gotenbergMockServer.stubGenerateRevocationOrder(revocationOrderFile.readBytes(), firstName)
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
       ClassPathResource("/document/licence.pdf").file.readText(),
