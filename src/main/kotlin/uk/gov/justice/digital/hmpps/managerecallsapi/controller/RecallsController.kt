@@ -210,7 +210,7 @@ data class RecallResponse(
 
   private fun calculateStatus() = if (recallNotificationEmailSentDateTime != null) {
     Status.RECALL_NOTIFICATION_ISSUED
-  } else if (documents.isNotEmpty()) {
+  } else if (bookedByUserId != null) {
     Status.BOOKED_ON
   } else {
     null
