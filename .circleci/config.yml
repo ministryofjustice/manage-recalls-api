@@ -141,14 +141,9 @@ workflows:
   build-test-and-deploy:
     unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:
-      - validate:
-          filters:
-            tags:
-              ignore: /.*/
+      - validate
 
-      - document-generation-tests:
-          requires:
-            - validate
+      - document-generation-tests
 
       - hmpps/helm_lint:
           name: helm_lint
