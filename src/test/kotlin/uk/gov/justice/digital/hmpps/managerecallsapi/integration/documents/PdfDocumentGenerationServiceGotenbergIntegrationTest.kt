@@ -4,7 +4,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.GotenbergApi
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.isPdfWithNumberOfPages
@@ -32,24 +33,22 @@ class PdfDocumentGenerationServiceGotenbergIntegrationTest {
 
     val generatedBytes = pdfDocumentGenerationService.generatePdf(
       html,
-      ClassPathDocumentDetail("revocation-order-logo.png")
+      ClassPathImageData("revocation-order-logo.png")
     ).block()!!
 
-//    java.io.File("generated.pdf").writeBytes(generatedBytes) // uncomment to save to temp file for viewing
     assertThat(generatedBytes, isPdfWithNumberOfPages(equalTo(1)))
   }
 
   @Test
   fun `should return byte array when merging pdfs`() {
     val details = listOf(
-      ClassPathDocumentDetail("1.pdf", "/document/licence.pdf"),
-      ClassPathDocumentDetail("2.pdf", "/document/revocation-order.pdf"),
-      ClassPathDocumentDetail("3.pdf", "/document/landscape.pdf")
+      ClassPathDocumentData("/document/licence.pdf"),
+      ClassPathDocumentData("/document/revocation-order.pdf"),
+      ClassPathDocumentData("/document/landscape.pdf")
     )
 
     val mergedBytes = pdfDocumentGenerationService.mergePdfs(details).block()!!
 
-//    java.io.File("merged.pdf").writeBytes(mergedBytes) // uncomment to save to temp file for viewing
     assertThat(mergedBytes, isPdfWithNumberOfPages(equalTo(5)))
   }
 }

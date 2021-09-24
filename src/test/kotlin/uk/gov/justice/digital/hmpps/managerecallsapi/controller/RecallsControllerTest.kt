@@ -43,7 +43,6 @@ class RecallsControllerTest {
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
-  private val revocationOrderId = UUID.randomUUID()
   private val recallRequest = BookRecallRequest(nomsNumber)
   private val fileName = "fileName"
 
@@ -83,7 +82,6 @@ class RecallsControllerTest {
     val recall = Recall(
       recallId = recallId,
       nomsNumber = nomsNumber,
-      revocationOrderId = revocationOrderId,
       documents = setOf(document),
       lastReleasePrison = "BEL",
       lastReleaseDate = lastReleaseDate,
@@ -103,7 +101,6 @@ class RecallsControllerTest {
           fileName = fileName
         )
       ),
-      revocationOrderId = revocationOrderId,
       lastReleasePrison = "BEL",
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,

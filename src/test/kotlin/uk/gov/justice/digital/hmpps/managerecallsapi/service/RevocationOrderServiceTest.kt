@@ -6,17 +6,17 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
-import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Base64EncodedImageData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -27,7 +27,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -37,7 +36,7 @@ internal class RevocationOrderServiceTest {
 
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
-  private val s3Service = mockk<S3Service>()
+  private val recallDocumentService = mockk<RecallDocumentService>()
   private val recallRepository = mockk<RecallRepository>()
   private val revocationOrderGenerator = mockk<RevocationOrderGenerator>()
   private val userDetailsService = mockk<UserDetailsService>()
@@ -45,7 +44,7 @@ internal class RevocationOrderServiceTest {
   private val underTest = RevocationOrderService(
     pdfDocumentGenerationService,
     prisonerOffenderSearchClient,
-    s3Service,
+    recallDocumentService,
     recallRepository,
     revocationOrderGenerator,
     userDetailsService
@@ -60,34 +59,40 @@ internal class RevocationOrderServiceTest {
   fun `creates a revocation order for a recall `() {
     val aRecall = Recall(recallId, nomsNumber)
     val prisoner = mockk<Prisoner>()
-    val revocationOrderIdSlot = slot<UUID>()
-    val savedRecallSlot = slot<Recall>()
+    val revocationOrderId = UUID.randomUUID()
     val userId = UserId(UUID.randomUUID())
+    val userSignature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
 
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     val generatedHtml = "Some html, honest"
-    every { userDetailsService.get(userId) } returns UserDetails(userId, FirstName("Bob"), LastName("Badger"), Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes()))
+    every { userDetailsService.get(userId) } returns UserDetails(userId, FirstName("Bob"), LastName("Badger"), userSignature)
     every { revocationOrderGenerator.generateHtml(prisoner, aRecall) } returns generatedHtml
-    every { pdfDocumentGenerationService.generatePdf(generatedHtml, ClassPathDocumentDetail("revocation-order-logo.png"), any()) } returns Mono.just(expectedBytes)
-    every { s3Service.uploadFile(capture(revocationOrderIdSlot), expectedBytes) } just runs
-    every { recallRepository.save(capture(savedRecallSlot)) } returns mockk()
+    every {
+      pdfDocumentGenerationService.generatePdf(
+        generatedHtml,
+        ClassPathImageData("revocation-order-logo.png"),
+        Base64EncodedImageData("signature.jpg", userSignature)
+      )
+    } returns Mono.just(expectedBytes)
+    every {
+      recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER)
+    } returns revocationOrderId
 
-    val result = underTest.createPdf(recallId, userId).block()!!
+    val result = underTest.createPdf(recallId, userId)
 
-    assertThat(result, equalTo(expectedBytes))
-    assertThat(savedRecallSlot.captured, equalTo(Recall(recallId, nomsNumber, revocationOrderIdSlot.captured)))
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it, equalTo(expectedBytes))
+        verify { recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER) }
+      }.verifyComplete()
   }
 
   @Test
   fun `gets existing revocation order for a recall`() {
 
-    val revocationOrderId = UUID.randomUUID()
-    val theRecallWithRevocationOrder = Recall(recallId, nomsNumber, revocationOrderId)
-
-    every { recallRepository.getByRecallId(recallId) } returns theRecallWithRevocationOrder
-    every { recallRepository.save(theRecallWithRevocationOrder) } returns theRecallWithRevocationOrder
-    every { s3Service.downloadFile(revocationOrderId) } returns expectedBytes
+    every { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns expectedBytes
 
     val result = underTest.getPdf(recallId)
 
@@ -98,10 +103,9 @@ internal class RevocationOrderServiceTest {
         verify { prisonerOffenderSearchClient wasNot Called }
         verify { pdfDocumentGenerationService wasNot Called }
         verify { revocationOrderGenerator wasNot Called }
-        verify(exactly = 0) { recallRepository.save(theRecallWithRevocationOrder) }
-        verify(exactly = 0) { s3Service.uploadFile(any(), any()) }
-        verify { recallRepository.getByRecallId(recallId) }
-        verify { s3Service.downloadFile(revocationOrderId) }
+        verify { recallRepository wasNot Called }
+        verify { userDetailsService wasNot Called }
+        verify { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) }
       }
       .verifyComplete()
   }

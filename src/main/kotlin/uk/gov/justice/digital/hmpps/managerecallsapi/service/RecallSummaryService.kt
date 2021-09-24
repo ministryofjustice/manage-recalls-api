@@ -7,7 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentDetail
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -33,7 +33,7 @@ class RecallSummaryService(
 
         pdfDocumentGenerationService.generatePdf(
           recallSummaryHtml,
-          ClassPathDocumentDetail("recall-summary-logo.png")
+          ClassPathImageData("recall-summary-logo.png")
         )
       }
   }

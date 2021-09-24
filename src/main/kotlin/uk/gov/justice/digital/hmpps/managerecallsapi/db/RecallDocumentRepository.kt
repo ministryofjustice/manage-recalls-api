@@ -13,4 +13,10 @@ interface RecallDocumentRepository : JpaRepository<RecallDocument, UUID> {
     @Param("recallId") recallId: UUID,
     @Param("category") category: RecallDocumentCategory
   ): RecallDocument?
+
+  @Query("SELECT d from RecallDocument d where d.recallId = :recallId and d.id = :documentId")
+  fun findByRecallIdAndDocumentId(
+    @Param("recallId") recallId: UUID,
+    @Param("documentId") documentId: UUID
+  ): RecallDocument?
 }

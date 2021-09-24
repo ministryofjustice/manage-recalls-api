@@ -22,7 +22,6 @@ class RandomUtilitiesTest {
       allOf(
         has(Recall::id, present()),
         has(Recall::nomsNumber, present()),
-        has(Recall::revocationOrderId, present()),
         has(
           Recall::documents,
           allOf(
