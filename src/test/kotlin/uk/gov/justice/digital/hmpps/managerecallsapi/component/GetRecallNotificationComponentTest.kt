@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -19,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
-import java.io.File
 import java.time.LocalDate
 import java.util.Base64
 
@@ -70,7 +70,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     userDetailsRepository.save(
       UserDetails(
         userId, FirstName("Bertie"), LastName("Badger"),
-        Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+        base64EncodedFileContents("/signature.jpg")
       )
     )
 

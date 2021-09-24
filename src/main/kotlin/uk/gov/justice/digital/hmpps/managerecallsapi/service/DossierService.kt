@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
@@ -10,6 +11,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocume
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathResource.RecallInformationLeaflet
+import java.io.InputStream
 
 @Service
 class DossierService(
@@ -24,6 +27,7 @@ class DossierService(
     val revocationOrder = recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER)
 
     val docs = mutableListOf(
+      InputStreamDocumentData(RecallInformationLeaflet.inputStream()),
       InputStreamDocumentData(license.inputStream()),
       InputStreamDocumentData(partARecallReport.inputStream()),
       InputStreamDocumentData(revocationOrder.inputStream())
@@ -34,4 +38,10 @@ class DossierService(
         pdfDecorator.numberPages(mergedPdfBytes)
       }
   }
+}
+
+enum class RecallClassPathResource(private val path: String) {
+  RecallInformationLeaflet("/pdfs/recall-information-leaflet.pdf");
+
+  fun inputStream(): InputStream = ClassPathResource(path).inputStream
 }

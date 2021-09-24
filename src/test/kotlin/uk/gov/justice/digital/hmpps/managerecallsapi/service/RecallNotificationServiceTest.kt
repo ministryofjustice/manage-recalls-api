@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.has
-import com.natpryce.hamkrest.isA
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -63,16 +61,13 @@ internal class RecallNotificationServiceTest {
       documentsToMergeSlot.captured,
       onlyContainsInOrder(
         listOf(
-          documentWith(recallSummaryContent),
-          documentWith(revocationOrderContent),
-          documentWith(letterToProbationContent)
+          inputStreamDocumentDataFor(recallSummaryContent),
+          inputStreamDocumentDataFor(revocationOrderContent),
+          inputStreamDocumentDataFor(letterToProbationContent)
         )
       )
     )
   }
-
-  private fun documentWith(documentContent: String) =
-    isA<InputStreamDocumentData>(has("data", { String(it.inputStream.readAllBytes()) }, equalTo(documentContent)))
 
   @Test
   fun `get recall notification returns existing recall notification`() {
