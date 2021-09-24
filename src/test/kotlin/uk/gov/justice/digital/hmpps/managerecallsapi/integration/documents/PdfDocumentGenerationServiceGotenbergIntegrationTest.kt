@@ -4,9 +4,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathDocumentData
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.GotenbergApi
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.isPdfWithNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
@@ -34,7 +33,7 @@ class PdfDocumentGenerationServiceGotenbergIntegrationTest {
 
     val generatedBytes = pdfDocumentGenerationService.generatePdf(
       html,
-      ClassPathImageData(RevocationOrderLogo)
+      recallImage(RevocationOrderLogo)
     ).block()!!
 
     assertThat(generatedBytes, isPdfWithNumberOfPages(equalTo(1)))
