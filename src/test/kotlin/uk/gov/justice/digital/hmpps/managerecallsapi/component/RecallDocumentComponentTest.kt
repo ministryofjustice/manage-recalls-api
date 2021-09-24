@@ -41,12 +41,13 @@ class RecallDocumentComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     recallRepository.save(Recall(recallId, nomsNumber))
 
-    val documentId = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest).documentId
+    val originalDocumentId = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest).documentId
     val newFilename = "newFilename"
     val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, newFilename)
-    val response = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest)
+    authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest)
 
-    assertThat(response.documentId, equalTo(documentId))
+    val recallDocument = authenticatedClient.getRecallDocument(recallId, originalDocumentId)
+    assertThat(recallDocument, equalTo(GetDocumentResponse(originalDocumentId, documentCategory, base64EncodedDocumentContents, newFilename)))
   }
 
   @Test
