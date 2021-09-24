@@ -9,12 +9,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathResource.RecallInformationLeaflet
 import java.time.LocalDate
-import java.util.Base64
 
 class CreateDossierComponentTest : ComponentTestBase() {
 
@@ -30,6 +32,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
 
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
+      RecallInformationLeaflet.readText(),
       ClassPathResource("/document/licence.pdf").file.readText(),
       ClassPathResource("/document/part_a.pdf").file.readText(),
       revocationOrderFile.readText(),
@@ -38,24 +41,21 @@ class CreateDossierComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(LICENCE, base64EncodedFile("/document/licence.pdf"), null)
+      AddDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"), null)
     )
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFile("/document/part_a.pdf"), null)
+      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), null)
     )
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(REVOCATION_ORDER, base64EncodedFile("/document/revocation-order.pdf"), null)
+      AddDocumentRequest(REVOCATION_ORDER, base64EncodedFileContents("/document/revocation-order.pdf"), null)
     )
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
     assertThat(dossier, hasNumberOfPages(equalTo(3)))
   }
-
-  private fun base64EncodedFile(fileName: String) =
-    Base64.getEncoder().encodeToString(ClassPathResource(fileName).file.readBytes())
 
   private fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, firstName: String) {
     prisonerOffenderSearch.prisonerSearchRespondsWith(

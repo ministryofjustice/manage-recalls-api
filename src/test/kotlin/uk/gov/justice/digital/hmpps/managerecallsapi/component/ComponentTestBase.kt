@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Hmp
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import java.io.File
+import java.util.Base64
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -103,4 +105,8 @@ abstract class ComponentTestBase {
       .exchange()
       .expectStatus().isEqualTo(expectedStatus)
       .expectBody()
+
+  protected fun writeBase64EncodedStringToFile(fileName: String, content: String) {
+    File(fileName).writeBytes(Base64.getDecoder().decode(content))
+  }
 }
