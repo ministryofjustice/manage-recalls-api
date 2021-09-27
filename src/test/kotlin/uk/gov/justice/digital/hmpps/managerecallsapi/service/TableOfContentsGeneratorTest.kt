@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 import java.time.LocalDate
 import java.time.LocalDate.now
 import java.util.stream.Stream
@@ -72,6 +73,7 @@ class TableOfContentsGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
+        has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName)),
         has(
           "recallLengthAndSentenceHeading", { it.variable("recallLengthAndSentenceHeading") }, equalTo(expectedText)
         ),

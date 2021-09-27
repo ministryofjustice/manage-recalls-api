@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.TableOfContentsLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class TableOfContentsServiceTest {
@@ -60,7 +60,7 @@ internal class TableOfContentsServiceTest {
     every {
       pdfDocumentGenerationService.generatePdf(
         someHtml,
-        ImageData.recallImage(TableOfContentsLogo)
+        ImageData.recallImage(HmppsLogo)
       )
     } returns Mono.just(tocBytes)
 

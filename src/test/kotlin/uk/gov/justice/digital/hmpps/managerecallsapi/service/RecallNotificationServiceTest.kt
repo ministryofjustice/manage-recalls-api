@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -46,7 +46,7 @@ internal class RecallNotificationServiceTest {
     val mergedBytes = randomString().toByteArray()
     val documentId = UUID.randomUUID()
     val userId = UserId(UUID.randomUUID())
-    val documentsToMergeSlot = slot<List<InputStreamDocumentData>>()
+    val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
     every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
     every { recallSummaryService.getPdf(recallId) } returns Mono.just(recallSummaryContent.toByteArray())

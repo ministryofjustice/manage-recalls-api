@@ -16,6 +16,7 @@ class TableOfContentsGenerator(
     Context().apply {
       val fullName = String.format("%s %s %s", context.prisoner.firstName ?: "", context.prisoner.middleNames ?: "", context.prisoner.lastName ?: "").trim()
 
+      setVariable("logoFileName", RecallImage.HmppsLogo.fileName)
       setVariable("recallLengthAndSentenceHeading", recallLengthAndSentenceHeading(context.recall))
       setVariable("fullName", fullName)
       setVariable("establishment", context.currentPrisonName)

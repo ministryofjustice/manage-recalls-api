@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -89,6 +90,7 @@ class RecallSummaryGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
+        has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName)),
         has("createdDate", { it.variable("createdDate") }, equalTo("01 Sep 2021")),
         has("createdTime", { it.variable("createdTime") }, equalTo("19:32")),
 
