@@ -9,12 +9,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_1
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
@@ -36,7 +33,7 @@ class DossierGenerationGotenbergComponentTest : ComponentTestBase(startGotenberg
   private val assessedByUserId = ::UserId.random()
 
   @Test
-  fun `can generate a recall notification and dossier using gotenberg`() {
+  fun `can generate a recall notification using gotenberg`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(assessedByUserId)
 
@@ -45,15 +42,24 @@ class DossierGenerationGotenbergComponentTest : ComponentTestBase(startGotenberg
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
 
-    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
+//    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
     assertThat(recallNotification, hasNumberOfPages(equalTo(3)))
+  }
 
+  @Test
+  fun `can generate a dossier using gotenberg`() {
+    expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
+    setupUserDetailsFor(assessedByUserId)
+
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    updateRecallWithRequiredInformationForTheRecallSummary(recall)
+    authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
     uploadLicenceFor(recall)
     uploadPartAFor(recall)
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
-    writeBase64EncodedStringToFile("dossier.pdf", dossier.content)
+//    writeBase64EncodedStringToFile("dossier.pdf", dossier.content)
     assertThat(dossier, hasNumberOfPages(equalTo(9)))
   }
 
@@ -98,14 +104,14 @@ class DossierGenerationGotenbergComponentTest : ComponentTestBase(startGotenberg
   private fun uploadPartAFor(recall: RecallResponse) {
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(RecallDocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"))
+      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"))
     )
   }
 
   private fun uploadLicenceFor(recall: RecallResponse) {
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(RecallDocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"))
+      AddDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"))
     )
   }
 
