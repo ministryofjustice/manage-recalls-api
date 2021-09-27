@@ -10,31 +10,19 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 
 @AutoConfigureWebTestClient(timeout = "10000")
-abstract class GotenbergComponentTestBase: ComponentTestBase(startGotenbergMockServer = false) {
+abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergServer = true) {
 
-  protected fun setupUserDetailsFor(userId: UserId) {
-    userDetailsRepository.save(
-      UserDetails(
-        userId, FirstName("Bertie"), LastName("Badger"),
-        base64EncodedFileContents("/signature.jpg")
-      )
-    )
-  }
-
-  protected fun updateRecallWithRequiredInformationForTheRecallSummary(recall: RecallResponse) {
+  protected fun updateRecallWithRequiredInformationForTheRecallSummary(recallId: RecallId) {
     authenticatedClient.updateRecall(
-      recall.recallId,
+      recallId,
       UpdateRecallRequest(
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainName = "Nat The Naughty",

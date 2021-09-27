@@ -21,7 +21,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheRecallSummary(recall)
+    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId)
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
 

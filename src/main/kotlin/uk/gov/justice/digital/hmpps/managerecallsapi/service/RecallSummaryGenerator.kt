@@ -34,7 +34,7 @@ class RecallSummaryGenerator(
       setVariable("createdDate", createdDate)
       setVariable("createdTime", createdTime)
 
-      // TODO: MD What do we do if any of these values are not NULL?  They should all be present and valid
+      // TODO: MD What do we do if any of these values are NULL?  They should all be present and valid
       with(context.prisoner) {
         val firstAndMiddleNames = String.format("%s %s", this.firstName ?: "", this.middleNames ?: "").trim()
         setVariable("forename", firstAndMiddleNames)
