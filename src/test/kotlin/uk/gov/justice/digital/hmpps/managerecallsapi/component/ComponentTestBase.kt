@@ -30,7 +30,7 @@ import java.util.Base64
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
 @TestInstance(PER_CLASS)
-abstract class ComponentTestBase {
+abstract class ComponentTestBase(private val startGotenbergMockServer: Boolean = true) {
 
   @Autowired
   private lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
@@ -67,16 +67,16 @@ abstract class ComponentTestBase {
   fun startMocks() {
     hmppsAuthMockServer.start()
     prisonerOffenderSearch.start()
-    gotenbergMockServer.start()
     prisonRegisterMockServer.start()
+    if (startGotenbergMockServer) gotenbergMockServer.start()
   }
 
   @AfterAll
   fun stopMocks() {
     hmppsAuthMockServer.stop()
     prisonerOffenderSearch.stop()
-    gotenbergMockServer.stop()
     prisonRegisterMockServer.stop()
+    if (startGotenbergMockServer) gotenbergMockServer.stop()
   }
 
   @BeforeEach
@@ -85,6 +85,7 @@ abstract class ComponentTestBase {
     hmppsAuthMockServer.stubClientToken()
     prisonerOffenderSearch.resetAll()
     prisonRegisterMockServer.resetAll()
+    if (startGotenbergMockServer) gotenbergMockServer.resetAll()
   }
 
   @Configuration

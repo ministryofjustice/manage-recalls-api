@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.netty.channel.ChannelOption
+import io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
 import org.springframework.beans.factory.annotation.Value
@@ -43,9 +43,10 @@ class WebClientConfig {
   }
 
   @Bean
-  fun webClient(): WebClient {
-    return WebClient.builder().codecs { it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024) }.build()
-  }
+  fun webClient(): WebClient =
+    WebClient.builder()
+      .codecs { it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024) }
+      .build()
 
   @Value("\${prisonRegister.endpoint.url}")
   private lateinit var prisonRegisterEndpointUrl: String
@@ -64,7 +65,7 @@ class WebClientConfig {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
 
     val httpClient = HttpClient.create()
-      .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+      .option(CONNECT_TIMEOUT_MILLIS, 10000)
       .doOnConnected {
         it.addHandlerLast(ReadTimeoutHandler(0, MILLISECONDS))
           .addHandlerLast(WriteTimeoutHandler(0, MILLISECONDS))

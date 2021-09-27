@@ -68,7 +68,8 @@ tasks {
 
   test {
     useJUnitPlatform {
-      exclude("**/*PdfDocumentGenerationServiceGotenbergIntegrationTest*")
+      exclude("**/*GotenbergIntegrationTest*")
+      exclude("**/*GotenbergComponentTest*")
       exclude("**/*PactTest*")
     }
   }
@@ -93,7 +94,8 @@ task<Test>("documentGenerationTest") {
   group = "verification"
   testClassesDirs = sourceSets["test"].output.classesDirs
   classpath = sourceSets["test"].runtimeClasspath
-  include("**/*PdfDocumentGenerationServiceGotenbergIntegrationTest*")
+  include("**/*GotenbergIntegrationTest*")
+  include("**/*GotenbergComponentTest*")
 }
 
 java {
