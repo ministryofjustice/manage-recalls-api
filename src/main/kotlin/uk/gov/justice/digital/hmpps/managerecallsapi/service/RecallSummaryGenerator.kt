@@ -33,6 +33,7 @@ class RecallSummaryGenerator(
       val createdTime = ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London")).format(timeFormatter)
       setVariable("createdDate", createdDate)
       setVariable("createdTime", createdTime)
+      setVariable("recallNotificationTotalNumberOfPages", context.recallNotificationTotalNumberOfPages)
 
       // TODO: MD What do we do if any of these values are NULL?  They should all be present and valid
       with(context.prisoner) {
