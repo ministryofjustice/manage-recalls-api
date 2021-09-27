@@ -16,31 +16,35 @@ import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.LetterToProbationLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RecallSummaryLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
   fun stubGenerateRevocationOrder(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, "revocation-order-logo.png")
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RevocationOrderLogo)
   }
 
   fun stubGetRecallNotification(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, "recall-summary-logo.png")
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RecallSummaryLogo)
   }
 
   fun stubLetterToProbation(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, "letter-to-probation-logo.png")
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, LetterToProbationLogo)
   }
 
   private fun stubPdfGeneration(
     generatedPdfContents: ByteArray,
     expectedTextInHtml: String,
-    logoFileName: String
+    recallImage: RecallImage
   ) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html")).apply {
         withMultipartHeader()
         withMultipartFor("index.html", containing(expectedTextInHtml))
-        withMultipartFor(logoFileName, equalTo(ClassPathResource("/templates/images/$logoFileName").file.readText()))
+        withMultipartFor(recallImage.fileName, equalTo(ClassPathResource(recallImage.path).file.readText()))
       }
         .willReturn(aResponse().withBody(generatedPdfContents))
     )

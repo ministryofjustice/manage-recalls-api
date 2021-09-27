@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageDat
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
@@ -47,7 +48,7 @@ class PdfDocumentGeneratorMockServerIntegrationTest {
 
     val generatedPdf = pdfDocumentGenerationService.generatePdf(
       html,
-      ClassPathImageData("revocation-order-logo.png")
+      ClassPathImageData(RevocationOrderLogo)
     ).block()!!
 
     assertThat(String(generatedPdf), equalTo(expectedGeneratedPdf))

@@ -6,6 +6,7 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 import java.time.Clock
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,6 +32,7 @@ class RevocationOrderGenerator(
       setVariable("croNumber", prisoner.croNumber)
       setVariable("licenseRevocationDate", todaysDate)
       setVariable("lastReleaseDate", lastReleaseDate)
+      setVariable("logoFileName", RevocationOrderLogo.fileName)
     }.let {
       templateEngine.process("revocation-order", it)
     }

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageDat
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.GotenbergApi
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.isPdfWithNumberOfPages
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 
 class PdfDocumentGenerationServiceGotenbergIntegrationTest {
 
@@ -25,7 +26,7 @@ class PdfDocumentGenerationServiceGotenbergIntegrationTest {
           <body>
               <center>
                 <h1>Test landscape pdf</h1>
-                <img width=65 height=57 id=logo.png src="revocation-order-logo.png"/>
+                <img width=65 height=57 id=logo.png src="${RevocationOrderLogo.fileName}"/>
               </center>
           </body>
         </html>
@@ -33,7 +34,7 @@ class PdfDocumentGenerationServiceGotenbergIntegrationTest {
 
     val generatedBytes = pdfDocumentGenerationService.generatePdf(
       html,
-      ClassPathImageData("revocation-order-logo.png")
+      ClassPathImageData(RevocationOrderLogo)
     ).block()!!
 
     assertThat(generatedBytes, isPdfWithNumberOfPages(equalTo(1)))

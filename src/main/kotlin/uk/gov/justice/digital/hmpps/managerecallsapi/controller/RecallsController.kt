@@ -82,6 +82,7 @@ class RecallsController(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody body: AddDocumentRequest
   ): ResponseEntity<AddDocumentResponse> {
+    // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
     val documentId = try {
       recallDocumentService.uploadAndAddDocumentForRecall(
         recallId = recallId,
@@ -245,7 +246,7 @@ data class Pdf(val content: String) {
   }
 }
 
-data class AddDocumentRequest(val category: RecallDocumentCategory, val fileContent: String, val fileName: String?)
+data class AddDocumentRequest(val category: RecallDocumentCategory, val fileContent: String, val fileName: String? = null)
 
 data class AddDocumentResponse(val documentId: UUID)
 

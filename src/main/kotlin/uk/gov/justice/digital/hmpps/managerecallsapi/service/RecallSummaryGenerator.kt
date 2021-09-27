@@ -6,6 +6,7 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RecallSummaryLogo
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId
@@ -57,6 +58,7 @@ class RecallSummaryGenerator(
       setVariable("vulnerabilityDetail", context.recall.vulnerabilityDiversityDetail ?: "None")
       setVariable("contraband", if (context.recall.contrabandDetail.isNullOrEmpty()) "NO" else "YES")
       setVariable("contrabandDetail", context.recall.contrabandDetail)
+      setVariable("logoFileName", RecallSummaryLogo.fileName)
     }.let {
       templateEngine.process("recall-summary", it)
     }

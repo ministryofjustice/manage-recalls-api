@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.has
-import com.natpryce.hamkrest.isA
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -19,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.onlyContainsInOrder
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathResource.RecallInformationLeaflet
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class DossierServiceTest {
@@ -52,9 +51,10 @@ internal class DossierServiceTest {
       documentsToMergeSlot.captured,
       onlyContainsInOrder(
         listOf(
-          documentWith(licenseContent),
-          documentWith(partARecallReportContent),
-          documentWith(revocationOrderContent)
+          inputStreamDocumentDataFor(RecallInformationLeaflet),
+          inputStreamDocumentDataFor(licenseContent),
+          inputStreamDocumentDataFor(partARecallReportContent),
+          inputStreamDocumentDataFor(revocationOrderContent)
         )
       )
     )
@@ -62,6 +62,3 @@ internal class DossierServiceTest {
 
   // TODO: PUD-575 test/handling when any input doc is not available
 }
-
-private fun documentWith(documentContent: String) =
-  isA<InputStreamDocumentData>(has("data", { String(it.inputStream.readAllBytes()) }, equalTo(documentContent)))
