@@ -9,26 +9,24 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 
-class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
+class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val prisonerFirstName = "Natalia"
   private val assessedByUserId = ::UserId.random()
 
   @Test
-  fun `can generate a dossier using gotenberg`() {
+  fun `can generate a recall notification using gotenberg`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     updateRecallWithRequiredInformationForTheRecallSummary(recall)
-    authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
-    uploadLicenceFor(recall)
-    uploadPartAFor(recall)
 
-    val dossier = authenticatedClient.getDossier(recall.recallId)
+    val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
 
-//    writeBase64EncodedStringToFile("dossier.pdf", dossier.content)
-    assertThat(dossier, hasNumberOfPages(equalTo(10)))
+//    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
+    assertThat(recallNotification, hasNumberOfPages(equalTo(3)))
   }
+
 }
