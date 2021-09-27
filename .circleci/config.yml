@@ -34,6 +34,23 @@ _db_localstack_docker_config: &db_localstack_docker_config
       - DEFAULT_REGION=eu-west-2
       - TMPDIR=/private
 
+_db_localstack_gotenberg_docker_config: &db_localstack_gotenberg_docker_config
+  - image: cimg/openjdk:16.0
+  - image: thecodingmachine/gotenberg:6
+  - image: circleci/postgres:10-alpine-ram
+    environment:
+      POSTGRES_USER: ppud_user
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: manage_recalls
+  - image: localstack/localstack:0.12.10
+    environment:
+      - SERVICES=s3
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_EXECUTION_ENV=True
+      - DEFAULT_REGION=eu-west-2
+      - TMPDIR=/private
+
 executors:
   local-docker:
     docker:
@@ -64,25 +81,31 @@ jobs:
           path: build/reports/tests
 
   document-generation-tests:
-    executor: local-docker
+    docker: *db_localstack_gotenberg_docker_config
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - hmpps/install_aws_cli
+      - hmpps/wait_till_ready:
+          port: 4566
       - run:
-          name: Build and pull docker containers
+          name: Create S3 bucket
           command: |
-            docker-compose -f docker-compose-int-test.yml build
-            docker-compose -f docker-compose-int-test.yml pull
-      - run:
-          name: Start docker compose and run the document generation tests
-          command: |
-            set -x
-            docker-compose -f docker-compose-int-test.yml up --exit-code-from manage-recalls-api-int-tests
-            docker cp manage-recalls-api-int-tests:/home/circleci/project/build/reports/tests/documentGenerationTest/ test-report
+            export AWS_ACCESS_KEY_ID=dontcare
+            export AWS_SECRET_ACCESS_KEY=dontcare
+            aws s3api create-bucket --bucket test-manage-recalls-api --region eu-west-2 --endpoint-url http://localhost:4566
+      - checkout
+      - gradle/with_cache:
+          cache_checksum_file: "build.gradle.kts"
+          steps:
+            - run:
+                name: Run document generation tests
+                command: |
+                  export GOTENBERG_ENDPOINT_URL=http://localhost:3000
+                  ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" documentGenerationTest
+      - store_test_results:
+          path: build/test-results
       - store_artifacts:
-          path: test-report
-          destination: local-test-summary
+          path: build/reports/tests
 
   verify_pact_and_publish:
     parameters:
