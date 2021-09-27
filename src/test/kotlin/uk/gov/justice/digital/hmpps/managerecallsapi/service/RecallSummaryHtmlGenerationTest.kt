@@ -68,7 +68,8 @@ class RecallSummaryHtmlGenerationTest(
             croNumber = "croNumber"
           ),
           "Prison A",
-          "Prison B"
+          "Prison B",
+          MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION
         )
       )
     )

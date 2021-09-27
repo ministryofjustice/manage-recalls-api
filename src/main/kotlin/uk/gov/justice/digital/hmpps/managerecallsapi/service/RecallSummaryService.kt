@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
+const val MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION = 3
+
 @Service
 class RecallSummaryService(
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
@@ -30,7 +32,9 @@ class RecallSummaryService(
 
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .flatMap { prisoners ->
-        val recallSummaryHtml = recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName))
+        val recallSummaryHtml = recallSummaryGenerator.generateHtml(
+          RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName, MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION)
+        )
 
         pdfDocumentGenerationService.generatePdf(
           recallSummaryHtml,
@@ -40,4 +44,10 @@ class RecallSummaryService(
   }
 }
 
-data class RecallSummaryContext(val recall: Recall, val prisoner: Prisoner, val lastReleasePrisonName: String, val currentPrisonName: String)
+data class RecallSummaryContext(
+  val recall: Recall,
+  val prisoner: Prisoner,
+  val lastReleasePrisonName: String,
+  val currentPrisonName: String,
+  val recallNotificationTotalNumberOfPages: Int
+)

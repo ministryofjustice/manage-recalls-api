@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId

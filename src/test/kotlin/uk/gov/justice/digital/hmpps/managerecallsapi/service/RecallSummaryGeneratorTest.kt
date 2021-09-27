@@ -82,7 +82,8 @@ class RecallSummaryGeneratorTest {
           croNumber = "croNumber"
         ),
         "Prison 1",
-        "Prison 2"
+        "Prison 2",
+        MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION
       )
     )
 
@@ -93,6 +94,7 @@ class RecallSummaryGeneratorTest {
         has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName)),
         has("createdDate", { it.variable("createdDate") }, equalTo("01 Sep 2021")),
         has("createdTime", { it.variable("createdTime") }, equalTo("19:32")),
+        has("recallNotificationTotalNumberOfPages", { it.variable("recallNotificationTotalNumberOfPages") }, equalTo("3")),
 
         has("mappaLevel1", { it.variable("mappaLevel1") }, equalTo("false")),
         has("mappaLevel2", { it.variable("mappaLevel2") }, equalTo("false")),
@@ -132,7 +134,13 @@ class RecallSummaryGeneratorTest {
 
     val nomsNumber = randomNoms()
     val result = underTest.generateHtml(
-      RecallSummaryContext(Recall(::RecallId.random(), nomsNumber), Prisoner(), "", "")
+      RecallSummaryContext(
+        Recall(::RecallId.random(), nomsNumber),
+        Prisoner(),
+        "",
+        "",
+        MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION
+      )
     )
     assertThat(result, equalTo(expectedHtml))
     assertThat(
