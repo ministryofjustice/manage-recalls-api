@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
-import org.apache.logging.log4j.util.Strings.isBlank
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -211,23 +209,14 @@ data class RecallResponse(
 ) {
   val status: Status? = calculateStatus()
 
-  private fun calculateStatus(): Status? {
-
-    // TODO PUD-616 debug: remove ASAP: logging here in order to be adjacent to sending response for all RecallResponses
-    val log = LoggerFactory.getLogger(this::class.java)
-    val lduIsNotBlankWhenOneOrMoreOtherProbationPropertyIsBlank = localDeliveryUnit != null &&
-      (isBlank(probationOfficerName) || isBlank(probationOfficerEmail) || isBlank(probationOfficerPhoneNumber) || isBlank(authorisingAssistantChiefOfficer))
-    log.info("PUD-616 temporary debug logging: LDU set when other ProbationInfo is not = $lduIsNotBlankWhenOneOrMoreOtherProbationPropertyIsBlank, localDeliveryUnit = $localDeliveryUnit, recallId = $recallId")
-    // TODO remove above ASAP
-
-    return if (recallNotificationEmailSentDateTime != null) {
+  private fun calculateStatus(): Status? =
+    if (recallNotificationEmailSentDateTime != null) {
       Status.RECALL_NOTIFICATION_ISSUED
     } else if (bookedByUserId != null) {
       Status.BOOKED_ON
     } else {
       null
     }
-  }
 }
 
 class Api {
