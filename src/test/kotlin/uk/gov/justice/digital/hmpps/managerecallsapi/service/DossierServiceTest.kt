@@ -23,10 +23,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathReso
 internal class DossierServiceTest {
 
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
+  private val tableOfContentsService = mockk<TableOfContentsService>()
   private val recallDocumentService = mockk<RecallDocumentService>()
   private val pdfDecorator = mockk<PdfDecorator>()
 
-  private val underTest = DossierService(pdfDocumentGenerationService, recallDocumentService, pdfDecorator)
+  private val underTest = DossierService(pdfDocumentGenerationService, recallDocumentService, pdfDecorator, tableOfContentsService)
 
   @Test
   fun `get dossier returns part A, license and revocation order as dossier when all present for recall`() {
@@ -35,14 +36,16 @@ internal class DossierServiceTest {
     val partARecallReportContent = randomString()
     val revocationOrderContent = randomString()
     val mergedBytes = randomString().toByteArray()
+    val tocBytes = randomString().toByteArray()
     val numberedMergedBytes = randomString().toByteArray()
     val documentsToMergeSlot = slot<List<InputStreamDocumentData>>()
 
     every { recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE) } returns licenseContent.toByteArray()
     every { recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContent.toByteArray()
     every { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContent.toByteArray()
+    every { tableOfContentsService.getPdf(recallId, any()) } returns Mono.just(tocBytes)
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
-    every { pdfDecorator.numberPages(mergedBytes) } returns numberedMergedBytes
+    every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
 
     val dossier = underTest.getDossier(recallId).block()!!
 
@@ -51,10 +54,11 @@ internal class DossierServiceTest {
       documentsToMergeSlot.captured,
       onlyContainsInOrder(
         listOf(
-          inputStreamDocumentDataFor(RecallInformationLeaflet),
-          inputStreamDocumentDataFor(licenseContent),
-          inputStreamDocumentDataFor(partARecallReportContent),
-          inputStreamDocumentDataFor(revocationOrderContent)
+          byteArrayDocumentDataFor(String(tocBytes)),
+          byteArrayDocumentDataFor(String(RecallInformationLeaflet.byteArray())),
+          byteArrayDocumentDataFor(licenseContent),
+          byteArrayDocumentDataFor(partARecallReportContent),
+          byteArrayDocumentDataFor(revocationOrderContent)
         )
       )
     )

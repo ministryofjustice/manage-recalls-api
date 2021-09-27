@@ -1,0 +1,88 @@
+<html>
+<head>
+  <style type="text/css">
+    .docTypeCell {
+      margin-left: 6.8pt;
+      border-right-style: solid;
+      padding: 5pt 5pt 5pt 5pt;
+      border-bottom-color: #000000;
+      border-top-width: 1pt;
+      border-right-width: 1pt;
+      border-left-color: #000000;
+      vertical-align: top;
+      border-right-color: #000000;
+      border-left-width: 1pt;
+      border-top-style: solid;
+      border-left-style: solid;
+      border-bottom-width: 1pt;
+      width: 400pt;
+      border-top-color: #000000;
+      border-bottom-style: solid
+    }
+
+    .pageNumberCell {
+      border-right-style: solid;
+      padding: 5pt 5pt 5pt 5pt;
+      border-bottom-color: #000000;
+      border-top-width: 1pt;
+      border-right-width: 1pt;
+      border-left-color: #000000;
+      vertical-align: top;
+      border-right-color: #000000;
+      border-left-width: 1pt;
+      border-top-style: solid;
+      border-left-style: solid;
+      border-bottom-width: 1pt;
+      width: 62.7pt;
+      border-top-color: #000000;
+      border-bottom-style: solid
+    }
+  </style>
+</head>
+<body>
+<p style="font-weight: 700;text-align: center">PROTECT</p>
+<img src="images/hmpps-logo.png" style="height: 100px; float: right"/>
+
+
+<p style="font-weight: 700"><span th:text="${recallLengthAndSentenceHeading}"/></p>
+<p style="font-weight: 700">PAPERS FOR THE PAROLE BOARD RELATING TO:-</p>
+<p style="font-weight: 700">Recall Outcome</p>
+<p><span style="font-weight: 700">NAME: </span><span th:text="${fullName}"/></p>
+
+<table>
+  <tr>
+    <td>
+      <span style="font-weight: 700">ESTABLISHMENT: </span><span th:text="${establishment}"/>
+    </td>
+    <td>
+      <span style="font-weight: 700">CATEGORY: </span><span th:text="${category}"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <span style="font-weight: 700">PRISON NUMBER: </span><span th:text="${prisonNumber}"/>
+    </td>
+    <td>
+      <span style="font-weight: 700">VERSION: </span><span th:text="${version}"/>
+    </td>
+  </tr>
+</table>
+
+<table style="border-spacing: 0; border-collapse: collapse">
+  <thead style="font-weight: 700; background: lightgrey">
+    <th class="docTypeCell">Document Type</th>
+    <th class="pageNumberCell">Page</th>
+  </thead>
+
+  <tr th:each="document: ${documents}">
+    <td class="docTypeCell" th:text="${document.title}"/>
+    <td class="pageNumberCell" th:text="${document.pageNumber}"/>
+  </tr>
+  <tr>
+    <td class="docTypeCell"/>
+    <td class="pageNumberCell"/>
+  </tr>
+</table>
+
+</body>
+</html>

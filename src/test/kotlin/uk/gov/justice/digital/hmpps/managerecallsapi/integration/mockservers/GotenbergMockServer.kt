@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.LetterToProbationLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RecallSummaryLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.TableOfContentsLogo
 
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
@@ -33,6 +34,10 @@ class GotenbergMockServer : WireMockServer(9093) {
 
   fun stubLetterToProbation(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, LetterToProbationLogo)
+  }
+
+  fun stubTableOfContents(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, TableOfContentsLogo)
   }
 
   private fun stubPdfGeneration(

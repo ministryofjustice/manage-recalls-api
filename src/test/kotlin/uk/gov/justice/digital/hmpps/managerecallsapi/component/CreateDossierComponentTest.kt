@@ -5,10 +5,13 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -29,9 +32,13 @@ class CreateDossierComponentTest : ComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
 
     val revocationOrderFile = ClassPathResource("/document/revocation-order.pdf").file
+    val tableOfContentsFile = ClassPathResource("/document/table-of-contents.pdf").file
+
+    gotenbergMockServer.stubTableOfContents(tableOfContentsFile.readBytes(), "PAPERS FOR THE PAROLE BOARD RELATING TO")
 
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
+      tableOfContentsFile.readText(),
       RecallInformationLeaflet.readText(),
       ClassPathResource("/document/licence.pdf").file.readText(),
       ClassPathResource("/document/part_a.pdf").file.readText(),
@@ -39,6 +46,19 @@ class CreateDossierComponentTest : ComponentTestBase() {
     )
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    authenticatedClient.updateRecall(
+      recall.recallId,
+      UpdateRecallRequest(
+        currentPrison = "MWI",
+        lastReleaseDate = LocalDate.of(2021, 9, 2),
+        sentenceDate = LocalDate.of(2012, 5, 17),
+        licenceExpiryDate = LocalDate.of(2025, 12, 25),
+        sentenceExpiryDate = LocalDate.of(2021, 1, 12),
+        sentenceLength = Api.SentenceLength(10, 1, 5),
+        sentencingCourt = "Badger court",
+        indexOffence = "Badgering"
+      )
+    )
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
       AddDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"))
