@@ -11,17 +11,19 @@ import java.io.ByteArrayOutputStream
 
 @Component
 class PdfDecorator {
-  fun numberPages(pdfContent: ByteArray): ByteArray =
+  fun numberPages(pdfContent: ByteArray, numberOfPagesToSkip: Int = 0): ByteArray =
     ByteArrayOutputStream().use { output ->
       PdfReader(pdfContent).use { pdfReader ->
         val pdfStamper = PdfStamper(pdfReader, output)
 
-        (1..pdfReader.numberOfPages).forEach { i ->
-          val t = Phrase(i.toString(), Liberation.SERIF.create(10))
-          val xt: Float = pdfReader.getPageSize(i).width / 2
-          val yt: Float = pdfReader.getPageSize(i).getBottom(20f)
+        val firstPageToNumber = numberOfPagesToSkip + 1
+        (firstPageToNumber..pdfReader.numberOfPages).forEach { pageNumber ->
+          val numberToPrintOnPage = pageNumber - numberOfPagesToSkip
+          val t = Phrase(numberToPrintOnPage.toString(), Liberation.SERIF.create(10))
+          val xt: Float = pdfReader.getPageSize(pageNumber).width / 2
+          val yt: Float = pdfReader.getPageSize(pageNumber).getBottom(20f)
           ColumnText.showTextAligned(
-            pdfStamper.getOverContent(i), Element.ALIGN_CENTER,
+            pdfStamper.getOverContent(pageNumber), Element.ALIGN_CENTER,
             t, xt, yt, 0f
           )
         }

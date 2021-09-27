@@ -1,3 +1,8 @@
 #Ignore due to dps_tech_team security issues with upgrades (5/7/21)
 # https://mojdt.slack.com/archives/CK0QLCQ1G/p1625473241438200
 CVE-2021-22119
+
+# Ignore until DPS tech team have had a chance to release this PR:
+# https://github.com/ministryofjustice/dps-gradle-spring-boot/pull/104
+CVE-2021-37136
+CVE-2021-37137

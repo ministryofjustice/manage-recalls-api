@@ -93,6 +93,10 @@ data class InputStreamDocumentData(val inputStream: InputStream) : Data<Multipar
   override fun data() = MultipartInputStreamFileResource(inputStream)
 }
 
+data class ByteArrayDocumentData(val byteArray: ByteArray) : Data<MultipartInputStreamFileResource> {
+  override fun data() = MultipartInputStreamFileResource(byteArray.inputStream())
+}
+
 class MultipartInputStreamFileResource(inputStream: InputStream, private val filename: String? = null) :
   InputStreamResource(inputStream) {
   override fun getFilename(): String? {
