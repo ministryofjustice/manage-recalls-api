@@ -176,7 +176,7 @@ data class SentencingInfo(
 
 @Embeddable
 data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val sentenceDays: Int) {
-  fun prettyPrint(): String = "$sentenceYears years $sentenceMonths months $sentenceDays days".format(this)
+  fun prettyPrint(): String = "$sentenceYears years $sentenceMonths months $sentenceDays days"
 }
 
 @Embeddable

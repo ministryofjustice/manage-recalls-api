@@ -4,8 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_1
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_2
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RecallSummaryLogo
 import java.time.Clock
 import java.time.LocalDate
@@ -27,39 +31,57 @@ class RecallSummaryGenerator(
     Context().apply {
       val createdDate = LocalDate.now(clock).format(dateFormatter)
       val createdTime = ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London")).format(timeFormatter)
-      val firstAndMiddleNames = String.format("%s %s", context.prisoner.firstName ?: "", context.prisoner.middleNames ?: "").trim()
       setVariable("createdDate", createdDate)
       setVariable("createdTime", createdTime)
 
-      setVariable("mappaLevel1", context.recall.mappaLevel?.equals(MappaLevel.LEVEL_1) ?: false)
-      setVariable("mappaLevel2", context.recall.mappaLevel?.equals(MappaLevel.LEVEL_2) ?: false)
-      setVariable("mappaLevel3", context.recall.mappaLevel?.equals(MappaLevel.LEVEL_3) ?: false)
+      // TODO: MD What do we do if any of these values are not NULL?  They should all be present and valid
+      with(context.prisoner) {
+        val firstAndMiddleNames = String.format("%s %s", this.firstName ?: "", this.middleNames ?: "").trim()
+        setVariable("forename", firstAndMiddleNames)
+        setVariable("surname", this.lastName)
+        setVariable("dateOfBirth", this.dateOfBirth?.format(dateFormatter))
+        setVariable("pncCroNumber", this.croNumber)
+      }
 
-      setVariable("forename", firstAndMiddleNames)
-      setVariable("surname", context.prisoner.lastName)
-      setVariable("dateOfBirth", context.prisoner.dateOfBirth?.format(dateFormatter))
-      setVariable("policeFileName", context.recall.previousConvictionMainName)
-      setVariable("prisonNumber", context.recall.bookingNumber)
-      setVariable("pnomisNumber", context.recall.nomsNumber)
-      setVariable("releasingPrison", context.lastReleasePrisonName)
-      setVariable("releaseDate", context.recall.lastReleaseDate?.format(dateFormatter))
-      setVariable("lengthOfSentence", context.recall.sentencingInfo?.sentenceLength?.prettyPrint())
-      setVariable("indexOffence", context.recall.sentencingInfo?.indexOffence)
-      setVariable("furtherCharge", context.recall.reasonsForRecall.contains(ReasonForRecall.ELM_FURTHER_OFFENCE) || context.recall.reasonsForRecall.contains(ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE))
+      val recall = context.recall
+      with(recall.mappaLevel) {
+        setVariable("mappaLevel1", this?.equals(LEVEL_1) ?: false)
+        setVariable("mappaLevel2", this?.equals(LEVEL_2) ?: false)
+        setVariable("mappaLevel3", this?.equals(LEVEL_3) ?: false)
+      }
 
-      setVariable("pncCroNumber", context.prisoner.croNumber)
-      setVariable("offenderManagerName", context.recall.probationInfo?.probationOfficerName)
-      setVariable("offenderManagerContactNumber", context.recall.probationInfo?.probationOfficerPhoneNumber)
-      setVariable("policeSpoc", context.recall.localPoliceForce)
+      with(recall.sentencingInfo) {
+        setVariable("lengthOfSentence", this?.sentenceLength?.prettyPrint())
+        setVariable("indexOffence", this?.indexOffence)
+        setVariable("sentencingCourt", this?.sentencingCourt)
+        setVariable("sentencingDate", this?.sentenceDate?.format(dateFormatter))
+        setVariable("sed", this?.sentenceExpiryDate?.format(dateFormatter))
+      }
+
+      with(recall.probationInfo) {
+        setVariable("offenderManagerName", this?.probationOfficerName)
+        setVariable("offenderManagerContactNumber", this?.probationOfficerPhoneNumber)
+      }
+
+      setVariable("policeFileName", recall.previousConvictionMainName)
+      setVariable("prisonNumber", recall.bookingNumber)
+      setVariable("pnomisNumber", recall.nomsNumber)
+      setVariable("releaseDate", recall.lastReleaseDate?.format(dateFormatter))
+      setVariable("furtherCharge", recall.hasFurtherCharge())
+      setVariable("policeSpoc", recall.localPoliceForce)
       setVariable("currentPrison", context.currentPrisonName)
-      setVariable("sentencingCourt", context.recall.sentencingInfo?.sentencingCourt)
-      setVariable("sentencingDate", context.recall.sentencingInfo?.sentenceDate?.format(dateFormatter))
-      setVariable("sed", context.recall.sentencingInfo?.sentenceExpiryDate?.format(dateFormatter))
-      setVariable("vulnerabilityDetail", context.recall.vulnerabilityDiversityDetail ?: "None")
-      setVariable("contraband", if (context.recall.contrabandDetail.isNullOrEmpty()) "NO" else "YES")
-      setVariable("contrabandDetail", context.recall.contrabandDetail)
+      setVariable("vulnerabilityDetail", recall.vulnerabilityDiversityDetail ?: "None")
+      setVariable("contraband", if (recall.contrabandDetail.isNullOrEmpty()) "NO" else "YES")
+      setVariable("contrabandDetail", recall.contrabandDetail)
+      setVariable("releasingPrison", context.lastReleasePrisonName)
+
       setVariable("logoFileName", RecallSummaryLogo.fileName)
     }.let {
       templateEngine.process("recall-summary", it)
     }
+
+  private fun Recall.hasFurtherCharge() =
+    reasonsForRecall.contains(ELM_FURTHER_OFFENCE) || reasonsForRecall.contains(
+      POOR_BEHAVIOUR_FURTHER_OFFENCE
+    )
 }
