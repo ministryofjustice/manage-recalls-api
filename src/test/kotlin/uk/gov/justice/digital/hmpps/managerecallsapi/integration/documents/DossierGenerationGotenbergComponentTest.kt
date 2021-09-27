@@ -62,7 +62,7 @@ class DossierGenerationGotenbergComponentTest : ComponentTestBase(startGotenberg
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
 //    writeBase64EncodedStringToFile("dossier.pdf", dossier.content)
-    assertThat(dossier, hasNumberOfPages(equalTo(9)))
+    assertThat(dossier, hasNumberOfPages(equalTo(10)))
   }
 
   private fun setupUserDetailsFor(userId: UserId) {
