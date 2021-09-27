@@ -27,7 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 
-@ActiveProfiles("db-gotenberg-test")
+@ActiveProfiles("db-test")
 class DossierGenerationGotenbergComponentTest : ComponentTestBase(startGotenbergMockServer = false) {
 
   private val nomsNumber = NomsNumber("123456")

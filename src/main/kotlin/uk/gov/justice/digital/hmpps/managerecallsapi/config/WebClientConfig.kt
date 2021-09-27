@@ -23,6 +23,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.AuthenticatingRestClient
 import java.lang.Integer.MAX_VALUE
+import java.time.Duration.ofSeconds
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 @Configuration
@@ -46,6 +47,9 @@ class WebClientConfig {
   fun webClient(): WebClient =
     WebClient.builder()
       .codecs { it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024) }
+      .clientConnector(
+        ReactorClientHttpConnector(HttpClient.create().responseTimeout(ofSeconds(10)))
+      )
       .build()
 
   @Value("\${prisonRegister.endpoint.url}")
