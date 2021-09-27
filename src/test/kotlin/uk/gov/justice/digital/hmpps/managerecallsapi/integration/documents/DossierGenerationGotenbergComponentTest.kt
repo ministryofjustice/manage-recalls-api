@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.test.context.ActiveProfiles
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
@@ -28,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchReques
 import java.time.LocalDate
 
 @ActiveProfiles("db-test")
+@AutoConfigureWebTestClient(timeout = "10000")
 class DossierGenerationGotenbergComponentTest : ComponentTestBase(startGotenbergMockServer = false) {
 
   private val nomsNumber = NomsNumber("123456")
