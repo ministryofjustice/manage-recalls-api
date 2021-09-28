@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.LetterToProbationLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
 @Service
 class LetterToProbationService(
@@ -19,7 +19,7 @@ class LetterToProbationService(
 
     return pdfDocumentGenerationService.generatePdf(
       letterToProbationHtml,
-      recallImage(LetterToProbationLogo)
+      recallImage(HmppsLogo)
     )
   }
 }

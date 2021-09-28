@@ -105,10 +105,6 @@ private data class Base64EncodedImageData(override val fileName: String, val bas
   )
 }
 
-data class InputStreamDocumentData(val inputStream: InputStream) : Data {
-  override fun data(): InputStreamResource = MultipartInputStreamFileResource(inputStream)
-}
-
 data class ByteArrayDocumentData(val byteArray: ByteArray, private val filename: String? = null) : Data {
   override fun data(): InputStreamResource = MultipartInputStreamFileResource(byteArray.inputStream())
 }

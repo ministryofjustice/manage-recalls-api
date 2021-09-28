@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RecallSummaryLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId
@@ -75,7 +75,7 @@ class RecallSummaryGenerator(
       setVariable("contrabandDetail", recall.contrabandDetail)
       setVariable("releasingPrison", context.lastReleasePrisonName)
 
-      setVariable("logoFileName", RecallSummaryLogo.fileName)
+      setVariable("logoFileName", HmppsLogo.fileName)
     }.let {
       templateEngine.process("recall-summary", it)
     }
