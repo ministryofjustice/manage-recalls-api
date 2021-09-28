@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
 class RecallSummaryServiceTest {
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
@@ -47,9 +48,7 @@ class RecallSummaryServiceTest {
     every { prisonLookupService.getPrisonName(lastReleasePrison) } returns lastReleasePrisonName
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     every { recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoner, lastReleasePrisonName, currentPrisonName, MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION)) } returns recallSummaryHtml
-    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtml, recallImage(RecallImage.RecallSummaryLogo)) } returns Mono.just(
-      expectedPdfBytes
-    )
+    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtml, recallImage(HmppsLogo)) } returns Mono.just(expectedPdfBytes)
 
     val result = underTest.getPdf(recallId).block()!!
 
