@@ -55,7 +55,7 @@ fi
 set -u
 
 K8S_NAMESPACE="ppud-replacement-${ENV}"
-PFP_NAME="manage-recalls-api-port-forward-$(whoami | tr ._ -)"
+PFP_NAME="manage-recalls-api-db-proxy-$(whoami | tr ._ -)"
 SECRET=manage-recalls-database
 
 DB_HOST=$(kubectl -n "${K8S_NAMESPACE}" get secret "${SECRET}" -o json | jq -r '.data.host | @base64d')
