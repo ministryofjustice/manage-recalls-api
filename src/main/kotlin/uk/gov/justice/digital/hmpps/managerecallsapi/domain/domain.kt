@@ -15,6 +15,8 @@ class RecallId(value: UUID) : Validated<UUID>(value)
 class UserId(value: UUID) : Validated<UUID>(value)
 class FirstName(value: String) : Validated<String>(value, notBlank)
 class LastName(value: String) : Validated<String>(value, notBlank)
+class Email(value: String) : Validated<String>(value, notBlank)
+class PhoneNumber(value: String) : Validated<String>(value, notBlank)
 
 fun <T : Validated<UUID>> ((UUID) -> T).random() = this(UUID.randomUUID())
 

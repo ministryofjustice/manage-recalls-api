@@ -12,8 +12,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.io.File
@@ -29,7 +31,9 @@ class UserDetailsRepositoryIntegrationTest(@Autowired private val repository: Us
   private val firstName = FirstName("Bertie")
   private val lastName = LastName("Badger")
   private val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
-  private val userDetails = UserDetails(userId, firstName, lastName, signature)
+  private val email = Email("bertie@badger.org")
+  private val phoneNumber = PhoneNumber("01234567890")
+  private val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
 
   @Test
   @Transactional
