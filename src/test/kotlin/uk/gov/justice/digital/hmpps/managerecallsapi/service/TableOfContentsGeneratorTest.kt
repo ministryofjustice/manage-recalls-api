@@ -76,16 +76,17 @@ class TableOfContentsGeneratorTest {
         has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName)),
         has(
           "recallLengthAndSentenceHeading", { it.variable("recallLengthAndSentenceHeading") }, equalTo(expectedText)
-        ),
-        has("fullName", { it.variable("fullName") }, equalTo("Bertie Basset Badger")),
-        has("establishment", { it.variable("establishment") }, equalTo(currentPrisonName)),
-        has("category", { it.variable("category") }, equalTo("Not Applicable")),
-        has("prisonNumber", { it.variable("prisonNumber") }, equalTo(bookingNumber)),
-        has("version", { it.variable("version") }, equalTo("0")),
-        has("documents", { it.variable("documents") }, equalTo("[Document(title=Document 1, pageNumber=1)]")),
+          ),
+          has("fullName", { it.variable("fullName") }, equalTo("Bertie Basset Badger")),
+          has("establishment", { it.variable("establishment") }, equalTo(currentPrisonName)),
+          has("category", { it.variable("category") }, equalTo("Not Applicable")),
+          has("prisonNumber", { it.variable("prisonNumber") }, equalTo(bookingNumber)),
+          has("version", { it.variable("version") }, equalTo("0")),
+          has("documents", { it.variable("documents") }, equalTo("[Document(title=Document 1, pageNumber=1)]")),
+        )
       )
-    )
-  }
+    }
 
-  private fun IContext.variable(variableName: String) = getVariable(variableName)?.toString()
-}
+    private fun IContext.variable(variableName: String) = getVariable(variableName)?.toString()
+  }
+  
