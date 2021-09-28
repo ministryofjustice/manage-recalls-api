@@ -17,10 +17,8 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.LetterToProbationLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RecallSummaryLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.TableOfContentsLogo
 
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
@@ -28,16 +26,8 @@ class GotenbergMockServer : WireMockServer(9093) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RevocationOrderLogo)
   }
 
-  fun stubGetRecallNotification(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RecallSummaryLogo)
-  }
-
-  fun stubLetterToProbation(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, LetterToProbationLogo)
-  }
-
-  fun stubTableOfContents(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, TableOfContentsLogo)
+  fun stubPdfGenerationWithHmppsLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml, HmppsLogo)
   }
 
   private fun stubPdfGeneration(

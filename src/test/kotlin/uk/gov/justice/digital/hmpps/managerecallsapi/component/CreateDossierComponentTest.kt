@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -34,7 +33,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
     val revocationOrderFile = ClassPathResource("/document/revocation-order.pdf").file
     val tableOfContentsFile = ClassPathResource("/document/table-of-contents.pdf").file
 
-    gotenbergMockServer.stubTableOfContents(tableOfContentsFile.readBytes(), "PAPERS FOR THE PAROLE BOARD RELATING TO")
+    gotenbergMockServer.stubPdfGenerationWithHmppsLogo(tableOfContentsFile.readBytes(), "PAPERS FOR THE PAROLE BOARD RELATING TO")
 
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
