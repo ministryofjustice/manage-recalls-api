@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import java.util.UUID
@@ -29,9 +31,15 @@ data class UserDetails(
   @Convert(converter = LastNameJpaConverter::class)
   val lastName: LastName,
   @Column(nullable = false)
-  val signature: String
+  val signature: String,
+  @Column(nullable = false)
+  @Convert(converter = EmailJpaConverter::class)
+  val email: Email,
+  @Column(nullable = false)
+  @Convert(converter = PhoneNumberJpaConverter::class)
+  val phoneNumber: PhoneNumber
 ) {
-  constructor(userId: UserId, firstName: FirstName, lastName: LastName, signature: String) : this(userId.value, firstName, lastName, signature)
+  constructor(userId: UserId, firstName: FirstName, lastName: LastName, signature: String, email: Email, phoneNumber: PhoneNumber) : this(userId.value, firstName, lastName, signature, email, phoneNumber)
 
   fun userId() = UserId(id)
 }

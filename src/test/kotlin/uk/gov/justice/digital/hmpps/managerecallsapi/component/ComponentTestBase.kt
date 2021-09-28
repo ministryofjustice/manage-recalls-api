@@ -21,8 +21,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
@@ -120,7 +122,9 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     userDetailsRepository.save(
       UserDetails(
         userId, FirstName("Bertie"), LastName("Badger"),
-        base64EncodedFileContents("/signature.jpg")
+        base64EncodedFileContents("/signature.jpg"),
+        Email("bertie@thebadgers.org"),
+        PhoneNumber("09876543210")
       )
     )
   }
