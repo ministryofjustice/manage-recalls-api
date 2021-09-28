@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.matchers
 
 import com.lowagie.text.pdf.PdfReader
+import com.lowagie.text.pdf.parser.PdfTextExtractor
 import com.natpryce.hamkrest.MatchResult
 import com.natpryce.hamkrest.MatchResult.Match
 import com.natpryce.hamkrest.MatchResult.Mismatch
@@ -39,6 +40,27 @@ fun isPdfWithNumberOfPages(numberOfPagesMatcher: Matcher<Int>): Matcher<ByteArra
     override fun invoke(actual: ByteArray): MatchResult =
       PdfReader(actual).use { pdfReader ->
         numberOfPagesMatcher(pdfReader.numberOfPages)
+      }
+  }
+
+fun hasTotalPageCount(expectedNumberOfPages: Int): Matcher<Pdf> =
+  has(
+    "number of pages",
+    { Base64.getDecoder().decode(it.content.toByteArray()) },
+    isPdfWithWithTotalPageCount(expectedNumberOfPages)
+  )
+
+fun isPdfWithWithTotalPageCount(expectedNumberOfPages: Int): Matcher<ByteArray> =
+  object : Matcher<ByteArray> {
+    override val description: String = "contains the total page count of $expectedNumberOfPages"
+
+    override fun invoke(actual: ByteArray): MatchResult =
+      PdfReader(actual).use { pdfReader ->
+        val recallSummaryText = PdfTextExtractor(pdfReader).getTextFromPage(1)
+        return when {
+          recallSummaryText.contains("of pages $expectedNumberOfPages (includes this one)") -> Match
+          else -> Mismatch("page content '$recallSummaryText' does not contain expected page count $expectedNumberOfPages")
+        }
       }
   }
 

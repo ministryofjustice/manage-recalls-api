@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
+import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasTotalPageCount
 
 class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
@@ -45,7 +46,9 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
 
-    writeBase64EncodedStringToFile("recall-notification-long-summary.pdf", recallNotification.content)
+//    writeBase64EncodedStringToFile("recall-notification-with-long-recall-summary.pdf", recallNotification.content)
+
     assertThat(recallNotification, hasNumberOfPages(equalTo(4)))
+    assertThat(recallNotification, hasTotalPageCount(4))
   }
 }
