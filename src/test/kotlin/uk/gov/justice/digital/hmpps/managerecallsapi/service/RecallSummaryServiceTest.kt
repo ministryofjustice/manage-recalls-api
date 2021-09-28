@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
+import org.springframework.core.io.ClassPathResource
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
@@ -40,18 +41,23 @@ class RecallSummaryServiceTest {
     val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison)
     val currentPrisonName = "Current Prison Name"
     val lastReleasePrisonName = "Last Release Prison Name"
-    val recallSummaryHtml = "generated Html"
-    val expectedPdfBytes = "some bytes".toByteArray()
+    val recallSummaryHtmlWithoutPageCount = "generated Html without page count"
+    val recallSummaryHtmlWithPageCount = "generated Html with page count"
+    val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
+    val recallNotificationTotalNumberOfPages = 5
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrison) } returns lastReleasePrisonName
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
-    every { recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoner, lastReleasePrisonName, currentPrisonName, MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION)) } returns recallSummaryHtml
-    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtml, recallImage(HmppsLogo)) } returns Mono.just(expectedPdfBytes)
+
+    every { recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoner, lastReleasePrisonName, currentPrisonName)) } returns recallSummaryHtmlWithoutPageCount
+    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithoutPageCount, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
+    every { recallSummaryGenerator.generateHtml(RecallSummaryContext(recall, prisoner, lastReleasePrisonName, currentPrisonName, recallNotificationTotalNumberOfPages)) } returns recallSummaryHtmlWithPageCount
+    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithPageCount, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
 
     val result = underTest.getPdf(recallId).block()!!
 
-    assertArrayEquals(expectedPdfBytes, result)
+    assertArrayEquals(pdfWith3Pages, result)
   }
 }

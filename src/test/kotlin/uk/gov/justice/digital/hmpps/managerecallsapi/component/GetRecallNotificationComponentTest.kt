@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
@@ -22,7 +23,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val firstName = "Natalia"
-  private val expectedPdf = "Expected Generated PDF".toByteArray()
+  private val expectedPdf = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
   private val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
   @Test
