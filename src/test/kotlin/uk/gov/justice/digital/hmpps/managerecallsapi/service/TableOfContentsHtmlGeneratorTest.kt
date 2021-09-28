@@ -4,9 +4,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
@@ -26,7 +25,7 @@ class TableOfContentsHtmlGeneratorTest(
         Recall(
           ::RecallId.random(),
           randomNoms(),
-          sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), "", "", SentenceLength(1, 0, 0)),
+          recallLength = TWENTY_EIGHT_DAYS,
           lastReleaseDate = LocalDate.of(2020, 9, 30),
           bookingNumber = "ABC1234F"
         ),

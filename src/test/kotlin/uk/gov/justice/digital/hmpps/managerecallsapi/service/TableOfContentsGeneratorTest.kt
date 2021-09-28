@@ -13,16 +13,16 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 import java.time.LocalDate
-import java.time.LocalDate.now
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -31,16 +31,16 @@ class TableOfContentsGeneratorTest {
 
   private val underTest = TableOfContentsGenerator(templateEngine)
 
-  private fun sentencingInfoOptions(): Stream<Arguments> {
+  private fun recallLengthOptions(): Stream<Arguments> {
     return Stream.of(
-      Arguments.of(SentenceLength(0, 11, 0), "14 Day FTR under 12 months"),
-      Arguments.of(SentenceLength(1, 0, 0), "28 Day FTR 12 months & over")
+      Arguments.of(FOURTEEN_DAYS, "14 Day FTR under 12 months"),
+      Arguments.of(TWENTY_EIGHT_DAYS, "28 Day FTR 12 months & over")
     )
   }
 
   @ParameterizedTest(name = "generate TOC HTML with all values populated for {0}")
-  @MethodSource("sentencingInfoOptions")
-  fun `generate TOC HTML with all values populated`(sentencingLength: SentenceLength, expectedText: String) {
+  @MethodSource("recallLengthOptions")
+  fun `generate TOC HTML with all values populated`(recallLength: RecallLength, expectedText: String) {
     val expectedHtml = "expected HTML"
     val contextSlot = slot<IContext>()
 
@@ -54,7 +54,7 @@ class TableOfContentsGeneratorTest {
           ::RecallId.random(), randomNoms(),
           lastReleaseDate = LocalDate.of(2020, 9, 1),
           bookingNumber = bookingNumber,
-          sentencingInfo = SentencingInfo(now(), now(), now(), "Court", "", sentencingLength)
+          recallLength = recallLength
         ),
         Prisoner(
           firstName = "Bertie",

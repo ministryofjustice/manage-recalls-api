@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 
 @Component
@@ -29,6 +30,8 @@ class TableOfContentsGenerator(
     }
 
   private fun recallLengthAndSentenceHeading(recall: Recall) =
-    if (recall.sentencingInfo!!.calculateRecallLength() == RecallLength.FOURTEEN_DAYS
-    ) "14 Day FTR under 12 months" else "28 Day FTR 12 months & over"
+    when (recall.recallLength!!) {
+      FOURTEEN_DAYS -> "14 Day FTR under 12 months"
+      TWENTY_EIGHT_DAYS -> "28 Day FTR 12 months & over"
+    }
 }
