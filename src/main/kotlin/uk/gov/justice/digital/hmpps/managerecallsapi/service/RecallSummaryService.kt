@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import com.lowagie.text.pdf.PdfReader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -14,7 +15,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
-const val MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION = 3
+// This is the number of pages of the Revocation Order and Letter to Probation
+const val OTHER_PAGES_IN_RECALL_NOTIFICATION = 2
 
 @Service
 class RecallSummaryService(
@@ -32,16 +34,26 @@ class RecallSummaryService(
 
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .flatMap { prisoners ->
-        val recallSummaryHtml = recallSummaryGenerator.generateHtml(
-          RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName, MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION)
-        )
+        val context = RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName)
 
-        pdfDocumentGenerationService.generatePdf(
-          recallSummaryHtml,
-          recallImage(HmppsLogo)
-        )
+        getRecallSummaryNumberOfPages(context).map { numberOfPages ->
+          context.copy(recallNotificationTotalNumberOfPages = OTHER_PAGES_IN_RECALL_NOTIFICATION + numberOfPages)
+        }.flatMap { contextWithActualNumberOfPages ->
+          generatePdf(contextWithActualNumberOfPages)
+        }
       }
   }
+
+  private fun getRecallSummaryNumberOfPages(context: RecallSummaryContext) =
+    generatePdf(context).map { pdfBytes ->
+      PdfReader(pdfBytes).use { it.numberOfPages }
+    }
+
+  private fun generatePdf(context: RecallSummaryContext) =
+    pdfDocumentGenerationService.generatePdf(
+      recallSummaryGenerator.generateHtml(context),
+      recallImage(HmppsLogo)
+    )
 }
 
 data class RecallSummaryContext(
@@ -49,5 +61,5 @@ data class RecallSummaryContext(
   val prisoner: Prisoner,
   val lastReleasePrisonName: String,
   val currentPrisonName: String,
-  val recallNotificationTotalNumberOfPages: Int
+  val recallNotificationTotalNumberOfPages: Int? = null
 )

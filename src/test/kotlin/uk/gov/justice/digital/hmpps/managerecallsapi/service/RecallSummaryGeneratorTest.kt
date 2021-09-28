@@ -83,7 +83,7 @@ class RecallSummaryGeneratorTest {
         ),
         "Prison 1",
         "Prison 2",
-        MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION
+        3
       )
     )
 
@@ -139,7 +139,7 @@ class RecallSummaryGeneratorTest {
         Prisoner(),
         "",
         "",
-        MINIMUM_NUMBER_OF_PAGES_IN_RECALL_NOTIFICATION
+        OTHER_PAGES_IN_RECALL_NOTIFICATION
       )
     )
     assertThat(result, equalTo(expectedHtml))
