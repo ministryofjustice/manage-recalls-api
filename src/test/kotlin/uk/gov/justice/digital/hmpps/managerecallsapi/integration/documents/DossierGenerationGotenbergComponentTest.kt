@@ -27,7 +27,7 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
     uploadPartAFor(recall)
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
-    writeBase64EncodedStringToFile("dossier.pdf", dossier.content)
+    // writeBase64EncodedStringToFile("dossier.pdf", dossier.content)
     assertThat(dossier, hasNumberOfPages(equalTo(11)))
   }
 }
