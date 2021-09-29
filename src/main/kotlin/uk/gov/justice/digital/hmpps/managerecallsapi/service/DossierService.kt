@@ -18,6 +18,7 @@ import java.io.InputStream
 class DossierService(
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val reasonsForRecallService: ReasonsForRecallService,
   @Autowired private val pdfDecorator: PdfDecorator,
   @Autowired private val tableOfContentsService: TableOfContentsService
 ) {
@@ -27,21 +28,26 @@ class DossierService(
     val partARecallReport = recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
     val revocationOrder = recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER)
 
-    val dossierDocuments = mapOf(
+    val dossierDocuments = mutableMapOf(
       "Recall Information Leaflet [Core Dossier]" to documentData(RecallInformationLeaflet),
       "Licence [Core Dossier]" to documentData(license),
       "Request for Recall Report [Core Dossier]" to documentData(partARecallReport),
       "Revocation Order [Core Dossier]" to documentData(revocationOrder)
     )
 
-    return tableOfContentsService.getPdf(recallId, dossierDocuments).map { tocBytes ->
-      val tocAndDossierDocuments = mutableListOf(documentData(tocBytes))
-      tocAndDossierDocuments.addAll(dossierDocuments.values)
-      tocAndDossierDocuments
-    }.flatMap {
-      pdfDocumentGenerationService.mergePdfs(it)
-    }.map { mergedPdfContentBytes ->
-      pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
+    return reasonsForRecallService.getPdf(recallId).map { bytes ->
+      dossierDocuments["Reasons for Recall [Core Dossier]"] = documentData(bytes)
+      dossierDocuments
+    }.flatMap { docsMap ->
+      tableOfContentsService.getPdf(recallId, docsMap).map { tocBytes ->
+        val tocAndDossierDocuments = mutableListOf(documentData(tocBytes))
+        tocAndDossierDocuments.addAll(docsMap.values)
+        tocAndDossierDocuments
+      }.flatMap {
+        pdfDocumentGenerationService.mergePdfs(it)
+      }.map { mergedPdfContentBytes ->
+        pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
+      }
     }
   }
 }
