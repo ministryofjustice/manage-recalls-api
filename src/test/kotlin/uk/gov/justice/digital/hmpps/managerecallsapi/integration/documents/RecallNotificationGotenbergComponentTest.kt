@@ -24,7 +24,10 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId)
+    updateRecallWithRequiredInformationForTheRecallSummary(
+      recall.recallId,
+      assessedByUserId = assessedByUserId
+    )
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
 
@@ -41,7 +44,8 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     updateRecallWithRequiredInformationForTheRecallSummary(
       recall.recallId,
       vulnerabilityDiversityDetail = loremIpsum,
-      contrabandDetail = loremIpsum
+      contrabandDetail = loremIpsum,
+      assessedByUserId = assessedByUserId
     )
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)

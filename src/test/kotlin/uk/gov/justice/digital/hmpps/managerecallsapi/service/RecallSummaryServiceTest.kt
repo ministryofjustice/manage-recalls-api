@@ -9,9 +9,15 @@ import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
@@ -33,7 +39,7 @@ class RecallSummaryServiceTest {
     val recallSummaryHtmlWithPageCount = "generated Html with page count"
     val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
 
-    val recallSummaryContext = RecallSummaryContext(mockk(), mockk(), "don't care", "don't care")
+    val recallSummaryContext = RecallSummaryContext(mockk(), mockk(), "don't care", "don't care", UserDetails(::UserId.random(), FirstName("Bob"), LastName("Badger"), "", Email("b@bob.com"), PhoneNumber("0987")))
     val recallSummaryContextWithPageCountSlot = slot<RecallSummaryContext>()
 
     every { recallSummaryContextFactory.createRecallSummaryContext(recallId) } returns Mono.just(recallSummaryContext)

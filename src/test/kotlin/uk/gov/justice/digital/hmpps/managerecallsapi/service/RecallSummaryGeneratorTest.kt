@@ -17,8 +17,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -42,6 +48,7 @@ class RecallSummaryGeneratorTest {
     every { templateEngine.process("recall-summary", capture(contextSlot)) } returns expectedHtml
 
     val nomsNumber: NomsNumber = randomNoms()
+    val assessedByUserId = ::UserId.random()
     val result = underTest.generateHtml(
       RecallSummaryContext(
         Recall(
@@ -71,7 +78,8 @@ class RecallSummaryGeneratorTest {
             "Ms Authoriser"
           ),
           localPoliceForce = "London",
-          vulnerabilityDiversityDetail = "Some stuff"
+          vulnerabilityDiversityDetail = "Some stuff",
+          assessedByUserId = assessedByUserId
         ),
         Prisoner(
           firstName = "Bertie",
@@ -83,6 +91,7 @@ class RecallSummaryGeneratorTest {
         ),
         "Prison 1",
         "Prison 2",
+        UserDetails(assessedByUserId, FirstName("Maria"), LastName("Badger"), "", Email("maria@thebadgers.set"), PhoneNumber("09876543210")),
         3
       )
     )
@@ -95,6 +104,10 @@ class RecallSummaryGeneratorTest {
         has("createdDate", { it.variable("createdDate") }, equalTo("01 Sep 2021")),
         has("createdTime", { it.variable("createdTime") }, equalTo("19:32")),
         has("recallNotificationTotalNumberOfPages", { it.variable("recallNotificationTotalNumberOfPages") }, equalTo("3")),
+
+        has("caseworkerName", { it.variable("caseworkerName") }, equalTo("Maria Badger")),
+        has("caseworkerEmail", { it.variable("caseworkerEmail") }, equalTo("maria@thebadgers.set")),
+        has("caseworkerPhoneNumber", { it.variable("caseworkerPhoneNumber") }, equalTo("09876543210")),
 
         has("mappaLevel1", { it.variable("mappaLevel1") }, equalTo("false")),
         has("mappaLevel2", { it.variable("mappaLevel2") }, equalTo("false")),
@@ -139,6 +152,7 @@ class RecallSummaryGeneratorTest {
         Prisoner(),
         "",
         "",
+        UserDetails(::UserId.random(), FirstName("A"), LastName("B"), "", Email("C"), PhoneNumber("D")),
         OTHER_PAGES_IN_RECALL_NOTIFICATION
       )
     )
@@ -148,6 +162,10 @@ class RecallSummaryGeneratorTest {
       allOf(
         has("createdDate", { it.variable("createdDate") }, equalTo("01 Sep 2021")),
         has("createdTime", { it.variable("createdTime") }, equalTo("19:32")),
+
+        has("caseworkerName", { it.variable("caseworkerName") }, equalTo("A B")),
+        has("caseworkerEmail", { it.variable("caseworkerEmail") }, equalTo("C")),
+        has("caseworkerPhoneNumber", { it.variable("caseworkerPhoneNumber") }, equalTo("D")),
 
         has("mappaLevel1", { it.variable("mappaLevel1") }, equalTo("false")),
         has("mappaLevel2", { it.variable("mappaLevel2") }, equalTo("false")),

@@ -21,7 +21,7 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId)
+    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId, assessedByUserId = assessedByUserId)
     authenticatedClient.getRecallNotification(recall.recallId, assessedByUserId)
     uploadLicenceFor(recall)
     uploadPartAFor(recall)

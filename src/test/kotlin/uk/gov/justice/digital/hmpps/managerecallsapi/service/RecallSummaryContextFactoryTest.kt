@@ -10,8 +10,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
@@ -20,11 +26,13 @@ class RecallSummaryContextFactoryTest {
   private val recallRepository = mockk<RecallRepository>()
   private val prisonLookupService = mockk<PrisonLookupService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
+  private val userDetailsService = mockk<UserDetailsService>()
 
   private val underTest = RecallSummaryContextFactory(
     recallRepository,
     prisonLookupService,
-    prisonerOffenderSearchClient
+    prisonerOffenderSearchClient,
+    userDetailsService
   )
 
   private val recallId = ::RecallId.random()
@@ -35,21 +43,31 @@ class RecallSummaryContextFactoryTest {
     val currentPrison = "AAA"
     val lastReleasePrison = "ZZZ"
     val prisoner = mockk<Prisoner>()
-    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison)
+    val assessedByUserId = ::UserId.random()
+    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison, assessedByUserId = assessedByUserId)
     val currentPrisonName = "Current Prison Name"
     val lastReleasePrisonName = "Last Release Prison Name"
+    val userDetails = UserDetails(
+      assessedByUserId,
+      FirstName("Bertie"),
+      LastName("Badger"),
+      "",
+      Email("b@b.com"),
+      PhoneNumber("09876543210")
+    )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrison) } returns lastReleasePrisonName
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
+    every { userDetailsService.get(assessedByUserId) } returns userDetails
 
     val result = underTest.createRecallSummaryContext(recallId).block()!!
 
     assertThat(
       result,
       equalTo(
-        RecallSummaryContext(recall, prisoner, lastReleasePrisonName, currentPrisonName)
+        RecallSummaryContext(recall, prisoner, lastReleasePrisonName, currentPrisonName, userDetails)
       )
     )
   }
