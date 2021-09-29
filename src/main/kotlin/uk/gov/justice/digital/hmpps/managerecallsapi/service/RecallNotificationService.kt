@@ -33,7 +33,7 @@ class RecallNotificationService(
     }.map { revocationOrderBytes ->
       docs += documentData(revocationOrderBytes)
     }.flatMap {
-      letterToProbationService.getPdf(recallId)
+      letterToProbationService.getPdf(recallId, userId)
     }.flatMap { letterToProbationBytes ->
       docs += documentData(letterToProbationBytes)
       pdfDocumentGenerationService.mergePdfs(docs)

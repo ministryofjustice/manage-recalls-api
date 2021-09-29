@@ -12,6 +12,6 @@ class LetterToProbationHtmlGenerationTest(
 
   @Test
   fun `generate HTML`(approver: ContentApprover) {
-    approver.assertApproved(underTest.generateHtml())
+    approver.assertApproved(underTest.generateHtml(LetterToProbationContext()))
   }
 }

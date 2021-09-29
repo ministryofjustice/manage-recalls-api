@@ -11,7 +11,7 @@ class LetterToProbationGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
 
-  fun generateHtml(): String =
+  fun generateHtml(letterToProbationContext: LetterToProbationContext): String =
     Context().apply {
       setVariable("logoFileName", HmppsLogo.fileName)
     }.let {
