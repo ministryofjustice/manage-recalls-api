@@ -49,7 +49,7 @@ internal class RecallNotificationServiceTest {
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
     every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
-    every { recallSummaryService.getPdf(recallId) } returns Mono.just(recallSummaryContent.toByteArray())
+    every { recallSummaryService.getPdf(recallId, userId) } returns Mono.just(recallSummaryContent.toByteArray())
     every { revocationOrderService.createPdf(recallId, userId) } returns Mono.just(revocationOrderContent.toByteArray())
     every { letterToProbationService.getPdf(recallId) } returns Mono.just(letterToProbationContent.toByteArray())
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
@@ -80,7 +80,7 @@ internal class RecallNotificationServiceTest {
 
     val result = underTest.getDocument(recallId, userId)
 
-    verify(exactly = 0) { recallSummaryService.getPdf(recallId) }
+    verify(exactly = 0) { recallSummaryService.getPdf(recallId, userId) }
     verify(exactly = 0) { revocationOrderService.createPdf(recallId, userId) }
     verify(exactly = 0) { letterToProbationService.getPdf(recallId) }
     verify(exactly = 0) { pdfDocumentGenerationService.mergePdfs(any()) }

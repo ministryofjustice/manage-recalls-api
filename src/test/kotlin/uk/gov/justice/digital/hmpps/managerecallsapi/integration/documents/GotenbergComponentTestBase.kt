@@ -13,8 +13,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
@@ -25,8 +23,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
   protected fun updateRecallWithRequiredInformationForTheRecallSummary(
     recallId: RecallId,
     vulnerabilityDiversityDetail: String = "Very diverse",
-    contrabandDetail: String = "Lots of naughty contraband",
-    assessedByUserId: UserId = ::UserId.random()
+    contrabandDetail: String = "Lots of naughty contraband"
   ) {
     authenticatedClient.updateRecall(
       recallId,
@@ -51,8 +48,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         localPoliceForce = "London",
         currentPrison = "MWI",
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
-        contrabandDetail = contrabandDetail,
-        assessedByUserId = assessedByUserId
+        contrabandDetail = contrabandDetail
       )
     )
   }

@@ -38,17 +38,18 @@ class RecallSummaryServiceTest {
     val recallSummaryHtmlWithoutPageCount = "generated Html without page count"
     val recallSummaryHtmlWithPageCount = "generated Html with page count"
     val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
+    val assessorId = ::UserId.random()
 
     val recallSummaryContext = RecallSummaryContext(mockk(), mockk(), "don't care", "don't care", UserDetails(::UserId.random(), FirstName("Bob"), LastName("Badger"), "", Email("b@bob.com"), PhoneNumber("0987")))
     val recallSummaryContextWithPageCountSlot = slot<RecallSummaryContext>()
 
-    every { recallSummaryContextFactory.createRecallSummaryContext(recallId) } returns Mono.just(recallSummaryContext)
+    every { recallSummaryContextFactory.createRecallSummaryContext(recallId, assessorId) } returns Mono.just(recallSummaryContext)
     every { recallSummaryGenerator.generateHtml(recallSummaryContext) } returns recallSummaryHtmlWithoutPageCount
     every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithoutPageCount, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
     every { recallSummaryGenerator.generateHtml(capture(recallSummaryContextWithPageCountSlot)) } returns recallSummaryHtmlWithPageCount
     every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithPageCount, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
 
-    val result = underTest.getPdf(recallId).block()!!
+    val result = underTest.getPdf(recallId, assessorId).block()!!
 
     assertThat(recallSummaryContextWithPageCountSlot.captured.recallNotificationTotalNumberOfPages, equalTo(5))
     assertArrayEquals(pdfWith3Pages, result)
