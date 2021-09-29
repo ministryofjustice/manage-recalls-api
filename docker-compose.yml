@@ -23,7 +23,7 @@ services:
       - POSTGRES_PASSWORD=secret
 
   postgres:
-    image: postgres:13
+    image: postgres:13-alpine
     container_name: postgres_manage-recalls-api
     networks:
       - manage-recalls-api

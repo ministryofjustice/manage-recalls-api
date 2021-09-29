@@ -13,8 +13,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ApprovalTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
@@ -33,12 +35,14 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val firstName = FirstName("Jimmy")
     val lastName = LastName("Ppud")
     val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
-    val userDetails = UserDetails(userId, firstName, lastName, signature)
+    val email = Email("bertie@badger.org")
+    val phoneNumber = PhoneNumber("01234567890")
+    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
 
     every { userDetailsService.save(userDetails) } returns userDetails
 
     approver(CREATED) {
-      userController.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName, signature))
+      userController.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName, signature, email, phoneNumber))
     }
   }
 
@@ -47,12 +51,14 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val userId = ::UserId.zeroes()
     val firstName = FirstName("Jimmy")
     val lastName = LastName("Ppud")
+    val email = Email("bertie@badger.org")
+    val phoneNumber = PhoneNumber("01234567890")
     val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
-    val userDetails = UserDetails(userId, firstName, lastName, signature)
+    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
 
     every { userDetailsService.get(userId) } returns userDetails
 
     val result = userController.getUserDetails(userId)
-    assertThat(result, equalTo(UserDetailsResponse(userId, firstName, lastName, signature)))
+    assertThat(result, equalTo(UserDetailsResponse(userId, firstName, lastName, signature, email, phoneNumber)))
   }
 }

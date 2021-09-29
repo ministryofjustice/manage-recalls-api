@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.InputStreamDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -18,31 +19,27 @@ class RecallNotificationService(
   @Autowired private val recallDocumentService: RecallDocumentService,
 ) {
 
-  fun getDocument(recallId: RecallId, userId: UserId): Mono<ByteArray> {
-    val recallNotification = recallDocumentService.getDocumentContentWithCategoryIfExists(
-      recallId,
-      RECALL_NOTIFICATION
-    )
+  fun getDocument(recallId: RecallId, userId: UserId): Mono<ByteArray> =
+    recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
+      ?.let { Mono.just(it) }
+      ?: createRecallNotification(recallId, userId)
 
-    if (recallNotification == null) {
-      val docs = mutableListOf<InputStreamDocumentData>()
-      return recallSummaryService.getPdf(recallId).map { recallSummaryBytes ->
-        docs.add(InputStreamDocumentData(recallSummaryBytes.inputStream()))
-      }.flatMap {
-        revocationOrderService.createPdf(recallId, userId)
-      }.map { revocationOrderBytes ->
-        docs.add(InputStreamDocumentData(revocationOrderBytes.inputStream()))
-      }.flatMap {
-        letterToProbationService.getPdf(recallId)
-      }.flatMap { letterToProbationBytes ->
-        docs.add(InputStreamDocumentData(letterToProbationBytes.inputStream()))
-        pdfDocumentGenerationService.mergePdfs(docs)
-      }.map { mergedBytes ->
-        recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION)
-        mergedBytes
-      }
-    } else {
-      return Mono.just(recallNotification)
+  private fun createRecallNotification(recallId: RecallId, userId: UserId): Mono<ByteArray> {
+    val docs = mutableListOf<ByteArrayDocumentData>()
+    return recallSummaryService.getPdf(recallId).map { recallSummaryBytes ->
+      docs += documentData(recallSummaryBytes)
+    }.flatMap {
+      revocationOrderService.createPdf(recallId, userId)
+    }.map { revocationOrderBytes ->
+      docs += documentData(revocationOrderBytes)
+    }.flatMap {
+      letterToProbationService.getPdf(recallId)
+    }.flatMap { letterToProbationBytes ->
+      docs += documentData(letterToProbationBytes)
+      pdfDocumentGenerationService.mergePdfs(docs)
+    }.map { mergedBytes ->
+      recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION)
+      mergedBytes
     }
   }
 }

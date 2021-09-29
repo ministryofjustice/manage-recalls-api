@@ -18,7 +18,14 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
@@ -30,7 +37,7 @@ import java.util.Base64
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
 @TestInstance(PER_CLASS)
-abstract class ComponentTestBase {
+abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = false) {
 
   @Autowired
   private lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
@@ -67,16 +74,16 @@ abstract class ComponentTestBase {
   fun startMocks() {
     hmppsAuthMockServer.start()
     prisonerOffenderSearch.start()
-    gotenbergMockServer.start()
     prisonRegisterMockServer.start()
+    if (!useRealGotenbergServer) gotenbergMockServer.start()
   }
 
   @AfterAll
   fun stopMocks() {
     hmppsAuthMockServer.stop()
     prisonerOffenderSearch.stop()
-    gotenbergMockServer.stop()
     prisonRegisterMockServer.stop()
+    if (!useRealGotenbergServer) gotenbergMockServer.stop()
   }
 
   @BeforeEach
@@ -85,6 +92,7 @@ abstract class ComponentTestBase {
     hmppsAuthMockServer.stubClientToken()
     prisonerOffenderSearch.resetAll()
     prisonRegisterMockServer.resetAll()
+    if (!useRealGotenbergServer) gotenbergMockServer.resetAll()
   }
 
   @Configuration
@@ -108,5 +116,16 @@ abstract class ComponentTestBase {
 
   protected fun writeBase64EncodedStringToFile(fileName: String, content: String) {
     File(fileName).writeBytes(Base64.getDecoder().decode(content))
+  }
+
+  protected fun setupUserDetailsFor(userId: UserId) {
+    userDetailsRepository.save(
+      UserDetails(
+        userId, FirstName("Bertie"), LastName("Badger"),
+        base64EncodedFileContents("/signature.jpg"),
+        Email("bertie@thebadgers.org"),
+        PhoneNumber("09876543210")
+      )
+    )
   }
 }

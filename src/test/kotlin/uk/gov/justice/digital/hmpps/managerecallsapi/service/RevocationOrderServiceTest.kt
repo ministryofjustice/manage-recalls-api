@@ -14,11 +14,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Base64EncodedImageData
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ClassPathImageData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.signature
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -66,13 +68,15 @@ internal class RevocationOrderServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     val generatedHtml = "Some html, honest"
-    every { userDetailsService.get(userId) } returns UserDetails(userId, FirstName("Bob"), LastName("Badger"), userSignature)
+    every { userDetailsService.get(userId) } returns UserDetails(
+      userId, FirstName("Bob"), LastName("Badger"), userSignature, Email("bertie@badger.org"), PhoneNumber("01234567890")
+    )
     every { revocationOrderGenerator.generateHtml(prisoner, aRecall) } returns generatedHtml
     every {
       pdfDocumentGenerationService.generatePdf(
         generatedHtml,
-        ClassPathImageData(RevocationOrderLogo),
-        Base64EncodedImageData("signature.jpg", userSignature)
+        recallImage(RevocationOrderLogo),
+        signature(userSignature)
       )
     } returns Mono.just(expectedBytes)
     every {

@@ -11,14 +11,20 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.util.UUID
 
 class RecallSummaryHtmlGenerationTest(
   @Autowired private val templateEngine: SpringTemplateEngine
@@ -28,11 +34,12 @@ class RecallSummaryHtmlGenerationTest(
 
   @Test
   fun `generate recall summary HTML`(approver: ContentApprover) {
+    val assessedByUserId = ::UserId.random()
     approver.assertApproved(
       underTest.generateHtml(
         RecallSummaryContext(
           Recall(
-            RecallId(UUID.randomUUID()), NomsNumber("AA1234A"),
+            ::RecallId.random(), NomsNumber("AA1234A"),
             contrabandDetail = "I believe that they will bring contraband to prison",
             mappaLevel = MappaLevel.LEVEL_3,
             previousConvictionMainName = "Bryan Badger",
@@ -57,7 +64,8 @@ class RecallSummaryHtmlGenerationTest(
               "Ms Authoriser"
             ),
             localPoliceForce = "London",
-            vulnerabilityDiversityDetail = "Some stuff"
+            vulnerabilityDiversityDetail = "Some stuff",
+            assessedByUserId = assessedByUserId
           ),
           Prisoner(
             firstName = "Bertie",
@@ -68,7 +76,9 @@ class RecallSummaryHtmlGenerationTest(
             croNumber = "croNumber"
           ),
           "Prison A",
-          "Prison B"
+          "Prison B",
+          UserDetails(assessedByUserId, FirstName("Maria"), LastName("Badger"), "", Email("maria@thebadgers.set"), PhoneNumber("09876543210")),
+          3
         )
       )
     )

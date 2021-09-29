@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.6"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.9"
   kotlin("plugin.spring") version "1.5.10"
   kotlin("plugin.jpa") version "1.5.20"
 }
@@ -60,15 +60,16 @@ dependencies {
 }
 
 tasks {
-  compileKotlin {
+  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-      jvmTarget = "16"
+      jvmTarget = JavaVersion.VERSION_16.toString()
     }
   }
 
   test {
     useJUnitPlatform {
-      exclude("**/*PdfDocumentGenerationServiceGotenbergIntegrationTest*")
+      exclude("**/*GotenbergIntegrationTest*")
+      exclude("**/*GotenbergComponentTest*")
       exclude("**/*PactTest*")
     }
   }
@@ -93,7 +94,8 @@ task<Test>("documentGenerationTest") {
   group = "verification"
   testClassesDirs = sourceSets["test"].output.classesDirs
   classpath = sourceSets["test"].runtimeClasspath
-  include("**/*PdfDocumentGenerationServiceGotenbergIntegrationTest*")
+  include("**/*GotenbergIntegrationTest*")
+  include("**/*GotenbergComponentTest*")
 }
 
 java {

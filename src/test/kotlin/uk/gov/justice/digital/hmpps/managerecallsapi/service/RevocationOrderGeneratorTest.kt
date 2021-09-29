@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -50,6 +51,7 @@ class RevocationOrderGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
+        has("logoFileName", { it.variable("logoFileName") }, equalTo(RevocationOrderLogo.fileName)),
         has("firstNames", { it.variable("firstNames") }, equalTo("Bertie Basset")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("1995-10-03")),

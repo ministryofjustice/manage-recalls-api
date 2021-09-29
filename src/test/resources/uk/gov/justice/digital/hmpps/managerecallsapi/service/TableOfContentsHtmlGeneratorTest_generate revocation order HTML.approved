@@ -1,96 +1,148 @@
-<html>
+<!DOCTYPE html>
+<html lang='en'>
 <head>
+  <meta charset='UTF-8'>
   <style type="text/css">
-    .docTypeCell {
-      margin-left: 6.8pt;
-      border-right-style: solid;
-      padding: 5pt 5pt 5pt 5pt;
-      border-bottom-color: #000000;
-      border-top-width: 1pt;
-      border-right-width: 1pt;
-      border-left-color: #000000;
-      vertical-align: top;
-      border-right-color: #000000;
-      border-left-width: 1pt;
-      border-top-style: solid;
-      border-left-style: solid;
-      border-bottom-width: 1pt;
-      width: 400pt;
-      border-top-color: #000000;
-      border-bottom-style: solid
+    .header-main {
+      position: relative;
+      text-align: right;
+    }
+    .header-main__center {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      top: 50%;
+    }
+    .h1 {
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      margin: 0;
     }
 
-    .pageNumberCell {
-      border-right-style: solid;
-      padding: 5pt 5pt 5pt 5pt;
-      border-bottom-color: #000000;
-      border-top-width: 1pt;
-      border-right-width: 1pt;
-      border-left-color: #000000;
-      vertical-align: top;
-      border-right-color: #000000;
-      border-left-width: 1pt;
-      border-top-style: solid;
-      border-left-style: solid;
-      border-bottom-width: 1pt;
-      width: 62.7pt;
-      border-top-color: #000000;
-      border-bottom-style: solid
+    .h1 {
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 10px 80px;
+    }
+
+    table {
+      width: 100%;
+    }
+
+    th {
+      text-align: left;
+    }
+
+    th,
+    td {
+      padding: 10px;
+    }
+
+    .tableStyled {
+      border-spacing: 0;
+      border-collapse: collapse;
+    }
+
+    .tableStyled__heading {
+      font-weight: bold;
+      background-color: lightgray;
+    }
+
+    .tableStyled th,
+    .tableStyled td {
+      border: 1px solid black;
+    }
+
+    .bold {
+      font-weight: 700;
+    }
+
+    .border-top {
+      border-top: 2px solid black;
+      padding-top: 5px;
+    }
+
+    .border-bottom {
+      border-bottom: 2px solid black;
+      padding-bottom: 5px;
+    }
+
+    .margin-bottom-md {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-<p style="font-weight: 700;text-align: center">PROTECT</p>
-<img src="images/hmpps-logo.png" style="height: 100px; float: right"/>
+<header class='header-main'>
+  <h1 class='h1 header-main__center'>PROTECT</h1>
+  <img src="hmpps-logo.png" height='100px' class='header-main__right'/>
+</header>
 
+<p class="bold">28 Day FTR 12 months &amp; over</p>
+<p class="bold">PAPERS FOR THE PAROLE BOARD RELATING TO:-</p>
+<p class="bold border-top border-bottom">Recall Outcome</p>
 
-<p style="font-weight: 700"><span>28 Day FTR 12 months &amp; over</span></p>
-<p style="font-weight: 700">PAPERS FOR THE PAROLE BOARD RELATING TO:-</p>
-<p style="font-weight: 700">Recall Outcome</p>
-<p><span style="font-weight: 700">NAME: </span><span>PrisonerFirstName PrisonerMiddleNames PrisonerLastName</span></p>
+<div class='border-bottom margin-bottom-md'>
 
-<table>
-  <tr>
-    <td>
-      <span style="font-weight: 700">ESTABLISHMENT: </span><span>Current Prison (ABC)</span>
-    </td>
-    <td>
-      <span style="font-weight: 700">CATEGORY: </span><span>Not Applicable</span>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <span style="font-weight: 700">PRISON NUMBER: </span><span>ABC1234F</span>
-    </td>
-    <td>
-      <span style="font-weight: 700">VERSION: </span><span>0</span>
-    </td>
-  </tr>
-</table>
+  <table>
+    <tr>
+      <th>
+        NAME:
+      </th>
+      <td COLSPAN='3'>PrisonerFirstName PrisonerMiddleNames PrisonerLastName</td>
+    </tr>
+    <tr>
+      <th>
+        ESTABLISHMENT:
+      </th>
+      <td>Current Prison (ABC)</td>
+      <th>
+        CATEGORY:
+      </th>
+      <td>Not Applicable</td>
+    </tr>
+    <tr>
+      <th>
+        PRISON NUMBER:
+      </th>
+      <td>ABC1234F</td>
+      <th>
+        VERSION:
+      </th>
+      <td>0</td>
+    </tr>
+  </table>
+</div>
 
-<table style="border-spacing: 0; border-collapse: collapse">
-  <thead style="font-weight: 700; background: lightgrey">
-    <th class="docTypeCell">Document Type</th>
-    <th class="pageNumberCell">Page</th>
+<table class="tableStyled">
+  <thead class='tableStyled__heading'>
+  <th>Document Type</th>
+  <th>Page</th>
   </thead>
 
   <tr>
-    <td class="docTypeCell">Document 1</td>
-    <td class="pageNumberCell">1</td>
+    <td>Document 1</td>
+    <td>1</td>
   </tr>
 
   <tr>
-    <td class="docTypeCell">Document 2</td>
-    <td class="pageNumberCell">3</td>
+    <td>Document 2</td>
+    <td>3</td>
   </tr>
 
   <tr>
-    <td class="docTypeCell">Document 3</td>
-    <td class="pageNumberCell">7</td>
+    <td>Document 3</td>
+    <td>7</td>
   </tr>
   <tr>
-    <td class="docTypeCell"/>
-    <td class="pageNumberCell"/>
+    <td/>
+    <td/>
   </tr>
 </table>
 
