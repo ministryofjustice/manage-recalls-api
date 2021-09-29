@@ -44,6 +44,12 @@ class RecallSummaryGenerator(
         setVariable("pncCroNumber", this.croNumber)
       }
 
+      with(context.assessor) {
+        setVariable("caseworkerName", "%s %s".format(this.firstName, this.lastName))
+        setVariable("caseworkerEmail", this.email)
+        setVariable("caseworkerPhoneNumber", this.phoneNumber)
+      }
+
       val recall = context.recall
       with(recall.mappaLevel) {
         setVariable("mappaLevel1", this?.equals(LEVEL_1) ?: false)

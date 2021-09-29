@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -47,5 +48,6 @@ data class RecallSummaryContext(
   val prisoner: Prisoner,
   val lastReleasePrisonName: String,
   val currentPrisonName: String,
+  val assessor: UserDetails,
   val recallNotificationTotalNumberOfPages: Int? = null
 )

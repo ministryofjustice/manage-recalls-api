@@ -915,7 +915,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c45">
     <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c1 c7 c25">From</span></p></td>
-    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7">&laquo;MANAGER_NAME&raquo;, Public Protection Casework Section</span>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7"><span th:text="${caseworkerName}"/>, Public Protection Casework Section</span>
     </p></td>
     <td class="c42" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">No. of pages</span></p></td>
     <td class="c9" colspan="1" rowspan="1"><p class="c0"><span class="c1">&nbsp;</span><span class="c3" th:text="${recallNotificationTotalNumberOfPages}"></span><span
@@ -923,7 +923,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c61">
     <td class="c40" colspan="1" rowspan="1"><p class="c0" id="h.30j0zll"><span class="c25 c1 c7">Email</span></p></td>
-    <td class="c54" colspan="3" rowspan="1"><p class="c0"><span class="c6 c7">&laquo;manager_email&raquo;</span></p>
+    <td class="c54" colspan="3" rowspan="1"><p class="c0"><span class="c6 c7" th:text="${caseworkerEmail}"/></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
   </tr>
   <tr class="c33">
@@ -932,7 +932,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
       <p class="c0 c28 c11"><span class="c20 c13"></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
     <td class="c47" colspan="2" rowspan="2"><p class="c0"><span
-      class="c6 c7">If any part of this document is unclear <br>please telephone: &laquo;MANAGER_PHONE&raquo;</span></p>
+      class="c6 c7">If any part of this document is unclear <br>please telephone: <span th:text="${caseworkerPhoneNumber}"/></span></p>
     </td>
   </tr>
   <tr class="c30">

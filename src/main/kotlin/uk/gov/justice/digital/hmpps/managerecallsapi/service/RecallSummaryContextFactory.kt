@@ -14,14 +14,17 @@ class RecallSummaryContextFactory(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val prisonLookupService: PrisonLookupService,
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
+  @Autowired private val userDetailsService: UserDetailsService,
 ) {
   fun createRecallSummaryContext(recallId: RecallId): Mono<RecallSummaryContext> {
     val recall = recallRepository.getByRecallId(recallId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison)!!
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison)!!
+    val assessedByUser = userDetailsService.get(recall.assessedByUserId()!!)
+
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .map { prisoners ->
-        RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName)
+        RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName, assessedByUser)
       }
   }
 }

@@ -30,7 +30,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   fun `get recall notification returns merged recall summary and revocation order`() {
     val userId = ::UserId.random()
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId)
+    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId, userId)
 
     setupUserDetailsFor(userId)
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
@@ -50,7 +50,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     assertThat(response.content, equalTo(expectedBase64Pdf))
   }
 
-  private fun updateRecallWithRequiredInformationForTheRecallSummary(recallId: RecallId) {
+  private fun updateRecallWithRequiredInformationForTheRecallSummary(recallId: RecallId, userId: UserId) {
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
@@ -74,7 +74,8 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         localPoliceForce = "London",
         currentPrison = "BMI",
         vulnerabilityDiversityDetail = "Some stuff",
-        contrabandDetail = "Some contraband detail"
+        contrabandDetail = "Some contraband detail",
+        assessedByUserId = userId
       )
     )
   }
