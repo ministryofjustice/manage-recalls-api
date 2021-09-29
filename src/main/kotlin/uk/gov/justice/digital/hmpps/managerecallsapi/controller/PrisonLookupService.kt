@@ -9,6 +9,7 @@ class PrisonLookupService(@Autowired private val prisonRegisterClient: PrisonReg
 
   fun getPrisonName(prisonId: String?): String? {
     prisonId.let {
+      // TODO Are we going to remove calls to block() ... seems to trigger e,g, knock on issues with chaining
       return prisonRegisterClient.getAllPrisons().block()?.find { it.prisonId == prisonId }?.prisonName
     }
   }

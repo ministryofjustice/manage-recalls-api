@@ -35,19 +35,20 @@ class DossierService(
       "Revocation Order [Core Dossier]" to documentData(revocationOrder)
     )
 
-    return reasonsForRecallService.getPdf(recallId).map { bytes ->
-      dossierDocuments["Reasons for Recall [Core Dossier]"] = documentData(bytes)
-      dossierDocuments
-    }.flatMap { docsMap ->
-      tableOfContentsService.getPdf(recallId, docsMap).map { tocBytes ->
-        val tocAndDossierDocuments = mutableListOf(documentData(tocBytes))
-        tocAndDossierDocuments.addAll(docsMap.values)
-        tocAndDossierDocuments
-      }.flatMap {
-        pdfDocumentGenerationService.mergePdfs(it)
-      }.map { mergedPdfContentBytes ->
-        pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
-      }
+    reasonsForRecallService.getPdf(recallId).map { bytes ->
+      documentData(bytes)
+    }.subscribe { dd ->
+      dossierDocuments["Reasons for Recall [Core Dossier]"] = dd
+    }
+
+    return tableOfContentsService.getPdf(recallId, dossierDocuments).map { tocBytes ->
+      val tocAndDossierDocuments = mutableListOf(documentData(tocBytes))
+      tocAndDossierDocuments.addAll(dossierDocuments.values)
+      tocAndDossierDocuments
+    }.flatMap {
+      pdfDocumentGenerationService.mergePdfs(it)
+    }.map { mergedPdfContentBytes ->
+      pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
     }
   }
 }
