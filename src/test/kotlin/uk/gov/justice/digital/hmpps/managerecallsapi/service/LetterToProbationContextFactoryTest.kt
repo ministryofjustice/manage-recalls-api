@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -53,7 +54,7 @@ class LetterToProbationContextFactoryTest {
     val userIdGeneratingTheLetter = ::UserId.random()
     val currentPrison = "AAA"
     val currentPrisonName = "Current Prison Name"
-    val prisoner = Prisoner(firstName = "Jimmy", lastName = "Offender")
+    val prisoner = Prisoner(firstName = "Jimmy", lastName = "Offender", middleNames = "The Hand")
     val probationOfficerName = "Mr Probation Officer"
     val bookingNumber = "bookingNumber"
     val recall = Recall(
@@ -87,10 +88,10 @@ class LetterToProbationContextFactoryTest {
           LocalDate.of(2021, 9, 29),
           RecallLengthDescription(TWENTY_EIGHT_DAYS),
           probationOfficerName,
-          FirstAndLastName(FirstName("Jimmy"), LastName("Offender")),
+          PersonName(FirstName("Jimmy"), MiddleNames("The Hand"), LastName("Offender")),
           bookingNumber,
           currentPrisonName,
-          FirstAndLastName(FirstName("Bertie"), LastName("Badger"))
+          PersonName(FirstName("Bertie"), null, LastName("Badger"))
         )
       )
     )

@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOU
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -16,8 +17,12 @@ const val RECALL_TEAM_CONTACT_NUMBER = "N/K"
 val standardDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
 val standardTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-data class FirstAndLastName(val firstName: FirstName, val lastName: LastName) {
-  override fun toString(): String = "$firstName $lastName"
+data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = null, val lastName: LastName) {
+  override fun toString(): String =
+    when (middleNames) {
+      null -> "$firstName $lastName"
+      else -> "$firstName $middleNames $lastName"
+    }
 }
 
 data class RecallLengthDescription(val recallLength: RecallLength) {
