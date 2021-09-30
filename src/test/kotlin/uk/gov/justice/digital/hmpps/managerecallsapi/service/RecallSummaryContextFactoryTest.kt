@@ -43,12 +43,12 @@ class RecallSummaryContextFactoryTest {
     val currentPrison = "AAA"
     val lastReleasePrison = "ZZZ"
     val prisoner = mockk<Prisoner>()
-    val assessedByUserId = ::UserId.random()
-    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison, assessedByUserId = assessedByUserId)
+    val assessorUserId = ::UserId.random()
+    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison)
     val currentPrisonName = "Current Prison Name"
     val lastReleasePrisonName = "Last Release Prison Name"
     val userDetails = UserDetails(
-      assessedByUserId,
+      assessorUserId,
       FirstName("Bertie"),
       LastName("Badger"),
       "",
@@ -60,9 +60,9 @@ class RecallSummaryContextFactoryTest {
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrison) } returns lastReleasePrisonName
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
-    every { userDetailsService.get(assessedByUserId) } returns userDetails
+    every { userDetailsService.get(assessorUserId) } returns userDetails
 
-    val result = underTest.createRecallSummaryContext(recallId).block()!!
+    val result = underTest.createRecallSummaryContext(recallId, assessorUserId).block()!!
 
     assertThat(
       result,

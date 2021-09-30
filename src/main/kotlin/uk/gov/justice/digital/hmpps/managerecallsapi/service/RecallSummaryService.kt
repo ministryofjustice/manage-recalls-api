@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
@@ -22,8 +23,8 @@ class RecallSummaryService(
   @Autowired private val recallSummaryContextFactory: RecallSummaryContextFactory
 ) {
 
-  fun getPdf(recallId: RecallId): Mono<ByteArray> =
-    recallSummaryContextFactory.createRecallSummaryContext(recallId).flatMap { context ->
+  fun getPdf(recallId: RecallId, userId: UserId): Mono<ByteArray> =
+    recallSummaryContextFactory.createRecallSummaryContext(recallId, userId).flatMap { context ->
       getRecallSummaryNumberOfPages(context).map { numberOfPages ->
         context.copy(recallNotificationTotalNumberOfPages = OTHER_PAGES_IN_RECALL_NOTIFICATION + numberOfPages)
       }.flatMap { contextWithActualNumberOfPages ->

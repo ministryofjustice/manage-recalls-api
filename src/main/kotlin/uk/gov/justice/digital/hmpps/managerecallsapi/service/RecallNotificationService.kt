@@ -26,7 +26,7 @@ class RecallNotificationService(
 
   private fun createRecallNotification(recallId: RecallId, userId: UserId): Mono<ByteArray> {
     val docs = mutableListOf<ByteArrayDocumentData>()
-    return recallSummaryService.getPdf(recallId).map { recallSummaryBytes ->
+    return recallSummaryService.getPdf(recallId, userId).map { recallSummaryBytes ->
       docs += documentData(recallSummaryBytes)
     }.flatMap {
       revocationOrderService.createPdf(recallId, userId)
