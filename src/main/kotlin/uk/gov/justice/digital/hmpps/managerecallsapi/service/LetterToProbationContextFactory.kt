@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
@@ -35,10 +36,10 @@ class LetterToProbationContextFactory(
           LocalDate.now(clock),
           RecallLengthDescription(recall.recallLength!!),
           recall.probationInfo!!.probationOfficerName,
-          FirstAndLastName(FirstName(prisoner.firstName!!), LastName(prisoner.lastName!!)),
+          PersonName(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }, LastName(prisoner.lastName!!)),
           recall.bookingNumber!!,
           currentPrisonName,
-          FirstAndLastName(assessedByUserDetails.firstName, assessedByUserDetails.lastName)
+          PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName)
         )
       }
   }
@@ -48,8 +49,8 @@ data class LetterToProbationContext(
   val licenceRevocationDate: LocalDate,
   val recallLengthDescription: RecallLengthDescription,
   val probationOfficerName: String,
-  val offenderName: FirstAndLastName,
+  val offenderName: PersonName,
   val bookingNumber: String,
   val currentPrisonName: String,
-  val assessedByUserName: FirstAndLastName
+  val assessedByUserName: PersonName
 )
