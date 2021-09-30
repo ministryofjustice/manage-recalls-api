@@ -212,4 +212,22 @@ class RecallsControllerTest {
     )
     assertThat(response.body, equalTo(expected))
   }
+
+  @Test
+  fun `get letter to prison returns expected PDF`() {
+    val recall = recallRequest.toRecall()
+    val expectedPdf = randomString().toByteArray()
+    val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+
+    every { letterToPrisonService.getDocument(recall.recallId()) } returns Mono.just(expectedPdf)
+
+    val result = underTest.getLetterToPrison(recall.recallId())
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
+      }
+      .verifyComplete()
+  }
 }
