@@ -11,8 +11,19 @@ class LetterToProbationGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
 
-  fun generateHtml(letterToProbationContext: LetterToProbationContext): String =
+  fun generateHtml(context: LetterToProbationContext): String =
     Context().apply {
+
+      setVariable("teamName", RECALL_TEAM_NAME)
+      setVariable("teamContactNumber", RECALL_TEAM_CONTACT_NUMBER)
+      setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
+      setVariable("recallLengthDescription", context.recallLengthDescription.asFixedTermLengthDescription())
+      setVariable("probationOfficerName", context.probationOfficerName)
+      setVariable("offenderName", context.offenderName)
+      setVariable("bookingNumber", context.bookingNumber)
+      setVariable("currentPrisonName", context.currentPrisonName)
+      setVariable("assessedByUserName", context.assessedByUserName)
+
       setVariable("logoFileName", HmppsLogo.fileName)
     }.let {
       templateEngine.process("letter-to-probation", it)

@@ -16,7 +16,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.Locale.ENGLISH
 
 @Component
 class RecallSummaryGenerator(
@@ -24,7 +24,7 @@ class RecallSummaryGenerator(
   @Autowired private val clock: Clock
 ) {
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
+  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
   private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
   fun generateHtml(context: RecallSummaryContext): String =
