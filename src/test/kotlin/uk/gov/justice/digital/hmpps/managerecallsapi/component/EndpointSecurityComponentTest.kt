@@ -40,7 +40,8 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents/${UUID.randomUUID()}"),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
-      webTestClient.post().uri("/search").bodyValue(apiSearchRequest)
+      webTestClient.post().uri("/search").bodyValue(apiSearchRequest),
+      webTestClient.get().uri("/reference-data/local-delivery-units")
     )
   }
 
