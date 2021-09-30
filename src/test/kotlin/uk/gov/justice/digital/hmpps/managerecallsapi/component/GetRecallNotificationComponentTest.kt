@@ -35,8 +35,8 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     setupUserDetailsFor(userId)
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
-    gotenbergMockServer.stubPdfGenerationWithHmppsLogo(expectedPdf, "OFFENDER IS IN CUSTODY")
-    gotenbergMockServer.stubPdfGenerationWithHmppsLogo(expectedPdf, "licence was revoked today as a Fixed Term Recall")
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
 
     gotenbergMockServer.stubMergePdfs(
       expectedPdf,

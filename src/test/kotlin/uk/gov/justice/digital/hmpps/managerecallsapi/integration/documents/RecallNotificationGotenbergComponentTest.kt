@@ -28,7 +28,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, userId)
 
-//    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
+    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
     assertThat(recallNotification, hasNumberOfPages(equalTo(3)))
   }
 
@@ -46,8 +46,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, userId)
 
-//    writeBase64EncodedStringToFile("recall-notification-with-long-recall-summary.pdf", recallNotification.content)
-
+    writeBase64EncodedStringToFile("recall-notification-with-long-recall-summary.pdf", recallNotification.content)
     assertThat(recallNotification, hasNumberOfPages(equalTo(4)))
     assertThat(recallNotification, hasTotalPageCount(4))
   }
