@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 
 @Component
@@ -16,15 +17,16 @@ class RecallSummaryContextFactory(
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
   @Autowired private val userDetailsService: UserDetailsService,
 ) {
-  fun createRecallSummaryContext(recallId: RecallId): Mono<RecallSummaryContext> {
+
+  fun createRecallSummaryContext(recallId: RecallId, userId: UserId): Mono<RecallSummaryContext> {
     val recall = recallRepository.getByRecallId(recallId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison)!!
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison)!!
-    val assessedByUser = userDetailsService.get(recall.assessedByUserId()!!)
+    val assessor = userDetailsService.get(userId)
 
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .map { prisoners ->
-        RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName, assessedByUser)
+        RecallSummaryContext(recall, prisoners.first(), lastReleasePrisonName, currentPrisonName, assessor)
       }
   }
 }

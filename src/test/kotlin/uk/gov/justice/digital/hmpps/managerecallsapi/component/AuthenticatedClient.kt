@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnitResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -102,6 +103,12 @@ class AuthenticatedClient(
 
   fun getUserDetails(userId: UserId) =
     getRequest("/users/${userId.value}", UserDetailsResponse::class.java)
+
+  fun localDeliveryUnit(): List<LocalDeliveryUnitResponse> =
+    sendGetRequest("/reference-data/local-delivery-units")
+      .expectBody(object : ParameterizedTypeReference<List<LocalDeliveryUnitResponse>>() {})
+      .returnResult()
+      .responseBody!!
 
   private fun patchRequest(path: String, request: Any, responseClass: Class<RecallResponse>): RecallResponse =
     sendPatchRequest(path, request)

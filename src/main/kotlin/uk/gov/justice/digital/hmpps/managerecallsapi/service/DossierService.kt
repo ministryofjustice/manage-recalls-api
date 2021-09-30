@@ -18,6 +18,7 @@ import java.io.InputStream
 class DossierService(
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val reasonsForRecallService: ReasonsForRecallService,
   @Autowired private val pdfDecorator: PdfDecorator,
   @Autowired private val tableOfContentsService: TableOfContentsService
 ) {
@@ -27,11 +28,15 @@ class DossierService(
     val partARecallReport = recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
     val revocationOrder = recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER)
 
-    val dossierDocuments = mapOf(
+    // TODO: attempts to add this without block() fell over on runtime errors relating to e.g. other use of block in getPrisonName
+    val reasonsForRecall = reasonsForRecallService.getPdf(recallId).block()!!
+
+    val dossierDocuments = mutableMapOf(
       "Recall Information Leaflet [Core Dossier]" to documentData(RecallInformationLeaflet),
       "Licence [Core Dossier]" to documentData(license),
       "Request for Recall Report [Core Dossier]" to documentData(partARecallReport),
-      "Revocation Order [Core Dossier]" to documentData(revocationOrder)
+      "Revocation Order [Core Dossier]" to documentData(revocationOrder),
+      "Reasons for Recall [Core Dossier]" to documentData(reasonsForRecall)
     )
 
     return tableOfContentsService.getPdf(recallId, dossierDocuments).map { tocBytes ->

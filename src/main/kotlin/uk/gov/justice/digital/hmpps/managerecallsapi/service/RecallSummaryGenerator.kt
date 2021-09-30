@@ -16,7 +16,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.Locale.ENGLISH
 
 @Component
 class RecallSummaryGenerator(
@@ -24,7 +24,7 @@ class RecallSummaryGenerator(
   @Autowired private val clock: Clock
 ) {
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
+  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
   private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
   fun generateHtml(context: RecallSummaryContext): String =
@@ -68,6 +68,7 @@ class RecallSummaryGenerator(
       with(recall.probationInfo) {
         setVariable("offenderManagerName", this?.probationOfficerName)
         setVariable("offenderManagerContactNumber", this?.probationOfficerPhoneNumber)
+        setVariable("localDeliveryUnit", this?.localDeliveryUnit?.label)
       }
 
       setVariable("policeFileName", recall.previousConvictionMainName)
@@ -76,10 +77,11 @@ class RecallSummaryGenerator(
       setVariable("releaseDate", recall.lastReleaseDate?.format(dateFormatter))
       setVariable("furtherCharge", recall.hasFurtherCharge())
       setVariable("policeSpoc", recall.localPoliceForce)
-      setVariable("currentPrison", context.currentPrisonName)
       setVariable("vulnerabilityDetail", recall.vulnerabilityDiversityDetail ?: "None")
       setVariable("contraband", if (recall.contrabandDetail.isNullOrEmpty()) "NO" else "YES")
       setVariable("contrabandDetail", recall.contrabandDetail)
+
+      setVariable("currentPrison", context.currentPrisonName)
       setVariable("releasingPrison", context.lastReleasePrisonName)
 
       setVariable("logoFileName", HmppsLogo.fileName)

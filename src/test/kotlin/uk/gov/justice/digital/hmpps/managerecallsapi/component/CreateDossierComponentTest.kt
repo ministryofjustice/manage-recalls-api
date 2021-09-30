@@ -32,8 +32,10 @@ class CreateDossierComponentTest : ComponentTestBase() {
 
     val revocationOrderFile = ClassPathResource("/document/revocation-order.pdf").file
     val tableOfContentsFile = ClassPathResource("/document/table-of-contents.pdf").file
+    val reasonsForRecallContentsFile = ClassPathResource("/document/reasons-for-recall.pdf").file // TODO use rep. pdf
 
-    gotenbergMockServer.stubPdfGenerationWithHmppsLogo(tableOfContentsFile.readBytes(), "PAPERS FOR THE PAROLE BOARD RELATING TO")
+    gotenbergMockServer.stubGenerateTableOfContents(tableOfContentsFile.readBytes())
+    gotenbergMockServer.stubGenerateReasonsForRecall(reasonsForRecallContentsFile.readBytes())
 
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,
@@ -42,6 +44,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
       ClassPathResource("/document/licence.pdf").file.readText(),
       ClassPathResource("/document/part_a.pdf").file.readText(),
       revocationOrderFile.readText(),
+      reasonsForRecallContentsFile.readText()
     )
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))

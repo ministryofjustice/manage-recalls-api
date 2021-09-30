@@ -26,20 +26,38 @@ class GotenbergMockServer : WireMockServer(9093) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RevocationOrderLogo)
   }
 
-  fun stubPdfGenerationWithHmppsLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+  fun stubGenerateRecallSummary(generatedPdfContents: ByteArray) {
+    stubPdfGenerationWithHmppsLogo(generatedPdfContents, "OFFENDER IS IN CUSTODY")
+  }
+
+  fun stubGenerateLetterToProbation(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+    stubPdfGenerationWithHmppsLogo(generatedPdfContents, expectedTextInHtml)
+  }
+
+  fun stubGenerateTableOfContents(generatedPdfContents: ByteArray) {
+    stubPdfGenerationWithHmppsLogo(generatedPdfContents, "PAPERS FOR THE PAROLE BOARD RELATING TO")
+  }
+
+  fun stubGenerateReasonsForRecall(generatedPdfContents: ByteArray) {
+    stubPdfGeneration(generatedPdfContents, "LICENCE REVOCATION")
+  }
+
+  private fun stubPdfGenerationWithHmppsLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, HmppsLogo)
   }
 
   private fun stubPdfGeneration(
     generatedPdfContents: ByteArray,
     expectedTextInHtml: String,
-    recallImage: RecallImage
+    vararg recallImage: RecallImage
   ) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html")).apply {
         withMultipartHeader()
         withMultipartFor("index.html", containing(expectedTextInHtml))
-        withMultipartFor(recallImage.fileName, equalTo(ClassPathResource(recallImage.path).file.readText()))
+        recallImage.forEach { image ->
+          withMultipartFor(image.fileName, equalTo(ClassPathResource(image.path).file.readText()))
+        }
       }
         .willReturn(aResponse().withBody(generatedPdfContents))
     )

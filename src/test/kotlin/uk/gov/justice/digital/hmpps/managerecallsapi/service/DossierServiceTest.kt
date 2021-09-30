@@ -26,16 +26,24 @@ internal class DossierServiceTest {
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val tableOfContentsService = mockk<TableOfContentsService>()
   private val recallDocumentService = mockk<RecallDocumentService>()
+  private val reasonsForRecallService = mockk<ReasonsForRecallService>()
   private val pdfDecorator = mockk<PdfDecorator>()
 
-  private val underTest = DossierService(pdfDocumentGenerationService, recallDocumentService, pdfDecorator, tableOfContentsService)
+  private val underTest = DossierService(
+    pdfDocumentGenerationService,
+    recallDocumentService,
+    reasonsForRecallService,
+    pdfDecorator,
+    tableOfContentsService
+  )
 
   @Test
-  fun `get dossier returns part A, license and revocation order as dossier when all present for recall`() {
+  fun `get dossier returns table of contents, recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall`() {
     val recallId = ::RecallId.random()
     val licenseContentBytes = randomString().toByteArray()
     val partARecallReportContentBytes = randomString().toByteArray()
     val revocationOrderContentBytes = randomString().toByteArray()
+    val reasonsForRecallContentBytes = randomString().toByteArray()
     val mergedBytes = randomString().toByteArray()
     val tableOfContentBytes = randomString().toByteArray()
     val numberedMergedBytes = randomString().toByteArray()
@@ -44,6 +52,7 @@ internal class DossierServiceTest {
     every { recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
     every { recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
     every { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
+    every { reasonsForRecallService.getPdf(recallId) } returns Mono.just(reasonsForRecallContentBytes)
     every { tableOfContentsService.getPdf(recallId, any()) } returns Mono.just(tableOfContentBytes)
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
@@ -59,7 +68,8 @@ internal class DossierServiceTest {
           byteArrayDocumentDataFor(RecallInformationLeaflet.byteArray()),
           byteArrayDocumentDataFor(licenseContentBytes),
           byteArrayDocumentDataFor(partARecallReportContentBytes),
-          byteArrayDocumentDataFor(revocationOrderContentBytes)
+          byteArrayDocumentDataFor(revocationOrderContentBytes),
+          byteArrayDocumentDataFor(reasonsForRecallContentBytes)
         )
       )
     )

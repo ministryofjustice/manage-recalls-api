@@ -8,7 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -30,13 +30,13 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   fun `get recall notification returns merged recall summary and revocation order`() {
     val userId = ::UserId.random()
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId, userId)
+    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
 
     setupUserDetailsFor(userId)
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
-    gotenbergMockServer.stubPdfGenerationWithHmppsLogo(expectedPdf, "OFFENDER IS IN CUSTODY")
-    gotenbergMockServer.stubPdfGenerationWithHmppsLogo(expectedPdf, "licence was revoked today as a Fixed Term Recall")
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
 
     gotenbergMockServer.stubMergePdfs(
       expectedPdf,
@@ -50,7 +50,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     assertThat(response.content, equalTo(expectedBase64Pdf))
   }
 
-  private fun updateRecallWithRequiredInformationForTheRecallSummary(recallId: RecallId, userId: UserId) {
+  private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId) {
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
@@ -65,7 +65,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         sentenceLength = Api.SentenceLength(2, 3, 10),
         sentencingCourt = "High court",
         indexOffence = "Some offence",
-        reasonsForRecall = setOf(ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE),
+        reasonsForRecall = setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
         probationOfficerName = "Mr Probation Officer",
         probationOfficerPhoneNumber = "01234567890",
         probationOfficerEmail = "officer@myprobation.com",
