@@ -26,11 +26,23 @@ class GotenbergMockServer : WireMockServer(9093) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RevocationOrderLogo)
   }
 
-  fun stubPdfGenerationNoLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
-    stubPdfGeneration(generatedPdfContents, expectedTextInHtml)
+  fun stubGenerateRecallSummary(generatedPdfContents: ByteArray) {
+    stubPdfGenerationWithHmppsLogo(generatedPdfContents, "OFFENDER IS IN CUSTODY")
   }
 
-  fun stubPdfGenerationWithHmppsLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+  fun stubGenerateLetterToProbation(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+    stubPdfGenerationWithHmppsLogo(generatedPdfContents, expectedTextInHtml)
+  }
+
+  fun stubGenerateTableOfContents(generatedPdfContents: ByteArray) {
+    stubPdfGenerationWithHmppsLogo(generatedPdfContents, "PAPERS FOR THE PAROLE BOARD RELATING TO")
+  }
+
+  fun stubGenerateReasonsForRecall(generatedPdfContents: ByteArray) {
+    stubPdfGeneration(generatedPdfContents, "LICENCE REVOCATION")
+  }
+
+  private fun stubPdfGenerationWithHmppsLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, HmppsLogo)
   }
 

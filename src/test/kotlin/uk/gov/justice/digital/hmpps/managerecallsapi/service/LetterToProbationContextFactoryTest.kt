@@ -44,7 +44,7 @@ class LetterToProbationContextFactoryTest {
     fixedClock
   )
 
-  //TODO:   What do we do if ANY of this data is missing?
+  // TODO:   What do we do if ANY of this data is missing?
 
   @Test
   fun `create LetterToProbationContext with all required data`() {
@@ -53,7 +53,7 @@ class LetterToProbationContextFactoryTest {
     val assessedByUserId = ::UserId.random()
     val currentPrison = "AAA"
     val currentPrisonName = "Current Prison Name"
-    val prisoner = Prisoner(firstName ="Jimmy", lastName = "Offender")
+    val prisoner = Prisoner(firstName = "Jimmy", lastName = "Offender")
     val probationOfficerName = "Mr Probation Officer"
     val bookingNumber = "bookingNumber"
     val recall = Recall(
@@ -81,16 +81,19 @@ class LetterToProbationContextFactoryTest {
 
     val result = underTest.createContext(recallId, assessedByUserId).block()!!
 
-    assertThat(result, equalTo(
-      LetterToProbationContext(
-        LocalDate.of(2021, 9, 29),
-        RecallLengthDescription(TWENTY_EIGHT_DAYS),
-        probationOfficerName,
-        FirstAndLastName(FirstName("Jimmy"), LastName("Offender")),
-        bookingNumber,
-        currentPrisonName,
-        FirstAndLastName(FirstName("Bertie"), LastName("Badger"))
+    assertThat(
+      result,
+      equalTo(
+        LetterToProbationContext(
+          LocalDate.of(2021, 9, 29),
+          RecallLengthDescription(TWENTY_EIGHT_DAYS),
+          probationOfficerName,
+          FirstAndLastName(FirstName("Jimmy"), LastName("Offender")),
+          bookingNumber,
+          currentPrisonName,
+          FirstAndLastName(FirstName("Bertie"), LastName("Badger"))
+        )
       )
-    ))
+    )
   }
 }

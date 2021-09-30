@@ -34,8 +34,8 @@ class CreateDossierComponentTest : ComponentTestBase() {
     val tableOfContentsFile = ClassPathResource("/document/table-of-contents.pdf").file
     val reasonsForRecallContentsFile = ClassPathResource("/document/reasons-for-recall.pdf").file // TODO use rep. pdf
 
-    gotenbergMockServer.stubPdfGenerationWithHmppsLogo(tableOfContentsFile.readBytes(), "PAPERS FOR THE PAROLE BOARD RELATING TO")
-    gotenbergMockServer.stubPdfGenerationNoLogo(reasonsForRecallContentsFile.readBytes(), "LICENCE REVOCATION")
+    gotenbergMockServer.stubGenerateTableOfContents(tableOfContentsFile.readBytes())
+    gotenbergMockServer.stubGenerateReasonsForRecall(reasonsForRecallContentsFile.readBytes())
 
     gotenbergMockServer.stubMergePdfs(
       expectedMergedPdf,

@@ -26,7 +26,7 @@ class RecallNotificationService(
 
   private fun createRecallNotification(recallId: RecallId, userId: UserId): Mono<ByteArray> {
     val docs = mutableListOf<ByteArrayDocumentData>()
-    //TODO:  Remove this block() (same problem as comment in the DossierService)
+    // TODO:  Remove this block() (same problem as comment in the DossierService)
     val letterToProbationBytes = letterToProbationService.getPdf(recallId, userId).block()!!
 
     return recallSummaryService.getPdf(recallId, userId).map { recallSummaryBytes ->
