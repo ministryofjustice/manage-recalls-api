@@ -50,7 +50,7 @@ class LetterToProbationContextFactoryTest {
   fun `create LetterToProbationContext with all required data`() {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("nomsNumber")
-    val assessedByUserId = ::UserId.random()
+    val userIdGeneratingTheLetter = ::UserId.random()
     val currentPrison = "AAA"
     val currentPrisonName = "Current Prison Name"
     val prisoner = Prisoner(firstName = "Jimmy", lastName = "Offender")
@@ -60,13 +60,12 @@ class LetterToProbationContextFactoryTest {
       recallId,
       nomsNumber,
       currentPrison = currentPrison,
-      assessedByUserId = assessedByUserId,
       recallLength = TWENTY_EIGHT_DAYS,
       probationInfo = ProbationInfo(probationOfficerName, "N/A", "N/A", ISLE_OF_MAN, "N/A"),
       bookingNumber = bookingNumber
     )
     val userDetails = UserDetails(
-      assessedByUserId,
+      userIdGeneratingTheLetter,
       FirstName("Bertie"),
       LastName("Badger"),
       "",
@@ -77,9 +76,9 @@ class LetterToProbationContextFactoryTest {
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
-    every { userDetailsService.get(assessedByUserId) } returns userDetails
+    every { userDetailsService.get(userIdGeneratingTheLetter) } returns userDetails
 
-    val result = underTest.createContext(recallId, assessedByUserId).block()!!
+    val result = underTest.createContext(recallId, userIdGeneratingTheLetter).block()!!
 
     assertThat(
       result,
