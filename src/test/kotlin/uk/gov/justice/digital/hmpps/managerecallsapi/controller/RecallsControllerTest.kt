@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotificationService
@@ -37,9 +38,10 @@ class RecallsControllerTest {
   private val recallNotificationService = mockk<RecallNotificationService>()
   private val recallDocumentService = mockk<RecallDocumentService>()
   private val dossierService = mockk<DossierService>()
+  private val letterToPrisonService = mockk<LetterToPrisonService>()
 
   private val underTest =
-    RecallsController(recallRepository, recallNotificationService, recallDocumentService, dossierService, advertisedBaseUri)
+    RecallsController(recallRepository, recallNotificationService, recallDocumentService, dossierService, letterToPrisonService, advertisedBaseUri)
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
