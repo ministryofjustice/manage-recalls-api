@@ -119,6 +119,7 @@ class RecallSummaryGeneratorTest {
         has("prisonNumber", { it.variable("prisonNumber") }, equalTo("B1234")),
         has("pnomisNumber", { it.variable("pnomisNumber") }, equalTo(nomsNumber.value)),
         has("releasingPrison", { it.variable("releasingPrison") }, equalTo("Prison 1")),
+        has("localDeliveryUnit", { it.variable("localDeliveryUnit") }, equalTo("PS - Barking, Dagenham & Havering")),
         has("releaseDate", { it.variable("releaseDate") }, equalTo("01 Oct 2020")),
         has("lengthOfSentence", { it.variable("lengthOfSentence") }, equalTo("2 years 3 months 10 days")),
         has("indexOffence", { it.variable("indexOffence") }, equalTo("Some offence")),

@@ -994,7 +994,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
     <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">PNC/CRO NUMBER: <span>croNumber</span></span>
     </p>
-      <p class="c0"><span class="c1">NPS LDU / CRC: «probation_area»</span></p>
+      <p class="c0"><span class="c1">NPS LDU / CRC: <span>PS - Tower Hamlets</span></span></p>
       <p class="c0"><span class="c1">OFFENDER MANAGER NAME:<br><span>Mr Probation Officer</span></span><span
         class="c13"><br></span><span class="c1">OFFENDER MANAGER CONTACT NUMBER: <span>01234567890</span></span></p>
       <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13"><span>London</span></span></p>
