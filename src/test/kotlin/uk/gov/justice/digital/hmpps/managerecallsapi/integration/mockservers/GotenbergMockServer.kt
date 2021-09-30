@@ -26,6 +26,10 @@ class GotenbergMockServer : WireMockServer(9093) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RevocationOrderLogo)
   }
 
+  fun stubPdfGenerationNoLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+    stubPdfGeneration(generatedPdfContents, expectedTextInHtml)
+  }
+
   fun stubPdfGenerationWithHmppsLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, HmppsLogo)
   }
@@ -33,13 +37,15 @@ class GotenbergMockServer : WireMockServer(9093) {
   private fun stubPdfGeneration(
     generatedPdfContents: ByteArray,
     expectedTextInHtml: String,
-    recallImage: RecallImage
+    vararg recallImage: RecallImage
   ) {
     stubFor(
       post(WireMock.urlEqualTo("/convert/html")).apply {
         withMultipartHeader()
         withMultipartFor("index.html", containing(expectedTextInHtml))
-        withMultipartFor(recallImage.fileName, equalTo(ClassPathResource(recallImage.path).file.readText()))
+        recallImage.forEach { image ->
+          withMultipartFor(image.fileName, equalTo(ClassPathResource(image.path).file.readText()))
+        }
       }
         .willReturn(aResponse().withBody(generatedPdfContents))
     )

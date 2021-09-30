@@ -6,12 +6,10 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
 @Service
 class ReasonsForRecallService(
@@ -26,12 +24,8 @@ class ReasonsForRecallService(
 
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .flatMap { prisoners ->
-        val recallSummaryHtml = reasonsForRecallGenerator.generateHtml(ReasonsForRecallContext(recall, prisoners.first()))
-
-        pdfDocumentGenerationService.generatePdf(
-          recallSummaryHtml,
-          recallImage(HmppsLogo)
-        )
+        val html = reasonsForRecallGenerator.generateHtml(ReasonsForRecallContext(recall, prisoners.first()))
+        pdfDocumentGenerationService.generatePdf(html)
       }
   }
 }
