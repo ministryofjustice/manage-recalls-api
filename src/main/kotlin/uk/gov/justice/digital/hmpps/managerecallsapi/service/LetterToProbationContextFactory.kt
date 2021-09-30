@@ -26,7 +26,7 @@ class LetterToProbationContextFactory(
     // TODO:  Ensure all the required data is present, if not throw a meaningful exception (should be applied in a consistent manner)
     val recall = recallRepository.getByRecallId(recallId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison)!!
-    val assessedByUserDetails = userDetailsService.get(recall.assessedByUserId()!!)
+    val assessedByUserDetails = userDetailsService.get(userId)
 
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .map { prisoners -> prisoners.first() }
