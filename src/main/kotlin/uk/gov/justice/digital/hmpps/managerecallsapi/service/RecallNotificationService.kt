@@ -29,8 +29,6 @@ class RecallNotificationService(
     val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, userId)
 
     val docs = mutableListOf<ByteArrayDocumentData>()
-    // TODO:  Remove this block() (same problem as comment in the DossierService)
-    val letterToProbationBytes = letterToProbationService.getPdf(recallNotificationContext).block()!!
 
     return recallSummaryService.getPdf(recallNotificationContext).map { recallSummaryBytes ->
       docs += documentData(recallSummaryBytes)
@@ -38,7 +36,9 @@ class RecallNotificationService(
       revocationOrderService.createPdf(recallNotificationContext)
     }.map { revocationOrderBytes ->
       docs += documentData(revocationOrderBytes)
-    }.map {
+    }.flatMap {
+      letterToProbationService.getPdf(recallNotificationContext)
+    }.map { letterToProbationBytes ->
       docs += documentData(letterToProbationBytes)
     }.flatMap {
       pdfDocumentGenerationService.mergePdfs(docs)
