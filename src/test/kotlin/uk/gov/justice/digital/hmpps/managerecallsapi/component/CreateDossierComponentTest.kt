@@ -87,7 +87,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
         Prisoner(
           prisonerNumber = nomsNumber.value,
           firstName = firstName,
-          lastName = "Oskina",
+          lastName = "Badger",
           dateOfBirth = LocalDate.of(2000, 1, 31),
           bookNumber = "Book Num 123",
           croNumber = "CRO Num/456"

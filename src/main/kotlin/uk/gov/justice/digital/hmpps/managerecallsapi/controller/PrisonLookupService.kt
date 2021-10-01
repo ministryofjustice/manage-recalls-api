@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterCl
 @Service
 class PrisonLookupService(@Autowired private val prisonRegisterClient: PrisonRegisterClient) {
 
+  // TODO: Make this not nullable
   fun getPrisonName(prisonId: String?): String? {
     prisonId.let {
       // TODO Are we going to remove calls to block() ... seems to trigger e,g, knock on issues with chaining
