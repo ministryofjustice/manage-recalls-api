@@ -21,7 +21,7 @@ class RecallSummaryService(
   @Autowired private val recallSummaryContextFactory: RecallSummaryContextFactory
 ) {
 
-  fun getPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> =
+  fun createPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> =
     recallSummaryContextFactory.createRecallSummaryContext(recallNotificationContext).flatMap { context ->
       getRecallSummaryNumberOfPages(context).map { numberOfPages ->
         context.copy(recallNotificationTotalNumberOfPages = OTHER_PAGES_IN_RECALL_NOTIFICATION + numberOfPages)

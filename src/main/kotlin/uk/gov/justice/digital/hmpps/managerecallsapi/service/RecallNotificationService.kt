@@ -30,14 +30,14 @@ class RecallNotificationService(
 
     val docs = mutableListOf<ByteArrayDocumentData>()
 
-    return recallSummaryService.getPdf(recallNotificationContext).map { recallSummaryBytes ->
+    return recallSummaryService.createPdf(recallNotificationContext).map { recallSummaryBytes ->
       docs += documentData(recallSummaryBytes)
     }.flatMap {
       revocationOrderService.createPdf(recallNotificationContext)
     }.map { revocationOrderBytes ->
       docs += documentData(revocationOrderBytes)
     }.flatMap {
-      letterToProbationService.getPdf(recallNotificationContext)
+      letterToProbationService.createPdf(recallNotificationContext)
     }.map { letterToProbationBytes ->
       docs += documentData(letterToProbationBytes)
     }.flatMap {

@@ -54,8 +54,8 @@ internal class RecallNotificationServiceTest {
 
     every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
     every { recallNotificationContextFactory.createContext(recallId, userId) } returns recallNotificationContext
-    every { letterToProbationService.getPdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
-    every { recallSummaryService.getPdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
+    every { letterToProbationService.createPdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
+    every { recallSummaryService.createPdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
     every { revocationOrderService.createPdf(recallNotificationContext) } returns Mono.just(revocationOrderContent.toByteArray())
 
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
