@@ -7,11 +7,16 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import java.time.Clock
+import java.time.LocalDate
 
 @Component
 class RecallNotificationContextFactory(
@@ -35,5 +40,42 @@ data class RecallNotificationContext(
   val prisoner: Prisoner,
   val assessedByUserDetails: UserDetails,
   val currentPrisonName: PrisonName,
-  val lastReleasePrisonName: PrisonName
+  val lastReleasePrisonName: PrisonName,
+  private val clock: Clock = Clock.systemUTC()
+) {
+  init {
+    /*
+     validate required fields?
+     e.g.
+     prisoner.firstName != null
+     prisoner.lastName != null
+     etc
+     */
+  }
+
+  fun getRevocationOrderContext(): RevocationOrderContext {
+    return RevocationOrderContext(
+      recall.recallId(),
+      FirstAndMiddleNames(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }),
+      LastName(prisoner.lastName!!),
+      prisoner.dateOfBirth!!,
+      recall.bookingNumber!!,
+      prisoner.croNumber!!,
+      LocalDate.now(clock).asStandardDateFormat(),
+      recall.lastReleaseDate!!.asStandardDateFormat(),
+      assessedByUserDetails.signature
+    )
+  }
+}
+
+data class RevocationOrderContext(
+  val recallId: RecallId,
+  val firstAndMiddleNames: FirstAndMiddleNames,
+  val lastName: LastName,
+  val dateOfBirth: LocalDate,
+  val bookingNumber: String,
+  val croNumber: String,
+  val today: String,
+  val lastReleaseDate: String,
+  val assessedByUserSignature: String
 )

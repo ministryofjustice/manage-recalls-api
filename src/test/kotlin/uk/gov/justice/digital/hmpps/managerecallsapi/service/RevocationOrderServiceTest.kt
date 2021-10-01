@@ -9,26 +9,18 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.signature
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
-import java.io.File
-import java.util.Base64
+import java.time.LocalDate
 import java.util.UUID
 
 @Suppress("ReactiveStreamsUnusedPublisher")
@@ -46,25 +38,26 @@ internal class RevocationOrderServiceTest {
 
   private val recallId = ::RecallId.random()
   private val expectedBytes = randomString().toByteArray()
-  private val nomsNumber = randomNoms()
 
   @Test
   fun `creates a revocation order for a recall `() {
-    val recall = Recall(recallId, nomsNumber)
-    val prisoner = mockk<Prisoner>()
-    val userId = UserId(UUID.randomUUID())
-    val userSignature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+    val userSignature = "base64EncodedUserSignature"
 
-    val userDetails = UserDetails(
-      userId,
-      FirstName("Bob"),
-      LastName("Badger"),
-      userSignature,
-      Email("bertie@badger.org"),
-      PhoneNumber("01234567890")
-    )
+    val revocationOrderContext =
+      RevocationOrderContext(
+        recallId,
+        FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
+        LastName("Basset"),
+        LocalDate.of(1995, 10, 3),
+        "bookNumber",
+        "croNumber",
+        "29 Aug 2017",
+        "01 Sep 2020",
+        userSignature
+      )
+
     val generatedHtml = "Some html, honest"
-    every { revocationOrderGenerator.generateHtml(prisoner, recall) } returns generatedHtml
+    every { revocationOrderGenerator.generateHtml(revocationOrderContext) } returns generatedHtml
     every {
       pdfDocumentGenerationService.generatePdf(
         generatedHtml,
@@ -76,9 +69,7 @@ internal class RevocationOrderServiceTest {
       recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER)
     } returns UUID.randomUUID()
 
-    val recallNotificationContext =
-      RecallNotificationContext(recall, prisoner, userDetails, PrisonName("currentPrisonName"), PrisonName("lastReleasePrisonName"))
-    val result = underTest.createPdf(recallNotificationContext)
+    val result = underTest.createPdf(revocationOrderContext)
 
     StepVerifier
       .create(result)

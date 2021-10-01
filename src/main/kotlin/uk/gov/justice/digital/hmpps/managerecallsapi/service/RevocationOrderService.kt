@@ -17,15 +17,15 @@ class RevocationOrderService(
   @Autowired private val revocationOrderGenerator: RevocationOrderGenerator,
 ) {
 
-  fun createPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> {
-    val revocationOrderHtml = revocationOrderGenerator.generateHtml(recallNotificationContext.prisoner, recallNotificationContext.recall)
+  fun createPdf(context: RevocationOrderContext): Mono<ByteArray> {
+    val revocationOrderHtml = revocationOrderGenerator.generateHtml(context)
 
     return pdfDocumentGenerationService.generatePdf(
       revocationOrderHtml,
       recallImage(RevocationOrderLogo),
-      signature(recallNotificationContext.assessedByUserDetails.signature)
+      signature(context.assessedByUserSignature)
     ).map { bytes ->
-      recallDocumentService.uploadAndAddDocumentForRecall(recallNotificationContext.recall.recallId(), bytes, REVOCATION_ORDER)
+      recallDocumentService.uploadAndAddDocumentForRecall(context.recallId, bytes, REVOCATION_ORDER)
       bytes
     }
   }
