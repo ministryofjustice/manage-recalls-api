@@ -69,3 +69,4 @@ ecr.repo
 
 # generated test files
 *.actual
+*.pdf

@@ -1,8 +1,13 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_1
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_2
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
@@ -32,7 +37,22 @@ data class RecallLengthDescription(val recallLength: RecallLength) {
       TWENTY_EIGHT_DAYS -> "28 DAY FIXED TERM RECALL"
     }
   }
+  fun numberOfDays(): Int {
+    return when (recallLength) {
+      FOURTEEN_DAYS -> 14
+      TWENTY_EIGHT_DAYS -> 28
+    }
+  }
 }
+
+fun MappaLevel.shouldShowOnDocuments(): Boolean {
+  return when (this) {
+    LEVEL_1, LEVEL_2, LEVEL_3 -> true
+    else -> false
+  }
+}
+
+fun UserDetails.fullName(): String = PersonName(this.firstName, null, this.lastName).toString()
 
 fun LocalDate.asStandardDateFormat(): String = this.format(standardDateFormatter)
 fun ZonedDateTime.asStandardTimeFormat(): String = this.format(standardTimeFormatter)

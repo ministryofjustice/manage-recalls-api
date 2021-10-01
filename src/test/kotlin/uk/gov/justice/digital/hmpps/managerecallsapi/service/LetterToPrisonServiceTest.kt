@@ -11,10 +11,16 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
@@ -31,12 +37,14 @@ internal class LetterToPrisonServiceTest {
   private val recallRepository = mockk<RecallRepository>()
   private val letterToPrisonCustodyOfficeGenerator = mockk<LetterToPrisonCustodyOfficeGenerator>()
   private val letterToPrisonGovernorGenerator = mockk<LetterToPrisonGovernorGenerator>()
+  private val letterToPrisonConfirmationGenerator = mockk<LetterToPrisonConfirmationGenerator>()
 
   private val underTest = LetterToPrisonService(
     recallDocumentService,
     letterToPrisonContextFactory,
     letterToPrisonCustodyOfficeGenerator,
     letterToPrisonGovernorGenerator,
+    letterToPrisonConfirmationGenerator,
     pdfDocumentGenerationService
   )
 
@@ -55,6 +63,7 @@ internal class LetterToPrisonServiceTest {
     verify(exactly = 0) { letterToPrisonContextFactory.createContext(any()) }
     verify(exactly = 0) { letterToPrisonCustodyOfficeGenerator.generateHtml(any()) }
     verify(exactly = 0) { letterToPrisonGovernorGenerator.generateHtml(any()) }
+    verify(exactly = 0) { letterToPrisonConfirmationGenerator.generateHtml(any()) }
     verify(exactly = 0) { pdfDocumentGenerationService.generatePdf(any()) }
     verify(exactly = 0) { pdfDocumentGenerationService.mergePdfs(any()) }
 
@@ -69,7 +78,8 @@ internal class LetterToPrisonServiceTest {
   fun `creates a letter to prison for a recall `() {
     val aRecall = Recall(recallId, nomsNumber)
     val documentId = UUID.randomUUID()
-    val context = LetterToPrisonContext(aRecall, Prisoner(), PrisonName("A Prison"))
+    val assessor = UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
+    val context = LetterToPrisonContext(aRecall, Prisoner(), PrisonName("A Prison"), assessor)
     val generatedHtml = "Some html, honest"
     val mergedBytes = randomString().toByteArray()
 
@@ -78,9 +88,11 @@ internal class LetterToPrisonServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns generatedHtml
     every { letterToPrisonGovernorGenerator.generateHtml(context) } returns generatedHtml
+    every { letterToPrisonConfirmationGenerator.generateHtml(context) } returns generatedHtml
     every {
       pdfDocumentGenerationService.generatePdf(generatedHtml, recallImage(HmppsLogo))
     } returns Mono.just(expectedBytes)
+    every { pdfDocumentGenerationService.generatePdf(generatedHtml) } returns Mono.just(expectedBytes)
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
     every {
       recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, LETTER_TO_PRISON)

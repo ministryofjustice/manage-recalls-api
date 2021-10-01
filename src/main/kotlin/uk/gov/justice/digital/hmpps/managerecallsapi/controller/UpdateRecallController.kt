@@ -81,13 +81,13 @@ enum class RecallLength {
   TWENTY_EIGHT_DAYS
 }
 
-enum class MappaLevel {
-  NA,
-  LEVEL_1,
-  LEVEL_2,
-  LEVEL_3,
-  NOT_KNOWN,
-  CONFIRMATION_REQUIRED
+enum class MappaLevel(val label: String) {
+  NA("N/A"),
+  LEVEL_1("Level 1"),
+  LEVEL_2("Level 2"),
+  LEVEL_3("Level 3"),
+  NOT_KNOWN("Not Known"),
+  CONFIRMATION_REQUIRED("Confirmation Required")
 }
 
 enum class RecallType {
