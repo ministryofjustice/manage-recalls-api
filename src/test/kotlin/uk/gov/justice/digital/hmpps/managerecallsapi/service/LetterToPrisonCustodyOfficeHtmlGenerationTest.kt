@@ -18,10 +18,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneId
 
 class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
   HtmlGenerationTestCase() {
-  private val underTest = LetterToPrisonCustodyOfficeGenerator(templateEngine)
+  private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T16:48:30.00Z"), ZoneId.of("UTC"))
+  private val underTest = LetterToPrisonCustodyOfficeGenerator(templateEngine, fixedClock)
 
   @Test
   fun `generate fully populated HTML`(approver: ContentApprover) {
