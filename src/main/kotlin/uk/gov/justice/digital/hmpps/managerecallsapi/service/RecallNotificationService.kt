@@ -32,7 +32,7 @@ class RecallNotificationService(
     // TODO:  Remove this block() (same problem as comment in the DossierService)
     val letterToProbationBytes = letterToProbationService.getPdf(recallNotificationContext).block()!!
 
-    return recallSummaryService.getPdf(recallId, userId).map { recallSummaryBytes ->
+    return recallSummaryService.getPdf(recallNotificationContext).map { recallSummaryBytes ->
       docs += documentData(recallSummaryBytes)
     }.flatMap {
       revocationOrderService.createPdf(recallId, userId)

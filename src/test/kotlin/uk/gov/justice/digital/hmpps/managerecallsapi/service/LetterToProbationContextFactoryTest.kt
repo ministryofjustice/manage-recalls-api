@@ -57,7 +57,7 @@ class LetterToProbationContextFactoryTest {
       PhoneNumber("09876543210")
     )
 
-    val recallNotificationContext = RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName)
+    val recallNotificationContext = RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, "Don't care")
     val result = underTest.createContext(recallNotificationContext)
 
     assertThat(
