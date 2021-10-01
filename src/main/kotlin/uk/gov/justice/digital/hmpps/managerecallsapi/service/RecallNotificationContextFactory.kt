@@ -23,8 +23,9 @@ class RecallNotificationContextFactory(
     val recall = recallRepository.getByRecallId(recallId)
     val prisoner = prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber)).block()!!.first()
     val userDetails = userDetailsService.get(userId)
-    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison)
-    return RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName!!)
+    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison)!!
+    val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison)!!
+    return RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName)
   }
 }
 
@@ -32,5 +33,6 @@ data class RecallNotificationContext(
   val recall: Recall,
   val prisoner: Prisoner,
   val assessedByUserDetails: UserDetails,
-  val currentPrisonName: String
+  val currentPrisonName: String,
+  val lastReleasePrisonName: String
 )

@@ -35,17 +35,20 @@ class RecallNotificationContextFactoryTest {
     val userIdGeneratingRecallNotification = ::UserId.random()
     val currentPrison = "AAA"
     val currentPrisonName = "Current Prison Name"
+    val lastReleasePrison = "XXX"
+    val lastReleasePrisonName = "Last Prison Name"
     val prisoner = mockk<Prisoner>()
-    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison)
+    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison)
     val userDetails = mockk<UserDetails>()
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
+    every { prisonLookupService.getPrisonName(lastReleasePrison) } returns lastReleasePrisonName
     every { userDetailsService.get(userIdGeneratingRecallNotification) } returns userDetails
 
     val result = underTest.createContext(recallId, userIdGeneratingRecallNotification)
 
-    assertThat(result, equalTo(RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName)))
+    assertThat(result, equalTo(RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName)))
   }
 }
