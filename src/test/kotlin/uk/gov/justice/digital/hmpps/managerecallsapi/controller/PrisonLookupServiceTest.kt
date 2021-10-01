@@ -7,6 +7,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
@@ -30,7 +31,7 @@ class PrisonLookupServiceTest {
 
     val result = underTest.getPrisonName(prisonId)
 
-    assertThat(result, equalTo(prisonName))
+    assertThat(result, equalTo(PrisonName(prisonName)))
   }
 
   @Test

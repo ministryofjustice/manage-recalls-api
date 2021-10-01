@@ -11,38 +11,32 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
-import java.io.File
-import java.util.Base64
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 import java.util.UUID
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class LetterToPrisonServiceTest {
 
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
-  private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
+  private val letterToPrisonContextFactory = mockk<LetterToPrisonContextFactory>()
   private val recallDocumentService = mockk<RecallDocumentService>()
   private val recallRepository = mockk<RecallRepository>()
-  private val revocationOrderGenerator = mockk<RevocationOrderGenerator>()
-  private val letterToPrisonGenerator = mockk<LetterToPrisonGenerator>()
-  private val userDetailsService = mockk<UserDetailsService>()
+  private val letterToPrisonCustodyOfficeGenerator = mockk<LetterToPrisonCustodyOfficeGenerator>()
+  private val letterToPrisonGovernorGenerator = mockk<LetterToPrisonGovernorGenerator>()
 
   private val underTest = LetterToPrisonService(
     recallDocumentService,
-    letterToPrisonGenerator,
+    letterToPrisonContextFactory,
+    letterToPrisonCustodyOfficeGenerator,
+    letterToPrisonGovernorGenerator,
     pdfDocumentGenerationService
   )
 
@@ -52,36 +46,53 @@ internal class LetterToPrisonServiceTest {
   private val nomsNumber = randomNoms()
 
   @Test
-  fun `creates a revocation order for a recall `() {
-    val aRecall = Recall(recallId, nomsNumber)
-    val revocationOrderId = UUID.randomUUID()
-    val userId = UserId(UUID.randomUUID())
-    val userSignature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+  fun `returns a letter to prison for a recall if one exists already`() {
+    every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns expectedBytes
 
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
-    val generatedHtml = "Some html, honest"
-    every { userDetailsService.get(userId) } returns UserDetails(
-      userId, FirstName("Bob"), LastName("Badger"), userSignature, Email("bertie@badger.org"), PhoneNumber("01234567890")
-    )
-    every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
-    every { letterToPrisonGenerator.generateHtml() } returns generatedHtml
-    every {
-      pdfDocumentGenerationService.generatePdf(
-        generatedHtml,
-        recallImage(RevocationOrderLogo)
-      )
-    } returns Mono.just(expectedBytes)
-    every {
-      recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, LETTER_TO_PRISON)
-    } returns revocationOrderId
+    val result = underTest.getPdf(recallId)
 
-    val result = underTest.getDocument(recallId)
+    verify(exactly = 0) { recallRepository.getByRecallId(any()) }
+    verify(exactly = 0) { letterToPrisonContextFactory.createContext(any()) }
+    verify(exactly = 0) { letterToPrisonCustodyOfficeGenerator.generateHtml(any()) }
+    verify(exactly = 0) { letterToPrisonGovernorGenerator.generateHtml(any()) }
+    verify(exactly = 0) { pdfDocumentGenerationService.generatePdf(any()) }
+    verify(exactly = 0) { pdfDocumentGenerationService.mergePdfs(any()) }
 
     StepVerifier
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-        verify { recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, LETTER_TO_PRISON) }
+      }.verifyComplete()
+  }
+
+  @Test
+  fun `creates a letter to prison for a recall `() {
+    val aRecall = Recall(recallId, nomsNumber)
+    val documentId = UUID.randomUUID()
+    val context = LetterToPrisonContext(aRecall, Prisoner(), PrisonName("A Prison"))
+    val generatedHtml = "Some html, honest"
+    val mergedBytes = randomString().toByteArray()
+
+    every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
+    every { letterToPrisonContextFactory.createContext(recallId) } returns context
+    every { recallRepository.getByRecallId(recallId) } returns aRecall
+    every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns generatedHtml
+    every { letterToPrisonGovernorGenerator.generateHtml(context) } returns generatedHtml
+    every {
+      pdfDocumentGenerationService.generatePdf(generatedHtml, recallImage(HmppsLogo))
+    } returns Mono.just(expectedBytes)
+    every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
+    every {
+      recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, LETTER_TO_PRISON)
+    } returns documentId
+
+    val result = underTest.getPdf(recallId)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it, equalTo(mergedBytes))
+        verify { recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, LETTER_TO_PRISON) }
       }.verifyComplete()
   }
 }

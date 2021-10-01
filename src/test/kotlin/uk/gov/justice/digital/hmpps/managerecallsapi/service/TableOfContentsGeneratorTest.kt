@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
@@ -46,7 +47,7 @@ class TableOfContentsGeneratorTest {
 
     every { templateEngine.process("table-of-contents", capture(contextSlot)) } returns expectedHtml
 
-    val currentPrisonName = "Prison (ABC)"
+    val currentPrisonName = PrisonName("Prison (ABC)")
     val bookingNumber = "ABC123F"
     val result = underTest.generateHtml(
       TableOfContentsContext(
@@ -78,7 +79,7 @@ class TableOfContentsGeneratorTest {
           "recallLengthAndSentenceHeading", { it.variable("recallLengthAndSentenceHeading") }, equalTo(expectedText)
           ),
           has("fullName", { it.variable("fullName") }, equalTo("Bertie Basset Badger")),
-          has("establishment", { it.variable("establishment") }, equalTo(currentPrisonName)),
+          has("establishment", { it.variable("establishment") }, equalTo(currentPrisonName.value)),
           has("category", { it.variable("category") }, equalTo("Not Applicable")),
           has("prisonNumber", { it.variable("prisonNumber") }, equalTo(bookingNumber)),
           has("version", { it.variable("version") }, equalTo("0")),

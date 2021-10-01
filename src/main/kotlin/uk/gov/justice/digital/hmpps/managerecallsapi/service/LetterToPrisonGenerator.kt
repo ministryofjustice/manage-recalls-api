@@ -10,7 +10,12 @@ class LetterToPrisonGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine,
 ) {
   fun generateHtml(): String =
-    Context().let {
-      templateEngine.process("letter-to-probation", it)
+    Context().apply {
+
+      setVariable("logoFileName", RecallImage.HmppsLogo.fileName)
+
+//      setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
+    }.let {
+      templateEngine.process("letter-to-prison", it)
     }
 }

@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -76,7 +77,7 @@ internal class RevocationOrderServiceTest {
     } returns UUID.randomUUID()
 
     val recallNotificationContext =
-      RecallNotificationContext(recall, prisoner, userDetails, "currentPrisonName", "lastReleasePrisonName")
+      RecallNotificationContext(recall, prisoner, userDetails, PrisonName("currentPrisonName"), PrisonName("lastReleasePrisonName"))
     val result = underTest.createPdf(recallNotificationContext)
 
     StepVerifier

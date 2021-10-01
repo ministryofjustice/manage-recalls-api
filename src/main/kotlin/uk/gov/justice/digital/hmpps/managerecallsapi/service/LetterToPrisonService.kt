@@ -3,30 +3,30 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LETTER_TO_PRISON
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
 @Service
 class LetterToPrisonService(
   @Autowired private val recallDocumentService: RecallDocumentService,
-  @Autowired private val letterToPrisonGenerator: LetterToPrisonGenerator,
+  @Autowired private val letterToPrisonContextFactory: LetterToPrisonContextFactory,
+  @Autowired private val letterToPrisonCustodyOfficeGenerator: LetterToPrisonCustodyOfficeGenerator,
+  @Autowired private val letterToPrisonGovernorGenerator: LetterToPrisonGovernorGenerator,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
+
 ) {
 
-  fun getDocument(recallId: RecallId): Mono<ByteArray> {
-    val letterToPrison = recallDocumentService.getDocumentContentWithCategoryIfExists(
-      recallId,
-      RecallDocumentCategory.LETTER_TO_PRISON
-    )
+  fun getPdf(recallId: RecallId): Mono<ByteArray> {
+    val letterToPrison = recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
 
     return if (letterToPrison == null) {
-      getPdf(recallId).map { letterToPrisonBytes ->
-        recallDocumentService.uploadAndAddDocumentForRecall(
-          recallId, letterToPrisonBytes,
-          RecallDocumentCategory.LETTER_TO_PRISON
-        )
+      createPdf(recallId).map { letterToPrisonBytes ->
+        recallDocumentService.uploadAndAddDocumentForRecall(recallId, letterToPrisonBytes, LETTER_TO_PRISON)
         letterToPrisonBytes
       }
     } else {
@@ -34,12 +34,23 @@ class LetterToPrisonService(
     }
   }
 
-  fun getPdf(recallId: RecallId): Mono<ByteArray> {
-    val letterToPrisonHtml = letterToPrisonGenerator.generateHtml()
+  private fun createPdf(recallId: RecallId): Mono<ByteArray> {
+    val context = letterToPrisonContextFactory.createContext(recallId)
 
-    return pdfDocumentGenerationService.generatePdf(
-      letterToPrisonHtml,
-      ImageData.recallImage(RecallImage.RevocationOrderLogo)
-    )
+    val docs = mutableListOf<ByteArrayDocumentData>()
+
+    val letterToPrisonCustodyOfficeHtml = letterToPrisonCustodyOfficeGenerator.generateHtml(context)
+
+    return pdfDocumentGenerationService.generatePdf(letterToPrisonCustodyOfficeHtml, recallImage(HmppsLogo))
+      .map { ltpCOBytes ->
+        docs += documentData(ltpCOBytes)
+      }.flatMap {
+        val letterToPrisonGovernorHtml = letterToPrisonGovernorGenerator.generateHtml(context)
+        pdfDocumentGenerationService.generatePdf(letterToPrisonGovernorHtml, recallImage(HmppsLogo))
+      }.map { ltpGBytes ->
+        docs += documentData(ltpGBytes)
+      }.flatMap {
+        pdfDocumentGenerationService.mergePdfs(docs)
+      }
   }
 }

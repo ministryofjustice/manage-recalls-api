@@ -6,6 +6,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
@@ -34,7 +35,7 @@ class TableOfContentsHtmlGeneratorTest(
           middleNames = "PrisonerMiddleNames",
           lastName = "PrisonerLastName"
         ),
-        "Current Prison (ABC)",
+        PrisonName("Current Prison (ABC)"),
         listOf(Document("Document 1", 1), Document("Document 2", 3), Document("Document 3", 7))
       )
     )

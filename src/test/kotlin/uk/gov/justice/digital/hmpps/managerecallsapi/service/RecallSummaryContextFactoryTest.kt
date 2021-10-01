@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -28,8 +29,8 @@ class RecallSummaryContextFactoryTest {
     val prisoner = mockk<Prisoner>()
     val assessorUserId = ::UserId.random()
     val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison)
-    val currentPrisonName = "Current Prison Name"
-    val lastReleasePrisonName = "Last Release Prison Name"
+    val currentPrisonName = PrisonName("Current Prison Name")
+    val lastReleasePrisonName = PrisonName("Last Release Prison Name")
     val userDetails = UserDetails(
       assessorUserId,
       FirstName("Bertie"),

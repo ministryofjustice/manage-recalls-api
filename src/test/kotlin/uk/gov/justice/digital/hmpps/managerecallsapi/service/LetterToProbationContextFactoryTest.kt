@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -36,7 +37,7 @@ class LetterToProbationContextFactoryTest {
     val nomsNumber = NomsNumber("nomsNumber")
     val userIdGeneratingTheLetter = ::UserId.random()
     val currentPrison = "AAA"
-    val currentPrisonName = "Current Prison Name"
+    val currentPrisonName = PrisonName("Current Prison Name")
     val prisoner = Prisoner(firstName = "Jimmy", lastName = "Offender", middleNames = "The Hand")
     val probationOfficerName = "Mr Probation Officer"
     val bookingNumber = "bookingNumber"
@@ -57,7 +58,7 @@ class LetterToProbationContextFactoryTest {
       PhoneNumber("09876543210")
     )
 
-    val recallNotificationContext = RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, "Don't care")
+    val recallNotificationContext = RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, PrisonName("Don't care"))
     val result = underTest.createContext(recallNotificationContext)
 
     assertThat(
