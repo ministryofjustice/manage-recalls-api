@@ -79,7 +79,7 @@ class RecallsController(
 
   @GetMapping("/recalls/{recallId}/letter-to-prison")
   fun getLetterToPrison(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
-    letterToPrison.getDocument(recallId).map {
+    letterToPrison.getPdf(recallId).map {
       val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)
       ResponseEntity.ok(Pdf(pdfBase64Encoded))
     }

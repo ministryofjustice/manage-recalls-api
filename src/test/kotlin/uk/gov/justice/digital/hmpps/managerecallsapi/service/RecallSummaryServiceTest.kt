@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
@@ -38,7 +39,7 @@ class RecallSummaryServiceTest {
     val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
     val recallNotificationContext = mockk<RecallNotificationContext>()
 
-    val recallSummaryContext = RecallSummaryContext(mockk(), mockk(), "don't care", "don't care", UserDetails(::UserId.random(), FirstName("Bob"), LastName("Badger"), "", Email("b@bob.com"), PhoneNumber("0987")))
+    val recallSummaryContext = RecallSummaryContext(mockk(), mockk(), PrisonName("don't care"), PrisonName("don't care"), UserDetails(::UserId.random(), FirstName("Bob"), LastName("Badger"), "", Email("b@bob.com"), PhoneNumber("0987")))
     val recallSummaryContextWithPageCountSlot = slot<RecallSummaryContext>()
 
     every { recallSummaryContextFactory.createRecallSummaryContext(recallNotificationContext) } returns Mono.just(recallSummaryContext)

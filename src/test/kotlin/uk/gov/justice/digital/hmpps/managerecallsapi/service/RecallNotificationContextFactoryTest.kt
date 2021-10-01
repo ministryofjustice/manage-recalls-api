@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -34,9 +35,9 @@ class RecallNotificationContextFactoryTest {
     val nomsNumber = NomsNumber("nomsNumber")
     val userIdGeneratingRecallNotification = ::UserId.random()
     val currentPrison = "AAA"
-    val currentPrisonName = "Current Prison Name"
+    val currentPrisonName = PrisonName("Current Prison Name")
     val lastReleasePrison = "XXX"
-    val lastReleasePrisonName = "Last Prison Name"
+    val lastReleasePrisonName = PrisonName("Last Prison Name")
     val prisoner = mockk<Prisoner>()
     val recall = Recall(recallId, nomsNumber, currentPrison = currentPrison, lastReleasePrison = lastReleasePrison)
     val userDetails = mockk<UserDetails>()

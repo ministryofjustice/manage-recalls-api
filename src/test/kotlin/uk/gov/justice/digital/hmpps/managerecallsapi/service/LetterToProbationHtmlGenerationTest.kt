@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOU
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
 
 class LetterToProbationHtmlGenerationTest(
@@ -23,7 +24,7 @@ class LetterToProbationHtmlGenerationTest(
       "Mr probation",
       PersonName(FirstName("Bertie"), MiddleNames("Wooster"), LastName("Offender")),
       "bookingNumber",
-      "Current prison name",
+      PrisonName("Current prison name"),
       PersonName(FirstName("Bobby"), null, LastName("Caseworker"))
     )
     approver.assertApproved(underTest.generateHtml(letterToProbationContext))

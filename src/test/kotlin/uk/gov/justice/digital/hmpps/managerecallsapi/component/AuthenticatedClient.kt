@@ -67,6 +67,9 @@ class AuthenticatedClient(
   fun getDossier(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/dossier", Pdf::class.java)
 
+  fun getLetterToPrison(recallId: RecallId): Pdf =
+    getRequest("/recalls/$recallId/letter-to-prison", Pdf::class.java)
+
   fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
     postRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
 

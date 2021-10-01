@@ -219,7 +219,7 @@ class RecallsControllerTest {
     val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
 
-    every { letterToPrisonService.getDocument(recall.recallId()) } returns Mono.just(expectedPdf)
+    every { letterToPrisonService.getPdf(recall.recallId()) } returns Mono.just(expectedPdf)
 
     val result = underTest.getLetterToPrison(recall.recallId())
 

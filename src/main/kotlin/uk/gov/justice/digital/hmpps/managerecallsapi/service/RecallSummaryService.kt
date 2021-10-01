@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
@@ -36,17 +37,14 @@ class RecallSummaryService(
     }
 
   private fun generatePdf(context: RecallSummaryContext) =
-    pdfDocumentGenerationService.generatePdf(
-      recallSummaryGenerator.generateHtml(context),
-      recallImage(HmppsLogo)
-    )
+    pdfDocumentGenerationService.generatePdf(recallSummaryGenerator.generateHtml(context), recallImage(HmppsLogo))
 }
 
 data class RecallSummaryContext(
   val recall: Recall,
   val prisoner: Prisoner,
-  val lastReleasePrisonName: String,
-  val currentPrisonName: String,
+  val lastReleasePrisonName: PrisonName,
+  val currentPrisonName: PrisonName,
   val assessor: UserDetails,
   val recallNotificationTotalNumberOfPages: Int? = null
 )

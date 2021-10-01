@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
@@ -34,11 +35,7 @@ class TableOfContentsService(
     return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
       .flatMap { prisoners ->
         val tocHtml = tableOfContentsGenerator.generateHtml(TableOfContentsContext(recall, prisoners.first(), currentPrisonName, docList))
-
-        pdfDocumentGenerationService.generatePdf(
-          tocHtml,
-          recallImage(HmppsLogo)
-        )
+        pdfDocumentGenerationService.generatePdf(tocHtml, recallImage(HmppsLogo))
       }
   }
 
@@ -53,4 +50,4 @@ class TableOfContentsService(
 }
 
 data class Document(val title: String, val pageNumber: Int)
-data class TableOfContentsContext(val recall: Recall, val prisoner: Prisoner, val currentPrisonName: String, val documents: List<Document>)
+data class TableOfContentsContext(val recall: Recall, val prisoner: Prisoner, val currentPrisonName: PrisonName, val documents: List<Document>)

@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -89,8 +90,8 @@ class RecallSummaryGeneratorTest {
           bookNumber = "bookNumber",
           croNumber = "croNumber"
         ),
-        "Prison 1",
-        "Prison 2",
+        PrisonName("Prison 1"),
+        PrisonName("Prison 2"),
         UserDetails(assessedByUserId, FirstName("Maria"), LastName("Badger"), "", Email("maria@thebadgers.set"), PhoneNumber("09876543210")),
         3
       )
@@ -147,12 +148,14 @@ class RecallSummaryGeneratorTest {
     every { templateEngine.process("recall-summary", capture(contextSlot)) } returns expectedHtml
 
     val nomsNumber = randomNoms()
+    val lastReleasePrisonName = PrisonName("A Prison")
+    val currentPrisonName = PrisonName("B Prison")
     val result = underTest.generateHtml(
       RecallSummaryContext(
         Recall(::RecallId.random(), nomsNumber),
         Prisoner(),
-        "",
-        "",
+        lastReleasePrisonName,
+        currentPrisonName,
         UserDetails(::UserId.random(), FirstName("A"), LastName("B"), "", Email("C"), PhoneNumber("D")),
         OTHER_PAGES_IN_RECALL_NOTIFICATION
       )
@@ -177,7 +180,7 @@ class RecallSummaryGeneratorTest {
         has("policeFileName", { it.variable("policeFileName") }, equalTo(null)),
         has("prisonNumber", { it.variable("prisonNumber") }, equalTo(null)),
         has("pnomisNumber", { it.variable("pnomisNumber") }, equalTo(nomsNumber.value)),
-        has("releasingPrison", { it.variable("releasingPrison") }, equalTo("")),
+        has("releasingPrison", { it.variable("releasingPrison") }, equalTo(lastReleasePrisonName.value)),
         has("releaseDate", { it.variable("releaseDate") }, equalTo(null)),
         has("lengthOfSentence", { it.variable("lengthOfSentence") }, equalTo(null)),
         has("indexOffence", { it.variable("indexOffence") }, equalTo(null)),
@@ -186,7 +189,7 @@ class RecallSummaryGeneratorTest {
         has("offenderManagerName", { it.variable("offenderManagerName") }, equalTo(null)),
         has("offenderManagerContactNumber", { it.variable("offenderManagerContactNumber") }, equalTo(null)),
         has("policeSpoc", { it.variable("policeSpoc") }, equalTo(null)),
-        has("currentPrison", { it.variable("currentPrison") }, equalTo("")),
+        has("currentPrison", { it.variable("currentPrison") }, equalTo(currentPrisonName.value)),
         has("sentencingCourt", { it.variable("sentencingCourt") }, equalTo(null)),
         has("sentencingDate", { it.variable("sentencingDate") }, equalTo(null)),
         has("sed", { it.variable("sed") }, equalTo(null)),

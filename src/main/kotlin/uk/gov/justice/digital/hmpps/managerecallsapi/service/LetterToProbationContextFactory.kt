@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.Clock
 import java.time.LocalDate
 
@@ -37,6 +38,6 @@ data class LetterToProbationContext(
   val probationOfficerName: String,
   val offenderName: PersonName,
   val bookingNumber: String,
-  val currentPrisonName: String,
+  val currentPrisonName: PrisonName,
   val assessedByUserName: PersonName
 )
