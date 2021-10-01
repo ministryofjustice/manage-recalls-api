@@ -2,46 +2,32 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupService
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.Clock
 import java.time.LocalDate
 
 @Component
 class LetterToProbationContextFactory(
-  @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val prisonLookupService: PrisonLookupService,
-  @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
-  @Autowired private val userDetailsService: UserDetailsService,
   @Autowired private val clock: Clock
 ) {
-  fun createContext(recallId: RecallId, userId: UserId): Mono<LetterToProbationContext> {
+  fun createContext(recallNotificationContext: RecallNotificationContext): LetterToProbationContext {
     // TODO:  Ensure all the required data is present, if not throw a meaningful exception (should be applied in a consistent manner)
-    val recall = recallRepository.getByRecallId(recallId)
-    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison)!!
-    val assessedByUserDetails = userDetailsService.get(userId)
+    val recall = recallNotificationContext.recall
+    val currentPrisonName = recallNotificationContext.currentPrisonName
+    val assessedByUserDetails = recallNotificationContext.assessedByUserDetails
+    val prisoner = recallNotificationContext.prisoner
 
-    return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
-      .map { prisoners -> prisoners.first() }
-      .map { prisoner ->
-        LetterToProbationContext(
-          LocalDate.now(clock),
-          RecallLengthDescription(recall.recallLength!!),
-          recall.probationInfo!!.probationOfficerName,
-          PersonName(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }, LastName(prisoner.lastName!!)),
-          recall.bookingNumber!!,
-          currentPrisonName,
-          PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName)
-        )
-      }
+    return LetterToProbationContext(
+      LocalDate.now(clock),
+      RecallLengthDescription(recall.recallLength!!),
+      recall.probationInfo!!.probationOfficerName,
+      PersonName(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }, LastName(prisoner.lastName!!)),
+      recall.bookingNumber!!,
+      currentPrisonName,
+      PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName)
+    )
   }
 }
 

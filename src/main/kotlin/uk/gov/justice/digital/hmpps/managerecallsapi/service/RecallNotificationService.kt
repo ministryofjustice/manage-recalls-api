@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 
 @Service
 class RecallNotificationService(
+  @Autowired private val recallNotificationContextFactory: RecallNotificationContextFactory,
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val recallSummaryService: RecallSummaryService,
   @Autowired private val letterToProbationService: LetterToProbationService,
@@ -25,9 +26,11 @@ class RecallNotificationService(
       ?: createRecallNotification(recallId, userId)
 
   private fun createRecallNotification(recallId: RecallId, userId: UserId): Mono<ByteArray> {
+    val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, userId)
+
     val docs = mutableListOf<ByteArrayDocumentData>()
     // TODO:  Remove this block() (same problem as comment in the DossierService)
-    val letterToProbationBytes = letterToProbationService.getPdf(recallId, userId).block()!!
+    val letterToProbationBytes = letterToProbationService.getPdf(recallNotificationContext).block()!!
 
     return recallSummaryService.getPdf(recallId, userId).map { recallSummaryBytes ->
       docs += documentData(recallSummaryBytes)

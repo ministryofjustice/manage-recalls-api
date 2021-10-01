@@ -2,17 +2,11 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.ISLE_OF_MAN
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -24,26 +18,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 
 class LetterToProbationContextFactoryTest {
-  private val recallRepository = mockk<RecallRepository>()
-  private val prisonLookupService = mockk<PrisonLookupService>()
-  private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
-  private val userDetailsService = mockk<UserDetailsService>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-09-29T00:00:00.00Z"), ZoneId.of("UTC"))
 
-  private val underTest = LetterToProbationContextFactory(
-    recallRepository,
-    prisonLookupService,
-    prisonerOffenderSearchClient,
-    userDetailsService,
-    fixedClock
-  )
+  private val underTest = LetterToProbationContextFactory(fixedClock)
 
   // TODO:   What do we do if ANY of this data is missing?
 
@@ -74,12 +57,8 @@ class LetterToProbationContextFactoryTest {
       PhoneNumber("09876543210")
     )
 
-    every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
-    every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
-    every { userDetailsService.get(userIdGeneratingTheLetter) } returns userDetails
-
-    val result = underTest.createContext(recallId, userIdGeneratingTheLetter).block()!!
+    val recallNotificationContext = RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName)
+    val result = underTest.createContext(recallNotificationContext)
 
     assertThat(
       result,
