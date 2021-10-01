@@ -69,10 +69,13 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.currentPrison").isEqualTo(fullyPopulatedRecall.currentPrison!!)
       .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
       .jsonPath("$.dossierEmailSentDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.status").isEqualTo(Status.RECALL_NOTIFICATION_ISSUED.toString())
+      .jsonPath("$.status").isEqualTo(Status.DOSSIER_ISSUED.toString())
       .jsonPath("$.hasOtherPreviousConvictionMainName").isEqualTo(fullyPopulatedRecall.hasOtherPreviousConvictionMainName!!)
       .jsonPath("$.hasDossierBeenChecked").isEqualTo(fullyPopulatedRecall.hasDossierBeenChecked!!)
       .jsonPath("$.previousConvictionMainName").isEqualTo(fullyPopulatedRecall.previousConvictionMainName!!)
+      .jsonPath("$.assessedByUserId").isEqualTo(fullyPopulatedRecall.assessedByUserId!!.toString())
+      .jsonPath("$.bookedByUserId").isEqualTo(fullyPopulatedRecall.bookedByUserId!!.toString())
+      .jsonPath("$.dossierCreatedByUserId").isEqualTo(fullyPopulatedRecall.dossierCreatedByUserId!!.toString())
   }
 
   @Test
