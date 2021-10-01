@@ -9,28 +9,15 @@ import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import org.springframework.core.io.ClassPathResource
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
 class RecallSummaryServiceTest {
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val recallSummaryGenerator = mockk<RecallSummaryGenerator>()
-  private val recallSummaryContextFactory = mockk<RecallSummaryContextFactory>()
 
-  private val underTest = RecallSummaryService(
-    pdfDocumentGenerationService,
-    recallSummaryGenerator,
-    recallSummaryContextFactory
-  )
+  private val underTest = RecallSummaryService(pdfDocumentGenerationService, recallSummaryGenerator)
 
   @Test
   fun `generates the recall summary PDF with required information`() {
@@ -39,18 +26,16 @@ class RecallSummaryServiceTest {
     val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
     val recallNotificationContext = mockk<RecallNotificationContext>()
 
-    val recallSummaryContext = RecallSummaryContext(mockk(), mockk(), PrisonName("don't care"), PrisonName("don't care"), UserDetails(::UserId.random(), FirstName("Bob"), LastName("Badger"), "", Email("b@bob.com"), PhoneNumber("0987")))
-    val recallSummaryContextWithPageCountSlot = slot<RecallSummaryContext>()
+    val pageCountSlot = slot<Int>()
 
-    every { recallSummaryContextFactory.createRecallSummaryContext(recallNotificationContext) } returns Mono.just(recallSummaryContext)
-    every { recallSummaryGenerator.generateHtml(recallSummaryContext) } returns recallSummaryHtmlWithoutPageCount
+    every { recallSummaryGenerator.generateHtml(recallNotificationContext, null) } returns recallSummaryHtmlWithoutPageCount
     every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithoutPageCount, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
-    every { recallSummaryGenerator.generateHtml(capture(recallSummaryContextWithPageCountSlot)) } returns recallSummaryHtmlWithPageCount
+    every { recallSummaryGenerator.generateHtml(recallNotificationContext, capture(pageCountSlot)) } returns recallSummaryHtmlWithPageCount
     every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithPageCount, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
 
     val result = underTest.createPdf(recallNotificationContext).block()!!
 
-    assertThat(recallSummaryContextWithPageCountSlot.captured.recallNotificationTotalNumberOfPages, equalTo(5))
+    assertThat(pageCountSlot.captured, equalTo(5))
     assertArrayEquals(pdfWith3Pages, result)
   }
 }

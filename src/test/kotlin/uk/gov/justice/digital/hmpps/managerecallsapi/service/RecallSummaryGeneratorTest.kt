@@ -51,7 +51,7 @@ class RecallSummaryGeneratorTest {
     val nomsNumber: NomsNumber = randomNoms()
     val assessedByUserId = ::UserId.random()
     val result = underTest.generateHtml(
-      RecallSummaryContext(
+      RecallNotificationContext(
         Recall(
           ::RecallId.random(),
           nomsNumber,
@@ -90,11 +90,11 @@ class RecallSummaryGeneratorTest {
           bookNumber = "bookNumber",
           croNumber = "croNumber"
         ),
-        PrisonName("Prison 1"),
-        PrisonName("Prison 2"),
         UserDetails(assessedByUserId, FirstName("Maria"), LastName("Badger"), "", Email("maria@thebadgers.set"), PhoneNumber("09876543210")),
-        3
-      )
+        PrisonName("Prison 2"),
+        PrisonName("Prison 1")
+      ),
+      3
     )
 
     assertThat(result, equalTo(expectedHtml))
@@ -151,14 +151,14 @@ class RecallSummaryGeneratorTest {
     val lastReleasePrisonName = PrisonName("A Prison")
     val currentPrisonName = PrisonName("B Prison")
     val result = underTest.generateHtml(
-      RecallSummaryContext(
+      RecallNotificationContext(
         Recall(::RecallId.random(), nomsNumber),
         Prisoner(),
-        lastReleasePrisonName,
-        currentPrisonName,
         UserDetails(::UserId.random(), FirstName("A"), LastName("B"), "", Email("C"), PhoneNumber("D")),
-        OTHER_PAGES_IN_RECALL_NOTIFICATION
-      )
+        currentPrisonName,
+        lastReleasePrisonName,
+      ),
+      OTHER_PAGES_IN_RECALL_NOTIFICATION
     )
     assertThat(result, equalTo(expectedHtml))
     assertThat(
