@@ -38,7 +38,7 @@ class RecallSummaryHtmlGenerationTest(
     val assessedByUserId = ::UserId.random()
     approver.assertApproved(
       underTest.generateHtml(
-        RecallSummaryContext(
+        RecallNotificationContext(
           Recall(
             ::RecallId.random(), NomsNumber("AA1234A"),
             contrabandDetail = "I believe that they will bring contraband to prison",
@@ -76,11 +76,11 @@ class RecallSummaryHtmlGenerationTest(
             bookNumber = "bookNumber",
             croNumber = "croNumber"
           ),
-          PrisonName("Prison A"),
-          PrisonName("Prison B"),
           UserDetails(assessedByUserId, FirstName("Maria"), LastName("Badger"), "", Email("maria@thebadgers.set"), PhoneNumber("09876543210")),
-          3
-        )
+          PrisonName("Prison B"),
+          PrisonName("Prison A")
+        ),
+        3
       )
     )
   }

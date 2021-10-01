@@ -27,13 +27,13 @@ class RecallSummaryGenerator(
   private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
   private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-  fun generateHtml(context: RecallSummaryContext): String =
+  fun generateHtml(context: RecallNotificationContext, recallNotificationTotalNumberOfPages: Int?): String =
     Context().apply {
       val createdDate = LocalDate.now(clock).format(dateFormatter)
       val createdTime = ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London")).format(timeFormatter)
       setVariable("createdDate", createdDate)
       setVariable("createdTime", createdTime)
-      setVariable("recallNotificationTotalNumberOfPages", context.recallNotificationTotalNumberOfPages)
+      setVariable("recallNotificationTotalNumberOfPages", recallNotificationTotalNumberOfPages)
 
       // TODO: MD What do we do if any of these values are NULL?  They should all be present and valid
       with(context.prisoner) {
@@ -44,7 +44,7 @@ class RecallSummaryGenerator(
         setVariable("pncCroNumber", this.croNumber)
       }
 
-      with(context.assessor) {
+      with(context.assessedByUserDetails) {
         setVariable("caseworkerName", "%s %s".format(this.firstName, this.lastName))
         setVariable("caseworkerEmail", this.email)
         setVariable("caseworkerPhoneNumber", this.phoneNumber)
