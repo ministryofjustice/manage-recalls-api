@@ -1,0 +1,1038 @@
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <style
+    type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=uTXSPZwEp3TWQFaTM2vlS3s421DlrhI9eSNlJenMRKM_aAifJoacbFX6HU9PyTi6');
+
+  ol {
+    margin: 0;
+    padding: 0
+  }
+
+  table td, table th {
+    padding: 0
+  }
+
+  .c42 {
+    border-right-style: solid;
+    padding-top: 1pt;
+    border-top-width: 0.5pt;
+    border-bottom-color: #000000;
+    border-right-width: 0.5pt;
+    padding-left: 4pt;
+    border-left-color: #000000;
+    padding-bottom: 31pt;
+    line-height: 1.0;
+    border-right-color: #000000;
+    border-left-width: 0.5pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+    padding-right: 4pt
+  }
+
+  .c11 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 172.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c31 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 75.8pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c32 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 202.7pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c57 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 75.8pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c77 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 158.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c63 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 202.7pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c41 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 230.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c13 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 253.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c24 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 11.8pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c26 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 450.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c50 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 180pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c70 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 496.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c55 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 61pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c74 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 248.2pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c71 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 158.4pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c29 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 45.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c58 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 506.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c72 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 82.3pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c20 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 170.7pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c69 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 172.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c39 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 70.5pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c40 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 291.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c75 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 171pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c60 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 1pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 180pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c68 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 241.2pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c67 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 1pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 1pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 1pt;
+    width: 171pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c34 {
+    -webkit-text-decoration-skip: none;
+    color: #ff0000;
+    font-weight: 400;
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+    font-size: 14pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c8 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: justify;
+    height: 10pt
+  }
+
+  .c3 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+    height: 10pt
+  }
+
+  .c7 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c0 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 10pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c18 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify
+  }
+
+  .c10 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c56 {
+    padding-top: 9pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c19 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: right
+  }
+
+  .c15 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+  }
+
+  .c12 {
+    color: #000000;
+    text-decoration: none;
+    font-size: 18pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c25 {
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11.5pt;
+    font-family: "Open Sans"
+  }
+
+  .c6 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    text-align: left;
+    height: 10pt
+  }
+
+  .c66 {
+    -webkit-text-decoration-skip: none;
+    color: #ff0000;
+    text-decoration: underline;
+    text-decoration-skip-ink: none
+  }
+
+  .c47 {
+    margin-left: -5.4pt;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c64 {
+    margin-left: -5pt;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c2 {
+    margin-left: -36.8pt;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c30 {
+    font-weight: 400;
+    text-decoration: none;
+    font-size: 8.5pt;
+    font-family: "Arial"
+  }
+
+  .c1 {
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-weight: 700
+  }
+
+  .c78 {
+    background-color: #ffffff;
+    max-width: 496pt;
+    padding: 35.5pt 42.5pt 42.5pt 56.7pt
+  }
+
+  .c59 {
+    color: #ff0000;
+    font-weight: 400;
+    font-style: normal
+  }
+
+  .c35 {
+    font-weight: 400;
+    text-decoration: none;
+    font-family: "Open Sans"
+  }
+
+  .c21 {
+    text-decoration: none;
+    font-size: 10pt;
+    font-family: "Arial"
+  }
+
+  .c54 {
+    font-weight: 400;
+    text-decoration: none;
+    font-family: "Arial"
+  }
+
+  .c53 {
+    text-decoration: none;
+    font-size: 8.5pt;
+    font-family: "Arial"
+  }
+
+  .c9 {
+    vertical-align: baseline;
+    font-weight: 700
+  }
+
+  .c76 {
+    margin-left: 0.1pt;
+    text-indent: -0.1pt
+  }
+
+  .c43 {
+    margin-left: 252pt;
+    text-indent: 36pt
+  }
+
+  .c4 {
+    vertical-align: baseline;
+    font-style: italic
+  }
+
+  .c14 {
+    font-style: normal;
+    color: #000000
+  }
+
+  .c48 {
+    font-size: 11.5pt;
+    font-family: "Open Sans"
+  }
+
+  .c17 {
+    vertical-align: baseline;
+    font-size: 11pt
+  }
+
+  .c65 {
+    height: 8.5pt
+  }
+
+  .c45 {
+    color: #000000
+  }
+
+  .c73 {
+    vertical-align: super
+  }
+
+  .c51 {
+    font-style: italic
+  }
+
+  .c27 {
+    vertical-align: baseline
+  }
+
+  .c37 {
+    height: 34.9pt
+  }
+
+  .c46 {
+    height: 68pt
+  }
+
+  .c79 {
+    height: 18.4pt
+  }
+
+  .c23 {
+    height: 10pt
+  }
+
+  .c28 {
+    height: 0pt
+  }
+
+  .c16 {
+    page-break-after: avoid
+  }
+
+  .c33 {
+    height: 31.1pt
+  }
+
+  .c49 {
+    height: 18pt
+  }
+
+  .c52 {
+    height: 21pt
+  }
+
+  .c36 {
+    height: 29pt
+  }
+
+  .c44 {
+    font-size: 11pt
+  }
+
+  .c38 {
+    font-size: 14pt
+  }
+
+  .c61 {
+    font-size: 11.5pt
+  }
+
+  .c62 {
+    margin-left: 252pt
+  }
+
+  .c22 {
+    font-weight: 700
+  }
+
+  .c5 {
+    height: 28.4pt
+  }
+
+  .title {
+    padding-top: 24pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 36pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .subtitle {
+    padding-top: 0pt;
+    color: #000000;
+    font-size: 12pt;
+    padding-bottom: 3pt;
+    font-family: "Calibri";
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+  }
+
+  li {
+    color: #000000;
+    font-size: 10pt;
+    font-family: "Arial"
+  }
+
+  p {
+    margin: 0;
+    color: #000000;
+    font-size: 10pt;
+    font-family: "Arial"
+  }
+
+  h1 {
+    padding-top: 24pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 24pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h2 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 14pt;
+    padding-bottom: 3pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    font-style: italic;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h3 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 13pt;
+    padding-bottom: 3pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h4 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 12pt;
+    padding-bottom: 2pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h5 {
+    padding-top: 11pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 11pt;
+    padding-bottom: 2pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h6 {
+    padding-top: 10pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 10pt;
+    padding-bottom: 2pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }</style>
+</head>
+<body class="c78">
+<p class="c3"><span class="c0"></span></p>
+<p class="c3"><span class="c0"></span></p><a id="t.9c73ff5f92f3d6cf85abd6419db180231d9fb49c"></a><a id="t.4"></a>
+<table class="c2">
+  <tbody>
+  <tr class="c46">
+    <td class="c40" colspan="2" rowspan="1"><p class="c10 c76"><span
+      style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 249.13px; height: 109.93px;"><img
+      src=""
+      style="width: 249.13px; height: 109.93px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+      title=""></span></p>
+      <p class="c3"><span class="c0"></span></p>
+      <p class="c3"><span class="c0"></span></p></td>
+    <td class="c24" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p></td>
+    <td class="c68" colspan="2" rowspan="4"><p class="c19"><span class="c9">Her Majesty&rsquo;s Prison &amp; Probation Service</span>
+    </p>
+      <p class="c19"><span class="c0">Public Protection Group</span></p>
+      <p class="c19"><span class="c0">Public Protection Casework Section &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span>
+      </p>
+      <p class="c19"><span class="c27">15</span><span class="c73">th</span><span
+        class="c0">&nbsp;Floor, Southern House </span></p>
+      <p class="c19"><span class="c0">Wellesley Grove </span></p>
+      <p class="c19"><span class="c0">Croydon </span></p>
+      <p class="c19"><span class="c0">CR0 1XG</span></p>
+      <p class="c19 c23"><span class="c0"></span></p>
+      <p class="c19"><span class="c27">HM Prison &amp; Probation Service (</span><span class="c4">PPCS</span><span
+        class="c0">)</span></p>
+      <p class="c19"><span class="c0">DX 330701, Croydon 52</span></p>
+      <p class="c19 c23"><span class="c0"></span></p>
+      <p class="c19"><span class="c9">Team: <span></span></span></p>
+      <p class="c19"><span class="c9">T</span><span class="c27">: <span></span></span></p>
+      <p class="c19 c23"><span class="c0"></span></p>
+      <p class="c19"><span class="c9 c14 c53">www.justice.gov.uk</span></p></td>
+  </tr>
+  <tr class="c65">
+    <td class="c55" colspan="1" rowspan="1"><p class="c3"><span class="c30 c14 c27"></span></p></td>
+    <td class="c41" colspan="1" rowspan="1"><p class="c3"><span class="c30 c14 c27"></span></p></td>
+    <td class="c24" colspan="1" rowspan="1"><p class="c3"><span class="c30 c14 c27"></span></p></td>
+  </tr>
+  <tr class="c5">
+    <td class="c55" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p></td>
+    <td class="c41" colspan="1" rowspan="1"><p class="c10"><span class="c7">For recall team 1 cases e-mail:</span></p>
+      <p class="c10"><span class="c9">recall1@justice.gov.uk</span></p></td>
+    <td class="c24" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p></td>
+  </tr>
+  <tr class="c5">
+    <td class="c55" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p></td>
+    <td class="c41" colspan="1" rowspan="1"><p class="c10"><span class="c7">For recall team 2 cases e-mail:</span></p>
+      <p class="c10"><span class="c9">recall2@justice.gov.uk</span></p></td>
+    <td class="c24" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p></td>
+  </tr>
+  <tr class="c5">
+    <td class="c55" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p></td>
+    <td class="c41" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p>
+      <p class="c3"><span class="c7"></span></p>
+      <p class="c3"><span class="c7"></span></p>
+      <p class="c10"><span class="c7">&nbsp;</span></p></td>
+    <td class="c72" colspan="2" rowspan="1"><p class="c3"><span class="c7"></span></p></td>
+    <td class="c20" colspan="1" rowspan="1"><p class="c3"><span class="c7"></span></p>
+      <p class="c19"><span class="c7"></span></p></td>
+  </tr>
+  </tbody>
+</table>
+<p class="c3"><span class="c0"></span></p>
+<p class="c15"><span class="c9 c38 c66"></span></p>
+<p class="c3"><span class="c7"></span></p>
+<p class="c10"><span class="c17">Dear </span><span class="c17"></span><span class="c7">,</span>
+</p>
+<p class="c3"><span class="c7"></span></p>
+<p class="c10"><span class="c1">Licensee:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span></span></span><span
+  class="c17">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+  class="c1">Our Ref: <span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c18"><span class="c7">Thank you for your report concerning the above named licensee.</span></p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c18"><span class="c1"></span><span class="c17">&rsquo;s licence was revoked today as a Fixed Term Recall under Section 254 of the Criminal Justice Act 2003, as amended and the revocation order has been forwarded to the Governor of </span><span
+  class="c1"></span><span class="c7">&nbsp;where <span></span> is currently in custody. Enclosed is a copy of the revocation order.</span>
+</p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c18"><span class="c1">Please note that </span><span class="c17"></span><span
+  class="c1"> will be released automatically at the end of the fixed term period, beginning on the date that he/she returned to custody. &nbsp;The Current Establishment will provide this date.</span>
+</p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c18"><span class="c7">Yours sincerely,</span></p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c10"><span class="c1"></span></p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c18 c23"><span class="c7"></span></p>
+<p class="c18"><span class="c1">Public Protection Casework Section </span></p></body>
+</html>
