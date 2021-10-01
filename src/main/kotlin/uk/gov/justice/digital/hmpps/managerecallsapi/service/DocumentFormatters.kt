@@ -30,6 +30,14 @@ data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = 
     }
 }
 
+data class FirstAndMiddleNames(val firstName: FirstName, val middleNames: MiddleNames? = null) {
+  override fun toString(): String =
+    when (middleNames) {
+      null -> "$firstName"
+      else -> "$firstName $middleNames"
+    }
+}
+
 data class RecallLengthDescription(val recallLength: RecallLength) {
   fun asFixedTermLengthDescription(): String {
     return when (recallLength) {
