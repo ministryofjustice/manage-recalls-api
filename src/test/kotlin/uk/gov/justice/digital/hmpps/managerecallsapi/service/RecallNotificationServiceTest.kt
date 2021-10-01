@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -55,8 +56,8 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContextFactory.createContext(recallId, userId) } returns recallNotificationContext
     every { letterToProbationService.getPdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { recallSummaryService.getPdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
+    every { revocationOrderService.createPdf(recallNotificationContext) } returns Mono.just(revocationOrderContent.toByteArray())
 
-    every { revocationOrderService.createPdf(recallId, userId) } returns Mono.just(revocationOrderContent.toByteArray())
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION) } returns documentId
 
@@ -85,10 +86,10 @@ internal class RecallNotificationServiceTest {
 
     val result = underTest.getDocument(recallId, userId)
 
-    verify(exactly = 0) { recallSummaryService.getPdf(any()) }
-    verify(exactly = 0) { revocationOrderService.createPdf(recallId, userId) }
-    verify(exactly = 0) { letterToProbationService.getPdf(any()) }
-    verify(exactly = 0) { pdfDocumentGenerationService.mergePdfs(any()) }
+    verify { recallSummaryService wasNot Called }
+    verify { revocationOrderService wasNot Called }
+    verify { letterToProbationService wasNot Called }
+    verify { pdfDocumentGenerationService wasNot Called }
 
     StepVerifier.create(result).assertNext { assertThat(it, equalTo(recallNotificationBytes)) }.verifyComplete()
   }

@@ -9,10 +9,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.signature
@@ -27,7 +25,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
 import java.io.File
 import java.util.Base64
@@ -37,41 +34,36 @@ import java.util.UUID
 internal class RevocationOrderServiceTest {
 
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
-  private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val recallDocumentService = mockk<RecallDocumentService>()
-  private val recallRepository = mockk<RecallRepository>()
   private val revocationOrderGenerator = mockk<RevocationOrderGenerator>()
-  private val userDetailsService = mockk<UserDetailsService>()
 
   private val underTest = RevocationOrderService(
     pdfDocumentGenerationService,
-    prisonerOffenderSearchClient,
     recallDocumentService,
-    recallRepository,
-    revocationOrderGenerator,
-    userDetailsService
+    revocationOrderGenerator
   )
 
-  // TODO: will be good to agree as the dev team whether we prefer this model or local vals per test fun
   private val recallId = ::RecallId.random()
   private val expectedBytes = randomString().toByteArray()
   private val nomsNumber = randomNoms()
 
   @Test
   fun `creates a revocation order for a recall `() {
-    val aRecall = Recall(recallId, nomsNumber)
+    val recall = Recall(recallId, nomsNumber)
     val prisoner = mockk<Prisoner>()
-    val revocationOrderId = UUID.randomUUID()
     val userId = UserId(UUID.randomUUID())
     val userSignature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
 
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
-    every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
-    val generatedHtml = "Some html, honest"
-    every { userDetailsService.get(userId) } returns UserDetails(
-      userId, FirstName("Bob"), LastName("Badger"), userSignature, Email("bertie@badger.org"), PhoneNumber("01234567890")
+    val userDetails = UserDetails(
+      userId,
+      FirstName("Bob"),
+      LastName("Badger"),
+      userSignature,
+      Email("bertie@badger.org"),
+      PhoneNumber("01234567890")
     )
-    every { revocationOrderGenerator.generateHtml(prisoner, aRecall) } returns generatedHtml
+    val generatedHtml = "Some html, honest"
+    every { revocationOrderGenerator.generateHtml(prisoner, recall) } returns generatedHtml
     every {
       pdfDocumentGenerationService.generatePdf(
         generatedHtml,
@@ -81,9 +73,11 @@ internal class RevocationOrderServiceTest {
     } returns Mono.just(expectedBytes)
     every {
       recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER)
-    } returns revocationOrderId
+    } returns UUID.randomUUID()
 
-    val result = underTest.createPdf(recallId, userId)
+    val recallNotificationContext =
+      RecallNotificationContext(recall, prisoner, userDetails, "currentPrisonName", "lastReleasePrisonName")
+    val result = underTest.createPdf(recallNotificationContext)
 
     StepVerifier
       .create(result)
@@ -104,11 +98,8 @@ internal class RevocationOrderServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-        verify { prisonerOffenderSearchClient wasNot Called }
         verify { pdfDocumentGenerationService wasNot Called }
         verify { revocationOrderGenerator wasNot Called }
-        verify { recallRepository wasNot Called }
-        verify { userDetailsService wasNot Called }
         verify { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) }
       }
       .verifyComplete()
