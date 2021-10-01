@@ -35,7 +35,7 @@ class RecallNotificationService(
     return recallSummaryService.getPdf(recallNotificationContext).map { recallSummaryBytes ->
       docs += documentData(recallSummaryBytes)
     }.flatMap {
-      revocationOrderService.createPdf(recallId, userId)
+      revocationOrderService.createPdf(recallNotificationContext)
     }.map { revocationOrderBytes ->
       docs += documentData(revocationOrderBytes)
     }.map {
