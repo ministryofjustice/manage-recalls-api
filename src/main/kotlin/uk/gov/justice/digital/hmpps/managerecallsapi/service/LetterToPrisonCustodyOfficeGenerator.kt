@@ -23,7 +23,7 @@ class LetterToPrisonCustodyOfficeGenerator(
       setVariable("teamPhoneNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("todaysDate", LocalDate.now(clock).asStandardDateFormat())
       with(context.prisoner) {
-        setVariable("fullName", PersonName(FirstName(this.firstName!!), MiddleNames(this.middleNames!!), LastName(this.lastName!!)))
+        setVariable("fullName", PersonName(FirstName(this.firstName!!), this.middleNames?.let { MiddleNames(it) }, LastName(this.lastName!!)))
       }
 
       with(context.recall) {

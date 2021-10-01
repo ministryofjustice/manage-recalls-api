@@ -14,19 +14,17 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
   private val prisonerFirstName = "Natalia"
   private val assessedByUserId = ::UserId.random()
-  private val recallNotificationUserId = ::UserId.random()
 
   @Test
   fun `can generate a letter to prison using gotenberg`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(assessedByUserId)
-    setupUserDetailsFor(recallNotificationUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheRecallSummary(recall.recallId)
+    updateRecallWithRequiredInformationForTheLetterToPrison(recall.recallId, assessedByUserId = assessedByUserId)
 
     val letterToPrison = authenticatedClient.getLetterToPrison(recall.recallId)
     writeBase64EncodedStringToFile("letter-to-prison.pdf", letterToPrison.content)
-    assertThat(letterToPrison, hasNumberOfPages(equalTo(4)))
+    assertThat(letterToPrison, hasNumberOfPages(equalTo(5)))
   }
 }

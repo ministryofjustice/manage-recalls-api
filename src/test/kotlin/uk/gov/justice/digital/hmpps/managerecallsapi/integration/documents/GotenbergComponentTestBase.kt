@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
@@ -49,6 +50,43 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         currentPrison = "MWI",
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
         contrabandDetail = contrabandDetail
+      )
+    )
+  }
+
+  protected fun updateRecallWithRequiredInformationForTheLetterToPrison(
+    recallId: RecallId,
+    vulnerabilityDiversityDetail: String = "Very diverse",
+    contrabandDetail: String = "Lots of naughty contraband",
+    assessedByUserId: UserId? = null
+  ) {
+    authenticatedClient.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        mappaLevel = MappaLevel.LEVEL_1,
+        previousConvictionMainName = "Nat The Naughty",
+        bookingNumber = "NAT0001",
+        lastReleasePrison = "MWI",
+        lastReleaseDate = LocalDate.of(2021, 9, 2),
+        sentenceDate = LocalDate.of(2012, 5, 17),
+        licenceExpiryDate = LocalDate.of(2025, 12, 25),
+        sentenceExpiryDate = LocalDate.of(2021, 1, 12),
+        sentenceLength = Api.SentenceLength(10, 1, 5),
+        sentencingCourt = "Badger court",
+        indexOffence = "Some index offence",
+        reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
+        probationOfficerName = "Percy Pig",
+        probationOfficerPhoneNumber = "0898909090",
+        probationOfficerEmail = "probation.officer@moj.com",
+        localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
+        authorisingAssistantChiefOfficer = "ACO",
+        localPoliceForce = "London",
+        currentPrison = "MWI",
+        vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
+        contrabandDetail = contrabandDetail,
+        assessedByUserId = assessedByUserId,
+        differentNomsNumber = true,
+        differentNomsNumberDetail = "ABC123"
       )
     )
   }
