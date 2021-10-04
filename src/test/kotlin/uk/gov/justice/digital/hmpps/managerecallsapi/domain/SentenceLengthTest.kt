@@ -38,7 +38,7 @@ class SentenceLengthTest {
         ).calculateRecallLength()
       )
     )
-    assertThat(sentenceLength.prettyPrint(), equalTo(prettyPrint))
+    assertThat(sentenceLength.toString(), equalTo(prettyPrint))
   }
 
   fun parameterArrays(): Stream<Arguments>? {
