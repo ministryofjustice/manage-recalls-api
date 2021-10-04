@@ -20,16 +20,18 @@ class DossierService(
   @Autowired private val recallDocumentService: RecallDocumentService,
   @Autowired private val reasonsForRecallService: ReasonsForRecallService,
   @Autowired private val pdfDecorator: PdfDecorator,
-  @Autowired private val tableOfContentsService: TableOfContentsService
+  @Autowired private val tableOfContentsService: TableOfContentsService,
+  @Autowired private val dossierContextFactory: DossierContextFactory
 ) {
 
   fun getDossier(recallId: RecallId): Mono<ByteArray> {
     val license = recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE)
     val partARecallReport = recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
     val revocationOrder = recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER)
+    val dossierContext = dossierContextFactory.createContext(recallId)
 
     // TODO: attempts to add this without block() fell over on runtime errors relating to e.g. other use of block in getPrisonName
-    val reasonsForRecall = reasonsForRecallService.getPdf(recallId).block()!!
+    val reasonsForRecall = reasonsForRecallService.getPdf(dossierContext).block()!!
 
     val dossierDocuments = mutableMapOf(
       "Recall Information Leaflet [Core Dossier]" to documentData(RecallInformationLeaflet),

@@ -28,13 +28,16 @@ internal class DossierServiceTest {
   private val recallDocumentService = mockk<RecallDocumentService>()
   private val reasonsForRecallService = mockk<ReasonsForRecallService>()
   private val pdfDecorator = mockk<PdfDecorator>()
+  private val dossierContextFactory = mockk<DossierContextFactory>()
+  private val dossierContext = mockk<DossierContext>()
 
   private val underTest = DossierService(
     pdfDocumentGenerationService,
     recallDocumentService,
     reasonsForRecallService,
     pdfDecorator,
-    tableOfContentsService
+    tableOfContentsService,
+    dossierContextFactory
   )
 
   @Test
@@ -49,10 +52,11 @@ internal class DossierServiceTest {
     val numberedMergedBytes = randomString().toByteArray()
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
+    every { dossierContextFactory.createContext(recallId) } returns dossierContext
     every { recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
     every { recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
     every { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
-    every { reasonsForRecallService.getPdf(recallId) } returns Mono.just(reasonsForRecallContentBytes)
+    every { reasonsForRecallService.getPdf(dossierContext) } returns Mono.just(reasonsForRecallContentBytes)
     every { tableOfContentsService.getPdf(recallId, any()) } returns Mono.just(tableOfContentBytes)
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
