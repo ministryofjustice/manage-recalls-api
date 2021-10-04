@@ -981,7 +981,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
       <p class="c0"><span class="c1">POLICE FILE NAME: <span>Bryan Badger</span></span></p>
       <p class="c0"><span class="c1">PRISON NUMBER: <span>B1234</span></span></p>
       <p class="c0"><span class="c1">PNOMIS NUMBER: <span>AA1234A</span></span></p>
-      <p class="c0"><span class="c1">RELEASING PRISON: <span>Prison A</span></span></p>
+      <p class="c0"><span class="c1">RELEASING PRISON: <span>Last Release Prison</span></span></p>
       <p class="c0"><span class="c1">RELEASE DATE: <span>01 Oct 2020</span></span></p>
       <p class="c0"><span class="c1">LENGTH OF SENTENCE: <span>2 years 3 months 10 days</span></span></p>
       <p class="c0"><span class="c1">INDEX OFFENCE: <span>Some offence</span></span></p><a
@@ -1000,7 +1000,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
       <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13"><span>London</span></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
       <p class="c0"><span class="c1">CURRENT PRISON:</span></p>
-      <p class="c0"><span class="c1"><span>Prison B</span></span></p>
+      <p class="c0"><span class="c1"><span>Current Prison</span></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
       <p class="c0"><span
         class="c1">SENTENCING COURT &amp; DATE: &nbsp;<span>High Court</span> <span>01 Oct 2020</span></span></p>

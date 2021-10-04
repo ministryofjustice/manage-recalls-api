@@ -62,5 +62,13 @@ fun MappaLevel.shouldShowOnDocuments(): Boolean {
 
 fun UserDetails.fullName(): String = PersonName(this.firstName, null, this.lastName).toString()
 
+class YesOrNo(val value: Boolean) {
+  override fun toString(): String = if (value) "YES" else "NO"
+}
+
+class ValueOrNone(val value: String?) {
+  override fun toString(): String = value ?: "None"
+}
+
 fun LocalDate.asStandardDateFormat(): String = this.format(standardDateFormatter)
 fun ZonedDateTime.asStandardTimeFormat(): String = this.format(standardTimeFormatter)

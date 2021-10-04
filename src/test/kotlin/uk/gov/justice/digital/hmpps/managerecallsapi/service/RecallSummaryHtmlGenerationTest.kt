@@ -4,81 +4,59 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.PS_TOWER_HAMLETS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import java.time.Clock
-import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 
 class RecallSummaryHtmlGenerationTest(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) : HtmlGenerationTestCase() {
-  private val fixedClock = Clock.fixed(Instant.parse("2021-09-01T16:48:30.00Z"), ZoneId.of("UTC"))
-  private val underTest = RecallSummaryGenerator(templateEngine, fixedClock)
+  private val underTest = RecallSummaryGenerator(templateEngine)
 
   @Test
   fun `generate recall summary HTML`(approver: ContentApprover) {
-    val assessedByUserId = ::UserId.random()
     approver.assertApproved(
       underTest.generateHtml(
-        RecallNotificationContext(
-          Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"),
-            contrabandDetail = "I believe that they will bring contraband to prison",
-            mappaLevel = MappaLevel.LEVEL_3,
-            previousConvictionMainName = "Bryan Badger",
-            bookingNumber = "B1234",
-            lastReleaseDate = LocalDate.of(2020, 10, 1),
-            reasonsForRecall = setOf(
-              ReasonForRecall.ELM_FURTHER_OFFENCE
-            ),
-            sentencingInfo = SentencingInfo(
-              LocalDate.of(2020, 10, 1),
-              LocalDate.of(2020, 11, 1),
-              LocalDate.of(2020, 10, 29),
-              "High Court",
-              "Some offence",
-              SentenceLength(2, 3, 10),
-            ),
-            probationInfo = ProbationInfo(
-              "Mr Probation Officer",
-              "01234567890",
-              "officer@myprobation.com",
-              LocalDeliveryUnit.PS_TOWER_HAMLETS,
-              "Ms Authoriser"
-            ),
-            localPoliceForce = "London",
-            vulnerabilityDiversityDetail = "Some stuff",
-            assessedByUserId = assessedByUserId
-          ),
-          Prisoner(
-            firstName = "Bertie",
-            middleNames = "Basset",
-            lastName = "Badger",
-            dateOfBirth = LocalDate.of(1995, 10, 3),
-            bookNumber = "bookNumber",
-            croNumber = "croNumber"
-          ),
-          UserDetails(assessedByUserId, FirstName("Maria"), LastName("Badger"), "", Email("maria@thebadgers.set"), PhoneNumber("09876543210")),
-          PrisonName("Prison B"),
-          PrisonName("Prison A")
+        RecallSummaryContext(
+          ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(17, 48), ZoneId.of("Europe/London")),
+          FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
+          LastName("Badger"),
+          LocalDate.of(1995, 10, 3),
+          "croNumber",
+          PersonName(FirstName("Maria"), null, LastName("Badger")),
+          Email("maria@thebadgers.set"),
+          PhoneNumber("09876543210"),
+          MappaLevel.LEVEL_3,
+          SentenceLength(2, 3, 10),
+          "Some offence",
+          "High Court",
+          LocalDate.of(2020, 10, 1),
+          LocalDate.of(2020, 10, 29),
+          "Mr Probation Officer",
+          "01234567890",
+          PS_TOWER_HAMLETS,
+          "Bryan Badger",
+          "B1234",
+          NomsNumber("AA1234A"),
+          LocalDate.of(2020, 10, 1),
+          setOf(ELM_FURTHER_OFFENCE),
+          "London",
+          "Some stuff",
+          "I believe that they will bring contraband to prison",
+          PrisonName("Current Prison"),
+          PrisonName("Last Release Prison")
         ),
         3
       )

@@ -18,20 +18,22 @@ class RecallSummaryService(
 ) {
 
   fun createPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> =
-    getRecallSummaryNumberOfPages(recallNotificationContext).map { numberOfPages ->
-      recallNotificationContext to OTHER_PAGES_IN_RECALL_NOTIFICATION + numberOfPages
-    }.flatMap { contextWithActualNumberOfPages ->
-      generatePdf(contextWithActualNumberOfPages.first, contextWithActualNumberOfPages.second)
+    recallNotificationContext.getRecallSummaryContext().let { recallSummaryContext ->
+      getRecallSummaryNumberOfPages(recallSummaryContext).map { numberOfPages ->
+        recallSummaryContext to OTHER_PAGES_IN_RECALL_NOTIFICATION + numberOfPages
+      }.flatMap { contextWithActualNumberOfPages ->
+        generatePdf(contextWithActualNumberOfPages.first, contextWithActualNumberOfPages.second)
+      }
     }
 
-  private fun getRecallSummaryNumberOfPages(context: RecallNotificationContext) =
-    generatePdf(context).map { pdfBytes ->
+  private fun getRecallSummaryNumberOfPages(recallSummaryContext: RecallSummaryContext) =
+    generatePdf(recallSummaryContext).map { pdfBytes ->
       PdfReader(pdfBytes).use { it.numberOfPages }
     }
 
-  private fun generatePdf(context: RecallNotificationContext, recallNotificationTotalNumberOfPages: Int? = null) =
+  private fun generatePdf(recallSummaryContext: RecallSummaryContext, recallNotificationTotalNumberOfPages: Int? = null) =
     pdfDocumentGenerationService.generatePdf(
-      recallSummaryGenerator.generateHtml(context, recallNotificationTotalNumberOfPages),
+      recallSummaryGenerator.generateHtml(recallSummaryContext, recallNotificationTotalNumberOfPages),
       recallImage(HmppsLogo)
     )
 }
