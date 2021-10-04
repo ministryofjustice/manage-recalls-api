@@ -219,7 +219,9 @@ data class RecallResponse(
   val status: Status? = calculateStatus()
 
   private fun calculateStatus(): Status? =
-    if (recallNotificationEmailSentDateTime != null) {
+    if (dossierCreatedByUserId != null) {
+      Status.DOSSIER_ISSUED
+    } else if (recallNotificationEmailSentDateTime != null) {
       Status.RECALL_NOTIFICATION_ISSUED
     } else if (bookedByUserId != null) {
       Status.BOOKED_ON
@@ -259,5 +261,6 @@ data class GetDocumentResponse(
 
 enum class Status {
   RECALL_NOTIFICATION_ISSUED,
-  BOOKED_ON
+  BOOKED_ON,
+  DOSSIER_ISSUED
 }

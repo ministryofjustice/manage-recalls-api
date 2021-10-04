@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -45,5 +46,27 @@ class RecallResponseTest {
     )
 
     assertThat(recall.status, equalTo(Status.RECALL_NOTIFICATION_ISSUED))
+  }
+
+  @Test
+  fun `RecallResponse with dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
+    val recall = RecallResponse(
+      RecallId(UUID.randomUUID()), randomNoms(),
+      dossierCreatedByUserId = UserId(UUID.randomUUID())
+    )
+
+    assertThat(recall.status, equalTo(Status.DOSSIER_ISSUED))
+  }
+
+  @Test
+  fun `RecallResponse with dossierCreatedByUserId set and recallNotificationEmailSentDateTime set and bookedByUserId set returns status DOSSIER_ISSUED`() {
+    val recall = RecallResponse(
+      RecallId(UUID.randomUUID()), randomNoms(),
+      dossierCreatedByUserId = UserId(UUID.randomUUID()),
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      bookedByUserId = UserId(UUID.randomUUID()),
+    )
+
+    assertThat(recall.status, equalTo(Status.DOSSIER_ISSUED))
   }
 }
