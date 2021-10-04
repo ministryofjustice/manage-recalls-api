@@ -2,15 +2,16 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 
 @Service
 class PrisonLookupService(@Autowired private val prisonRegisterClient: PrisonRegisterClient) {
-  fun getPrisonName(prisonId: String): PrisonName =
+  fun getPrisonName(prisonId: PrisonId): PrisonName =
     prisonRegisterClient.getAllPrisons().mapNotNull { prisons ->
-      prisons.find { it.prisonId == prisonId }?.prisonName?.let { name -> PrisonName(name) }
+      prisons.find { it.prisonId == prisonId }?.prisonName
     }.block() ?: throw PrisonNotFoundException(prisonId)
 }
 
-data class PrisonNotFoundException(val prisonId: String) : Exception()
+data class PrisonNotFoundException(val prisonId: PrisonId) : Exception()

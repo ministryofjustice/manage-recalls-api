@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
@@ -19,7 +20,7 @@ class UpdateRecallControllerTest {
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A9876ZZ")
 
-  private val updateRecallRequest = UpdateRecallRequest(lastReleasePrison = "ABC", currentPrison = "DEF")
+  private val updateRecallRequest = UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
 
   private val recall = Recall(recallId, nomsNumber)
 

@@ -17,14 +17,16 @@ import java.util.Base64
 @Component
 class PdfDocumentGenerationService(@Autowired private val gotenbergApi: GotenbergApi) {
 
-  fun generatePdf(html: String, vararg images: ImageData): Mono<ByteArray> =
+  fun generatePdf(html: String, vararg images: ImageData): Mono<ByteArray> = generatePdf(html = html, marginTop = 0.0, marginBottom = 0.0, images = images)
+
+  fun generatePdf(html: String, marginTop: Double, marginBottom: Double, vararg images: ImageData): Mono<ByteArray> =
     gotenbergApi.convertHtml(
       toConvertHtmlRequest(
         html,
         images,
         mapOf(
-          "marginTop" to 0,
-          "marginBottom" to 0,
+          "marginTop" to marginTop,
+          "marginBottom" to marginBottom,
           "marginLeft" to 0,
           "marginRight" to 0
         )

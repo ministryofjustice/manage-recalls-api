@@ -38,7 +38,7 @@ class RandomUtilitiesTest {
         ),
         has(Recall::recallType, present()),
         has(Recall::recallLength, present()),
-        has(Recall::lastReleasePrison, present()),
+        has("lastReleasePrison", { it.lastReleasePrison }, present()),
         has(Recall::lastReleaseDate, present()),
         has(Recall::recallEmailReceivedDateTime, present()),
         has(Recall::localPoliceForce, present()),
@@ -53,7 +53,7 @@ class RandomUtilitiesTest {
         has(Recall::reasonsForRecallOtherDetail, present()),
         has(Recall::agreeWithRecall, present()),
         has(Recall::agreeWithRecallDetail, present()),
-        has(Recall::currentPrison, present()),
+        has("currentPrison", { it.currentPrison }, present()),
         has(Recall::additionalLicenceConditions, present()),
         has(Recall::additionalLicenceConditionsDetail, present()),
         has(Recall::differentNomsNumber, present()),
@@ -62,7 +62,10 @@ class RandomUtilitiesTest {
         has(Recall::dossierEmailSentDate, present()),
         has(Recall::hasOtherPreviousConvictionMainName, present()),
         has(Recall::hasDossierBeenChecked, present()),
-        has(Recall::previousConvictionMainName, present())
+        has(Recall::previousConvictionMainName, present()),
+        has("assessedByUserId", { it.assessedByUserId }, present()),
+        has("dossierCreatedByUserId", { it.dossierCreatedByUserId }, present()),
+        has("bookedByUserId", { it.bookedByUserId }, present()),
       )
     )
   }

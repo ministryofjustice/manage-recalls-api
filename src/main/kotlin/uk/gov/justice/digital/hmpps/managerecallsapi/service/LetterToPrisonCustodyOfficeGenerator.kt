@@ -7,6 +7,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 import java.time.Clock
 import java.time.LocalDate
 
@@ -18,10 +19,11 @@ class LetterToPrisonCustodyOfficeGenerator(
   fun generateHtml(context: LetterToPrisonContext): String =
     Context().apply {
 
-      setVariable("logoFileName", RecallImage.HmppsLogo.fileName)
+      setVariable("logoFileName", HmppsLogo.fileName)
       setVariable("teamName", RECALL_TEAM_NAME)
       setVariable("teamPhoneNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("todaysDate", LocalDate.now(clock).asStandardDateFormat())
+
       with(context.prisoner) {
         setVariable("fullName", PersonName(FirstName(this.firstName!!), this.middleNames?.let { MiddleNames(it) }, LastName(this.lastName!!)))
       }
@@ -40,13 +42,11 @@ class LetterToPrisonCustodyOfficeGenerator(
         setVariable("hasContraband", this.contrabandDetail?.isNotEmpty())
         setVariable("contrabandDetail", this.contrabandDetail)
         setVariable("hasMappaLevel", this.mappaLevel!!.shouldShowOnDocuments())
-        setVariable("mappaLevel", this.mappaLevel)
+        setVariable("mappaLevel", this.mappaLevel.label)
       }
 
       setVariable("currentEstablishment", context.currentPrisonName)
       setVariable("assessorName", context.assessor.fullName())
-
-//      setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
     }.let {
       templateEngine.process("letter-to-prison_custody-office", it)
     }

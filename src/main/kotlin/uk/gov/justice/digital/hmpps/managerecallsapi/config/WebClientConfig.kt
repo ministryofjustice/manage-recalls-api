@@ -57,7 +57,13 @@ class WebClientConfig {
 
   @Bean
   fun prisonRegisterWebClient(): WebClient {
-    return WebClient.builder().baseUrl(prisonRegisterEndpointUrl).build()
+    return WebClient.builder()
+      .baseUrl(prisonRegisterEndpointUrl)
+      .codecs {
+        it.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
+        it.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
+      }
+      .build()
   }
 
   private fun webClientFactory(

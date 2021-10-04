@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -32,7 +33,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainName = "Nat The Naughty",
         bookingNumber = "NAT0001",
-        lastReleasePrison = "MWI",
+        lastReleasePrison = PrisonId("MWI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
         sentenceDate = LocalDate.of(2012, 5, 17),
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
@@ -47,7 +48,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
         authorisingAssistantChiefOfficer = "ACO",
         localPoliceForce = "London",
-        currentPrison = "MWI",
+        currentPrison = PrisonId("MWI"),
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
         contrabandDetail = contrabandDetail
       )
@@ -66,7 +67,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainName = "Nat The Naughty",
         bookingNumber = "NAT0001",
-        lastReleasePrison = "MWI",
+        lastReleasePrison = PrisonId("MWI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
         sentenceDate = LocalDate.of(2012, 5, 17),
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
@@ -81,7 +82,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
         authorisingAssistantChiefOfficer = "ACO",
         localPoliceForce = "London",
-        currentPrison = "MWI",
+        currentPrison = PrisonId("MWI"),
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
         contrabandDetail = contrabandDetail,
         assessedByUserId = assessedByUserId,

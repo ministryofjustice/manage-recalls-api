@@ -72,7 +72,7 @@
       <td width=389 colspan=2 valign=top style='width:291.85pt;border:solid white 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
         <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-  border:none'><span style='color:black'><img width=187 height=82 th:src="${logoFileName}"></span></p>
+  border:none'><span style='color:black'><img width=187 height=82 src="hmpps-logo.png"></span></p>
       </td>
       <td width=16 valign=top style='width:11.8pt;border:solid white 1.0pt;
   border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
@@ -106,9 +106,9 @@
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'><span style='font-size:10.0pt'>&nbsp;</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt'>Team: <span th:text="${teamName}"/></span></b></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt'>Team: <span>Recall Team</span></span></b></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt'>T</span></b><span style='font-size:10.0pt'>: <span th:text="${teamPhoneNumber}"/></span></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt'>T</span></b><span style='font-size:10.0pt'>: <span>N/K</span></span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'>&nbsp;</p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
@@ -207,7 +207,7 @@
         <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
   border:none'><span style='color:black'>&nbsp;</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt;line-height:normal;border:none' th:text="${todaysDate}"></p>
+  text-indent:-.1pt;line-height:normal;border:none'>04 Oct 2021</p>
       </td>
     </tr>
     <tr height=0>
@@ -222,7 +222,7 @@
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span style='font-size:10.5pt;color:white'>                        </span></p>
 
   <p class=MsoNormal align=center style='margin-left:.05pt;text-align:center;
-text-indent:-.15pt'><b><u><span style='font-size:17.0pt' th:text="${recallLengthDescription}"/></u></b></p>
+text-indent:-.15pt'><b><u><span style='font-size:17.0pt'>14 DAY FIXED TERM RECALL</span></u></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span
     style='font-size:10.5pt'>                                     </span></p>
@@ -232,25 +232,25 @@ text-indent:-.15pt'><b><u><span style='font-size:17.0pt' th:text="${recallLength
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><b>To:</b>The Governor </p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt' th:text="${currentEstablishment}"/>
+  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>Prison A</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal align=center style='margin-left:0cm;text-align:center;
-text-indent:-.1pt'><b>RECALL TO PRISON OF: <span th:text="${fullName}"/></b></p>
+text-indent:-.1pt'><b>RECALL TO PRISON OF: <span>Billie Bob Badger</span></b></p>
 
   <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
 text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>PRISON NUMBER</b>:<span th:text="${bookingNumber}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>PRISON NUMBER</b>:<span>B1234</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASED ON LICENCE: </b><span th:text="${lastReleaseDate}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASED ON LICENCE: </b><span>01 Oct 2020</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASING PRISON: </b><span th:text="${lastReleasePrison}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASING PRISON: </b><span>Prison B</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 

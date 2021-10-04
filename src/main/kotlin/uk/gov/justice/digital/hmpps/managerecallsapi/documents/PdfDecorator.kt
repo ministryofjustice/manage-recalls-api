@@ -19,13 +19,66 @@ class PdfDecorator {
         val firstPageToNumber = numberOfPagesToSkip + 1
         (firstPageToNumber..pdfReader.numberOfPages).forEach { pageNumber ->
           val numberToPrintOnPage = pageNumber - numberOfPagesToSkip
-          val t = Phrase(numberToPrintOnPage.toString(), Liberation.SERIF.create(10))
-          val xt: Float = pdfReader.getPageSize(pageNumber).width / 2
-          val yt: Float = pdfReader.getPageSize(pageNumber).getBottom(20f)
+          val text = Phrase("$numberToPrintOnPage", Liberation.SERIF.create(10))
+          val xPos: Float = pdfReader.getPageSize(pageNumber).width / 2
+          val yPos: Float = pdfReader.getPageSize(pageNumber).getBottom(20f)
           ColumnText.showTextAligned(
             pdfStamper.getOverContent(pageNumber), Element.ALIGN_CENTER,
-            t, xt, yt, 0f
+            text, xPos, yPos, 0f
           )
+        }
+        pdfStamper.close()
+      }
+      output.toByteArray()
+    }
+
+  fun numberPagesOnRightWithHeaderAndFooter(
+    pdfContent: ByteArray,
+    numberOfPagesToSkip: Int = 0,
+    shouldCountAllPages: Boolean = true,
+    headerText: String?,
+    firstHeaderPage: Int = 1,
+    footerText: String?,
+    firstFooterPage: Int = 1
+  ): ByteArray =
+    ByteArrayOutputStream().use { output ->
+      PdfReader(pdfContent).use { pdfReader ->
+        val pdfStamper = PdfStamper(pdfReader, output)
+
+        val firstPageToNumber = numberOfPagesToSkip + 1
+        (1..pdfReader.numberOfPages).forEach { pageNumber ->
+          if (pageNumber >= firstPageToNumber) {
+            val numberToPrintOnPage = if (shouldCountAllPages) pageNumber else pageNumber - numberOfPagesToSkip
+            val pageNumberPhrase = Phrase("$numberToPrintOnPage", Liberation.SERIF.create(10))
+            val xRightPos: Float = pdfReader.getPageSize(pageNumber).width - 40f
+            val yPosNumber: Float = pdfReader.getPageSize(pageNumber).getBottom(50f)
+            ColumnText.showTextAligned(
+              pdfStamper.getOverContent(pageNumber), Element.ALIGN_CENTER,
+              pageNumberPhrase, xRightPos, yPosNumber, 0f
+            )
+          }
+          if (pageNumber >= firstHeaderPage) {
+            headerText.let { header ->
+              val headerPhrase = Phrase("$header", Liberation.SERIF.create(10))
+              val xRightPos: Float = pdfReader.getPageSize(pageNumber).width - 20f
+              val yPosHeader: Float = pdfReader.getPageSize(pageNumber).getTop(20f)
+              ColumnText.showTextAligned(
+                pdfStamper.getOverContent(pageNumber), Element.ALIGN_RIGHT,
+                headerPhrase, xRightPos, yPosHeader, 0f
+              )
+            }
+          }
+          if (pageNumber >= firstFooterPage) {
+            footerText.let { footer ->
+              val xCentralPos: Float = pdfReader.getPageSize(pageNumber).width / 2
+              val footerPhrase = Phrase(footer, Liberation.SERIF_BOLD.create(10))
+              val yPosFooter: Float = pdfReader.getPageSize(pageNumber).getBottom(30f)
+              ColumnText.showTextAligned(
+                pdfStamper.getOverContent(pageNumber), Element.ALIGN_CENTER,
+                footerPhrase, xCentralPos, yPosFooter, 0f
+              )
+            }
+          }
         }
         pdfStamper.close()
       }

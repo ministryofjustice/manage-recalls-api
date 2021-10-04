@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import com.lowagie.text.pdf.PdfReader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -7,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.L
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
@@ -19,7 +21,7 @@ class LetterToPrisonService(
   @Autowired private val letterToPrisonGovernorGenerator: LetterToPrisonGovernorGenerator,
   @Autowired private val letterToPrisonConfirmationGenerator: LetterToPrisonConfirmationGenerator,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
-
+  @Autowired private val pdfDecorator: PdfDecorator,
 ) {
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> {
@@ -41,13 +43,15 @@ class LetterToPrisonService(
     val docs = mutableListOf<ByteArrayDocumentData>()
 
     val letterToPrisonCustodyOfficeHtml = letterToPrisonCustodyOfficeGenerator.generateHtml(context)
+    var custodyOfficePageCount = 0
 
-    return pdfDocumentGenerationService.generatePdf(letterToPrisonCustodyOfficeHtml, recallImage(HmppsLogo))
+    return pdfDocumentGenerationService.generatePdf(letterToPrisonCustodyOfficeHtml, 1.0, 1.0, recallImage(HmppsLogo))
       .map { custodyBytes ->
+        custodyOfficePageCount = PdfReader(custodyBytes).numberOfPages
         docs += documentData(custodyBytes)
       }.flatMap {
         val letterToPrisonGovernorHtml = letterToPrisonGovernorGenerator.generateHtml(context)
-        pdfDocumentGenerationService.generatePdf(letterToPrisonGovernorHtml, recallImage(HmppsLogo))
+        pdfDocumentGenerationService.generatePdf(letterToPrisonGovernorHtml, 1.0, 1.0, recallImage(HmppsLogo))
       }.map { governorBytes ->
         docs += documentData(governorBytes)
       }.flatMap {
@@ -57,6 +61,13 @@ class LetterToPrisonService(
         docs += documentData(confBytes)
       }.flatMap {
         pdfDocumentGenerationService.mergePdfs(docs)
+      }.map { mergedPdfContentBytes ->
+        pdfDecorator.numberPagesOnRightWithHeaderAndFooter(
+          mergedPdfContentBytes,
+          headerText = "Annex H – Appeal Papers",
+          firstHeaderPage = custodyOfficePageCount + 1,
+          footerText = "OFFICIAL"
+        )
       }
   }
 }

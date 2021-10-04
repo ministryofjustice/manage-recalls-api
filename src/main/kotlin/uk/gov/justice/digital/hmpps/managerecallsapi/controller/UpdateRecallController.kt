@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.time.LocalDate
@@ -36,7 +37,7 @@ class UpdateRecallController(private val updateRecallService: UpdateRecallServic
 }
 
 data class UpdateRecallRequest(
-  val lastReleasePrison: String? = null,
+  val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceForce: String? = null,
@@ -61,7 +62,7 @@ data class UpdateRecallRequest(
   val reasonsForRecallOtherDetail: String? = null,
   val agreeWithRecall: AgreeWithRecall? = null,
   val agreeWithRecallDetail: String? = null,
-  val currentPrison: String? = null,
+  val currentPrison: PrisonId? = null,
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
   val differentNomsNumber: Boolean? = null,

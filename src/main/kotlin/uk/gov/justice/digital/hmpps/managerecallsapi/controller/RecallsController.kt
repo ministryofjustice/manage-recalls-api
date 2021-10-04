@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -130,7 +131,7 @@ fun Recall.toResponse() = RecallResponse(
   nomsNumber = this.nomsNumber,
   documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) },
   recallLength = this.recallLength,
-  lastReleasePrison = this.lastReleasePrison,
+  lastReleasePrison = this.lastReleasePrison?.let { PrisonId(it) },
   lastReleaseDate = this.lastReleaseDate,
   recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
   localPoliceForce = localPoliceForce,
@@ -155,7 +156,7 @@ fun Recall.toResponse() = RecallResponse(
   reasonsForRecallOtherDetail = this.reasonsForRecallOtherDetail,
   agreeWithRecall = this.agreeWithRecall,
   agreeWithRecallDetail = this.agreeWithRecallDetail,
-  currentPrison = this.currentPrison,
+  currentPrison = this.currentPrison?.let { PrisonId(it) },
   additionalLicenceConditions = this.additionalLicenceConditions,
   additionalLicenceConditionsDetail = this.additionalLicenceConditionsDetail,
   differentNomsNumber = this.differentNomsNumber,
@@ -177,7 +178,7 @@ data class RecallResponse(
   val nomsNumber: NomsNumber,
   val documents: List<ApiRecallDocument> = emptyList(),
   val recallLength: RecallLength? = null,
-  val lastReleasePrison: String? = null,
+  val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceForce: String? = null,
@@ -202,7 +203,7 @@ data class RecallResponse(
   val reasonsForRecallOtherDetail: String? = null,
   val agreeWithRecall: AgreeWithRecall? = null,
   val agreeWithRecallDetail: String? = null,
-  val currentPrison: String? = null,
+  val currentPrison: PrisonId? = null,
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
   val differentNomsNumber: Boolean? = null,

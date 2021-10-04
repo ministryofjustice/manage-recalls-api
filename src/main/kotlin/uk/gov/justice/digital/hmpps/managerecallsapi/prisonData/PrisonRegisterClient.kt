@@ -5,6 +5,8 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 
 @Component
 class PrisonRegisterClient {
@@ -21,8 +23,8 @@ class PrisonRegisterClient {
   }
 
   data class Prison(
-    val prisonId: String? = null,
-    val prisonName: String? = null,
+    val prisonId: PrisonId? = null,
+    val prisonName: PrisonName? = null,
     val active: Boolean? = null
   )
 }

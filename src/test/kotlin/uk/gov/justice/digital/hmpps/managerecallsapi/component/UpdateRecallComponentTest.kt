@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -41,9 +42,9 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   @Test
   fun `update a recall returns updated recall`() {
     prisonRegisterMockServer.prisonerSearchRespondsWith200()
-    val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = "MWI", currentPrison = "BMI"))
+    val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = PrisonId("MWI"), currentPrison = PrisonId("BMI")))
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = "MWI", currentPrison = "BMI")))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = PrisonId("MWI"), currentPrison = PrisonId("BMI"))))
   }
 
   @Suppress("unused")

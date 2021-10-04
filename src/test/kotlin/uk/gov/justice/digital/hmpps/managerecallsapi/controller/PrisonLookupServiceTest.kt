@@ -7,6 +7,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient.Prison
@@ -17,11 +18,11 @@ class PrisonLookupServiceTest {
 
   private val underTest = PrisonLookupService(prisonRegisterClient)
 
-  private val prisonId = "prisonId"
+  private val prisonId = PrisonId("prisonId")
 
   @Test
   fun `get prison name from prison register`() {
-    val prisonName = "prisonName"
+    val prisonName = PrisonName("prisonName")
 
     every { prisonRegisterClient.getAllPrisons() } returns Mono.just(
       listOf(
@@ -31,7 +32,7 @@ class PrisonLookupServiceTest {
 
     val result = underTest.getPrisonName(prisonId)
 
-    assertThat(result, equalTo(PrisonName(prisonName)))
+    assertThat(result, equalTo(prisonName))
   }
 
   @Test

@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -85,7 +86,7 @@ class RecallsControllerTest {
       recallId = recallId,
       nomsNumber = nomsNumber,
       documents = setOf(document),
-      lastReleasePrison = "BEL",
+      lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
@@ -103,7 +104,7 @@ class RecallsControllerTest {
           fileName = fileName
         )
       ),
-      lastReleasePrison = "BEL",
+      lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
     )

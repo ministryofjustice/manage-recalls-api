@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -41,12 +42,12 @@ internal class TableOfContentsServiceTest {
     val recallId = ::RecallId.random()
     val prisoner = Prisoner()
     val nomsNumber = NomsNumber("AB1234C")
-    val recall = Recall(recallId, nomsNumber, currentPrison = "ABC")
+    val recall = Recall(recallId, nomsNumber, currentPrison = PrisonId("ABC"))
     val someHtml = "Some content"
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
-    every { prisonLookupService.getPrisonName("ABC") } returns PrisonName("A Prison")
+    every { prisonLookupService.getPrisonName(PrisonId("ABC")) } returns PrisonName("A Prison")
     every {
       tableOfContentsGenerator.generateHtml(
         TableOfContentsContext(
