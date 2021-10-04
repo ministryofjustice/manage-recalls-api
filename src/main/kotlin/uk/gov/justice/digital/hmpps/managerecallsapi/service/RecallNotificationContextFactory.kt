@@ -82,7 +82,7 @@ data class RecallNotificationContext(
       FirstAndMiddleNames(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }),
       LastName(prisoner.lastName!!),
       prisoner.dateOfBirth!!,
-      prisoner.croNumber!!,
+      prisoner.croNumber,
       PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName),
       assessedByUserDetails.email,
       assessedByUserDetails.phoneNumber,
@@ -134,7 +134,7 @@ data class RecallSummaryContext(
   val firstAndMiddleNames: FirstAndMiddleNames,
   val lastName: LastName,
   val dateOfBirth: LocalDate,
-  val croNumber: String,
+  val croNumber: String?, // TODO:  Can this really ever be null?  Breaks in dev because we have test prisoners without a croNumber
   val assessedByUserName: PersonName,
   val assessedByUserEmail: Email,
   val assessedByUserPhoneNumber: PhoneNumber,
