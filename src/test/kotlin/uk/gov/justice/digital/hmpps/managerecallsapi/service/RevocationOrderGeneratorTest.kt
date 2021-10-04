@@ -38,8 +38,8 @@ class RevocationOrderGeneratorTest {
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",
-        "29 Aug 2017",
-        "01 Sep 2020",
+        LocalDate.of(2017, 8, 29),
+        LocalDate.of(2020, 9, 1),
         "assessedByUserDetailsSignature"
       )
     )

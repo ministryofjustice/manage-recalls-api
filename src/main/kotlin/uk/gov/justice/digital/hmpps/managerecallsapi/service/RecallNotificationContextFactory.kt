@@ -61,8 +61,8 @@ data class RecallNotificationContext(
       prisoner.dateOfBirth!!,
       recall.bookingNumber!!,
       prisoner.croNumber!!,
-      LocalDate.now(clock).asStandardDateFormat(),
-      recall.lastReleaseDate!!.asStandardDateFormat(),
+      LocalDate.now(clock),
+      recall.lastReleaseDate!!,
       assessedByUserDetails.signature
     )
   }
@@ -75,7 +75,7 @@ data class RevocationOrderContext(
   val dateOfBirth: LocalDate,
   val bookingNumber: String,
   val croNumber: String,
-  val today: String,
-  val lastReleaseDate: String,
+  val today: LocalDate,
+  val lastReleaseDate: LocalDate,
   val assessedByUserSignature: String
 )

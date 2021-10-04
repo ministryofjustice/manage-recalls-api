@@ -11,15 +11,15 @@ class RevocationOrderGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
 
-  fun generateHtml(context: RevocationOrderContext): String =
+  fun generateHtml(revocationOrderContext: RevocationOrderContext): String =
     Context().apply {
-      setVariable("firstNames", context.firstAndMiddleNames)
-      setVariable("lastName", context.lastName)
-      setVariable("dateOfBirth", context.dateOfBirth)
-      setVariable("prisonNumber", context.bookingNumber)
-      setVariable("croNumber", context.croNumber)
-      setVariable("licenseRevocationDate", context.today)
-      setVariable("lastReleaseDate", context.lastReleaseDate)
+      setVariable("firstNames", revocationOrderContext.firstAndMiddleNames)
+      setVariable("lastName", revocationOrderContext.lastName)
+      setVariable("dateOfBirth", revocationOrderContext.dateOfBirth)
+      setVariable("prisonNumber", revocationOrderContext.bookingNumber)
+      setVariable("croNumber", revocationOrderContext.croNumber)
+      setVariable("licenseRevocationDate", revocationOrderContext.today.asStandardDateFormat())
+      setVariable("lastReleaseDate", revocationOrderContext.lastReleaseDate.asStandardDateFormat())
       setVariable("logoFileName", RevocationOrderLogo.fileName)
     }.let {
       templateEngine.process("revocation-order", it)
