@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.PS_TOWER_HAMLETS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -37,6 +38,9 @@ class RecallNotificationContextTest {
   private val userSignature = "user signature"
   private val lastReleaseDate = LocalDate.of(2020, 10, 1)
 
+  private val recallLength = RecallLength.TWENTY_EIGHT_DAYS
+  private val probationOfficerName = "Mr Probation Officer"
+
   private val recall = Recall(
     recallId,
     NomsNumber("AA1234A"),
@@ -55,7 +59,7 @@ class RecallNotificationContextTest {
       SentenceLength(2, 3, 10),
     ),
     probationInfo = ProbationInfo(
-      "Mr Probation Officer",
+      probationOfficerName,
       "01234567890",
       "officer@myprobation.com",
       PS_TOWER_HAMLETS,
@@ -63,8 +67,10 @@ class RecallNotificationContextTest {
     ),
     localPoliceForce = "London",
     vulnerabilityDiversityDetail = "Some stuff",
-    assessedByUserId = assessedByUserId
+    assessedByUserId = assessedByUserId,
+    recallLength = recallLength
   )
+
   private val prisoner = Prisoner(
     firstName = "Bertie",
     middleNames = "Basset",
@@ -73,7 +79,6 @@ class RecallNotificationContextTest {
     bookNumber = "prisonerBookNumber",
     croNumber = prisonerCroNumber
   )
-
   private val assessedByUserDetails = UserDetails(
     assessedByUserId,
     FirstName("Maria"),
@@ -83,6 +88,7 @@ class RecallNotificationContextTest {
     PhoneNumber("09876543210")
   )
   private val currentPrisonName = PrisonName("Prison B")
+
   private val lastReleasePrisonName = PrisonName("Prison A")
 
   private val underTest = RecallNotificationContext(
@@ -113,5 +119,25 @@ class RecallNotificationContextTest {
     val result = underTest.getRevocationOrderContext()
 
     assertThat(result, equalTo(expectedRevocationOrderContext))
+  }
+
+  @Test
+  fun `create LetterToProbationContext with all required data`() {
+    val result = underTest.getLetterToProbationContext()
+
+    assertThat(
+      result,
+      equalTo(
+        LetterToProbationContext(
+          LocalDate.of(2021, 10, 4),
+          RecallLengthDescription(recallLength),
+          probationOfficerName,
+          PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
+          recallBookingNumber,
+          currentPrisonName,
+          PersonName(FirstName("Maria"), null, LastName("Badger"))
+        )
+      )
+    )
   }
 }

@@ -9,13 +9,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLo
 
 @Service
 class LetterToProbationService(
-  @Autowired private val letterToProbationContextFactory: LetterToProbationContextFactory,
   @Autowired private val letterToProbationGenerator: LetterToProbationGenerator,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
 ) {
-  fun createPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> {
-    val letterToProbationContext = letterToProbationContextFactory.createContext(recallNotificationContext)
-    val letterToProbationHtml = letterToProbationGenerator.generateHtml(letterToProbationContext)
-    return pdfDocumentGenerationService.generatePdf(letterToProbationHtml, recallImage(HmppsLogo))
-  }
+  fun createPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> =
+    pdfDocumentGenerationService.generatePdf(
+      letterToProbationGenerator.generateHtml(recallNotificationContext.getLetterToProbationContext()),
+      recallImage(HmppsLogo)
+    )
 }
