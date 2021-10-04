@@ -106,7 +106,28 @@ data class RecallNotificationContext(
       currentPrisonName,
       lastReleasePrisonName
     )
+
+  fun getLetterToProbationContext(): LetterToProbationContext =
+    LetterToProbationContext(
+      LocalDate.now(clock),
+      RecallLengthDescription(recall.recallLength!!),
+      recall.probationInfo!!.probationOfficerName,
+      PersonName(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }, LastName(prisoner.lastName!!)),
+      recall.bookingNumber!!,
+      currentPrisonName,
+      PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName)
+    )
 }
+
+data class LetterToProbationContext(
+  val licenceRevocationDate: LocalDate,
+  val recallLengthDescription: RecallLengthDescription,
+  val probationOfficerName: String,
+  val offenderName: PersonName,
+  val bookingNumber: String,
+  val currentPrisonName: PrisonName,
+  val assessedByUserName: PersonName
+)
 
 data class RecallSummaryContext(
   val createdDateTime: ZonedDateTime,
