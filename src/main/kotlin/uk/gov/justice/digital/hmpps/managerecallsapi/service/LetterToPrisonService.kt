@@ -17,6 +17,7 @@ class LetterToPrisonService(
   @Autowired private val letterToPrisonContextFactory: LetterToPrisonContextFactory,
   @Autowired private val letterToPrisonCustodyOfficeGenerator: LetterToPrisonCustodyOfficeGenerator,
   @Autowired private val letterToPrisonGovernorGenerator: LetterToPrisonGovernorGenerator,
+  @Autowired private val letterToPrisonConfirmationGenerator: LetterToPrisonConfirmationGenerator,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
 
 ) {
@@ -42,13 +43,18 @@ class LetterToPrisonService(
     val letterToPrisonCustodyOfficeHtml = letterToPrisonCustodyOfficeGenerator.generateHtml(context)
 
     return pdfDocumentGenerationService.generatePdf(letterToPrisonCustodyOfficeHtml, recallImage(HmppsLogo))
-      .map { ltpCOBytes ->
-        docs += documentData(ltpCOBytes)
+      .map { custodyBytes ->
+        docs += documentData(custodyBytes)
       }.flatMap {
         val letterToPrisonGovernorHtml = letterToPrisonGovernorGenerator.generateHtml(context)
         pdfDocumentGenerationService.generatePdf(letterToPrisonGovernorHtml, recallImage(HmppsLogo))
-      }.map { ltpGBytes ->
-        docs += documentData(ltpGBytes)
+      }.map { governorBytes ->
+        docs += documentData(governorBytes)
+      }.flatMap {
+        val letterToPrisonConfirmationHtml = letterToPrisonConfirmationGenerator.generateHtml(context)
+        pdfDocumentGenerationService.generatePdf(letterToPrisonConfirmationHtml)
+      }.map { confBytes ->
+        docs += documentData(confBytes)
       }.flatMap {
         pdfDocumentGenerationService.mergePdfs(docs)
       }
