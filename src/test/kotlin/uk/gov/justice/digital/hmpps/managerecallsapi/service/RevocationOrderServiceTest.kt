@@ -42,7 +42,6 @@ internal class RevocationOrderServiceTest {
   @Test
   fun `creates a revocation order for a recall `() {
     val userSignature = "base64EncodedUserSignature"
-
     val revocationOrderContext =
       RevocationOrderContext(
         recallId,
@@ -51,11 +50,13 @@ internal class RevocationOrderServiceTest {
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",
-        "29 Aug 2017",
-        "01 Sep 2020",
+        LocalDate.of(2017, 8, 29),
+        LocalDate.of(2020, 9, 1),
         userSignature
       )
+    val recallNotificationContext = mockk<RecallNotificationContext>()
 
+    every { recallNotificationContext.getRevocationOrderContext() } returns revocationOrderContext
     val generatedHtml = "Some html, honest"
     every { revocationOrderGenerator.generateHtml(revocationOrderContext) } returns generatedHtml
     every {
@@ -69,7 +70,7 @@ internal class RevocationOrderServiceTest {
       recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER)
     } returns UUID.randomUUID()
 
-    val result = underTest.createPdf(revocationOrderContext)
+    val result = underTest.createPdf(recallNotificationContext)
 
     StepVerifier
       .create(result)

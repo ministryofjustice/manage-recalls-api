@@ -25,10 +25,10 @@ class RevocationOrderHtmlGenerationTest(
         FirstAndMiddleNames(FirstName("PrisonerFirstName"), MiddleNames("PrisonerMiddleNames")),
         LastName("PrisonerLastName"),
         LocalDate.of(1999, 12, 31),
-        "PrisonerBookNumber",
+        "RecallBookingNumber",
         "PrisonerCroNumber",
-        "01 Sep 2021",
-        "30 Sep 2020",
+        LocalDate.of(2021, 9, 1),
+        LocalDate.of(2020, 9, 30),
         "assessedByUserDetailsSignature"
       )
     )
