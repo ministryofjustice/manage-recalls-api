@@ -194,7 +194,7 @@ workflows:
             - validate
             - document-generation-tests
             - helm_lint
-            - trivy_scan
+            # - trivy_scan
           filters:
             branches:
               only:
