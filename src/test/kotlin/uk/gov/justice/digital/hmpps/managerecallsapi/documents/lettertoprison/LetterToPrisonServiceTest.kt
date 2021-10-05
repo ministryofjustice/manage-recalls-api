@@ -53,7 +53,6 @@ internal class LetterToPrisonServiceTest {
     pdfDecorator
   )
 
-  // TODO: will be good to agree as the dev team whether we prefer this model or local vals per test fun
   private val recallId = ::RecallId.random()
   private val expectedBytes = randomString().toByteArray()
   private val nomsNumber = randomNoms()
