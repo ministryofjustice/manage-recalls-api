@@ -161,7 +161,7 @@ data class RevocationOrderContext(
   val dateOfBirth: LocalDate,
   val bookingNumber: String,
   val croNumber: String?,
-  val today: LocalDate,
+  val licenseRevocationDate: LocalDate,
   val lastReleaseDate: LocalDate,
   val assessedByUserSignature: String
 )
