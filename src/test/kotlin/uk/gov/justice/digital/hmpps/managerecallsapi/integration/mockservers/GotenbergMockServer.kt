@@ -16,9 +16,9 @@ import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.RevocationOrderLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 
 @Component
 class GotenbergMockServer : WireMockServer(9093) {
