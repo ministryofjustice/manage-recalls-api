@@ -54,8 +54,11 @@ class LetterToPrisonContextFactoryTest {
 
     val result = underTest.createContext(recallId)
 
-    assertThat(result, equalTo(
-      LetterToPrisonContext(recall, prisoner, currentPrisonName, lastReleasePrisonName, assessedByUserDetails)
-    ))
+    assertThat(
+      result,
+      equalTo(
+        LetterToPrisonContext(recall, prisoner, currentPrisonName, lastReleasePrisonName, assessedByUserDetails)
+      )
+    )
   }
 }

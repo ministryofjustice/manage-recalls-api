@@ -43,10 +43,10 @@ class ReasonsForRecallGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("firstNames", { it.variable("firstNames") }, equalTo("Bertie Basset")),
+        has("firstAndMiddleNames", { it.variable("firstAndMiddleNames") }, equalTo("Bertie Basset")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
-        has("prisonNumber", { it.variable("prisonNumber") }, equalTo("B1234")),
-        has("pnomisNumber", { it.variable("pnomisNumber") }, equalTo("A1234AA")),
+        has("bookingNumber", { it.variable("bookingNumber") }, equalTo("B1234")),
+        has("nomsNumber", { it.variable("nomsNumber") }, equalTo("A1234AA")),
         has(
           "licenceConditionsBreached", { it.variable("licenceConditionsBreached") },
           equalTo("(i) breach one\n(ii) breach two")
