@@ -11,9 +11,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsItem
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class TableOfContentsServiceTest {

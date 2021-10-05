@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.signature
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -47,8 +47,7 @@ internal class RevocationOrderServiceTest {
     val revocationOrderContext =
       RevocationOrderContext(
         recallId,
-        FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
-        LastName("Basset"),
+        PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Basset")),
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",

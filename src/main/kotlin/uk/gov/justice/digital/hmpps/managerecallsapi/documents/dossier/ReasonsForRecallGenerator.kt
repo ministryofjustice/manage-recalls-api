@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.ReasonsForRecallContext
 
 @Component
 class ReasonsForRecallGenerator(
@@ -12,8 +11,8 @@ class ReasonsForRecallGenerator(
 ) {
   fun generateHtml(reasonsForRecallContext: ReasonsForRecallContext): String =
     Context().apply {
-      setVariable("firstAndMiddleNames", reasonsForRecallContext.firstAndMiddleNames)
-      setVariable("lastName", reasonsForRecallContext.lastName)
+      setVariable("firstAndMiddleNames", reasonsForRecallContext.personName.firstAndMiddleNames())
+      setVariable("lastName", reasonsForRecallContext.personName.lastName)
       setVariable("bookingNumber", reasonsForRecallContext.bookingNumber)
       setVariable("nomsNumber", reasonsForRecallContext.nomsNumber)
       setVariable("licenceConditionsBreached", reasonsForRecallContext.licenceConditionsBreached)

@@ -12,8 +12,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsItem
 
 class TableOfContentsHtmlGeneratorTest(
   @Autowired private val templateEngine: SpringTemplateEngine

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.service
+package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
@@ -11,10 +11,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.ReasonsForRecallService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.TableOfContentsService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathResource.RecallInformationLeaflet
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import java.io.InputStream
 
 @Service

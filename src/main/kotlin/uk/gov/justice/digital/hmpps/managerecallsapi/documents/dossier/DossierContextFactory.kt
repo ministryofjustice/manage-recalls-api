@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.service
+package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -6,7 +6,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.fullName
@@ -40,8 +39,7 @@ data class DossierContext(
 ) {
   fun getReasonsForRecallContext(): ReasonsForRecallContext {
     return ReasonsForRecallContext(
-      FirstAndMiddleNames(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }),
-      LastName(prisoner.lastName!!),
+      PersonName(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }, LastName(prisoner.lastName!!)),
       recall.bookingNumber!!,
       recall.nomsNumber,
       recall.licenceConditionsBreached!!
@@ -66,8 +64,7 @@ data class TableOfContentsContext(
 )
 
 data class ReasonsForRecallContext(
-  val firstAndMiddleNames: FirstAndMiddleNames,
-  val lastName: LastName,
+  val personName: PersonName,
   val bookingNumber: String,
   val nomsNumber: NomsNumber,
   val licenceConditionsBreached: String

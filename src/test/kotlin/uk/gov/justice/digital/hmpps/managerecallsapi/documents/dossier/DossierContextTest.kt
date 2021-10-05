@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
@@ -13,8 +13,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.ReasonsForRecallContext
 
 class DossierContextTest {
 
@@ -42,8 +40,7 @@ class DossierContextTest {
       result,
       equalTo(
         ReasonsForRecallContext(
-          FirstAndMiddleNames(FirstName(firstName), MiddleNames(middleNames)),
-          LastName(lastName),
+          PersonName(FirstName(firstName), MiddleNames(middleNames), LastName(lastName)),
           bookingNumber,
           nomsNumber,
           licenceConditionsBreached
@@ -63,8 +60,7 @@ class DossierContextTest {
       result,
       equalTo(
         ReasonsForRecallContext(
-          FirstAndMiddleNames(FirstName(firstName)),
-          LastName(lastName),
+          PersonName(FirstName(firstName), lastName = LastName(lastName)),
           bookingNumber,
           nomsNumber,
           licenceConditionsBreached

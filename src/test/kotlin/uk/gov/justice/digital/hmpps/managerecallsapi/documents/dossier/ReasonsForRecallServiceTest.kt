@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.ReasonsForRecallContext
 
 class ReasonsForRecallServiceTest {
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()

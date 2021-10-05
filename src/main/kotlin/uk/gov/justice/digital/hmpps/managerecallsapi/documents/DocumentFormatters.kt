@@ -24,15 +24,11 @@ val standardDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd M
 val standardTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = null, val lastName: LastName) {
-  override fun toString(): String =
-    when (middleNames) {
-      null -> "$firstName $lastName"
-      else -> "$firstName $middleNames $lastName"
-    }
-}
+  override fun toString(): String = "${firstAndMiddleNames()} $lastName"
 
-data class FirstAndMiddleNames(val firstName: FirstName, val middleNames: MiddleNames? = null) {
-  override fun toString(): String =
+  fun firstAndLastName(): String = "$firstName $lastName"
+
+  fun firstAndMiddleNames(): String =
     when (middleNames) {
       null -> "$firstName"
       else -> "$firstName $middleNames"

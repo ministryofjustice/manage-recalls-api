@@ -8,7 +8,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -34,8 +33,7 @@ class RecallSummaryHtmlGenerationTest(
       underTest.generateHtml(
         RecallSummaryContext(
           ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(17, 48), ZoneId.of("Europe/London")),
-          FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
-          LastName("Badger"),
+          PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
           LocalDate.of(1995, 10, 3),
           "croNumber",
           PersonName(FirstName("Maria"), null, LastName("Badger")),

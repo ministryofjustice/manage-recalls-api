@@ -17,8 +17,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierContextFactory
 
 class DossierContextFactoryTest {
   private val recallRepository = mockk<RecallRepository>()

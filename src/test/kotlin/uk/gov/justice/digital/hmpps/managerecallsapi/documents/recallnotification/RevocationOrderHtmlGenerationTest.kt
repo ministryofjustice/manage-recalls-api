@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
@@ -24,8 +24,7 @@ class RevocationOrderHtmlGenerationTest(
     val generatedHtml = underTest.generateHtml(
       RevocationOrderContext(
         ::RecallId.random(),
-        FirstAndMiddleNames(FirstName("PrisonerFirstName"), MiddleNames("PrisonerMiddleNames")),
-        LastName("PrisonerLastName"),
+        PersonName(FirstName("PrisonerFirstName"), MiddleNames("PrisonerMiddleNames"), LastName("PrisonerLastName")),
         LocalDate.of(1999, 12, 31),
         "RecallBookingNumber",
         "PrisonerCroNumber",

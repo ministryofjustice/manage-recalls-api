@@ -5,8 +5,6 @@ import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsItem
 
 @Component
 class TableOfContentsGenerator(

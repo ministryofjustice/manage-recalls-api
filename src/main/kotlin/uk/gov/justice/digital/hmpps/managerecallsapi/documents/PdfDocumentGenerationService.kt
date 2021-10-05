@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders.CONTENT_DISPOSITION
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathResource
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream

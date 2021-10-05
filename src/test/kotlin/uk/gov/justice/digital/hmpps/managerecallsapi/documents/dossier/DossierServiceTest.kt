@@ -14,14 +14,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.onlyContainsInOrder
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierContextFactory
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DossierService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 
 @Suppress("ReactiveStreamsUnusedPublisher")
