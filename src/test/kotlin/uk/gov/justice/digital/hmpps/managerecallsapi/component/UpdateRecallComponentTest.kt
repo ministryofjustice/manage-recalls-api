@@ -41,7 +41,6 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `update a recall returns updated recall`() {
-    prisonRegisterMockServer.prisonerSearchRespondsWith200()
     val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = PrisonId("MWI"), currentPrison = PrisonId("BMI")))
 
     assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = PrisonId("MWI"), currentPrison = PrisonId("BMI"))))

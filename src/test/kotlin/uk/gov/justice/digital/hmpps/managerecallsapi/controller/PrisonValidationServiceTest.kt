@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.component
+package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -6,15 +6,14 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 
-class PrisonRegisterComponentTest : ComponentTestBase() {
+class PrisonValidationServiceTest {
 
   private val prisonRegister = mockk<PrisonRegisterClient>()
-  private val prisonValidationService = PrisonValidationService(prisonRegister)
+  private val underTest = PrisonValidationService(prisonRegister)
 
   @Test
   fun `can check prison is in register`() {
@@ -26,7 +25,7 @@ class PrisonRegisterComponentTest : ComponentTestBase() {
 
     every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
 
-    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive(PrisonId("MWI"))
+    val prisonValidationResult = underTest.isPrisonValidAndActive(PrisonId("MWI"))
 
     assertThat(prisonValidationResult, equalTo(true))
   }
@@ -40,7 +39,7 @@ class PrisonRegisterComponentTest : ComponentTestBase() {
 
     every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
 
-    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive(PrisonId("MWI"))
+    val prisonValidationResult = underTest.isPrisonValidAndActive(PrisonId("MWI"))
 
     assertThat(prisonValidationResult, equalTo(false))
   }
@@ -48,7 +47,7 @@ class PrisonRegisterComponentTest : ComponentTestBase() {
   @Test
   fun `can return true if prison name is null`() {
 
-    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive(null)
+    val prisonValidationResult = underTest.isPrisonValidAndActive(null)
 
     assertThat(prisonValidationResult, equalTo(true))
   }

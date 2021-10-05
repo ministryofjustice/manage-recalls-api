@@ -24,3 +24,7 @@ pactbroker:
 pact:
   verifier:
     publishResults: false
+
+prisonRegister:
+  endpoint:
+    url: http://localhost:9094

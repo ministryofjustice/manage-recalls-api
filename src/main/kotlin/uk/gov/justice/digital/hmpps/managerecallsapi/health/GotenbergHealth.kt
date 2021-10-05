@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 
-@Component
+@Component("gotenberg")
 class GotenbergHealth(
   webClient: WebClient,
   @Value("\${gotenberg.endpoint.url}") gotenbergEndpointUrl: String

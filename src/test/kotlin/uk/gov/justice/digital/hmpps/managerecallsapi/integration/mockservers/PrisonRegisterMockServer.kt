@@ -9,6 +9,7 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
@@ -21,7 +22,7 @@ class PrisonRegisterMockServer(
   @Autowired private val objectMapper: ObjectMapper
 ) : WireMockServer(9094) {
 
-  fun prisonerSearchRespondsWith200() {
+  fun respondsWith200() {
     stubFor(
       get(urlEqualTo("/prisons"))
         .willReturn(
@@ -33,6 +34,9 @@ class PrisonRegisterMockServer(
                   Prison(PrisonId("MWI"), PrisonName("Medway (STC)"), true),
                   Prison(PrisonId("AKI"), PrisonName("Acklington (HMP)"), false),
                   Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
+                  Prison(PrisonId("KTI"), PrisonName("KTI (HMP)"), true),
+                  Prison(PrisonId("BAI"), PrisonName("BAI (HMP)"), true),
+                  Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true),
                 )
               )
             )
@@ -40,4 +44,21 @@ class PrisonRegisterMockServer(
         )
     )
   }
+
+  fun isHealthy() {
+    healthCheck(OK)
+  }
+
+  fun isUnhealthy() {
+    healthCheck(HttpStatus.INTERNAL_SERVER_ERROR)
+  }
+
+  private fun healthCheck(status: HttpStatus) =
+    this.stubFor(
+      get("/health").willReturn(
+        aResponse()
+          .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+          .withStatus(status.value())
+      )
+    )
 }
