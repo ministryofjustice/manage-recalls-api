@@ -26,7 +26,7 @@ class TableOfContentsService(
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
 ) {
 
-  fun getPdf(recallId: RecallId, contentDocs: Map<String, ByteArrayDocumentData>): Mono<ByteArray> {
+  fun createPdf(recallId: RecallId, contentDocs: Map<String, ByteArrayDocumentData>): Mono<ByteArray> {
     val recall = recallRepository.getByRecallId(recallId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison()!!)
 
