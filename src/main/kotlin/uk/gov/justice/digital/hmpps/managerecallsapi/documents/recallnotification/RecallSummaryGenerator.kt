@@ -56,7 +56,7 @@ class RecallSummaryGenerator(
       setVariable("lastReleaseDate", recallSummaryContext.lastReleaseDate.asStandardDateFormat())
       setVariable("furtherCharge", recallSummaryContext.reasonsForRecall.isFurtherCharge())
       setVariable("localPoliceForce", recallSummaryContext.localPoliceForce)
-      setVariable("hasContrabandDetail", YesOrNo(recallSummaryContext.contraband ?: false))
+      setVariable("hasContrabandDetail", YesOrNo(recallSummaryContext.contraband))
       setVariable("contrabandDetail", recallSummaryContext.contrabandDetail)
       setVariable("vulnerabilityDiversityDetail", ValueOrNone(recallSummaryContext.vulnerabilityDiversityDetail))
 
@@ -70,6 +70,4 @@ class RecallSummaryGenerator(
 
   private fun Set<ReasonForRecall>.isFurtherCharge() =
     this.contains(ELM_FURTHER_OFFENCE) || this.contains(POOR_BEHAVIOUR_FURTHER_OFFENCE)
-
-  private fun String?.hasContrabandDetail(): Boolean = this.isNullOrEmpty().not()
 }
