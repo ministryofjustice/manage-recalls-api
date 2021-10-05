@@ -16,14 +16,17 @@ class HealthCheckComponentTest : ComponentTestBase() {
   fun `healthy service returns status of each health check and version details`() {
     prisonerOffenderSearch.isHealthy()
     gotenbergMockServer.isHealthy()
+    prisonRegisterMockServer.isHealthy()
 
     healthCheckIsUpWith(
       "/health",
       "status" to "UP",
-      "components.prisonerOffenderSearchHealth.details.status" to OK.name,
-      "components.gotenbergHealth.details.status" to OK.name,
+      "components.prisonerOffenderSearch.details.status" to OK.name,
+      "components.gotenberg.details.status" to OK.name,
       "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
-      "components.db.status" to "UP"
+      "components.db.status" to "UP",
+      "components.s3.status" to "UP",
+      "components.prisonRegister.status" to "UP"
     )
   }
 
@@ -33,7 +36,17 @@ class HealthCheckComponentTest : ComponentTestBase() {
 
     healthCheckIsDownWith(
       SERVICE_UNAVAILABLE,
-      "components.prisonerOffenderSearchHealth.details.status" to INTERNAL_SERVER_ERROR.name
+      "components.prisonerOffenderSearch.details.status" to INTERNAL_SERVER_ERROR.name
+    )
+  }
+
+  @Test
+  fun `service is unhealthy when prisonRegister is unhealthy`() {
+    prisonRegisterMockServer.isUnhealthy()
+
+    healthCheckIsDownWith(
+      SERVICE_UNAVAILABLE,
+      "components.prisonRegister.details.status" to INTERNAL_SERVER_ERROR.name
     )
   }
 
@@ -43,7 +56,7 @@ class HealthCheckComponentTest : ComponentTestBase() {
 
     healthCheckIsDownWith(
       SERVICE_UNAVAILABLE,
-      "components.gotenbergHealth.details.status" to INTERNAL_SERVER_ERROR.name
+      "components.gotenberg.details.status" to INTERNAL_SERVER_ERROR.name
     )
   }
 
