@@ -12,10 +12,10 @@ class ReasonsForRecallGenerator(
 ) {
   fun generateHtml(reasonsForRecallContext: ReasonsForRecallContext): String =
     Context().apply {
-      setVariable("firstNames", reasonsForRecallContext.firstAndMiddleNames)
+      setVariable("firstAndMiddleNames", reasonsForRecallContext.firstAndMiddleNames)
       setVariable("lastName", reasonsForRecallContext.lastName)
-      setVariable("prisonNumber", reasonsForRecallContext.bookingNumber)
-      setVariable("pnomisNumber", reasonsForRecallContext.nomsNumber)
+      setVariable("bookingNumber", reasonsForRecallContext.bookingNumber)
+      setVariable("nomsNumber", reasonsForRecallContext.nomsNumber)
       setVariable("licenceConditionsBreached", reasonsForRecallContext.licenceConditionsBreached)
     }.let {
       templateEngine.process("reasons-for-recall", it)
