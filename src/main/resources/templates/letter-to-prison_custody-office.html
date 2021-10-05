@@ -48,11 +48,8 @@
     {font-size:11.0pt;
       font-family:"Arial",sans-serif;}
     /* Page Definitions */
-    @page WordSection1
-    {size:595.3pt 841.9pt;
-      margin:53.9pt 42.55pt 35.95pt 90.7pt;}
     div.WordSection1
-    {page:WordSection1;}
+    {margin:0pt 42.55pt 35.95pt 90.7pt;}
     /* List Definitions */
     ol
     {margin-bottom:0cm;}
@@ -89,9 +86,7 @@ border:none'><span style='line-height:115%;color:black'>&nbsp;</span></p>
   text-indent:-.1pt'><b><span style='font-size:10.0pt;color:black'>HerMajesty’s Prison &amp; Probation Service</span></b></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'><span style='font-size:10.0pt'>Public Protection Group</span></p>
-        <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><span style='font-size:10.0pt'>Public Protection Casework
-  Section                                                </span></p>
+        <p class=MsoNormal align=right style='margin-left:0cm;text-align:right; text-indent:-.1pt'><span style='font-size:10.0pt'>Public Protection Casework Section</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'><span style='font-size:10.0pt'>15th Floor, Southern House </span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
@@ -293,7 +288,7 @@ border:none'>&nbsp;</p>
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black' th:if="${hasMappaLevel}">Please note that <span th:text="${fullName}"/> is registered as MAPPA Level <span th:text="${mappaLevel}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black' th:if="${hasMappaLevel}">Please note that <span th:text="${fullName}"/> is registered as MAPPA <span th:text="${mappaLevel}"/></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>&nbsp;</span></p>

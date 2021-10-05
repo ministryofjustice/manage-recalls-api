@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.R
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
@@ -51,7 +52,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(
-        currentPrison = "MWI",
+        currentPrison = PrisonId("MWI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
         sentenceDate = LocalDate.of(2012, 5, 17),
         licenceExpiryDate = LocalDate.of(2025, 12, 25),

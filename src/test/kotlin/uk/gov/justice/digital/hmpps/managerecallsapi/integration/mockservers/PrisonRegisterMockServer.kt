@@ -12,6 +12,8 @@ import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient.Prison
 
 @Component
@@ -28,9 +30,9 @@ class PrisonRegisterMockServer(
             .withBody(
               objectMapper.writeValueAsString(
                 listOf(
-                  Prison("MWI", "Medway (STC)", true),
-                  Prison("AKI", "Acklington (HMP)", false),
-                  Prison("BMI", "Birmingham (HMP)", true),
+                  Prison(PrisonId("MWI"), PrisonName("Medway (STC)"), true),
+                  Prison(PrisonId("AKI"), PrisonName("Acklington (HMP)"), false),
+                  Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
                 )
               )
             )

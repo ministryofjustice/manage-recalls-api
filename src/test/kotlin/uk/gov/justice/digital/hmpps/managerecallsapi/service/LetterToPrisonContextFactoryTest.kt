@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -34,12 +35,12 @@ class LetterToPrisonContextFactoryTest {
 
     val recallId = ::RecallId.random()
     val assessedByUserId = ::UserId.random()
-    val recall = Recall(recallId, NomsNumber("AA1234A"), currentPrison = "WIM", assessedByUserId = assessedByUserId)
+    val recall = Recall(recallId, NomsNumber("AA1234A"), currentPrison = PrisonId("WIM"), assessedByUserId = assessedByUserId)
     val prisoner = Prisoner()
     val userDetails = UserDetails(assessedByUserId, FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns PrisonName("WIM Prison")
+    every { prisonLookupService.getPrisonName(recall.currentPrison()!!) } returns PrisonName("WIM Prison")
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber)) } returns Mono.just(listOf(prisoner))
     every { userDetailsService.get(recall.assessedByUserId()!!) } returns userDetails
 

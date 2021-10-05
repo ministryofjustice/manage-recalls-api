@@ -7,6 +7,8 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonValidationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 
 class PrisonRegisterComponentTest : ComponentTestBase() {
@@ -17,14 +19,14 @@ class PrisonRegisterComponentTest : ComponentTestBase() {
   @Test
   fun `can check prison is in register`() {
     val prisonList: MutableList<PrisonRegisterClient.Prison> = ArrayList()
-    prisonList.add(PrisonRegisterClient.Prison("HPI", "HPI name", false))
-    prisonList.add(PrisonRegisterClient.Prison("MWI", "MWI name", true))
-    prisonList.add(PrisonRegisterClient.Prison("ALI", "ALI name", true))
-    prisonList.add(PrisonRegisterClient.Prison("FYI", "FYI name", false))
+    prisonList.add(PrisonRegisterClient.Prison(PrisonId("HPI"), PrisonName("HPI name"), false))
+    prisonList.add(PrisonRegisterClient.Prison(PrisonId("MWI"), PrisonName("MWI name"), true))
+    prisonList.add(PrisonRegisterClient.Prison(PrisonId("ALI"), PrisonName("ALI name"), true))
+    prisonList.add(PrisonRegisterClient.Prison(PrisonId("FYI"), PrisonName("FYI name"), false))
 
     every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
 
-    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive("MWI")
+    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive(PrisonId("MWI"))
 
     assertThat(prisonValidationResult, equalTo(true))
   }
@@ -32,13 +34,13 @@ class PrisonRegisterComponentTest : ComponentTestBase() {
   @Test
   fun `can check prison is not in register`() {
     val prisonList: MutableList<PrisonRegisterClient.Prison> = ArrayList()
-    prisonList.add(PrisonRegisterClient.Prison("HPI"))
-    prisonList.add(PrisonRegisterClient.Prison("ALI"))
-    prisonList.add(PrisonRegisterClient.Prison("FYI"))
+    prisonList.add(PrisonRegisterClient.Prison(PrisonId("HPI")))
+    prisonList.add(PrisonRegisterClient.Prison(PrisonId("ALI")))
+    prisonList.add(PrisonRegisterClient.Prison(PrisonId("FYI")))
 
     every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
 
-    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive("MWI")
+    val prisonValidationResult = prisonValidationService.isPrisonValidAndActive(PrisonId("MWI"))
 
     assertThat(prisonValidationResult, equalTo(false))
   }

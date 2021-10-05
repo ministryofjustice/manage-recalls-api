@@ -24,7 +24,7 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
     updateRecallWithRequiredInformationForTheLetterToPrison(recall.recallId, assessedByUserId = assessedByUserId)
 
     val letterToPrison = authenticatedClient.getLetterToPrison(recall.recallId)
-    writeBase64EncodedStringToFile("letter-to-prison.pdf", letterToPrison.content)
+//    writeBase64EncodedStringToFile("letter-to-prison.pdf", letterToPrison.content)
     assertThat(letterToPrison, hasNumberOfPages(equalTo(5)))
   }
 }

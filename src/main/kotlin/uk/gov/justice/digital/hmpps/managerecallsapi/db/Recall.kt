@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.time.LocalDate
@@ -84,7 +85,7 @@ data class Recall(
     documents: Set<RecallDocument> = emptySet(),
     recallType: RecallType? = null,
     recallLength: RecallLength? = null,
-    lastReleasePrison: String? = null,
+    lastReleasePrison: PrisonId? = null,
     lastReleaseDate: LocalDate? = null,
     recallEmailReceivedDateTime: OffsetDateTime? = null,
     localPoliceForce: String? = null,
@@ -99,7 +100,7 @@ data class Recall(
     reasonsForRecallOtherDetail: String? = null,
     agreeWithRecall: AgreeWithRecall? = null,
     agreeWithRecallDetail: String? = null,
-    currentPrison: String? = null,
+    currentPrison: PrisonId? = null,
     additionalLicenceConditions: Boolean? = null,
     additionalLicenceConditionsDetail: String? = null,
     differentNomsNumber: Boolean? = null,
@@ -119,7 +120,7 @@ data class Recall(
       documents,
       recallType,
       recallLength,
-      lastReleasePrison,
+      lastReleasePrison?.value,
       lastReleaseDate,
       recallEmailReceivedDateTime,
       localPoliceForce,
@@ -134,7 +135,7 @@ data class Recall(
       reasonsForRecallOtherDetail,
       agreeWithRecall,
       agreeWithRecallDetail,
-      currentPrison,
+      currentPrison?.value,
       additionalLicenceConditions,
       additionalLicenceConditionsDetail,
       differentNomsNumber,
@@ -153,6 +154,8 @@ data class Recall(
   fun assessedByUserId() = assessedByUserId?.let { UserId(it) }
   fun bookedByUserId() = bookedByUserId?.let { UserId(it) }
   fun dossierCreatedByUserId() = dossierCreatedByUserId?.let { UserId(it) }
+  fun lastReleasePrison() = lastReleasePrison?.let { PrisonId(it) }
+  fun currentPrison() = currentPrison?.let { PrisonId(it) }
 }
 
 @Embeddable

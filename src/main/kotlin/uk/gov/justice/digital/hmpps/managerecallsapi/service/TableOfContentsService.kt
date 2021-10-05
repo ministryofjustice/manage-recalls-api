@@ -28,7 +28,7 @@ class TableOfContentsService(
 
   fun getPdf(recallId: RecallId, contentDocs: Map<String, ByteArrayDocumentData>): Mono<ByteArray> {
     val recall = recallRepository.getByRecallId(recallId)
-    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
+    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison()!!)
 
     val docList = generateDocsList(contentDocs)
 

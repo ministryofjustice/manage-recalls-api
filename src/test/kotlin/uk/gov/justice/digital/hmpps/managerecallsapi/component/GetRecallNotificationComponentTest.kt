@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -57,7 +58,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         mappaLevel = MappaLevel.LEVEL_3,
         previousConvictionMainName = "Bryan Badger",
         bookingNumber = "B1234",
-        lastReleasePrison = "AKI",
+        lastReleasePrison = PrisonId("AKI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
         sentenceDate = LocalDate.of(2012, 5, 17),
         licenceExpiryDate = LocalDate.of(2020, 11, 1),
@@ -72,7 +73,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         localDeliveryUnit = LocalDeliveryUnit.PS_BARNET,
         authorisingAssistantChiefOfficer = "Ms Authoriser",
         localPoliceForce = "London",
-        currentPrison = "BMI",
+        currentPrison = PrisonId("BMI"),
         vulnerabilityDiversityDetail = "Some stuff",
         contrabandDetail = "Some contraband detail",
         assessedByUserId = userId,

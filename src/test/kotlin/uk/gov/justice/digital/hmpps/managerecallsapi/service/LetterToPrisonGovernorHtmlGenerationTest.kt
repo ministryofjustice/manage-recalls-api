@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
@@ -20,12 +19,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 
-class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
+class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
   HtmlGenerationTestCase() {
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T16:48:30.00Z"), ZoneId.of("UTC"))
-  private val underTest = LetterToPrisonCustodyOfficeGenerator(templateEngine, fixedClock)
+  private val underTest = LetterToPrisonGovernorGenerator(templateEngine, fixedClock)
 
   @Test
   fun `generate fully populated HTML`(approver: ContentApprover) {
@@ -36,13 +36,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
             ::RecallId.random(), NomsNumber("AA1234A"),
             recallLength = RecallLength.FOURTEEN_DAYS,
             bookingNumber = "B1234",
-            differentNomsNumber = true,
-            differentNomsNumberDetail = "ABC1234F",
-            mappaLevel = MappaLevel.LEVEL_2,
-            additionalLicenceConditions = true,
-            additionalLicenceConditionsDetail = "Blah blah blah",
-            vulnerabilityDiversityDetail = "Yes, yadda yadda",
-            contrabandDetail = "Because..."
+            lastReleaseDate = LocalDate.of(2020, 10, 1)
           ),
           Prisoner(firstName = "Billie", middleNames = "Bob", lastName = "Badger"),
           PrisonName("Prison A"),

@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
-import java.time.LocalDate
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 
 @Component
 class LetterToPrisonConfirmationGenerator(
@@ -13,16 +15,14 @@ class LetterToPrisonConfirmationGenerator(
   fun generateHtml(context: LetterToPrisonContext): String =
     Context().apply {
 
-      setVariable("logoFileName", RecallImage.HmppsLogo.fileName)
-      setVariable("teamName", RECALL_TEAM_NAME)
-      setVariable("teamPhoneNumber", RECALL_TEAM_CONTACT_NUMBER)
-      setVariable("todaysDate", LocalDate.now().asStandardDateFormat())
-      with(context.recall) {
-        setVariable("recallLength", RecallLengthDescription(this.recallLength!!).asFixedTermLengthDescription())
+      with(context.prisoner) {
+        setVariable("fullName", PersonName(FirstName(this.firstName!!), this.middleNames?.let { MiddleNames(it) }, LastName(this.lastName!!)))
       }
-      setVariable("currentEstablishment", context.currentPrisonName)
 
-//      setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
+      with(context.recall) {
+        setVariable("recallLengthDescription", RecallLengthDescription(this.recallLength!!).asFixedTermLengthDescription())
+        setVariable("bookingNumber", this.bookingNumber)
+      }
     }.let {
       templateEngine.process("letter-to-prison_confirmation-of-rar", it)
     }
