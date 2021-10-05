@@ -131,9 +131,9 @@
   <th>Page</th>
   </thead>
 
-  <tr th:each="document: ${documents}">
-    <td th:text="${document.title}"/>
-    <td th:text="${document.pageNumber}"/>
+  <tr th:each="tableOfContentsItem: ${tableOfContentsItems}">
+    <td th:text="${tableOfContentsItem.title}"/>
+    <td th:text="${tableOfContentsItem.pageNumber}"/>
   </tr>
   <tr>
     <td/>

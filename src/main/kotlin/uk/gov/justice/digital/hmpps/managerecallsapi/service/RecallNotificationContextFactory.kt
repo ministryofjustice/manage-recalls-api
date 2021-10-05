@@ -102,7 +102,7 @@ data class RecallNotificationContext(
       LocalDate.now(clock),
       RecallLengthDescription(recall.recallLength!!),
       recall.probationInfo!!.probationOfficerName,
-      PersonName(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }, LastName(prisoner.lastName!!)),
+      prisoner.fullName(),
       recall.bookingNumber!!,
       currentPrisonName,
       PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName)

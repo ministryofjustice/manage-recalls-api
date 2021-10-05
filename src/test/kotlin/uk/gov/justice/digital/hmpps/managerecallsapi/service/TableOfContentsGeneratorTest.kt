@@ -16,14 +16,11 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
-import java.time.LocalDate
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -49,26 +46,15 @@ class TableOfContentsGeneratorTest {
 
     val currentPrisonName = PrisonName("Prison (ABC)")
     val bookingNumber = "ABC123F"
-    val documents = listOf(Document("Document 1", 1))
+    val tableOfContentsItems = listOf(TableOfContentsItem("Document 1", 1))
     val result = underTest.generateHtml(
       TableOfContentsContext(
-        Recall(
-          ::RecallId.random(), randomNoms(),
-          lastReleaseDate = LocalDate.of(2020, 9, 1),
-          bookingNumber = bookingNumber,
-          recallLength = recallLength
-        ),
-        Prisoner(
-          firstName = "Bertie",
-          middleNames = "Basset",
-          lastName = "Badger",
-          dateOfBirth = LocalDate.of(1995, 10, 3),
-          bookNumber = "bookNumber",
-          croNumber = "croNumber"
-        ),
+        PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
+        RecallLengthDescription(recallLength),
         currentPrisonName,
-        documents
-      )
+        bookingNumber
+      ),
+      tableOfContentsItems
     )
 
     assertThat(result, equalTo(expectedHtml))
@@ -77,19 +63,20 @@ class TableOfContentsGeneratorTest {
       allOf(
         has("logoFileName", { it.variableAsString("logoFileName") }, equalTo(HmppsLogo.fileName)),
         has(
-          "recallLengthAndSentenceHeading", { it.variableAsString("recallLengthAndSentenceHeading") }, equalTo(expectedText)
-          ),
-          has("fullName", { it.variableAsString("fullName") }, equalTo("Bertie Basset Badger")),
-          has("establishment", { it.variableAsString("establishment") }, equalTo(currentPrisonName.value)),
-          has("category", { it.variableAsString("category") }, equalTo("Not Applicable")),
-          has("prisonNumber", { it.variableAsString("prisonNumber") }, equalTo(bookingNumber)),
-          has("version", { it.variableAsString("version") }, equalTo("0")),
-          has("documents", { it.variable("documents") }, equalTo(documents)),
-        )
+          "recallLengthAndSentenceHeading",
+          { it.variableAsString("recallLengthAndSentenceHeading") },
+          equalTo(expectedText)
+        ),
+        has("fullName", { it.variableAsString("fullName") }, equalTo("Bertie Basset Badger")),
+        has("establishment", { it.variableAsString("establishment") }, equalTo(currentPrisonName.value)),
+        has("category", { it.variableAsString("category") }, equalTo("Not Applicable")),
+        has("prisonNumber", { it.variableAsString("prisonNumber") }, equalTo(bookingNumber)),
+        has("version", { it.variableAsString("version") }, equalTo("0")),
+        has("tableOfContentsItems", { it.variable("tableOfContentsItems") }, equalTo(tableOfContentsItems)),
       )
-    }
-
-    private fun IContext.variableAsString(variableName: String) = getVariable(variableName)?.toString()
-    private inline fun <reified T : Any> IContext.variable(variableName: String): T = getVariable(variableName) as T
+    )
   }
-  
+
+  private fun IContext.variableAsString(variableName: String) = getVariable(variableName)?.toString()
+  private inline fun <reified T : Any> IContext.variable(variableName: String): T = getVariable(variableName) as T
+}
