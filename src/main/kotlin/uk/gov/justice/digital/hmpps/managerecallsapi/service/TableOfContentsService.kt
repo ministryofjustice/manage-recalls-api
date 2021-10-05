@@ -4,39 +4,37 @@ import com.lowagie.text.pdf.PdfReader
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PrisonLookupService
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallImage.HmppsLogo
 
 @Service
 class TableOfContentsService(
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val tableOfContentsGenerator: TableOfContentsGenerator,
-  @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val prisonLookupService: PrisonLookupService,
-  @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
 ) {
 
-  fun createPdf(recallId: RecallId, contentDocs: Map<String, ByteArrayDocumentData>): Mono<ByteArray> {
-    val recall = recallRepository.getByRecallId(recallId)
-    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison()!!)
-
+  fun createPdf(dossierContext: DossierContext, contentDocs: Map<String, ByteArrayDocumentData>): Mono<ByteArray> {
     val docList = generateDocsList(contentDocs)
+    val recall = dossierContext.recall
+    val currentPrisonName = dossierContext.currentPrisonName
+    val prisoner = dossierContext.prisoner
 
-    return prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber))
-      .flatMap { prisoners ->
-        val tocHtml = tableOfContentsGenerator.generateHtml(TableOfContentsContext(recall, prisoners.first(), currentPrisonName, docList))
-        pdfDocumentGenerationService.generatePdf(tocHtml, recallImage(HmppsLogo))
-      }
+    return pdfDocumentGenerationService.generatePdf(
+      tableOfContentsGenerator.generateHtml(
+        TableOfContentsContext(
+          recall,
+          prisoner,
+          currentPrisonName,
+          docList
+        )
+      ),
+      recallImage(HmppsLogo)
+    )
   }
 
   private fun generateDocsList(contentDocs: Map<String, ByteArrayDocumentData>): List<Document> {
@@ -50,4 +48,9 @@ class TableOfContentsService(
 }
 
 data class Document(val title: String, val pageNumber: Int)
-data class TableOfContentsContext(val recall: Recall, val prisoner: Prisoner, val currentPrisonName: PrisonName, val documents: List<Document>)
+data class TableOfContentsContext(
+  val recall: Recall,
+  val prisoner: Prisoner,
+  val currentPrisonName: PrisonName,
+  val documents: List<Document>
+)
