@@ -22,10 +22,11 @@ class LetterToPrisonContextFactory(
 ) {
   fun createContext(recallId: RecallId): LetterToPrisonContext {
     val recall = recallRepository.getByRecallId(recallId)
-    val prisonName = prisonLookupService.getPrisonName(recall.currentPrison()!!)
+    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison()!!)
+    val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison()!!)
     val prisoner = prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber)).block()!!.first()
-    val assessor = userDetailsService.get(recall.assessedByUserId()!!)
-    return LetterToPrisonContext(recall, prisoner, prisonName, PrisonName("Prison B"), assessor)
+    val assessedByUserDetails = userDetailsService.get(recall.assessedByUserId()!!)
+    return LetterToPrisonContext(recall, prisoner, currentPrisonName, lastReleasePrisonName, assessedByUserDetails)
   }
 }
 

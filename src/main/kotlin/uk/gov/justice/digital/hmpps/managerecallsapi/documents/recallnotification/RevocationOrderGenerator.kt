@@ -14,12 +14,12 @@ class RevocationOrderGenerator(
 
   fun generateHtml(revocationOrderContext: RevocationOrderContext): String =
     Context().apply {
-      setVariable("firstNames", revocationOrderContext.firstAndMiddleNames)
+      setVariable("firstAndMiddleNames", revocationOrderContext.firstAndMiddleNames)
       setVariable("lastName", revocationOrderContext.lastName)
       setVariable("dateOfBirth", revocationOrderContext.dateOfBirth)
-      setVariable("prisonNumber", revocationOrderContext.bookingNumber)
+      setVariable("bookingNumber", revocationOrderContext.bookingNumber)
       setVariable("croNumber", revocationOrderContext.croNumber)
-      setVariable("licenseRevocationDate", revocationOrderContext.today.asStandardDateFormat())
+      setVariable("licenseRevocationDate", revocationOrderContext.licenseRevocationDate.asStandardDateFormat())
       setVariable("lastReleaseDate", revocationOrderContext.lastReleaseDate.asStandardDateFormat())
       setVariable("logoFileName", RevocationOrderLogo.fileName)
     }.let {

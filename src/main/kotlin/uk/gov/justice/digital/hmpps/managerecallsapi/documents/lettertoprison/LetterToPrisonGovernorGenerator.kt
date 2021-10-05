@@ -34,7 +34,7 @@ class LetterToPrisonGovernorGenerator(
         setVariable("lastReleaseDate", this.lastReleaseDate!!.asStandardDateFormat())
       }
 
-      setVariable("currentEstablishment", context.currentPrisonName)
+      setVariable("currentPrisonName", context.currentPrisonName)
       setVariable("lastReleasePrison", context.lastReleasePrisonName)
     }.let {
       templateEngine.process("letter-to-prison_governor", it)

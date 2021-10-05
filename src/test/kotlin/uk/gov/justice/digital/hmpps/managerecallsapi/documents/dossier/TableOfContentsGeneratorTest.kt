@@ -51,6 +51,7 @@ class TableOfContentsGeneratorTest {
     val currentPrisonName = PrisonName("Prison (ABC)")
     val bookingNumber = "ABC123F"
     val tableOfContentsItems = listOf(TableOfContentsItem("Document 1", 1))
+
     val result = underTest.generateHtml(
       TableOfContentsContext(
         PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
@@ -72,9 +73,9 @@ class TableOfContentsGeneratorTest {
           equalTo(expectedText)
         ),
         has("fullName", { it.variableAsString("fullName") }, equalTo("Bertie Basset Badger")),
-        has("establishment", { it.variableAsString("establishment") }, equalTo(currentPrisonName.value)),
+        has("currentPrisonName", { it.variableAsString("currentPrisonName") }, equalTo(currentPrisonName.value)),
         has("category", { it.variableAsString("category") }, equalTo("Not Applicable")),
-        has("prisonNumber", { it.variableAsString("prisonNumber") }, equalTo(bookingNumber)),
+        has("bookingNumber", { it.variableAsString("bookingNumber") }, equalTo(bookingNumber)),
         has("version", { it.variableAsString("version") }, equalTo("0")),
         has("tableOfContentsItems", { it.variable("tableOfContentsItems") }, equalTo(tableOfContentsItems)),
       )

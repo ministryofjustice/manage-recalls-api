@@ -908,14 +908,14 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c68">
     <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">To</span></p></td>
-    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7">PNCB &ndash; Referencing &amp; Vetting Services/<span th:text="${policeSpoc}"/></span>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7">PNCB &ndash; Referencing &amp; Vetting Services/<span th:text="${localPoliceForce}"/></span>
     </p></td>
     <td class="c42" colspan="1" rowspan="1"><p class="c0 c11"><span class="c25 c1 c7"></span></p></td>
     <td class="c9" colspan="1" rowspan="1"><p class="c0 c11"><span class="c25 c1 c7"></span></p></td>
   </tr>
   <tr class="c45">
     <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c1 c7 c25">From</span></p></td>
-    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7"><span th:text="${caseworkerName}"/>, Public Protection Casework Section</span>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7"><span th:text="${assessedByUserName}"/>, Public Protection Casework Section</span>
     </p></td>
     <td class="c42" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">No. of pages</span></p></td>
     <td class="c9" colspan="1" rowspan="1"><p class="c0"><span class="c1">&nbsp;</span><span class="c3" th:text="${recallNotificationTotalNumberOfPages}"></span><span
@@ -923,7 +923,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c61">
     <td class="c40" colspan="1" rowspan="1"><p class="c0" id="h.30j0zll"><span class="c25 c1 c7">Email</span></p></td>
-    <td class="c54" colspan="3" rowspan="1"><p class="c0"><span class="c6 c7" th:text="${caseworkerEmail}"/></p>
+    <td class="c54" colspan="3" rowspan="1"><p class="c0"><span class="c6 c7" th:text="${assessedByUserEmail}"/></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
   </tr>
   <tr class="c33">
@@ -932,7 +932,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
       <p class="c0 c28 c11"><span class="c20 c13"></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
     <td class="c47" colspan="2" rowspan="2"><p class="c0"><span
-      class="c6 c7">If any part of this document is unclear <br>please telephone: <span th:text="${caseworkerPhoneNumber}"/></span></p>
+      class="c6 c7">If any part of this document is unclear <br>please telephone: <span th:text="${assessedByUserPhoneNumber}"/></span></p>
     </td>
   </tr>
   <tr class="c30">
@@ -974,15 +974,15 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
 <table class="c57">
   <tbody>
   <tr class="c49">
-    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">FORENAME: <span th:text="${forename}"/></span>
+    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">FORENAME: <span th:text="${firstAndMiddleNames}"/></span>
     </p>
-      <p class="c0"><span class="c1">SURNAME: <span th:text="${surname}"/></span></p>
+      <p class="c0"><span class="c1">SURNAME: <span th:text="${lastName}"/></span></p>
       <p class="c0"><span class="c1">DATE OF BIRTH: <span th:text="${dateOfBirth}"/></span></p>
-      <p class="c0"><span class="c1">POLICE FILE NAME: <span th:text="${policeFileName}"/></span></p>
-      <p class="c0"><span class="c1">PRISON NUMBER: <span th:text="${prisonNumber}"/></span></p>
-      <p class="c0"><span class="c1">PNOMIS NUMBER: <span th:text="${pnomisNumber}"/></span></p>
-      <p class="c0"><span class="c1">RELEASING PRISON: <span th:text="${releasingPrison}"/></span></p>
-      <p class="c0"><span class="c1">RELEASE DATE: <span th:text="${releaseDate}"/></span></p>
+      <p class="c0"><span class="c1">POLICE FILE NAME: <span th:text="${previousConvictionMainName}"/></span></p>
+      <p class="c0"><span class="c1">PRISON NUMBER: <span th:text="${bookingNumber}"/></span></p>
+      <p class="c0"><span class="c1">PNOMIS NUMBER: <span th:text="${nomsNumber}"/></span></p>
+      <p class="c0"><span class="c1">RELEASING PRISON: <span th:text="${lastReleasePrisonName}"/></span></p>
+      <p class="c0"><span class="c1">RELEASE DATE: <span th:text="${lastReleaseDate}"/></span></p>
       <p class="c0"><span class="c1">LENGTH OF SENTENCE: <span th:text="${lengthOfSentence}"/></span></p>
       <p class="c0"><span class="c1">INDEX OFFENCE: <span th:text="${indexOffence}"/></span></p><a
         id="id.3dy6vkm"></a>
@@ -992,20 +992,20 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
       </p>
       <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
-    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">PNC/CRO NUMBER: <span th:text="${pncCroNumber}"/></span>
+    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">PNC/CRO NUMBER: <span th:text="${croNumber}"/></span>
     </p>
       <p class="c0"><span class="c1">NPS LDU / CRC: <span th:text="${localDeliveryUnit}"/></span></p>
-      <p class="c0"><span class="c1">OFFENDER MANAGER NAME:<br><span th:text="${offenderManagerName}"/></span><span
-        class="c13"><br></span><span class="c1">OFFENDER MANAGER CONTACT NUMBER: <span th:text="${offenderManagerContactNumber}"/></span></p>
-      <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13"><span th:text="${policeSpoc}"/></span></p>
+      <p class="c0"><span class="c1">OFFENDER MANAGER NAME:<br><span th:text="${probationOfficerName}"/></span><span
+        class="c13"><br></span><span class="c1">OFFENDER MANAGER CONTACT NUMBER: <span th:text="${probationOfficerPhoneNumber}"/></span></p>
+      <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13"><span th:text="${localPoliceForce}"/></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
       <p class="c0"><span class="c1">CURRENT PRISON:</span></p>
-      <p class="c0"><span class="c1"><span th:text="${currentPrison}"/></span></p>
+      <p class="c0"><span class="c1"><span th:text="${currentPrisonName}"/></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
       <p class="c0"><span
         class="c1">SENTENCING COURT &amp; DATE: &nbsp;<span th:text="${sentencingCourt}"/> <span th:text="${sentencingDate}"/></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
-      <p class="c0"><span class="c1">SED: <span th:text="${sed}"/></span></p></td>
+      <p class="c0"><span class="c1">SED: <span th:text="${sentenceExpiryDate}"/></span></p></td>
   </tr>
   </tbody>
 </table>
@@ -1013,13 +1013,13 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   <tbody>
   <tr class="c49">
     <td class="c39" colspan="1" rowspan="1"><p class="c0">
-      <p class="c24"><span class="c1">VULNERABILITY ISSUES: <span th:text="${vulnerabilityDetail}"></span></p>
+      <p class="c24"><span class="c1">VULNERABILITY ISSUES: <span th:text="${vulnerabilityDiversityDetail}"></span></p>
     </p></td>
   </tr>
   <tr class="c49">
     <td class="c39" colspan="1" rowspan="1"><p class="c0">
       <span class="c1">IS IT BELIEVED THAT THE OFFENDER MAY BE USING RECALL TO BRING CONTRABAND INTO THE PRISON ESTATE? </span>
-      <span class="c6 c7" th:text="${contraband}"></span>. <span th:text="${contrabandDetail}"></span>
+      <span class="c6 c7" th:text="${hasContrabandDetail}"></span>. <span th:text="${contrabandDetail}"></span>
     </p></td>
   </tr>
   </tbody>
