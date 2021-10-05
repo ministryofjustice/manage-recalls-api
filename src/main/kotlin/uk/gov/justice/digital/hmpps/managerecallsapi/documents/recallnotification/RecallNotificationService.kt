@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotificati
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
@@ -29,23 +30,19 @@ class RecallNotificationService(
   private fun createRecallNotification(recallId: RecallId, userId: UserId): Mono<ByteArray> {
     val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, userId)
 
-    val docs = mutableListOf<ByteArrayDocumentData>()
-
-    return recallSummaryService.createPdf(recallNotificationContext).map { recallSummaryBytes ->
-      docs += documentData(recallSummaryBytes)
-    }.flatMap {
-      revocationOrderService.createPdf(recallNotificationContext)
-    }.map { revocationOrderBytes ->
-      docs += documentData(revocationOrderBytes)
-    }.flatMap {
-      letterToProbationService.createPdf(recallNotificationContext)
-    }.map { letterToProbationBytes ->
-      docs += documentData(letterToProbationBytes)
-    }.flatMap {
-      pdfDocumentGenerationService.mergePdfs(docs)
-    }.map { mergedBytes ->
-      recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION)
-      mergedBytes
-    }
+    val documentGenerators = Flux.just(
+      { recallSummaryService.createPdf(recallNotificationContext) },
+      { revocationOrderService.createPdf(recallNotificationContext) },
+      { letterToProbationService.createPdf(recallNotificationContext) }
+    )
+    return documentGenerators
+      .flatMapSequential { it() }
+      .map { documentData(it) }
+      .collectList()
+      .flatMap { pdfDocumentGenerationService.mergePdfs(it) }
+      .map { mergedBytes ->
+        recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION)
+        mergedBytes
+      }
   }
 }
