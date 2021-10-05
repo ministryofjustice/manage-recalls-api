@@ -57,7 +57,7 @@ internal class DossierServiceTest {
     every { recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
     every { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
     every { reasonsForRecallService.createPdf(dossierContext) } returns Mono.just(reasonsForRecallContentBytes)
-    every { tableOfContentsService.createPdf(recallId, any()) } returns Mono.just(tableOfContentBytes)
+    every { tableOfContentsService.createPdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
 

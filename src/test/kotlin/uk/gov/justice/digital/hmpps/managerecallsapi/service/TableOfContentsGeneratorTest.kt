@@ -49,6 +49,7 @@ class TableOfContentsGeneratorTest {
 
     val currentPrisonName = PrisonName("Prison (ABC)")
     val bookingNumber = "ABC123F"
+    val documents = listOf(Document("Document 1", 1))
     val result = underTest.generateHtml(
       TableOfContentsContext(
         Recall(
@@ -66,7 +67,7 @@ class TableOfContentsGeneratorTest {
           croNumber = "croNumber"
         ),
         currentPrisonName,
-        listOf(Document("Document 1", 1))
+        documents
       )
     )
 
@@ -74,20 +75,21 @@ class TableOfContentsGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName)),
+        has("logoFileName", { it.variableAsString("logoFileName") }, equalTo(HmppsLogo.fileName)),
         has(
-          "recallLengthAndSentenceHeading", { it.variable("recallLengthAndSentenceHeading") }, equalTo(expectedText)
+          "recallLengthAndSentenceHeading", { it.variableAsString("recallLengthAndSentenceHeading") }, equalTo(expectedText)
           ),
-          has("fullName", { it.variable("fullName") }, equalTo("Bertie Basset Badger")),
-          has("establishment", { it.variable("establishment") }, equalTo(currentPrisonName.value)),
-          has("category", { it.variable("category") }, equalTo("Not Applicable")),
-          has("prisonNumber", { it.variable("prisonNumber") }, equalTo(bookingNumber)),
-          has("version", { it.variable("version") }, equalTo("0")),
-          has("documents", { it.variable("documents") }, equalTo("[Document(title=Document 1, pageNumber=1)]")),
+          has("fullName", { it.variableAsString("fullName") }, equalTo("Bertie Basset Badger")),
+          has("establishment", { it.variableAsString("establishment") }, equalTo(currentPrisonName.value)),
+          has("category", { it.variableAsString("category") }, equalTo("Not Applicable")),
+          has("prisonNumber", { it.variableAsString("prisonNumber") }, equalTo(bookingNumber)),
+          has("version", { it.variableAsString("version") }, equalTo("0")),
+          has("documents", { it.variable("documents") }, equalTo(documents)),
         )
       )
     }
 
-    private fun IContext.variable(variableName: String) = getVariable(variableName)?.toString()
+    private fun IContext.variableAsString(variableName: String) = getVariable(variableName)?.toString()
+    private inline fun <reified T : Any> IContext.variable(variableName: String): T = getVariable(variableName) as T
   }
   

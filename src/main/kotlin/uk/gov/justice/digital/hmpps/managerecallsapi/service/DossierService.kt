@@ -41,7 +41,7 @@ class DossierService(
       "Reasons for Recall [Core Dossier]" to documentData(reasonsForRecall)
     )
 
-    return tableOfContentsService.createPdf(recallId, dossierDocuments).map { tocBytes ->
+    return tableOfContentsService.createPdf(dossierContext, dossierDocuments).map { tocBytes ->
       val tocAndDossierDocuments = mutableListOf(documentData(tocBytes))
       tocAndDossierDocuments.addAll(dossierDocuments.values)
       tocAndDossierDocuments

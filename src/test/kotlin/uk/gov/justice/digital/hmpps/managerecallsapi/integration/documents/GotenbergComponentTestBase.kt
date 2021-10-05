@@ -22,7 +22,7 @@ import java.time.LocalDate
 @AutoConfigureWebTestClient(timeout = "10000")
 abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergServer = true) {
 
-  protected fun updateRecallWithRequiredInformationForTheRecallSummary(
+  protected fun updateRecallWithRequiredInformationForTheDossier(
     recallId: RecallId,
     vulnerabilityDiversityDetail: String = "Very diverse",
     contrabandDetail: String = "Lots of naughty contraband"
@@ -50,7 +50,8 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         localPoliceForce = "London",
         currentPrison = PrisonId("MWI"),
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
-        contrabandDetail = contrabandDetail
+        contrabandDetail = contrabandDetail,
+        licenceConditionsBreached = "licenceConditionsBreached"
       )
     )
   }
