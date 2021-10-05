@@ -13,7 +13,7 @@ class ReasonsForRecallService(
   @Autowired private val reasonsForRecallGenerator: ReasonsForRecallGenerator,
 ) {
 
-  fun getPdf(dossierContext: DossierContext): Mono<ByteArray> =
+  fun createPdf(dossierContext: DossierContext): Mono<ByteArray> =
     pdfDocumentGenerationService.generatePdf(
       reasonsForRecallGenerator.generateHtml(
         ReasonsForRecallContext(

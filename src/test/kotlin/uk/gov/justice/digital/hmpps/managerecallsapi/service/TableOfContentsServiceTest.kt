@@ -66,7 +66,7 @@ internal class TableOfContentsServiceTest {
       )
     } returns Mono.just(tocBytes)
 
-    val tableOfContents = underTest.getPdf(
+    val tableOfContents = underTest.createPdf(
       recallId,
       mapOf(
         "Document 1" to ByteArrayDocumentData(documentStream1),
