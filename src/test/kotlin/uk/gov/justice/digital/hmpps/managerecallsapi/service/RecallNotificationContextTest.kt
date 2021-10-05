@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.PS_TOWER_HAMLETS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
@@ -139,5 +140,35 @@ class RecallNotificationContextTest {
         )
       )
     )
+  }
+
+  @Test
+  fun `can create RevocationOrderContext without croNumber`() {
+    val prisonerWithoutCroNumber = prisoner.copy(croNumber = null)
+    val underTest = RecallNotificationContext(
+      recall,
+      prisonerWithoutCroNumber,
+      assessedByUserDetails,
+      currentPrisonName,
+      lastReleasePrisonName,
+      fixedClock
+    )
+
+    assertDoesNotThrow { underTest.getRevocationOrderContext() }
+  }
+
+  @Test
+  fun `can create RecallSummaryContext without croNumber`() {
+    val prisonerWithoutCroNumber = prisoner.copy(croNumber = null)
+    val underTest = RecallNotificationContext(
+      recall,
+      prisonerWithoutCroNumber,
+      assessedByUserDetails,
+      currentPrisonName,
+      lastReleasePrisonName,
+      fixedClock
+    )
+
+    assertDoesNotThrow { underTest.getRecallSummaryContext() }
   }
 }

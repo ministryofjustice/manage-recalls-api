@@ -52,16 +52,6 @@ data class RecallNotificationContext(
   val lastReleasePrisonName: PrisonName,
   private val clock: Clock = Clock.systemUTC()
 ) {
-  init {
-    /*
-     validate required fields?
-     e.g.
-     prisoner.firstName != null
-     prisoner.lastName != null
-     etc
-     */
-  }
-
   fun getRevocationOrderContext(): RevocationOrderContext {
     return RevocationOrderContext(
       recall.recallId(),
@@ -69,7 +59,7 @@ data class RecallNotificationContext(
       LastName(prisoner.lastName!!),
       prisoner.dateOfBirth!!,
       recall.bookingNumber!!,
-      prisoner.croNumber!!,
+      prisoner.croNumber,
       LocalDate.now(clock),
       recall.lastReleaseDate!!,
       assessedByUserDetails.signature
@@ -165,7 +155,7 @@ data class RevocationOrderContext(
   val lastName: LastName,
   val dateOfBirth: LocalDate,
   val bookingNumber: String,
-  val croNumber: String,
+  val croNumber: String?,
   val today: LocalDate,
   val lastReleaseDate: LocalDate,
   val assessedByUserSignature: String
