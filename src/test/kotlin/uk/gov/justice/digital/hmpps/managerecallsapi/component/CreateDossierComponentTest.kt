@@ -59,7 +59,9 @@ class CreateDossierComponentTest : ComponentTestBase() {
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),
         sentenceLength = Api.SentenceLength(10, 1, 5),
         sentencingCourt = "Badger court",
-        indexOffence = "Badgering"
+        indexOffence = "Badgering",
+        bookingNumber = "booking number",
+        licenceConditionsBreached = "he was a very naughty boy"
       )
     )
     authenticatedClient.uploadRecallDocument(
@@ -85,14 +87,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(
       PrisonerSearchRequest(nomsNumber),
       listOf(
-        Prisoner(
-          prisonerNumber = nomsNumber.value,
-          firstName = firstName,
-          lastName = "Badger",
-          dateOfBirth = LocalDate.of(2000, 1, 31),
-          bookNumber = "Book Num 123",
-          croNumber = "CRO Num/456"
-        )
+        Prisoner(prisonerNumber = nomsNumber.value, firstName = firstName, lastName = "Badger")
       )
     )
   }

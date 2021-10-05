@@ -9,15 +9,13 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 class ReasonsForRecallGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
-
-  fun generateHtml(context: ReasonsForRecallContext): String =
+  fun generateHtml(reasonsForRecallContext: ReasonsForRecallContext): String =
     Context().apply {
-      val firstAndMiddleNames = String.format("%s %s", context.prisoner.firstName ?: "", context.prisoner.middleNames ?: "").trim()
-      setVariable("firstNames", firstAndMiddleNames)
-      setVariable("lastName", context.prisoner.lastName)
-      setVariable("prisonNumber", context.recall.bookingNumber)
-      setVariable("pnomisNumber", context.recall.nomsNumber)
-      setVariable("licenceConditionsBreached", context.recall.licenceConditionsBreached)
+      setVariable("firstNames", reasonsForRecallContext.firstAndMiddleNames)
+      setVariable("lastName", reasonsForRecallContext.lastName)
+      setVariable("prisonNumber", reasonsForRecallContext.bookingNumber)
+      setVariable("pnomisNumber", reasonsForRecallContext.nomsNumber)
+      setVariable("licenceConditionsBreached", reasonsForRecallContext.licenceConditionsBreached)
     }.let {
       templateEngine.process("reasons-for-recall", it)
     }

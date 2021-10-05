@@ -4,11 +4,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 
 class ReasonsForRecallHtmlGenerationTest(
   @Autowired private val templateEngine: SpringTemplateEngine
@@ -17,21 +16,13 @@ class ReasonsForRecallHtmlGenerationTest(
 
   @Test
   fun `generate HTML`(approver: ContentApprover) {
-    val nomsNumber = NomsNumber("G4995VC")
     val html = underTest.generateHtml(
       ReasonsForRecallContext(
-        Recall(
-          ::RecallId.random(),
-          nomsNumber,
-          bookingNumber = "B1234",
-          licenceConditionsBreached = "(i) breach one\n(ii) breach two"
-        ),
-        Prisoner(
-          firstName = "Bertie",
-          middleNames = "Basset",
-          lastName = "Badger",
-          bookNumber = "bookNumber"
-        )
+        FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
+        LastName("Badger"),
+        "B1234",
+        NomsNumber("G4995VC"),
+        "(i) breach one\n(ii) breach two"
       )
     )
     approver.assertApproved(html)

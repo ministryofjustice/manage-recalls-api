@@ -10,12 +10,10 @@ import io.mockk.slot
 import org.junit.jupiter.api.Test
 import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 
 class ReasonsForRecallGeneratorTest {
   private val templateEngine = mockk<SpringTemplateEngine>()
@@ -29,21 +27,13 @@ class ReasonsForRecallGeneratorTest {
 
     every { templateEngine.process("reasons-for-recall", capture(contextSlot)) } returns expectedHtml
 
-    val nomsNumber: NomsNumber = randomNoms()
     val result = underTest.generateHtml(
       ReasonsForRecallContext(
-        Recall(
-          ::RecallId.random(),
-          nomsNumber,
-          bookingNumber = "B1234",
-          licenceConditionsBreached = "(i) breach one\n(ii) breach two"
-        ),
-        Prisoner(
-          firstName = "Bertie",
-          middleNames = "Basset",
-          lastName = "Badger",
-          bookNumber = "bookNumber"
-        )
+        FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
+        LastName("Badger"),
+        "B1234",
+        NomsNumber("A1234AA"),
+        "(i) breach one\n(ii) breach two"
       )
     )
 
@@ -54,35 +44,11 @@ class ReasonsForRecallGeneratorTest {
         has("firstNames", { it.variable("firstNames") }, equalTo("Bertie Basset")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
         has("prisonNumber", { it.variable("prisonNumber") }, equalTo("B1234")),
-        has("pnomisNumber", { it.variable("pnomisNumber") }, equalTo(nomsNumber.value)),
+        has("pnomisNumber", { it.variable("pnomisNumber") }, equalTo("A1234AA")),
         has(
           "licenceConditionsBreached", { it.variable("licenceConditionsBreached") },
           equalTo("(i) breach one\n(ii) breach two")
         )
-      )
-    )
-  }
-
-  @Test
-  fun `generate recall summary HTML with no values populated`() {
-    val expectedHtml = "expected HTML"
-    val contextSlot = slot<IContext>()
-
-    every { templateEngine.process("reasons-for-recall", capture(contextSlot)) } returns expectedHtml
-
-    val nomsNumber = randomNoms()
-    val result = underTest.generateHtml(
-      ReasonsForRecallContext(Recall(::RecallId.random(), nomsNumber), Prisoner())
-    )
-    assertThat(result, equalTo(expectedHtml))
-    assertThat(
-      contextSlot.captured,
-      allOf(
-        has("firstNames", { it.variable("firstNames") }, equalTo("")),
-        has("lastName", { it.variable("lastName") }, equalTo(null)),
-        has("prisonNumber", { it.variable("prisonNumber") }, equalTo(null)),
-        has("pnomisNumber", { it.variable("pnomisNumber") }, equalTo(nomsNumber.value)),
-        has("licenceConditionsBreached", { it.variable("licenceConditionsBreached") }, equalTo(null))
       )
     )
   }
