@@ -38,10 +38,10 @@ class LetterToPrisonCustodyOfficeGenerator(
         setVariable("recallLengthDays", RecallLengthDescription(this.recallLength).numberOfDays())
         setVariable("hasAdditionalLicenceConditions", this.additionalLicenceConditions)
         setVariable("additionalLicenceConditionsDetail", this.additionalLicenceConditionsDetail)
-        setVariable("hasVulnerabilities", this.vulnerabilityDiversityDetail?.isNotEmpty())
-        setVariable("vulnerabilityDiversityDetail", this.vulnerabilityDiversityDetail)
-        setVariable("hasContraband", this.contrabandDetail?.isNotEmpty())
+        setVariable("hasContraband", this.contraband ?: false)
         setVariable("contrabandDetail", this.contrabandDetail)
+        setVariable("hasVulnerabilities", this.vulnerabilityDiversity ?: false)
+        setVariable("vulnerabilityDiversityDetail", this.vulnerabilityDiversityDetail)
         setVariable("hasMappaLevel", this.mappaLevel!!.shouldShowOnDocuments())
         setVariable("mappaLevel", this.mappaLevel.label)
       }

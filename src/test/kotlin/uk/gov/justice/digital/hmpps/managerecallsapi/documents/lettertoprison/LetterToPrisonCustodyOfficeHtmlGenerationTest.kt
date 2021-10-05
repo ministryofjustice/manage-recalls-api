@@ -42,8 +42,10 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
             mappaLevel = MappaLevel.LEVEL_2,
             additionalLicenceConditions = true,
             additionalLicenceConditionsDetail = "Blah blah blah",
+            contraband = true,
+            contrabandDetail = "Because...",
+            vulnerabilityDiversity = true,
             vulnerabilityDiversityDetail = "Yes, yadda yadda",
-            contrabandDetail = "Because..."
           ),
           Prisoner(firstName = "Billie", middleNames = "Bob", lastName = "Badger"),
           PrisonName("Prison A"),

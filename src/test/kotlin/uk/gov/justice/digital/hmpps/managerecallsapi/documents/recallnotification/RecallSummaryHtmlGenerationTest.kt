@@ -51,8 +51,10 @@ class RecallSummaryHtmlGenerationTest(
           LocalDate.of(2020, 10, 1),
           setOf(ELM_FURTHER_OFFENCE),
           "London",
-          "Some stuff",
+          true,
           "I believe that they will bring contraband to prison",
+          true,
+          "Some stuff",
           PrisonName("Current Prison"),
           PrisonName("Last Release Prison")
         ),

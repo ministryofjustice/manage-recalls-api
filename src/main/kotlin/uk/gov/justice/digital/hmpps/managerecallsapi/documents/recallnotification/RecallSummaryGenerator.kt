@@ -56,9 +56,9 @@ class RecallSummaryGenerator(
       setVariable("lastReleaseDate", recallSummaryContext.lastReleaseDate.asStandardDateFormat())
       setVariable("furtherCharge", recallSummaryContext.reasonsForRecall.isFurtherCharge())
       setVariable("localPoliceForce", recallSummaryContext.localPoliceForce)
-      setVariable("vulnerabilityDiversityDetail", ValueOrNone(recallSummaryContext.vulnerabilityDiversityDetail))
-      setVariable("hasContrabandDetail", YesOrNo(recallSummaryContext.contrabandDetail.hasContrabandDetail()))
+      setVariable("hasContrabandDetail", YesOrNo(recallSummaryContext.contraband ?: false))
       setVariable("contrabandDetail", recallSummaryContext.contrabandDetail)
+      setVariable("vulnerabilityDiversityDetail", ValueOrNone(recallSummaryContext.vulnerabilityDiversityDetail))
 
       setVariable("currentPrisonName", recallSummaryContext.currentPrisonName)
       setVariable("lastReleasePrisonName", recallSummaryContext.lastReleasePrisonName)

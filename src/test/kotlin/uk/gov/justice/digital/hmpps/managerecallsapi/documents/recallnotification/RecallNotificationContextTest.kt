@@ -46,7 +46,10 @@ class RecallNotificationContextTest {
   private val recall = Recall(
     recallId,
     NomsNumber("AA1234A"),
+    contraband = true,
     contrabandDetail = "I believe that they will bring contraband to prison",
+    vulnerabilityDiversity = true,
+    vulnerabilityDiversityDetail = "Some stuff",
     mappaLevel = LEVEL_3,
     previousConvictionMainName = "Bryan Badger",
     bookingNumber = recallBookingNumber,
@@ -68,7 +71,6 @@ class RecallNotificationContextTest {
       "Ms Authoriser"
     ),
     localPoliceForce = "London",
-    vulnerabilityDiversityDetail = "Some stuff",
     assessedByUserId = assessedByUserId,
     recallLength = recallLength
   )
