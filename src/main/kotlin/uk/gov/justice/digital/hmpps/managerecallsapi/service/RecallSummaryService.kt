@@ -34,6 +34,8 @@ class RecallSummaryService(
   private fun generatePdf(recallSummaryContext: RecallSummaryContext, recallNotificationTotalNumberOfPages: Int? = null) =
     pdfDocumentGenerationService.generatePdf(
       recallSummaryGenerator.generateHtml(recallSummaryContext, recallNotificationTotalNumberOfPages),
+      1.0,
+      1.0,
       recallImage(HmppsLogo)
     )
 }
