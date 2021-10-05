@@ -43,7 +43,23 @@ data class DossierContext(
       recall.licenceConditionsBreached!!
     )
   }
+
+  fun getTableOfContentsContext(): TableOfContentsContext =
+    TableOfContentsContext(
+      prisoner.fullName(),
+      RecallLengthDescription(recall.recallLength!!),
+      currentPrisonName,
+      recall.bookingNumber!!
+    )
 }
+
+data class TableOfContentsItem(val title: String, val pageNumber: Int)
+data class TableOfContentsContext(
+  val fullName: PersonName,
+  val recallLengthDescription: RecallLengthDescription,
+  val currentPrisonName: PrisonName,
+  val bookingNumber: String
+)
 
 data class ReasonsForRecallContext(
   val firstAndMiddleNames: FirstAndMiddleNames,

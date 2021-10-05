@@ -5,13 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import java.time.LocalDate
 
 class TableOfContentsHtmlGeneratorTest(
   @Autowired private val templateEngine: SpringTemplateEngine
@@ -23,20 +20,15 @@ class TableOfContentsHtmlGeneratorTest(
   fun `generate revocation order HTML`(approver: ContentApprover) {
     val generatedHtml = underTest.generateHtml(
       TableOfContentsContext(
-        Recall(
-          ::RecallId.random(),
-          randomNoms(),
-          recallLength = TWENTY_EIGHT_DAYS,
-          lastReleaseDate = LocalDate.of(2020, 9, 30),
-          bookingNumber = "ABC1234F"
-        ),
-        Prisoner(
-          firstName = "PrisonerFirstName",
-          middleNames = "PrisonerMiddleNames",
-          lastName = "PrisonerLastName"
-        ),
+        PersonName(FirstName("PrisonerFirstName"), MiddleNames("PrisonerMiddleNames"), LastName("PrisonerLastName")),
+        RecallLengthDescription(TWENTY_EIGHT_DAYS),
         PrisonName("Current Prison (ABC)"),
-        listOf(Document("Document 1", 1), Document("Document 2", 3), Document("Document 3", 7))
+        "ABC1234F"
+      ),
+      listOf(
+        TableOfContentsItem("Document 1", 1),
+        TableOfContentsItem("Document 2", 3),
+        TableOfContentsItem("Document 3", 7)
       )
     )
 

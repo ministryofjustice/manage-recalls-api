@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -51,6 +52,11 @@ data class RecallLengthDescription(val recallLength: RecallLength) {
       TWENTY_EIGHT_DAYS -> 28
     }
   }
+  fun tableOfContentsFixedTermLengthDescription() =
+    when (recallLength) {
+      FOURTEEN_DAYS -> "14 Day FTR under 12 months"
+      TWENTY_EIGHT_DAYS -> "28 Day FTR 12 months & over"
+    }
 }
 
 fun MappaLevel.shouldShowOnDocuments(): Boolean {
@@ -61,6 +67,8 @@ fun MappaLevel.shouldShowOnDocuments(): Boolean {
 }
 
 fun UserDetails.fullName(): String = PersonName(this.firstName, null, this.lastName).toString()
+fun Prisoner.fullName(): PersonName =
+  PersonName(FirstName(this.firstName!!), this.middleNames?.let { MiddleNames(it) }, LastName(this.lastName!!))
 
 class YesOrNo(val value: Boolean) {
   override fun toString(): String = if (value) "YES" else "NO"
