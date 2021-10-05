@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
@@ -25,31 +26,37 @@ class DossierService(
 ) {
 
   fun getDossier(recallId: RecallId): Mono<ByteArray> {
+    val dossierContext = dossierContextFactory.createContext(recallId)
+
+    return reasonsForRecallService.createPdf(dossierContext).map { reasonsForRecallPdfBytes ->
+      createTableOfContentsDocumentMap(recallId, reasonsForRecallPdfBytes)
+    }.flatMap { tableOfContentsDocumentMap ->
+      tableOfContentsService.createPdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
+        mutableListOf(documentData(tableOfContentsBytes)).apply {
+          this += tableOfContentsDocumentMap.values
+        }
+      }
+    }.flatMap { dossierDocuments ->
+      pdfDocumentGenerationService.mergePdfs(dossierDocuments)
+    }.map { mergedPdfContentBytes ->
+      pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
+    }
+  }
+
+  private fun createTableOfContentsDocumentMap(
+    recallId: RecallId,
+    reasonsForRecall: ByteArray
+  ): MutableMap<String, ByteArrayDocumentData> {
     val license = recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE)
     val partARecallReport = recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
     val revocationOrder = recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER)
-    val dossierContext = dossierContextFactory.createContext(recallId)
-
-    // TODO: attempts to add this without block() fell over on runtime errors relating to e.g. other use of block in getPrisonName
-    val reasonsForRecall = reasonsForRecallService.createPdf(dossierContext).block()!!
-
-    val dossierDocuments = mutableMapOf(
+    return mutableMapOf(
       "Recall Information Leaflet [Core Dossier]" to documentData(RecallInformationLeaflet),
       "Licence [Core Dossier]" to documentData(license),
       "Request for Recall Report [Core Dossier]" to documentData(partARecallReport),
       "Revocation Order [Core Dossier]" to documentData(revocationOrder),
       "Reasons for Recall [Core Dossier]" to documentData(reasonsForRecall)
     )
-
-    return tableOfContentsService.createPdf(dossierContext, dossierDocuments).map { tocBytes ->
-      val tocAndDossierDocuments = mutableListOf(documentData(tocBytes))
-      tocAndDossierDocuments.addAll(dossierDocuments.values)
-      tocAndDossierDocuments
-    }.flatMap {
-      pdfDocumentGenerationService.mergePdfs(it)
-    }.map { mergedPdfContentBytes ->
-      pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
-    }
   }
 }
 
