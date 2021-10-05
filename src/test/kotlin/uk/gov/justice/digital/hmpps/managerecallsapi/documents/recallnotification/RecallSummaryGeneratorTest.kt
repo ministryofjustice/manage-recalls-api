@@ -146,7 +146,7 @@ class RecallSummaryGeneratorTest {
         "London",
         false,
         null,
-        null,
+        false,
         null,
         PrisonName("Current Prison"),
         PrisonName("Last Release Prison")

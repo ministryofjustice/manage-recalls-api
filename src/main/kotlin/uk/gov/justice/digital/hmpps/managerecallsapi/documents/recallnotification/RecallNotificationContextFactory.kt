@@ -91,9 +91,9 @@ data class RecallNotificationContext(
       recall.lastReleaseDate!!,
       recall.reasonsForRecall,
       recall.localPoliceForce!!,
-      recall.contraband,
+      recall.contraband!!,
       recall.contrabandDetail,
-      recall.vulnerabilityDiversity,
+      recall.vulnerabilityDiversity!!,
       recall.vulnerabilityDiversityDetail,
       currentPrisonName,
       lastReleasePrisonName
@@ -145,9 +145,9 @@ data class RecallSummaryContext(
   val lastReleaseDate: LocalDate,
   val reasonsForRecall: Set<ReasonForRecall>,
   val localPoliceForce: String,
-  val contraband: Boolean?,
+  val contraband: Boolean,
   val contrabandDetail: String?,
-  val vulnerabilityDiversity: Boolean?,
+  val vulnerabilityDiversity: Boolean,
   val vulnerabilityDiversityDetail: String?,
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName
