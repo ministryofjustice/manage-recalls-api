@@ -30,6 +30,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
 //    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
     assertThat(recallNotification, hasNumberOfPages(equalTo(3)))
+    assertThat(recallNotification, hasTotalPageCount(3))
   }
 
   @Test
