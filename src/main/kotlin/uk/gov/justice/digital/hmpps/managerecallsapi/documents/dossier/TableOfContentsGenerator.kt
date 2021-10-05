@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsContext
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsItem
 
@@ -18,17 +19,17 @@ class TableOfContentsGenerator(
     tableOfContentsItems: List<TableOfContentsItem>
   ): String =
     Context().apply {
-      setVariable("logoFileName", RecallImage.HmppsLogo.fileName)
+      setVariable("logoFileName", HmppsLogo.fileName)
       setVariable(
         "recallLengthAndSentenceHeading",
         tableOfContentsContext.recallLengthDescription.tableOfContentsFixedTermLengthDescription()
       )
       setVariable("fullName", tableOfContentsContext.fullName)
-      setVariable("establishment", tableOfContentsContext.currentPrisonName)
-      setVariable("category", "Not Applicable")
-      setVariable("prisonNumber", tableOfContentsContext.bookingNumber)
-      setVariable("version", "0")
+      setVariable("currentPrisonName", tableOfContentsContext.currentPrisonName)
+      setVariable("bookingNumber", tableOfContentsContext.bookingNumber)
       setVariable("tableOfContentsItems", tableOfContentsItems)
+      setVariable("category", "Not Applicable")
+      setVariable("version", "0")
     }.let {
       templateEngine.process("table-of-contents", it)
     }
