@@ -15,9 +15,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Compani
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
@@ -47,7 +44,7 @@ internal class RevocationOrderServiceTest {
     val revocationOrderContext =
       RevocationOrderContext(
         recallId,
-        PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Basset")),
+        PersonName("Bertie", "Basset", "Basset"),
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",

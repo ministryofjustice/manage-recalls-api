@@ -5,9 +5,6 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -40,7 +37,7 @@ class DossierContextTest {
       result,
       equalTo(
         ReasonsForRecallContext(
-          PersonName(FirstName(firstName), MiddleNames(middleNames), LastName(lastName)),
+          PersonName(firstName, middleNames, lastName),
           bookingNumber,
           nomsNumber,
           licenceConditionsBreached
@@ -60,7 +57,7 @@ class DossierContextTest {
       result,
       equalTo(
         ReasonsForRecallContext(
-          PersonName(FirstName(firstName), lastName = LastName(lastName)),
+          PersonName(firstName, lastName = lastName),
           bookingNumber,
           nomsNumber,
           licenceConditionsBreached

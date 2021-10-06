@@ -12,9 +12,6 @@ import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
@@ -34,7 +31,7 @@ class RevocationOrderGeneratorTest {
     val result = underTest.generateHtml(
       RevocationOrderContext(
         ::RecallId.random(),
-        PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
+        PersonName("Bertie", "Basset", "Badger"),
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",

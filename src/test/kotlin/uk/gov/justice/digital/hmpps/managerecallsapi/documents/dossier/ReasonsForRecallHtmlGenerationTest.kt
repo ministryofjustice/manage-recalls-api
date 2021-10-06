@@ -6,9 +6,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 
 class ReasonsForRecallHtmlGenerationTest(
@@ -20,7 +17,7 @@ class ReasonsForRecallHtmlGenerationTest(
   fun `generate HTML`(approver: ContentApprover) {
     val html = underTest.generateHtml(
       ReasonsForRecallContext(
-        PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
+        PersonName("Bertie", "Basset", "Badger"),
         "B1234",
         NomsNumber("G4995VC"),
         "(i) breach one\n(ii) breach two"

@@ -8,10 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.fullName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -39,7 +36,7 @@ data class DossierContext(
 ) {
   fun getReasonsForRecallContext(): ReasonsForRecallContext {
     return ReasonsForRecallContext(
-      PersonName(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }, LastName(prisoner.lastName!!)),
+      prisoner.personName(),
       recall.bookingNumber!!,
       recall.nomsNumber,
       recall.licenceConditionsBreached!!
@@ -48,7 +45,7 @@ data class DossierContext(
 
   fun getTableOfContentsContext(): TableOfContentsContext =
     TableOfContentsContext(
-      prisoner.fullName(),
+      prisoner.personName(),
       RecallLengthDescription(recall.recallLength!!),
       currentPrisonName,
       recall.bookingNumber!!

@@ -24,6 +24,7 @@ val standardDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd M
 val standardTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = null, val lastName: LastName) {
+  constructor(firstName: String, middleNames: String? = null, lastName: String) : this(FirstName(firstName), middleNames?.let { MiddleNames(it) }, LastName(lastName))
   override fun toString(): String = "${firstAndMiddleNames()} $lastName"
 
   fun firstAndLastName(): String = "$firstName $lastName"
@@ -62,9 +63,9 @@ fun MappaLevel.shouldShowOnDocuments(): Boolean {
   }
 }
 
-fun UserDetails.fullName(): String = PersonName(this.firstName, null, this.lastName).toString()
-fun Prisoner.fullName(): PersonName =
-  PersonName(FirstName(this.firstName!!), this.middleNames?.let { MiddleNames(it) }, LastName(this.lastName!!))
+fun UserDetails.personName(): String = PersonName(this.firstName, null, this.lastName).toString()
+fun Prisoner.personName(): PersonName =
+  PersonName(this.firstName!!, this.middleNames, this.lastName!!)
 
 class YesOrNo(val value: Boolean) {
   override fun toString(): String = if (value) "YES" else "NO"

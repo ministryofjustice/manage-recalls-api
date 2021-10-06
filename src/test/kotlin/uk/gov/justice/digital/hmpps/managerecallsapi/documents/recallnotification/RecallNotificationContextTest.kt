@@ -18,7 +18,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescr
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -106,7 +105,7 @@ class RecallNotificationContextTest {
   @Test
   fun getRevocationOrderContext() {
     val expectedPersonName =
-      PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger"))
+      PersonName("Bertie", "Basset", "Badger")
     val expectedRevocationOrderContext = RevocationOrderContext(
       recallId,
       expectedPersonName,
@@ -134,10 +133,10 @@ class RecallNotificationContextTest {
           LocalDate.of(2021, 10, 4),
           RecallLengthDescription(recallLength),
           probationOfficerName,
-          PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
+          PersonName("Bertie", "Basset", "Badger"),
           recallBookingNumber,
           currentPrisonName,
-          PersonName(FirstName("Maria"), null, LastName("Badger"))
+          PersonName("Maria", lastName = "Badger")
         )
       )
     )
