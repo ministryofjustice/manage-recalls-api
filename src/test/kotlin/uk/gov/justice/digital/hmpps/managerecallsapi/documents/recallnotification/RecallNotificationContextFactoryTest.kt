@@ -112,7 +112,9 @@ class RecallNotificationContextFactoryTest {
       previousConvictionMainName = prevConsMainName,
       bookingNumber = "1243A",
       lastReleaseDate = LocalDate.now(),
-      localPoliceForce = "A Force"
+      localPoliceForce = "A Force",
+      contraband = true,
+      vulnerabilityDiversity = true,
     )
     val userDetails =
       UserDetails(::UserId.random(), FirstName("Sue"), LastName("Smith"), "", Email("s@smith.com"), PhoneNumber("0123"))
