@@ -15,13 +15,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -45,11 +41,10 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
-        LastName("Badger"),
+        PersonName("Bertie", "Basset", "Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
-        PersonName(FirstName("Maria"), null, LastName("Badger")),
+        PersonName("Maria", lastName = "Badger"),
         Email("maria@thebadgers.set"),
         PhoneNumber("09876543210"),
         LEVEL_3,
@@ -126,11 +121,10 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
-        LastName("Badger"),
+        PersonName("Bertie", "Basset", "Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
-        PersonName(FirstName("Maria"), null, LastName("Badger")),
+        PersonName("Maria", lastName = "Badger"),
         Email("maria@thebadgers.set"),
         PhoneNumber("09876543210"),
         LEVEL_3,

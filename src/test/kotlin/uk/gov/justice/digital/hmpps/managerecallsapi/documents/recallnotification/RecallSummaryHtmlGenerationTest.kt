@@ -8,13 +8,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -34,11 +30,10 @@ class RecallSummaryHtmlGenerationTest(
       underTest.generateHtml(
         RecallSummaryContext(
           ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(17, 48), ZoneId.of("Europe/London")),
-          FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
-          LastName("Badger"),
+          PersonName("Bertie", "Basset", "Badger"),
           LocalDate.of(1995, 10, 3),
           "croNumber",
-          PersonName(FirstName("Maria"), null, LastName("Badger")),
+          PersonName("Maria", lastName = "Badger"),
           Email("maria@thebadgers.set"),
           PhoneNumber("09876543210"),
           MappaLevel.LEVEL_3,

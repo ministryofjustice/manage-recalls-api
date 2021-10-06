@@ -11,14 +11,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.fullName
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -60,8 +56,7 @@ data class RecallNotificationContext(
   fun getRevocationOrderContext(): RevocationOrderContext {
     return RevocationOrderContext(
       recall.recallId(),
-      FirstAndMiddleNames(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }),
-      LastName(prisoner.lastName!!),
+      prisoner.personName(),
       prisoner.dateOfBirth!!,
       recall.bookingNumber!!,
       prisoner.croNumber,
@@ -71,11 +66,11 @@ data class RecallNotificationContext(
     )
   }
 
-  fun getRecallSummaryContext(): RecallSummaryContext =
-    RecallSummaryContext(
+  fun getRecallSummaryContext(): RecallSummaryContext {
+    val prisonerName = prisoner.personName()
+    return RecallSummaryContext(
       ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London")),
-      FirstAndMiddleNames(FirstName(prisoner.firstName!!), prisoner.middleNames?.let { MiddleNames(it) }),
-      LastName(prisoner.lastName!!),
+      prisonerName,
       prisoner.dateOfBirth!!,
       prisoner.croNumber,
       PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName),
@@ -90,7 +85,7 @@ data class RecallNotificationContext(
       recall.probationInfo!!.probationOfficerName,
       recall.probationInfo.probationOfficerPhoneNumber,
       recall.probationInfo.localDeliveryUnit,
-      recall.previousConvictionMainName!!,
+      if (recall.hasOtherPreviousConvictionMainName == true) recall.previousConvictionMainName!! else prisonerName.firstAndLastName(),
       recall.bookingNumber!!,
       recall.nomsNumber,
       recall.lastReleaseDate!!,
@@ -101,13 +96,14 @@ data class RecallNotificationContext(
       currentPrisonName,
       lastReleasePrisonName
     )
+  }
 
   fun getLetterToProbationContext(): LetterToProbationContext =
     LetterToProbationContext(
       LocalDate.now(clock),
       RecallLengthDescription(recall.recallLength!!),
       recall.probationInfo!!.probationOfficerName,
-      prisoner.fullName(),
+      prisoner.personName(),
       recall.bookingNumber!!,
       currentPrisonName,
       PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName)
@@ -126,8 +122,7 @@ data class LetterToProbationContext(
 
 data class RecallSummaryContext(
   val createdDateTime: ZonedDateTime,
-  val firstAndMiddleNames: FirstAndMiddleNames,
-  val lastName: LastName,
+  val personName: PersonName,
   val dateOfBirth: LocalDate,
   val croNumber: String?, // TODO:  Can this really ever be null?  Breaks in dev because we have test prisoners without a croNumber
   val assessedByUserName: PersonName,
@@ -156,8 +151,7 @@ data class RecallSummaryContext(
 
 data class RevocationOrderContext(
   val recallId: RecallId,
-  val firstAndMiddleNames: FirstAndMiddleNames,
-  val lastName: LastName,
+  val personName: PersonName,
   val dateOfBirth: LocalDate,
   val bookingNumber: String,
   val croNumber: String?,

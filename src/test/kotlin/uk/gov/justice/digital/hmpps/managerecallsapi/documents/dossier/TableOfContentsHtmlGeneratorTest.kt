@@ -8,12 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWE
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsItem
 
 class TableOfContentsHtmlGeneratorTest(
   @Autowired private val templateEngine: SpringTemplateEngine
@@ -25,7 +20,7 @@ class TableOfContentsHtmlGeneratorTest(
   fun `generate revocation order HTML`(approver: ContentApprover) {
     val generatedHtml = underTest.generateHtml(
       TableOfContentsContext(
-        PersonName(FirstName("PrisonerFirstName"), MiddleNames("PrisonerMiddleNames"), LastName("PrisonerLastName")),
+        PersonName("PrisonerFirstName", "PrisonerMiddleNames", "PrisonerLastName"),
         RecallLengthDescription(TWENTY_EIGHT_DAYS),
         PrisonName("Current Prison (ABC)"),
         "ABC1234F"

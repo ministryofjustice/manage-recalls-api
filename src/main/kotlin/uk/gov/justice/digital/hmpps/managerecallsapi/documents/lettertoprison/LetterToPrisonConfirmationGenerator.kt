@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.fullName
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
 
 @Component
 class LetterToPrisonConfirmationGenerator(
@@ -13,7 +13,7 @@ class LetterToPrisonConfirmationGenerator(
 ) {
   fun generateHtml(context: LetterToPrisonContext): String =
     Context().apply {
-      setVariable("fullName", context.prisoner.fullName())
+      setVariable("fullName", context.prisoner.personName())
 
       with(context.recall) {
         setVariable("recallLengthDescription", RecallLengthDescription(this.recallLength!!).asFixedTermLengthDescription())

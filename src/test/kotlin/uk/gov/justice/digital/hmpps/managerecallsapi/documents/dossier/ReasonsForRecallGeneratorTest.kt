@@ -10,12 +10,8 @@ import io.mockk.slot
 import org.junit.jupiter.api.Test
 import org.thymeleaf.context.IContext
 import org.thymeleaf.spring5.SpringTemplateEngine
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.FirstAndMiddleNames
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.ReasonsForRecallContext
 
 class ReasonsForRecallGeneratorTest {
   private val templateEngine = mockk<SpringTemplateEngine>()
@@ -31,8 +27,7 @@ class ReasonsForRecallGeneratorTest {
 
     val result = underTest.generateHtml(
       ReasonsForRecallContext(
-        FirstAndMiddleNames(FirstName("Bertie"), MiddleNames("Basset")),
-        LastName("Badger"),
+        PersonName("Bertie", "Basset", "Badger"),
         "B1234",
         NomsNumber("A1234AA"),
         "(i) breach one\n(ii) breach two"

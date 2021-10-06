@@ -19,12 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWE
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsContext
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.TableOfContentsItem
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -54,7 +49,7 @@ class TableOfContentsGeneratorTest {
 
     val result = underTest.generateHtml(
       TableOfContentsContext(
-        PersonName(FirstName("Bertie"), MiddleNames("Basset"), LastName("Badger")),
+        PersonName("Bertie", "Basset", "Badger"),
         RecallLengthDescription(recallLength),
         currentPrisonName,
         bookingNumber
