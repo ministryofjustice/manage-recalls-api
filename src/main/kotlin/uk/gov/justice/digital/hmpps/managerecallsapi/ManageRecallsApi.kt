@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
-@SpringBootApplication()
+@SpringBootApplication
 @EnableJpaRepositories("uk.gov.justice.digital.hmpps.managerecallsapi.db")
 class ManageRecallsApi
 

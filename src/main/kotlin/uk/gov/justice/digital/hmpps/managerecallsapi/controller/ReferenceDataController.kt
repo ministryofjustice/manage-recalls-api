@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RestController()
+@RestController
 @RequestMapping("/reference-data", produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
-class ReferenceDataController() {
+class ReferenceDataController {
 
   @GetMapping("/local-delivery-units")
   fun localDeliveryUnits(): List<LocalDeliveryUnitResponse> = LocalDeliveryUnit.values().map { ldu -> LocalDeliveryUnitResponse(ldu.name, ldu.label) }.toList()

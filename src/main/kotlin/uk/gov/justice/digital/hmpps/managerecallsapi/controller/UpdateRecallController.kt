@@ -254,7 +254,7 @@ enum class LocalDeliveryUnit(val label: String) {
   PS_YORK("PS - York"),
   REGIONAL_CT_ADMIN("Regional CT Admin"),
   REPUBLIC_OF_IRELAND("Republic of Ireland"),
-  SCOTLAND("Scotland",),
+  SCOTLAND("Scotland"),
   YOT_SEE_COMMENTS("YOT - See Comments")
 }
 

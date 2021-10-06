@@ -74,7 +74,7 @@ private fun makeRandomSet(kclass: KClass<*>, type: KType): Set<Any> {
 }
 
 fun <T : Validated<UUID>> ((UUID) -> T).zeroes() = this(UUID(0, 0))
-fun randomString() = RandomStringUtils.randomAlphanumeric(10)
+fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomDocumentCategory() = RecallDocumentCategory.values().random()
 fun randomAdultDateOfBirth(): LocalDate? {

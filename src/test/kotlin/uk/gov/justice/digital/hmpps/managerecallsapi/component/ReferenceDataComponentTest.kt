@@ -12,7 +12,7 @@ class ReferenceDataComponentTest : ComponentTestBase() {
   fun `can get local delivery unit`() {
     val response = authenticatedClient.localDeliveryUnit()
 
-    assertThat(response.size, equalTo(LocalDeliveryUnit.values().size))
-    assertThat(response[0], equalTo(LocalDeliveryUnitResponse(LocalDeliveryUnit.values().get(0).name, LocalDeliveryUnit.values()[0].label)))
+    val expectedResponse = LocalDeliveryUnit.values().map { LocalDeliveryUnitResponse(it.name, it.label) }
+    assertThat(response, equalTo(expectedResponse))
   }
 }
