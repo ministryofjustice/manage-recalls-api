@@ -21,7 +21,7 @@ const val RECALL_TEAM_NAME = "Recall Team"
 const val RECALL_TEAM_CONTACT_NUMBER = "N/K"
 
 val standardDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
-val standardTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+val standardTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = null, val lastName: LastName) {
   constructor(firstName: String, middleNames: String? = null, lastName: String) : this(FirstName(firstName), middleNames?.let { MiddleNames(it) }, LastName(lastName))
