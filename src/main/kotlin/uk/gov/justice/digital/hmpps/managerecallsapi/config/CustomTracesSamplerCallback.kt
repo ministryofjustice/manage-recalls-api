@@ -5,27 +5,19 @@ import io.sentry.SentryOptions.TracesSamplerCallback
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
+const val defaultSampleRate = 0.05
+const val noSampleRate = 0.0
+
 @Component
 class CustomTracesSamplerCallback : TracesSamplerCallback {
-  override fun sample(context: SamplingContext): Double? {
-    val customSamplingContext = context.customSamplingContext
-    if (customSamplingContext != null) {
+  override fun sample(context: SamplingContext): Double =
+    context.customSamplingContext?.let { customSamplingContext ->
       val request = customSamplingContext["request"] as HttpServletRequest
-      return when (request.requestURI) {
+      when (request.requestURI) {
         // The health check endpoints are just noise - drop all transactions
-        "/health/liveness" -> {
-          0.0
-        }
-        "/health/readiness" -> {
-          0.0
-        }
-        // Default sample rate
-        else -> {
-          0.05
-        }
+        "/health/liveness" -> noSampleRate
+        "/health/readiness" -> noSampleRate
+        else -> defaultSampleRate
       }
-    } else {
-      return 0.05
-    }
-  }
+    } ?: defaultSampleRate
 }
