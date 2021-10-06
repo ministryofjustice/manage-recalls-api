@@ -62,8 +62,10 @@ class RecallSummaryGeneratorTest {
         LocalDate.of(2020, 10, 1),
         setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
         "London",
-        "Some stuff",
+        true,
         "Some contraband detail",
+        true,
+        "Some stuff",
         PrisonName("Current Prison"),
         PrisonName("Last Release Prison")
       ),
@@ -142,7 +144,9 @@ class RecallSummaryGeneratorTest {
         LocalDate.of(2020, 10, 1),
         setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
         "London",
+        false,
         null,
+        false,
         null,
         PrisonName("Current Prison"),
         PrisonName("Last Release Prison")

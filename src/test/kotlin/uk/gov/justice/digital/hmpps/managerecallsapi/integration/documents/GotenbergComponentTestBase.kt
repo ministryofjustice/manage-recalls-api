@@ -24,8 +24,10 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
 
   protected fun updateRecallWithRequiredInformationForTheDossier(
     recallId: RecallId,
+    contraband: Boolean = true,
+    contrabandDetail: String = "Lots of naughty contraband",
+    vulnerabilityDiversity: Boolean = true,
     vulnerabilityDiversityDetail: String = "Very diverse",
-    contrabandDetail: String = "Lots of naughty contraband"
   ) {
     authenticatedClient.updateRecall(
       recallId,
@@ -49,8 +51,10 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         authorisingAssistantChiefOfficer = "ACO",
         localPoliceForce = "London",
         currentPrison = PrisonId("MWI"),
-        vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
+        contraband = contraband,
         contrabandDetail = contrabandDetail,
+        vulnerabilityDiversity = vulnerabilityDiversity,
+        vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
         licenceConditionsBreached = "licenceConditionsBreached"
       )
     )
@@ -58,8 +62,10 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
 
   protected fun updateRecallWithRequiredInformationForTheLetterToPrison(
     recallId: RecallId,
-    vulnerabilityDiversityDetail: String = "Very diverse",
+    contraband: Boolean = true,
     contrabandDetail: String = "Lots of naughty contraband",
+    vulnerabilityDiversity: Boolean = true,
+    vulnerabilityDiversityDetail: String = "Very diverse",
     assessedByUserId: UserId? = null
   ) {
     authenticatedClient.updateRecall(
@@ -84,8 +90,10 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         authorisingAssistantChiefOfficer = "ACO",
         localPoliceForce = "London",
         currentPrison = PrisonId("MWI"),
-        vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
+        contraband = contraband,
         contrabandDetail = contrabandDetail,
+        vulnerabilityDiversity = vulnerabilityDiversity,
+        vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
         assessedByUserId = assessedByUserId,
         differentNomsNumber = true,
         differentNomsNumberDetail = "ABC123"

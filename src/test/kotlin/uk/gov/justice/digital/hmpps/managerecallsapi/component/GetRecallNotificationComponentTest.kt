@@ -74,8 +74,10 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         authorisingAssistantChiefOfficer = "Ms Authoriser",
         localPoliceForce = "London",
         currentPrison = PrisonId("BMI"),
-        vulnerabilityDiversityDetail = "Some stuff",
+        contraband = true,
         contrabandDetail = "Some contraband detail",
+        vulnerabilityDiversity = true,
+        vulnerabilityDiversityDetail = "Some stuff",
         assessedByUserId = userId,
 
       )

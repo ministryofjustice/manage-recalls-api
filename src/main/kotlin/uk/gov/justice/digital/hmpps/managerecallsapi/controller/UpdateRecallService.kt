@@ -26,7 +26,10 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       lastReleasePrison = updateRecallRequest.lastReleasePrison?.value ?: lastReleasePrison,
       lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,
       localPoliceForce = updateRecallRequest.localPoliceForce ?: localPoliceForce,
+      contraband = updateRecallRequest.contraband ?: contraband,
       contrabandDetail = updateRecallRequest.contrabandDetail ?: contrabandDetail,
+      vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity
+        ?: vulnerabilityDiversity,
       vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail
         ?: vulnerabilityDiversityDetail,
       mappaLevel = updateRecallRequest.mappaLevel ?: mappaLevel,
