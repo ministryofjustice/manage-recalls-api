@@ -30,6 +30,7 @@ class LetterToPrisonGovernorGenerator(
 
       with(context.recall) {
         setVariable("recallLengthDescription", RecallLengthDescription(this.recallLength!!).asFixedTermLengthDescription())
+        setVariable("recallLength", RecallLengthDescription(this.recallLength).numberOfDays())
         setVariable("bookingNumber", this.bookingNumber)
         setVariable("lastReleaseDate", this.lastReleaseDate!!.asStandardDateFormat())
       }
