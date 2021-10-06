@@ -24,16 +24,16 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-client")
 
   implementation("io.springfox:springfox-boot-starter:3.0.0")
-  implementation("org.flywaydb:flyway-core:7.10.0")
+  implementation("org.flywaydb:flyway-core:7.14.1")
   implementation("org.postgresql:postgresql:42.2.22")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
-  implementation("software.amazon.awssdk:s3:2.16.101")
-  implementation("org.http4k:http4k-format-jackson:4.12.1.0")
+  implementation("software.amazon.awssdk:s3:2.17.46")
+  implementation("org.http4k:http4k-format-jackson:4.13.1.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:5.1.2")
-  implementation("io.sentry:sentry-logback:5.1.2")
+  implementation("io.sentry:sentry-spring-boot-starter:5.2.1")
+  implementation("io.sentry:sentry-logback:5.2.1")
   implementation("com.github.librepdf:openpdf:1.3.26")
   implementation("com.github.librepdf:openpdf-fonts-extra:1.3.26")
 
@@ -45,18 +45,18 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
   }
 
-  testImplementation("io.mockk:mockk:1.10.0")
-  testImplementation("com.natpryce:hamkrest:1.7.0.3")
+  testImplementation("io.mockk:mockk:1.12.0")
+  testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
-  testImplementation("io.zonky.test:embedded-database-spring-test:2.0.1")
-  testImplementation("io.zonky.test:embedded-postgres:1.3.0")
+  testImplementation("io.zonky.test:embedded-database-spring-test:2.1.0")
+  testImplementation("io.zonky.test:embedded-postgres:1.3.1")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("com.ninja-squad:springmockk:3.0.1")
 
-  testImplementation("au.com.dius.pact.provider:junit5:4.2.7")
-  testImplementation("au.com.dius.pact.provider:junit5spring:4.2.7")
-  testImplementation("org.http4k:http4k-testing-approval:4.12.1.0")
+  testImplementation("au.com.dius.pact.provider:junit5:4.2.13")
+  testImplementation("au.com.dius.pact.provider:junit5spring:4.2.13")
+  testImplementation("org.http4k:http4k-testing-approval:4.13.1.0")
 }
 
 tasks {
