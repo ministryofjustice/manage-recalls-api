@@ -56,7 +56,7 @@ class RecallDocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `get a recall document downloads the file from S3`() {
+  fun `can download an uploaded document`() {
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     val document = authenticatedClient.uploadRecallDocument(
       recall.recallId,
