@@ -15,10 +15,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Base64
 import java.util.Locale.ENGLISH
 
 const val RECALL_TEAM_NAME = "Recall Team"
 const val RECALL_TEAM_CONTACT_NUMBER = "N/K"
+
+fun String.toBase64DecodedByteArray(): ByteArray = Base64.getDecoder().decode(this)
+fun ByteArray.encodeToBase64String(): String = Base64.getEncoder().encodeToString(this)
+fun String.encodeToBase64String(): String = this.toByteArray().encodeToBase64String()
 
 val standardDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
 val standardTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")

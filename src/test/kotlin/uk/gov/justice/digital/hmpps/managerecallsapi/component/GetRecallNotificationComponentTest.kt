@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -18,14 +19,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
-import java.util.Base64
 
 class GetRecallNotificationComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val firstName = "Natalia"
   private val expectedPdf = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
-  private val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+  private val expectedBase64Pdf = expectedPdf.encodeToBase64String()
 
   @Test
   fun `get recall notification returns merged recall summary and revocation order`() {

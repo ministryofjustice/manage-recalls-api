@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -26,7 +27,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.util.Base64
 import java.util.UUID
 
 @RestController
@@ -60,23 +60,20 @@ class RecallsController(
 
   @GetMapping("/recalls/{recallId}/recallNotification/{userId}")
   fun getRecallNotification(@PathVariable("recallId") recallId: RecallId, @PathVariable("userId") userId: UserId): Mono<ResponseEntity<Pdf>> =
-    recallNotificationService.getDocument(recallId, userId)
-      .map {
-        ResponseEntity.ok(Pdf.encode(it))
-      }
+    recallNotificationService.getDocument(recallId, userId).map {
+      ResponseEntity.ok(Pdf.encode(it))
+    }
 
   @GetMapping("/recalls/{recallId}/dossier")
   fun getDossier(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
-    dossierService.getDossier(recallId)
-      .map {
-        ResponseEntity.ok(Pdf.encode(it))
-      }
+    dossierService.getDossier(recallId).map {
+      ResponseEntity.ok(Pdf.encode(it))
+    }
 
   @GetMapping("/recalls/{recallId}/letter-to-prison")
   fun getLetterToPrison(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
     letterToPrison.getPdf(recallId).map {
-      val pdfBase64Encoded = Base64.getEncoder().encodeToString(it)
-      ResponseEntity.ok(Pdf(pdfBase64Encoded))
+      ResponseEntity.ok(Pdf.encode(it))
     }
 
   @GetMapping("/recalls/{recallId}/documents/{documentId}")
@@ -89,7 +86,7 @@ class RecallsController(
       GetDocumentResponse(
         documentId = documentId,
         category = document.category,
-        content = Base64.getEncoder().encodeToString(bytes),
+        content = bytes.encodeToBase64String(),
         fileName = document.fileName
       )
     )
@@ -219,7 +216,7 @@ data class ApiRecallDocument(
 
 data class Pdf(val content: String) {
   companion object {
-    fun encode(content: ByteArray): Pdf = Pdf(Base64.getEncoder().encodeToString(content))
+    fun encode(content: ByteArray): Pdf = Pdf(content.encodeToBase64String())
   }
 }
 

@@ -2,9 +2,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents
 
 import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource
-import java.util.Base64
 
 fun base64EncodedFileContents(fileName: String): String =
-  Base64.getEncoder().encodeToString(ClassPathResource(fileName).file.readBytes())
+  ClassPathResource(fileName).file.readBytes().encodeToBase64String()
 
 fun RecallClassPathResource.readText(): String = this.inputStream().reader().use { it.readText() }

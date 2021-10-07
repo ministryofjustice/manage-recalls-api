@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ApprovalTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -21,7 +22,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.io.File
-import java.util.Base64
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [UserController::class])
@@ -34,7 +34,7 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val userId = ::UserId.zeroes()
     val firstName = FirstName("Jimmy")
     val lastName = LastName("Ppud")
-    val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+    val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
     val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
@@ -53,7 +53,7 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val lastName = LastName("Ppud")
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
-    val signature = Base64.getEncoder().encodeToString(File("src/test/resources/signature.jpg").readBytes())
+    val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
     val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
 
     every { userDetailsService.get(userId) } returns userDetails

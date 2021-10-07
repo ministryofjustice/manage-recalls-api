@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -24,7 +25,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.util.Base64
 import java.util.UUID
 
 class RecallsControllerTest {
@@ -109,7 +109,7 @@ class RecallsControllerTest {
   fun `get recall notification returns Recall Notification PDF`() {
     val recall = recallRequest.toRecall()
     val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
     val userId = UserId(UUID.randomUUID())
 
     every { recallNotificationService.getDocument(recall.recallId(), userId) } returns Mono.just(expectedPdf)
@@ -129,7 +129,7 @@ class RecallsControllerTest {
   fun `get dossier returns expected PDF`() {
     val recall = recallRequest.toRecall()
     val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
 
     every { dossierService.getDossier(recall.recallId()) } returns Mono.just(expectedPdf)
 
@@ -163,7 +163,7 @@ class RecallsControllerTest {
     val expected = GetDocumentResponse(
       documentId,
       aRecallDocument.category,
-      content = Base64.getEncoder().encodeToString(bytes),
+      content = bytes.encodeToBase64String(),
       fileName
     )
     assertThat(response.body, equalTo(expected))
@@ -173,7 +173,7 @@ class RecallsControllerTest {
   fun `get letter to prison returns expected PDF`() {
     val recall = recallRequest.toRecall()
     val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = Base64.getEncoder().encodeToString(expectedPdf)
+    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
 
     every { letterToPrisonService.getPdf(recall.recallId()) } returns Mono.just(expectedPdf)
 
