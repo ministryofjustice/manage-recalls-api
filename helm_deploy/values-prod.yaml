@@ -17,6 +17,7 @@ generic-service:
     SENTRY_ENVIRONMENT: PROD
 
 generic-prometheus-alerts:
+  alertSeverity: ppud-replacement-prod
   extraDashboardTags:
     - ppud-replacement
     - manage-recalls
