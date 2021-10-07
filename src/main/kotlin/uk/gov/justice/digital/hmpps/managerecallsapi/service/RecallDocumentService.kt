@@ -22,34 +22,38 @@ class RecallDocumentService(
     documentBytes: ByteArray,
     documentCategory: RecallDocumentCategory,
     fileName: String? = null
-  ): UUID {
-    recallRepository.findByRecallId(recallId) ?: throw RecallNotFoundException(recallId)
-    val documentId = recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id ?: UUID.randomUUID()
-    s3Service.uploadFile(documentId, documentBytes)
-    // TODO: [KF] delete the document from S3 if saving fails?
-    recallDocumentRepository.save(RecallDocument(documentId, recallId.value, documentCategory, fileName))
-    return documentId
-  }
-
-  fun getDocument(recallId: RecallId, documentId: UUID): Pair<RecallDocument, ByteArray> {
-    recallRepository.getByRecallId(recallId)
-    val document = recallDocumentRepository.findByRecallIdAndDocumentId(recallId.value, documentId)
-      ?: throw RecallDocumentNotFoundException(recallId, documentId)
-    val bytes = s3Service.downloadFile(documentId)
-    return Pair(document, bytes)
-  }
-
-  fun getDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray {
-    return getDocumentContentWithCategoryIfExists(recallId, documentCategory)
-      ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
-  }
-
-  fun getDocumentContentWithCategoryIfExists(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray? {
-    // DB constraint ("UNIQUE (recall_id, category)") disallows > 1 doc matching recallId and category
-    recallRepository.getByRecallId(recallId)
-    return recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
-      s3Service.downloadFile(it.id)
+  ): UUID =
+    forExistingRecall(recallId) {
+      val documentId =
+        recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id ?: UUID.randomUUID()
+      s3Service.uploadFile(documentId, documentBytes)
+      // TODO: [KF] delete the document from S3 if saving fails?
+      recallDocumentRepository.save(RecallDocument(documentId, recallId.value, documentCategory, fileName))
+      return documentId
     }
+
+  fun getDocument(recallId: RecallId, documentId: UUID): Pair<RecallDocument, ByteArray> =
+    forExistingRecall(recallId) {
+      Pair(
+        recallDocumentRepository.getByRecallIdAndDocumentId(recallId, documentId),
+        s3Service.downloadFile(documentId)
+      )
+    }
+
+  fun getDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
+    getDocumentContentWithCategoryIfExists(recallId, documentCategory)
+      ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
+
+  fun getDocumentContentWithCategoryIfExists(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray? =
+    forExistingRecall(recallId) {
+      recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
+        s3Service.downloadFile(it.id)
+      }
+    }
+
+  private inline fun <reified T : Any?> forExistingRecall(recallId: RecallId, fn: () -> T): T {
+    recallRepository.getByRecallId(recallId)
+    return fn()
   }
 }
 

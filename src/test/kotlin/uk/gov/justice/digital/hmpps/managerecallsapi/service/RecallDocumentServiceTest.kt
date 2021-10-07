@@ -40,30 +40,11 @@ internal class RecallDocumentServiceTest {
   private val fileName = randomString()
 
   @Test
-  fun `getDocument throws a custom 'document not found' error if document with id is not found in recall`() {
-    val theDocumentId = UUID.randomUUID()
-    val otherDocumentId = UUID.randomUUID()
-    val otherDocument = RecallDocument(
-      id = otherDocumentId,
-      recallId = recallId.value,
-      category = randomDocumentCategory(),
-      fileName = randomString()
-    )
-    val aRecallWithAnotherDocument = aRecallWithoutDocuments.copy(documents = setOf(otherDocument))
-    every { recallRepository.getByRecallId(recallId) } returns aRecallWithAnotherDocument
-    every { recallDocumentRepository.findByRecallIdAndDocumentId(recallId.value, theDocumentId) } returns null
-
-    assertThrows<RecallDocumentNotFoundException> {
-      underTest.getDocument(recallId, theDocumentId)
-    }
-  }
-
-  @Test
-  fun `addDocumentToRecall uploads the document to S3 and adds it to the existing recall`() {
+  fun `can upload a document to S3 and adds it to the existing recall`() {
     val documentIdSlot = slot<UUID>()
     val savedDocumentSlot = slot<RecallDocument>()
 
-    every { recallRepository.findByRecallId(recallId) } returns aRecallWithoutDocuments
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
     every { s3Service.uploadFile(capture(documentIdSlot), documentBytes) } just runs
     every { recallRepository.addDocumentToRecall(recallId, capture(savedDocumentSlot)) } just runs
@@ -80,14 +61,14 @@ internal class RecallDocumentServiceTest {
   }
 
   @Test
-  fun `addDocumentToRecall with a category that already exists updates the existing document in both S3 and the repository`() {
+  fun `add document with a category that already exists updates the existing document in both S3 and the repository`() {
     val existingDocumentId = UUID.randomUUID()
     val existingDocument = RecallDocument(existingDocumentId, recallId.value, documentCategory, fileName)
     val aRecallWithDocument = Recall(recallId, nomsNumber, documents = setOf(existingDocument))
     val newFileName = randomString()
     val updatedDocument = RecallDocument(existingDocumentId, recallId.value, documentCategory, newFileName)
 
-    every { recallRepository.findByRecallId(recallId) } returns aRecallWithDocument
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
     every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns existingDocument
     every { s3Service.uploadFile(existingDocumentId, documentBytes) } just runs
     every { recallDocumentRepository.save(updatedDocument) } returns updatedDocument
@@ -95,18 +76,6 @@ internal class RecallDocumentServiceTest {
     val actualDocumentId = underTest.uploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, newFileName)
 
     assertThat(actualDocumentId, equalTo(existingDocumentId))
-  }
-
-  @Test
-  fun `add document to recall throws NotFoundException if recall does not exist`() {
-    every { recallRepository.findByRecallId(recallId) } returns null
-
-    assertThrows<RecallNotFoundException> {
-      underTest.uploadAndAddDocumentForRecall(recallId, documentBytes, PART_A_RECALL_REPORT, randomString())
-    }
-
-    verify(exactly = 0) { s3Service.uploadFile(any(), any()) }
-    verify(exactly = 0) { recallRepository.save(any()) }
   }
 
   @Test
@@ -122,7 +91,7 @@ internal class RecallDocumentServiceTest {
     val fileBytes = randomString().toByteArray()
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
-    every { recallDocumentRepository.findByRecallIdAndDocumentId(recallId.value, aDocumentId) } returns aDocument
+    every { recallDocumentRepository.getByRecallIdAndDocumentId(recallId, aDocumentId) } returns aDocument
     every { s3Service.downloadFile(aDocumentId) } returns fileBytes
 
     val (actualDocument, actualBytes) = underTest.getDocument(recallId, aDocumentId)
@@ -146,7 +115,6 @@ internal class RecallDocumentServiceTest {
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
     every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, aDocumentCategory) } returns aDocument
-
     every { s3Service.downloadFile(documentId) } returns fileBytes
 
     val actualBytes = underTest.getDocumentContentWithCategory(recallId, aDocumentCategory)
