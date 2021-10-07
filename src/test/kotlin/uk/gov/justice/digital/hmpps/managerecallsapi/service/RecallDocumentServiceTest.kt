@@ -3,6 +3,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.nhaarman.mockitokotlin2.any
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.get
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -21,6 +23,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.VirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.util.UUID
 
@@ -29,8 +33,9 @@ internal class RecallDocumentServiceTest {
   private val s3Service = mockk<S3Service>()
   private val recallRepository = mockk<RecallRepository>()
   private val recallDocumentRepository = mockk<RecallDocumentRepository>()
+  private val virusScanner = mockk<VirusScanner>()
 
-  private val underTest = RecallDocumentService(s3Service, recallRepository, recallDocumentRepository)
+  private val underTest = RecallDocumentService(s3Service, recallRepository, recallDocumentRepository, virusScanner)
 
   private val recallId = ::RecallId.random()
   private val documentBytes = randomString().toByteArray()
@@ -40,24 +45,39 @@ internal class RecallDocumentServiceTest {
   private val fileName = randomString()
 
   @Test
-  fun `can upload a document to S3 and adds it to the existing recall`() {
+  fun `can scan and upload a document to S3 and add it to the existing recall`() {
     val documentIdSlot = slot<UUID>()
     val savedDocumentSlot = slot<RecallDocument>()
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
+    every { virusScanner.scan(documentBytes) } returns NoVirusFound
     every { s3Service.uploadFile(capture(documentIdSlot), documentBytes) } just runs
-    every { recallRepository.addDocumentToRecall(recallId, capture(savedDocumentSlot)) } just runs
     every { recallDocumentRepository.save(capture(savedDocumentSlot)) } returns any()
 
-    val actualDocumentId = underTest.uploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, fileName)
+    val result = underTest.scanUploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, fileName)
 
     val uploadedDocumentId = documentIdSlot.captured
-    assertThat(actualDocumentId, equalTo(uploadedDocumentId))
+    assertThat(result.get(), equalTo(uploadedDocumentId))
     assertThat(
       savedDocumentSlot.captured,
       equalTo(RecallDocument(uploadedDocumentId, recallId.value, documentCategory, fileName))
     )
+  }
+
+  @Test
+  fun `uploading a document with a virus does not add to S3 or add to the recall`() {
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
+    every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
+    every { virusScanner.scan(documentBytes) } returns VirusFound
+
+    val result = underTest.scanUploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, fileName)
+
+    assertThat(result, equalTo(Failure(VirusFound)))
+
+    verify(exactly = 0) { s3Service.uploadFile(any(), documentBytes) }
+    verify(exactly = 0) { recallRepository.addDocumentToRecall(recallId, any()) }
+    verify(exactly = 0) { recallDocumentRepository.save(any()) }
   }
 
   @Test

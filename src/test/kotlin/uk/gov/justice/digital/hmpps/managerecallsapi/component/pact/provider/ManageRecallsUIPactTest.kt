@@ -10,6 +10,7 @@ import au.com.dius.pact.provider.junitsupport.loader.PactBroker
 import au.com.dius.pact.provider.junitsupport.loader.PactFilter
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
+import dev.forkhandles.result4k.Success
 import io.mockk.every
 import org.apache.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
@@ -146,8 +147,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a document can be created`() {
     val documentId = UUID.fromString("3fa85f64-5718-4562-b3fc-2c963f66afa8")
     every {
-      recallDocumentService.uploadAndAddDocumentForRecall(any(), any(), any(), any())
-    } returns documentId
+      recallDocumentService.scanUploadAndAddDocumentForRecall(any(), any(), any(), any())
+    } returns Success(documentId)
   }
 
   @State("a document exists")
