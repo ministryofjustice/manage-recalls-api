@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import dev.forkhandles.result4k.map
+import dev.forkhandles.result4k.recover
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -32,22 +34,29 @@ class AddDocumentController(
   fun addDocument(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody body: AddDocumentRequest
-  ): ResponseEntity<AddDocumentResponse> {
+  ): ResponseEntity<AddDocumentResponse> =
     // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
-    val documentId = try {
-      recallDocumentService.uploadAndAddDocumentForRecall(
-        recallId = recallId,
-        documentBytes = body.fileContent.toBase64DecodedByteArray(),
-        documentCategory = body.category,
-        fileName = body.fileName
-      )
-    } catch (e: RecallNotFoundException) {
-      throw ResponseStatusException(BAD_REQUEST, e.message, e)
+    uploadDocument(recallId, body).map { documentId ->
+      ResponseEntity
+        .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
+        .body(AddDocumentResponse(documentId = documentId))
+    }.recover {
+      ResponseEntity.badRequest().build()
     }
 
-    return ResponseEntity
-      .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
-      .body(AddDocumentResponse(documentId = documentId))
+  private fun uploadDocument(
+    recallId: RecallId,
+    body: AddDocumentRequest
+  ) = try {
+    recallDocumentService.scanUploadAndAddDocumentForRecall(
+      recallId = recallId,
+      documentBytes = body.fileContent.toBase64DecodedByteArray(),
+      documentCategory = body.category,
+      fileName = body.fileName
+    )
+  } catch (e: RecallNotFoundException) {
+    // Anyone object ot getting rid of this and letting the default NotFoundException return NOT_FOUND?
+    throw ResponseStatusException(BAD_REQUEST, e.message, e)
   }
 }
 

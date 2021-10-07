@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.allElements
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
+import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -36,13 +37,13 @@ class AddDocumentControllerTest {
     val documentId = UUID.randomUUID()
 
     every {
-      recallDocumentService.uploadAndAddDocumentForRecall(
+      recallDocumentService.scanUploadAndAddDocumentForRecall(
         recallId,
         documentBytes,
         category,
         fileName
       )
-    } returns documentId
+    } returns Success(documentId)
 
     val request = AddDocumentRequest(category, documentBytes.encodeToBase64String(), fileName)
     val response = underTest.addDocument(recallId, request)
@@ -62,7 +63,7 @@ class AddDocumentControllerTest {
     val category = PART_A_RECALL_REPORT
     val recallNotFoundError = RecallNotFoundException(recallId)
 
-    every { recallDocumentService.uploadAndAddDocumentForRecall(recallId, documentBytes, category, fileName) } throws recallNotFoundError
+    every { recallDocumentService.scanUploadAndAddDocumentForRecall(recallId, documentBytes, category, fileName) } throws recallNotFoundError
 
     val request = AddDocumentRequest(category, documentBytes.encodeToBase64String(), fileName)
 
