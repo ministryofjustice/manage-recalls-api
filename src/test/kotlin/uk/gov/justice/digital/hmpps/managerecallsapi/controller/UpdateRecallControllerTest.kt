@@ -11,6 +11,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.UpdateRecallService
 
 class UpdateRecallControllerTest {
   private val updateRecallService = mockk<UpdateRecallService>()
