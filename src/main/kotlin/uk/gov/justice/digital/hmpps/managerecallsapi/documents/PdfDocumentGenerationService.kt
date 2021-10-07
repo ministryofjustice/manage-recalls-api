@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallCla
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
-import java.util.Base64
 
 @Component
 class PdfDocumentGenerationService(@Autowired private val gotenbergApi: GotenbergApi) {
@@ -99,9 +98,7 @@ private data class ClassPathImageData(
 private data class Base64EncodedImageData(override val fileName: String, val base64EncodedContent: String) :
   ImageData {
   override fun data() = MultipartInputStreamFileResource(
-    ByteArrayInputStream(
-      Base64.getDecoder().decode(base64EncodedContent.toByteArray())
-    ),
+    ByteArrayInputStream(base64EncodedContent.toBase64DecodedByteArray()),
     fileName
   )
 }

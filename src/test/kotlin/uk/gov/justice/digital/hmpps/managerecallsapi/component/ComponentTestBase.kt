@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -32,7 +33,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Pri
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.io.File
-import java.util.Base64
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -116,7 +116,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
       .expectBody()
 
   protected fun writeBase64EncodedStringToFile(fileName: String, content: String) {
-    File(fileName).writeBytes(Base64.getDecoder().decode(content))
+    File(fileName).writeBytes(content.toBase64DecodedByteArray())
   }
 
   protected fun setupUserDetailsFor(userId: UserId) {

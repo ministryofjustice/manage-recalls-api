@@ -11,10 +11,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import java.util.Base64
 import java.util.UUID
 
 class RecallDocumentComponentTest : ComponentTestBase() {
@@ -22,7 +22,7 @@ class RecallDocumentComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
   private val documentCategory = PART_A_RECALL_REPORT
   private val documentContents = "Expected Generated PDF".toByteArray()
-  private val base64EncodedDocumentContents = Base64.getEncoder().encodeToString(documentContents)
+  private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = "emailfileName"
   private val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, fileName)
 

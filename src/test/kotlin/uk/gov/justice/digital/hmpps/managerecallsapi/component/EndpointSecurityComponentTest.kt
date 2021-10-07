@@ -10,8 +10,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import java.util.Base64
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -21,7 +21,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val fileBytes = "content".toByteArray()
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
-  private val addDocumentRequest = AddDocumentRequest(category, Base64.getEncoder().encodeToString(fileBytes))
+  private val addDocumentRequest = AddDocumentRequest(category, fileBytes.encodeToBase64String())
   private val updateRecallRequest = UpdateRecallRequest()
   private val recallSearchRequest = RecallSearchRequest(nomsNumber)
   private val apiSearchRequest = SearchRequest(nomsNumber)

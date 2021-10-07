@@ -13,7 +13,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
-import java.util.Base64
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 
 @Component
 class HmppsAuthMockServer(
@@ -22,7 +22,7 @@ class HmppsAuthMockServer(
   @Value("\${spring.security.oauth2.client.registration.offender-search-client.client-secret}") private val apiClientSecret: String
 ) : WireMockServer(9090) {
 
-  private val oauthClientToken = Base64.getEncoder().encodeToString("$apiClientId:$apiClientSecret".toByteArray())
+  private val oauthClientToken = "$apiClientId:$apiClientSecret".toByteArray().encodeToBase64String()
 
   fun stubClientToken() {
     stubFor(

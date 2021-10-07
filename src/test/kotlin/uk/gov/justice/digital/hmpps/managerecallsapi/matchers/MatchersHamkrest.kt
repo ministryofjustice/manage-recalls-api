@@ -12,7 +12,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.hasSize
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
-import java.util.Base64
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 
 fun <T> isSingleItemMatching(matcher: Matcher<T>): Matcher<Collection<T>> =
   allOf(
@@ -29,7 +29,7 @@ fun <T> isSingleItemMatching(matcher: Matcher<T>): Matcher<Collection<T>> =
 fun hasNumberOfPages(numberOfPagesMatcher: Matcher<Int>): Matcher<Pdf> =
   has(
     "number of pages",
-    { Base64.getDecoder().decode(it.content.toByteArray()) },
+    { it.content.toBase64DecodedByteArray() },
     isPdfWithNumberOfPages(numberOfPagesMatcher)
   )
 
@@ -46,7 +46,7 @@ fun isPdfWithNumberOfPages(numberOfPagesMatcher: Matcher<Int>): Matcher<ByteArra
 fun hasTotalPageCount(expectedNumberOfPages: Int): Matcher<Pdf> =
   has(
     "number of pages",
-    { Base64.getDecoder().decode(it.content.toByteArray()) },
+    { it.content.toBase64DecodedByteArray() },
     isPdfWithWithTotalPageCount(expectedNumberOfPages)
   )
 

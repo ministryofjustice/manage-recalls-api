@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.net.URI
-import java.util.Base64
 import java.util.UUID
 
 @RestController
@@ -37,7 +37,7 @@ class AddDocumentController(
     val documentId = try {
       recallDocumentService.uploadAndAddDocumentForRecall(
         recallId = recallId,
-        documentBytes = Base64.getDecoder().decode(body.fileContent),
+        documentBytes = body.fileContent.toBase64DecodedByteArray(),
         documentCategory = body.category,
         fileName = body.fileName
       )
