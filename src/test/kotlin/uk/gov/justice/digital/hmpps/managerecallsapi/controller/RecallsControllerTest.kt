@@ -1,15 +1,11 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
-import com.natpryce.hamkrest.allElements
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.present
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -26,15 +22,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.Base64
 import java.util.UUID
 
 class RecallsControllerTest {
-  private val advertisedBaseUri = "https://api"
-
   private val recallRepository = mockk<RecallRepository>()
   private val recallNotificationService = mockk<RecallNotificationService>()
   private val recallDocumentService = mockk<RecallDocumentService>()
@@ -42,7 +35,7 @@ class RecallsControllerTest {
   private val letterToPrisonService = mockk<LetterToPrisonService>()
 
   private val underTest =
-    RecallsController(recallRepository, recallNotificationService, recallDocumentService, dossierService, letterToPrisonService, advertisedBaseUri)
+    RecallsController(recallRepository, recallNotificationService, recallDocumentService, dossierService, letterToPrisonService)
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
@@ -148,44 +141,6 @@ class RecallsControllerTest {
         assertThat(it.body?.content, equalTo(expectedBase64Pdf))
       }
       .verifyComplete()
-  }
-
-  @Test
-  fun `adds a recall document successfully`() {
-    val document = "a document"
-    val documentBytes = document.toByteArray()
-    val category = RecallDocumentCategory.PART_A_RECALL_REPORT
-    val documentId = UUID.randomUUID()
-
-    every { recallDocumentService.uploadAndAddDocumentForRecall(recallId, documentBytes, category, fileName) } returns documentId
-
-    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes), fileName)
-    val response = underTest.addDocument(recallId, request)
-
-    assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
-    assertThat(
-      response.headers["Location"]?.toList(),
-      present(allElements(equalTo("$advertisedBaseUri/recalls/$recallId/documents/$documentId")))
-    )
-    assertThat(response.body, equalTo(AddDocumentResponse(documentId)))
-  }
-
-  @Test
-  fun `'add document' responds with BAD_REQUEST if target recall is not found`() {
-    val document = "a document"
-    val documentBytes = document.toByteArray()
-    val category = RecallDocumentCategory.PART_A_RECALL_REPORT
-    val recallNotFoundError = RecallNotFoundException(recallId)
-
-    every { recallDocumentService.uploadAndAddDocumentForRecall(recallId, documentBytes, category, fileName) } throws recallNotFoundError
-
-    val request = AddDocumentRequest(category, Base64.getEncoder().encodeToString(documentBytes), fileName)
-
-    val exception = assertThrows<ResponseStatusException> { underTest.addDocument(recallId, request) }
-
-    assertThat(exception.status, equalTo(HttpStatus.BAD_REQUEST))
-    assertThat(exception.reason, equalTo(recallNotFoundError.message))
-    assertThat(exception.cause, equalTo(recallNotFoundError))
   }
 
   @Test
