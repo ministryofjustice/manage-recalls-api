@@ -64,6 +64,8 @@ class CreateDossierComponentTest : ComponentTestBase() {
         licenceConditionsBreached = "he was a very naughty boy"
       )
     )
+    expectNoVirusesWillBeFound()
+
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
       AddDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"))
