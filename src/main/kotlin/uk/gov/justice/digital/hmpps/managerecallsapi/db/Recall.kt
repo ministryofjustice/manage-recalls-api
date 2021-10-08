@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -159,9 +160,10 @@ data class Recall(
     )
 
   fun recallId() = RecallId(id)
-  fun assessedByUserId() = assessedByUserId?.let { UserId(it) }
-  fun bookedByUserId() = bookedByUserId?.let { UserId(it) }
-  fun dossierCreatedByUserId() = dossierCreatedByUserId?.let { UserId(it) }
+  fun assessedByUserId() = assessedByUserId?.let(::UserId)
+  fun bookedByUserId() = bookedByUserId?.let(::UserId)
+  fun dossierCreatedByUserId() = dossierCreatedByUserId?.let(::UserId)
+  fun sentencingCourt() = sentencingInfo?.sentencingCourt()
 }
 
 @Embeddable
@@ -175,6 +177,7 @@ data class SentencingInfo(
   val sentenceLength: SentenceLength,
   val conditionalReleaseDate: LocalDate? = null
 ) {
+  fun sentencingCourt(): CourtId = CourtId(sentencingCourt)
   fun calculateRecallLength(): RecallLength {
     return if (sentenceLength.sentenceDays >= 366 || sentenceLength.sentenceMonths >= 12 || sentenceLength.sentenceYears >= 1) {
       RecallLength.TWENTY_EIGHT_DAYS

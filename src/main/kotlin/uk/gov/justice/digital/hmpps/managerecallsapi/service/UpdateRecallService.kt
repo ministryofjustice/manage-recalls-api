@@ -74,7 +74,7 @@ fun UpdateRecallRequest.toSentencingInfo(
       sentenceDate,
       licenceExpiryDate,
       sentenceExpiryDate,
-      sentencingCourt,
+      sentencingCourt.value,
       indexOffence,
       SentenceLength(sentenceLength.years, sentenceLength.months, sentenceLength.days),
       conditionalReleaseDate

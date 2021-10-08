@@ -161,6 +161,18 @@ workflows:
               only:
                 - main
 
+  fake-court-register-api-build:
+    unless: << pipeline.parameters.only_run_pact_workflow >>
+    jobs:
+      - hmpps/build_docker:
+          name: build_fake_court_register_api
+          image_name: quay.io/hmpps/ppud-fake-court-register-api
+          dockerfile_dir: fake-court-register-api
+          filters:
+            branches:
+              only:
+                - main
+
   build-test-and-deploy:
     unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:

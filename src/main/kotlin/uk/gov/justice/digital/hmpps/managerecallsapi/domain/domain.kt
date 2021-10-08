@@ -22,6 +22,8 @@ class Email(value: String) : Validated<String>(value, notBlank)
 class PhoneNumber(value: String) : Validated<String>(value, notBlank)
 class PrisonName(value: String) : Validated<String>(value, notBlank)
 class PrisonId(value: String) : Validated<String>(value, notBlank, alphanumeric, 2.minLength, 6.maxLength)
+class CourtId(value: String) : Validated<String>(value, notBlank)
+class CourtName(value: String) : Validated<String>(value, notBlank)
 
 fun <T : Validated<UUID>> ((UUID) -> T).random() = this(UUID.randomUUID())
 

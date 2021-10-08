@@ -10,48 +10,33 @@ import com.github.tomakehurst.wiremock.http.HttpHeaders
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient.Court
 
 @Component
-class PrisonRegisterMockServer(
+class CourtRegisterMockServer(
   @Autowired private val objectMapper: ObjectMapper
-) : WireMockServer(9094) {
+) : WireMockServer(9095) {
 
-  fun stubPrisons() {
-    val prisons = listOf(
-      Prison(PrisonId("MWI"), PrisonName("Medway (STC)"), true),
-      Prison(PrisonId("AKI"), PrisonName("Acklington (HMP)"), false),
-      Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
-      Prison(PrisonId("KTI"), PrisonName("KTI (HMP)"), true),
-      Prison(PrisonId("BAI"), PrisonName("BAI (HMP)"), true),
-      Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true)
-    )
-    stubAllPrisons(prisons)
-    prisons.forEach { stubPrison(it) }
-  }
-
-  fun stubAllPrisons(prisons: List<Prison>) {
-    stubGet("/prisons", prisons)
-  }
-
-  fun stubPrison(prison: Prison) {
-    stubGet("/prisons/id/${prison.prisonId}", prison)
-  }
-
-  fun <T> stubGet(url: String, response: T) {
+  fun respondsWith200() {
     stubFor(
-      get(urlEqualTo(url))
+      get(urlEqualTo("/courts/all"))
         .willReturn(
           aResponse()
             .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
             .withBody(
-              objectMapper.writeValueAsString(response)
+              objectMapper.writeValueAsString(
+                listOf(
+                  Court(CourtId("ACCRYC"), CourtName("Accrington Youth Court")),
+                  Court(CourtId("BANBCT"), CourtName("Banbury County Court")),
+                  Court(CourtId("CARLCT"), CourtName("Carlisle Combined Court Centre")),
+                  Court(CourtId("HVRFCT"), CourtName("Haverfordwest County Court")),
+                )
+              )
             )
             .withStatus(OK.value())
         )
@@ -63,7 +48,7 @@ class PrisonRegisterMockServer(
   }
 
   fun isUnhealthy() {
-    healthCheck(INTERNAL_SERVER_ERROR)
+    healthCheck(HttpStatus.INTERNAL_SERVER_ERROR)
   }
 
   private fun healthCheck(status: HttpStatus) =

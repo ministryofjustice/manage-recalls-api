@@ -79,7 +79,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       LocalDate.now(),
       LocalDate.now(),
       LocalDate.now(),
-      "court",
+      "ACCRYC",
       "index offence",
       SentenceLength(2, 5, 31)
     )
@@ -90,7 +90,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         sentenceDate = sentencingInfo.sentenceDate,
         licenceExpiryDate = sentencingInfo.licenceExpiryDate,
         sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
-        sentencingCourt = sentencingInfo.sentencingCourt,
+        sentencingCourt = sentencingInfo.sentencingCourt(),
         indexOffence = sentencingInfo.indexOffence,
         conditionalReleaseDate = sentencingInfo.conditionalReleaseDate,
         sentenceLength = Api.SentenceLength(
@@ -111,7 +111,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
           sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
-          sentencingCourt = sentencingInfo.sentencingCourt,
+          sentencingCourt = sentencingInfo.sentencingCourt(),
           indexOffence = sentencingInfo.indexOffence,
           sentenceLength = Api.SentenceLength(2, 5, 31)
         )

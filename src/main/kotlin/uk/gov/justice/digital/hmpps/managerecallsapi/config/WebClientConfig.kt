@@ -9,7 +9,6 @@ import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
 import java.time.Duration.ofSeconds
 
 @Configuration
@@ -27,13 +26,20 @@ class WebClientConfig {
   @Value("\${prisonRegister.endpoint.url}")
   private lateinit var prisonRegisterEndpointUrl: String
 
-  @Bean
-  fun prisonRegisterWebClient(): WebClient =
-    WebClient.builder()
-      .baseUrl(prisonRegisterEndpointUrl)
-      .codecs {
-        it.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(mapper, APPLICATION_JSON))
-        it.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(mapper, APPLICATION_JSON))
-      }
-      .build()
+  @Bean("prisonRegisterWebClient")
+  fun prisonRegisterWebClient(): WebClient = webClient(prisonRegisterEndpointUrl)
+
+  @Value("\${courtRegister.endpoint.url}")
+  private lateinit var courtRegisterEndpointUrl: String
+
+  @Bean("courtRegisterWebClient")
+  fun courtRegisterWebClient(): WebClient = webClient(courtRegisterEndpointUrl)
+
+  private fun webClient(endpointUrl: String) = WebClient.builder()
+    .baseUrl(endpointUrl)
+    .codecs {
+      it.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
+      it.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
+    }
+    .build()
 }

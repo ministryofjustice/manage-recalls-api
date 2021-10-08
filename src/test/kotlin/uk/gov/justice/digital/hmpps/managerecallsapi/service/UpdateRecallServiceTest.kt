@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -41,7 +42,7 @@ class UpdateRecallServiceTest {
     fullyPopulatedUpdateRecallRequest.sentenceDate!!,
     fullyPopulatedUpdateRecallRequest.licenceExpiryDate!!,
     fullyPopulatedUpdateRecallRequest.sentenceExpiryDate!!,
-    fullyPopulatedUpdateRecallRequest.sentencingCourt!!,
+    fullyPopulatedUpdateRecallRequest.sentencingCourt!!.value,
     fullyPopulatedUpdateRecallRequest.indexOffence!!,
     SentenceLength(
       fullyPopulatedUpdateRecallRequest.sentenceLength!!.years,
@@ -152,7 +153,7 @@ class UpdateRecallServiceTest {
     sentenceDate: LocalDate? = today,
     licenceExpiryDate: LocalDate? = today,
     sentenceExpiryDate: LocalDate? = today,
-    sentencingCourt: String? = "court",
+    sentencingCourt: CourtId? = CourtId("court"),
     indexOffence: String? = "index offence",
     sentenceLength: Api.SentenceLength? = Api.SentenceLength(10, 1, 1)
   ) = UpdateRecallRequest(

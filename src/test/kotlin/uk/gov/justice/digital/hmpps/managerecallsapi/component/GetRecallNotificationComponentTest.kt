@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -64,7 +65,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         licenceExpiryDate = LocalDate.of(2020, 11, 1),
         sentenceExpiryDate = LocalDate.of(2020, 10, 29),
         sentenceLength = Api.SentenceLength(2, 3, 10),
-        sentencingCourt = "High court",
+        sentencingCourt = CourtId("ACCRYC"),
         indexOffence = "Some offence",
         reasonsForRecall = setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
         probationOfficerName = "Mr Probation Officer",
