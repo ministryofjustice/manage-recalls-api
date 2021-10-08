@@ -78,7 +78,8 @@ data class UpdateRecallRequest(
   val previousConvictionMainName: String? = null,
   val assessedByUserId: UserId? = null,
   val bookedByUserId: UserId? = null,
-  val dossierCreatedByUserId: UserId? = null
+  val dossierCreatedByUserId: UserId? = null,
+  val dossierTargetDate: OffsetDateTime? = null
 )
 
 enum class RecallLength {

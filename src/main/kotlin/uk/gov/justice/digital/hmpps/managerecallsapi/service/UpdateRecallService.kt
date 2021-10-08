@@ -9,6 +9,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.time.DayOfWeek
+import java.time.LocalDate
 
 @Service
 class UpdateRecallService(private val recallRepository: RecallRepository) {
@@ -54,7 +56,8 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
       assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
-      dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId
+      dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
+      dossierTargetDate = updateRecallRequest.findDossierTargetDate()
     )
   }
 }
@@ -101,3 +104,13 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
   } else {
     existingRecall.probationInfo
   }
+
+fun UpdateRecallRequest.findDossierTargetDate(): LocalDate? {
+  return recallNotificationEmailSentDateTime?.let {
+    val dossierTargetDate = it.toLocalDate().plusDays(1)
+    while (dossierTargetDate?.dayOfWeek == DayOfWeek.SATURDAY || dossierTargetDate?.dayOfWeek == DayOfWeek.SATURDAY) {
+      dossierTargetDate.plusDays(1)
+    }
+    dossierTargetDate
+  }
+}
