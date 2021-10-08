@@ -9,10 +9,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 
 @Component
-class PrisonRegisterClient {
-
-  @Autowired
-  internal lateinit var prisonRegisterWebClient: WebClient
+class PrisonRegisterClient(
+  @Autowired private val prisonRegisterWebClient: WebClient
+) {
 
   fun getAllPrisons(): Mono<List<Prison>> {
     return prisonRegisterWebClient
@@ -22,9 +21,6 @@ class PrisonRegisterClient {
       .bodyToMono(object : ParameterizedTypeReference<List<Prison>>() {})
   }
 
-  data class Prison(
-    val prisonId: PrisonId? = null,
-    val prisonName: PrisonName? = null,
-    val active: Boolean? = null
-  )
 }
+
+data class Prison(val prisonId: PrisonId, val prisonName: PrisonName, val active: Boolean)

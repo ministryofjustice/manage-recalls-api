@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 
 class PrisonLookupServiceTest {
@@ -26,7 +26,7 @@ class PrisonLookupServiceTest {
 
     every { prisonRegisterClient.getAllPrisons() } returns Mono.just(
       listOf(
-        Prison(prisonId, prisonName), fullyPopulatedInstance(), fullyPopulatedInstance(), fullyPopulatedInstance()
+        Prison(prisonId, prisonName, true), fullyPopulatedInstance(), fullyPopulatedInstance(), fullyPopulatedInstance()
       )
     )
 
