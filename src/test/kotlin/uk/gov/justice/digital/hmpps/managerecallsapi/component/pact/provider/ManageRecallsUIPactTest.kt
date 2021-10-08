@@ -147,7 +147,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a document can be created`() {
     val documentId = UUID.fromString("3fa85f64-5718-4562-b3fc-2c963f66afa8")
     every {
-      recallDocumentService.scanUploadAndAddDocumentForRecall(any(), any(), any(), any())
+      recallDocumentService.scanAndStoreDocument(any(), any(), any(), any())
     } returns Success(documentId)
   }
 

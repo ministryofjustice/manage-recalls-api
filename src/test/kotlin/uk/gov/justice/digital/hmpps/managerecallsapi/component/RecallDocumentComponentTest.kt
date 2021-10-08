@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -18,8 +17,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.util.UUID
 
 class RecallDocumentComponentTest : ComponentTestBase() {
-
   private val nomsNumber = NomsNumber("123456")
+  private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val documentCategory = PART_A_RECALL_REPORT
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
@@ -28,25 +27,36 @@ class RecallDocumentComponentTest : ComponentTestBase() {
 
   @Test
   fun `add a recall document uploads the file to S3 and returns the documentId`() {
-    val recallId = ::RecallId.random()
-    recallRepository.save(Recall(recallId, nomsNumber))
+    expectNoVirusesWillBeFound()
 
-    val response = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest)
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    val response = authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest)
 
     assertThat(response.documentId, present())
   }
 
   @Test
-  fun `upload a recall document with a category that already exists overwrites the existing document`() {
-    val recallId = ::RecallId.random()
-    recallRepository.save(Recall(recallId, nomsNumber))
+  fun `add a recall document with a virus returns bad request`() {
+    expectAVirusWillBeFound()
 
-    val originalDocumentId = authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest).documentId
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest, BAD_REQUEST)
+  }
+
+  @Test
+  fun `upload a recall document with a category that already exists overwrites the existing document`() {
+    expectNoVirusesWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    val originalDocumentId = authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest).documentId
     val newFilename = "newFilename"
     val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, newFilename)
-    authenticatedClient.uploadRecallDocument(recallId, addDocumentRequest)
+    authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest)
 
-    val recallDocument = authenticatedClient.getRecallDocument(recallId, originalDocumentId)
+    val recallDocument = authenticatedClient.getRecallDocument(recall.recallId, originalDocumentId)
     assertThat(recallDocument, equalTo(GetDocumentResponse(originalDocumentId, documentCategory, base64EncodedDocumentContents, newFilename)))
   }
 
@@ -57,7 +67,9 @@ class RecallDocumentComponentTest : ComponentTestBase() {
 
   @Test
   fun `can download an uploaded document`() {
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    expectNoVirusesWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadRecallDocument(
       recall.recallId,
       AddDocumentRequest(documentCategory, base64EncodedDocumentContents, fileName)
@@ -79,10 +91,11 @@ class RecallDocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `get recall document returns 404 if recall exist but document does not exist`() {
-    val recallId = ::RecallId.random()
-    recallRepository.save(Recall(recallId, nomsNumber))
+  fun `get recall document returns 404 if the recall exists but the document does not`() {
+    expectNoVirusesWillBeFound()
 
-    authenticatedClient.getRecallDocument(recallId, UUID.randomUUID(), expectedStatus = NOT_FOUND)
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    authenticatedClient.getRecallDocument(recall.recallId, UUID.randomUUID(), expectedStatus = NOT_FOUND)
   }
 }

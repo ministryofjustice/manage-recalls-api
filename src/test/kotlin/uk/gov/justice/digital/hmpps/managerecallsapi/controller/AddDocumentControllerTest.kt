@@ -37,7 +37,7 @@ class AddDocumentControllerTest {
     val documentId = UUID.randomUUID()
 
     every {
-      recallDocumentService.scanUploadAndAddDocumentForRecall(
+      recallDocumentService.scanAndStoreDocument(
         recallId,
         documentBytes,
         category,
@@ -63,7 +63,7 @@ class AddDocumentControllerTest {
     val category = PART_A_RECALL_REPORT
     val recallNotFoundError = RecallNotFoundException(recallId)
 
-    every { recallDocumentService.scanUploadAndAddDocumentForRecall(recallId, documentBytes, category, fileName) } throws recallNotFoundError
+    every { recallDocumentService.scanAndStoreDocument(recallId, documentBytes, category, fileName) } throws recallNotFoundError
 
     val request = AddDocumentRequest(category, documentBytes.encodeToBase64String(), fileName)
 

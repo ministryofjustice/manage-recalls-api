@@ -13,18 +13,17 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val prisonerFirstName = "Natalia"
-  private val assessedByUserId = ::UserId.random()
   private val recallNotificationUserId = ::UserId.random()
 
   @Test
   fun `can generate a dossier using gotenberg`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
-    setupUserDetailsFor(assessedByUserId)
     setupUserDetailsFor(recallNotificationUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     updateRecallWithRequiredInformationForTheDossier(recall.recallId)
     authenticatedClient.getRecallNotification(recall.recallId, recallNotificationUserId)
+    expectNoVirusesWillBeFound()
     uploadLicenceFor(recall)
     uploadPartAFor(recall)
 
