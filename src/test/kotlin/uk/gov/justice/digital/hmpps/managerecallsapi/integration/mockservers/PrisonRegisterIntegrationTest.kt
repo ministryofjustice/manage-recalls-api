@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -41,15 +40,6 @@ class PrisonRegisterIntegrationTest(
   @AfterAll
   fun stopMockServer() {
     prisonRegisterMockServer.stop()
-  }
-
-  @Test
-  fun `can retrieve all prisons`() {
-    prisonRegisterMockServer.stubPrisons()
-
-    val result = prisonRegisterClient.getAllPrisons().block()!!
-
-    assertThat(result, hasSize(equalTo(6)))
   }
 
   @Test

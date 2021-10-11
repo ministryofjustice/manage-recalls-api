@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.prisonData
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
@@ -14,16 +13,8 @@ class PrisonRegisterClient(
   @Autowired private val prisonRegisterWebClient: WebClient
 ) {
 
-  fun getAllPrisons(): Mono<List<Prison>> {
-    return prisonRegisterWebClient
-      .get()
-      .uri("/prisons")
-      .retrieve()
-      .bodyToMono(object : ParameterizedTypeReference<List<Prison>>() {})
-  }
-
-  fun findPrisonById(prisonId: PrisonId): Mono<Prison> {
-    return prisonRegisterWebClient
+  fun findPrisonById(prisonId: PrisonId): Mono<Prison> =
+    prisonRegisterWebClient
       .get()
       .uri("/prisons/id/$prisonId")
       .retrieve()
@@ -34,7 +25,6 @@ class PrisonRegisterClient(
           else -> Mono.error(exception)
         }
       }
-  }
 }
 
 data class Prison(val prisonId: PrisonId, val prisonName: PrisonName, val active: Boolean)

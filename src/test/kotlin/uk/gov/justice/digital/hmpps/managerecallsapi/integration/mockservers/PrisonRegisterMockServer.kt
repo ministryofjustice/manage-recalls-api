@@ -24,26 +24,14 @@ class PrisonRegisterMockServer(
 ) : WireMockServer(9094) {
 
   fun stubPrisons() {
-    stubFor(
-      get(urlEqualTo("/prisons"))
-        .willReturn(
-          aResponse()
-            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
-            .withBody(
-              objectMapper.writeValueAsString(
-                listOf(
-                  Prison(PrisonId("MWI"), PrisonName("Medway (STC)"), true),
-                  Prison(PrisonId("AKI"), PrisonName("Acklington (HMP)"), false),
-                  Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
-                  Prison(PrisonId("KTI"), PrisonName("KTI (HMP)"), true),
-                  Prison(PrisonId("BAI"), PrisonName("BAI (HMP)"), true),
-                  Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true),
-                )
-              )
-            )
-            .withStatus(OK.value())
-        )
-    )
+    listOf(
+      Prison(PrisonId("MWI"), PrisonName("Medway (STC)"), true),
+      Prison(PrisonId("AKI"), PrisonName("Acklington (HMP)"), false),
+      Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
+      Prison(PrisonId("KTI"), PrisonName("KTI (HMP)"), true),
+      Prison(PrisonId("BAI"), PrisonName("BAI (HMP)"), true),
+      Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true)
+    ).forEach { stubPrison(it) }
   }
 
   fun stubPrison(prison: Prison) {
