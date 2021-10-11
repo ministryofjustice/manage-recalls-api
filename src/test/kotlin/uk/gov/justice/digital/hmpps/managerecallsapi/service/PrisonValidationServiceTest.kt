@@ -69,5 +69,4 @@ class PrisonValidationServiceTest {
 
     assertThat(prisonValidationResult, equalTo(expectedResult))
   }
-
 }
