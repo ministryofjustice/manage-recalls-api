@@ -21,6 +21,13 @@ class PrisonRegisterClient(
       .bodyToMono(object : ParameterizedTypeReference<List<Prison>>() {})
   }
 
+  fun getPrison(prisonId: PrisonId): Mono<Prison> {
+    return prisonRegisterWebClient
+      .get()
+      .uri("/prisons/id/$prisonId")
+      .retrieve()
+      .bodyToMono(Prison::class.java)
+  }
 }
 
 data class Prison(val prisonId: PrisonId, val prisonName: PrisonName, val active: Boolean)

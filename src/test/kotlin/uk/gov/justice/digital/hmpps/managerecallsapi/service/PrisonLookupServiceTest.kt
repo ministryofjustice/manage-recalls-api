@@ -9,8 +9,8 @@ import org.junit.jupiter.api.assertThrows
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 
 class PrisonLookupServiceTest {

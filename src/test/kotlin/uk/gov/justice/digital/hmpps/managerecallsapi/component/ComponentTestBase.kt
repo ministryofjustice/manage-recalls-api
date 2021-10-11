@@ -92,7 +92,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     hmppsAuthMockServer.stubClientToken()
     prisonerOffenderSearch.resetAll()
     prisonRegisterMockServer.resetAll()
-    prisonRegisterMockServer.respondsWith200()
+    prisonRegisterMockServer.stubPrisons()
     if (!useRealGotenbergServer) gotenbergMockServer.resetAll()
   }
 
