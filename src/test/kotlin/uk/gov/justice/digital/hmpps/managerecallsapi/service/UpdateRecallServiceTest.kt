@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)
@@ -112,6 +113,17 @@ class UpdateRecallServiceTest {
     val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
 
     assertThat(response, equalTo(fullyPopulatedRecall))
+  }
+
+  @Test
+  fun `return dossierTargetDate when updating recallNotificationEmailSentDateTime`() {
+    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-08T12:00-06:00"))
+    val recallWithDossier = existingRecall.copy(recallType = FIXED, recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-08T12:00-06:00"), dossierTargetDate = LocalDate.of(2021, 10, 11))
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+    every { recallRepository.save(recallWithDossier) } returns recallWithDossier
+    val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
+
+    assertThat(response.dossierTargetDate, equalTo(LocalDate.of(2021, 10, 11)))
   }
 
   @Suppress("unused")

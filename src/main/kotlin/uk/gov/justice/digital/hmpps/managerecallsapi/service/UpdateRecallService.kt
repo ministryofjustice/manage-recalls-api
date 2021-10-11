@@ -107,9 +107,9 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
 
 fun UpdateRecallRequest.findDossierTargetDate(): LocalDate? {
   return recallNotificationEmailSentDateTime?.let {
-    val dossierTargetDate = it.toLocalDate().plusDays(1)
-    while (dossierTargetDate?.dayOfWeek == DayOfWeek.SATURDAY || dossierTargetDate?.dayOfWeek == DayOfWeek.SATURDAY) {
-      dossierTargetDate.plusDays(1)
+    var dossierTargetDate = it.toLocalDate().plusDays(1)
+    while (dossierTargetDate?.dayOfWeek == DayOfWeek.SATURDAY || dossierTargetDate?.dayOfWeek == DayOfWeek.SUNDAY) {
+      dossierTargetDate = dossierTargetDate.plusDays(1)
     }
     dossierTargetDate
   }

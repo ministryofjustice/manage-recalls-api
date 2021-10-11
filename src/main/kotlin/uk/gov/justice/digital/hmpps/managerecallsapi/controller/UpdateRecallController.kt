@@ -79,7 +79,7 @@ data class UpdateRecallRequest(
   val assessedByUserId: UserId? = null,
   val bookedByUserId: UserId? = null,
   val dossierCreatedByUserId: UserId? = null,
-  val dossierTargetDate: OffsetDateTime? = null
+  val dossierTargetDate: LocalDate? = null
 )
 
 enum class RecallLength {
