@@ -60,7 +60,7 @@ internal class RecallNotificationServiceTest {
     every { revocationOrderService.createPdf(recallNotificationContext) } returns Mono.just(revocationOrderContent.toByteArray())
 
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
-    every { recallDocumentService.storeDocument(recallId, mergedBytes, RECALL_NOTIFICATION) } returns documentId
+    every { recallDocumentService.uploadAndAddDocumentForRecall(recallId, mergedBytes, RECALL_NOTIFICATION) } returns documentId
 
     val recallNotification = underTest.getDocument(recallId, userId).block()!!
 

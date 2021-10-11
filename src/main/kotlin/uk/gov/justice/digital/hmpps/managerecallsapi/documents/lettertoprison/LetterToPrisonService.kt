@@ -30,7 +30,7 @@ class LetterToPrisonService(
 
     return if (letterToPrison == null) {
       createPdf(recallId).map { letterToPrisonBytes ->
-        recallDocumentService.storeDocument(recallId, letterToPrisonBytes, LETTER_TO_PRISON)
+        recallDocumentService.uploadAndAddDocumentForRecall(recallId, letterToPrisonBytes, LETTER_TO_PRISON)
         letterToPrisonBytes
       }
     } else {

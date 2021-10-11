@@ -26,7 +26,7 @@ class RevocationOrderService(
           recallImage(RevocationOrderLogo),
           signature(revocationOrderContext.assessedByUserSignature)
         ).map { bytes ->
-          recallDocumentService.storeDocument(revocationOrderContext.recallId, bytes, REVOCATION_ORDER)
+          recallDocumentService.uploadAndAddDocumentForRecall(revocationOrderContext.recallId, bytes, REVOCATION_ORDER)
           bytes
         }
       }

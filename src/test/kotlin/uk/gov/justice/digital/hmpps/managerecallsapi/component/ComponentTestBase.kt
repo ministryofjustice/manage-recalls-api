@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -34,10 +32,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Hmp
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
-import xyz.capybara.clamav.ClamavClient
-import xyz.capybara.clamav.commands.scan.result.ScanResult
 import java.io.File
-import java.io.InputStream
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -70,9 +65,6 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
 
   @Autowired
   protected lateinit var s3Service: S3Service
-
-  @MockkBean
-  protected lateinit var clamavClient: ClamavClient
 
   protected val authenticatedClient: AuthenticatedClient by lazy {
     AuthenticatedClient(webTestClient, jwtAuthenticationHelper)
@@ -136,13 +128,5 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
         PhoneNumber("09876543210")
       )
     )
-  }
-
-  protected fun expectNoVirusesWillBeFound() {
-    every { clamavClient.scan(any<InputStream>()) } returns ScanResult.OK
-  }
-
-  protected fun expectAVirusWillBeFound() {
-    every { clamavClient.scan(any<InputStream>()) } returns ScanResult.VirusFound(mapOf())
   }
 }
