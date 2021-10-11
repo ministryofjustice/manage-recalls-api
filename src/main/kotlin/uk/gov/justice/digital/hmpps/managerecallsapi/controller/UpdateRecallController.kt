@@ -26,8 +26,8 @@ class UpdateRecallController(private val updateRecallService: UpdateRecallServic
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody updateRecallRequest: UpdateRecallRequest
   ): ResponseEntity<RecallResponse> =
-    if (prisonValidationService.isPrisonValidAndActive(updateRecallRequest.currentPrison) &&
-      prisonValidationService.isPrisonValid(updateRecallRequest.lastReleasePrison)
+    if (prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) &&
+      prisonValidationService.isValid(updateRecallRequest.lastReleasePrison)
     ) {
       ResponseEntity.ok(
         updateRecallService.updateRecall(recallId, updateRecallRequest)

@@ -22,7 +22,7 @@ class PrisonRegisterClient(
       .bodyToMono(object : ParameterizedTypeReference<List<Prison>>() {})
   }
 
-  fun findPrisonById(prisonId: PrisonId): Mono<Prison?> {
+  fun findPrisonById(prisonId: PrisonId): Mono<Prison> {
     return prisonRegisterWebClient
       .get()
       .uri("/prisons/id/$prisonId")
