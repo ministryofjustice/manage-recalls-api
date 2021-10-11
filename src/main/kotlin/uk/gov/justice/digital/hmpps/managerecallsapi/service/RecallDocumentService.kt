@@ -1,5 +1,8 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.Success
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -7,6 +10,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.VirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.util.UUID
 
@@ -14,8 +19,21 @@ import java.util.UUID
 class RecallDocumentService(
   @Autowired private val s3Service: S3Service,
   @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val recallDocumentRepository: RecallDocumentRepository
+  @Autowired private val recallDocumentRepository: RecallDocumentRepository,
+  @Autowired private val virusScanner: VirusScanner
 ) {
+
+  fun scanUploadAndAddDocumentForRecall(
+    recallId: RecallId,
+    documentBytes: ByteArray,
+    documentCategory: RecallDocumentCategory,
+    fileName: String? = null
+  ): Result<UUID, VirusScanResult> {
+    return when (val virusScanResult = virusScanner.scan(documentBytes)) {
+      NoVirusFound -> Success(uploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, fileName))
+      VirusFound -> Failure(virusScanResult)
+    }
+  }
 
   fun uploadAndAddDocumentForRecall(
     recallId: RecallId,

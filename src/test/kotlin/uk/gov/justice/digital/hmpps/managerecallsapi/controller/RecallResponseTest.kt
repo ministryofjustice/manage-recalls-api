@@ -69,4 +69,24 @@ class RecallResponseTest {
 
     assertThat(recall.status, equalTo(Status.DOSSIER_ISSUED))
   }
+
+  @Test
+  fun `RecallResponse with recallEmailReceivedDateTime set returns recallAssessmentDueDateTime as 24 hours later`() {
+    val dateTime = OffsetDateTime.now()
+    val recall = RecallResponse(
+      RecallId(UUID.randomUUID()), randomNoms(),
+      recallEmailReceivedDateTime = dateTime
+    )
+
+    assertThat(recall.recallAssessmentDueDateTime, equalTo(dateTime.plusHours(24)))
+  }
+
+  @Test
+  fun `RecallResponse without recallEmailReceivedDateTime set returns recallAssessmentDueDateTime as null`() {
+    val recall = RecallResponse(
+      RecallId(UUID.randomUUID()), randomNoms()
+    )
+
+    assertThat(recall.recallAssessmentDueDateTime, equalTo(null))
+  }
 }

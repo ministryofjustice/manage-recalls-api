@@ -36,6 +36,8 @@ dependencies {
   implementation("io.sentry:sentry-logback:5.2.1")
   implementation("com.github.librepdf:openpdf:1.3.26")
   implementation("com.github.librepdf:openpdf-fonts-extra:1.3.26")
+  implementation("xyz.capybara:clamav-client:2.0.2")
+  implementation("dev.forkhandles:result4k:1.11.2.1")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 
