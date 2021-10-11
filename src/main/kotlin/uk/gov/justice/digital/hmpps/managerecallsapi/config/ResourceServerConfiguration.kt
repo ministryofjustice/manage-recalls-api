@@ -28,6 +28,7 @@ class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
         auth
           .antMatchers(
             "/health/**",
+            "/reference-data/**",
             "/info",
             "/v2/**",
             "/v3/**",
