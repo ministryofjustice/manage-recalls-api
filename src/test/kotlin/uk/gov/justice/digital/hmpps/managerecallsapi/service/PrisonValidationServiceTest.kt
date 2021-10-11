@@ -30,7 +30,7 @@ class PrisonValidationServiceTest {
     return Stream.of(
       Arguments.of(activePrison, true),
       Arguments.of(inactivePrison, false),
-      Arguments.of(null, false)
+      Arguments.of(null, true)
     )
   }
 
@@ -52,7 +52,7 @@ class PrisonValidationServiceTest {
     return Stream.of(
       Arguments.of(activePrison, true),
       Arguments.of(inactivePrison, true),
-      Arguments.of(null, false)
+      Arguments.of(null, true)
     )
   }
 

@@ -47,8 +47,8 @@ class LetterToPrisonContextFactoryTest {
     val lastReleasePrisonName = PrisonName("Bobbins Prison")
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonLookupService.getPrisonName(recall.currentPrison()!!) } returns currentPrisonName
-    every { prisonLookupService.getPrisonName(recall.lastReleasePrison()!!) } returns lastReleasePrisonName
+    every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
+    every { prisonLookupService.getPrisonName(recall.lastReleasePrison!!) } returns lastReleasePrisonName
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber)) } returns Mono.just(listOf(prisoner))
     every { userDetailsService.get(recall.assessedByUserId()!!) } returns assessedByUserDetails
 
