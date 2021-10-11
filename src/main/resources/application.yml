@@ -94,7 +94,7 @@ gotenberg:
 
 clamav:
   hostname: localhost
-  port: 3310
+  port: 3031
 
 aws:
   region: eu-west-2
