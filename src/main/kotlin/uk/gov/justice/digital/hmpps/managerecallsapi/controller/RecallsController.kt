@@ -190,6 +190,7 @@ data class RecallResponse(
   val bookedByUserId: UserId? = null,
   val dossierCreatedByUserId: UserId? = null,
 ) {
+  val recallAssessmentDueDateTime: OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
   val status: Status? = calculateStatus()
 
   private fun calculateStatus(): Status? =
