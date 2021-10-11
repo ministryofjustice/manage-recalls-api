@@ -4,52 +4,70 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
+import java.util.stream.Stream
 
+@TestInstance(PER_CLASS)
 class PrisonValidationServiceTest {
 
   private val prisonRegister = mockk<PrisonRegisterClient>()
   private val underTest = PrisonValidationService(prisonRegister)
 
-  @Test
-  fun `can check prison is in register`() {
-    val prisonList: MutableList<Prison> = ArrayList()
-    prisonList.add(Prison(PrisonId("HPI"), PrisonName("HPI name"), false))
-    prisonList.add(Prison(PrisonId("MWI"), PrisonName("MWI name"), true))
-    prisonList.add(Prison(PrisonId("ALI"), PrisonName("ALI name"), true))
-    prisonList.add(Prison(PrisonId("FYI"), PrisonName("FYI name"), false))
+  private val prisonId = PrisonId("AAA")
+  private val activePrison = Prison(prisonId, PrisonName("Active Prison"), true)
+  private val inactivePrison = Prison(prisonId, PrisonName("Inactive Prison"), false)
 
-    every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
-
-    val prisonValidationResult = underTest.isPrisonValidAndActive(PrisonId("MWI"))
-
-    assertThat(prisonValidationResult, equalTo(true))
+  private fun isValidAndActiveInputs(): Stream<Arguments>? {
+    return Stream.of(
+      Arguments.of(activePrison, true),
+      Arguments.of(inactivePrison, false),
+      Arguments.of(null, false)
+    )
   }
 
-  @Test
-  fun `can check prison is not in register`() {
-    val prisonList: MutableList<Prison> = ArrayList()
-    prisonList.add(Prison(PrisonId("HPI"), PrisonName("MWI Name"), true))
-    prisonList.add(Prison(PrisonId("ALI"), PrisonName("ALI Name"), true))
-    prisonList.add(Prison(PrisonId("FYI"), PrisonName("FYI Name"), true))
+  @ParameterizedTest(name = "{0} prison is valid and active {1}")
+  @MethodSource("isValidAndActiveInputs")
+  fun `isValidAndActive should return true if prison is found and active`(
+    foundPrison: Prison?,
+    expectedResult: Boolean
+  ) {
+    val prisonRegisterResult: Mono<Prison> = foundPrison?.let { Mono.just(foundPrison) } ?: Mono.empty()
+    every { prisonRegister.findPrisonById(prisonId) } returns prisonRegisterResult
 
-    every { prisonRegister.getAllPrisons() } returns Mono.just(prisonList)
+    val prisonValidationResult = underTest.isValidAndActive(prisonId)
 
-    val prisonValidationResult = underTest.isPrisonValidAndActive(PrisonId("MWI"))
-
-    assertThat(prisonValidationResult, equalTo(false))
+    assertThat(prisonValidationResult, equalTo(expectedResult))
   }
 
-  @Test
-  fun `can return true if prison name is null`() {
-
-    val prisonValidationResult = underTest.isPrisonValidAndActive(null)
-
-    assertThat(prisonValidationResult, equalTo(true))
+  private fun isValidInputs(): Stream<Arguments>? {
+    return Stream.of(
+      Arguments.of(activePrison, true),
+      Arguments.of(inactivePrison, true),
+      Arguments.of(null, false)
+    )
   }
+
+  @ParameterizedTest(name = "{0} prison is found {1}")
+  @MethodSource("isValidInputs")
+  fun `isValidInputs should return true if prison is found`(
+    foundPrison: Prison?,
+    expectedResult: Boolean
+  ) {
+    val prisonRegisterResult: Mono<Prison> = foundPrison?.let { Mono.just(foundPrison) } ?: Mono.empty()
+    every { prisonRegister.findPrisonById(prisonId) } returns prisonRegisterResult
+
+    val prisonValidationResult = underTest.isValid(prisonId)
+
+    assertThat(prisonValidationResult, equalTo(expectedResult))
+  }
+
 }
