@@ -6,7 +6,7 @@ services:
     networks:
       - manage-recalls-api
     container_name: manage-recalls-api
-    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg, localstack, clamav ]
+    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg ]
     ports:
       - "8080:8080"
     healthcheck:
@@ -76,19 +76,7 @@ services:
     container_name: localstack_manage-recalls-api
     environment:
       - SERVICES=s3
-      - DATA_DIR=/tmp/localstack/dataCLAM_ENDPOINT
-
-  clamav:
-    image: mkodockx/docker-clamav
-    networks:
-      - manage-recalls-api
-    container_name: clamav-manage-recalls-api
-    ports:
-      - "3310:3310"
-    deploy:
-      resources:
-        limits:
-          memory: 1G
+      - DATA_DIR=/tmp/localstack/data
 
 networks:
   manage-recalls-api:
