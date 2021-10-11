@@ -29,7 +29,6 @@ import javax.transaction.Transactional
 @ActiveProfiles("db-test")
 class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallRepository) {
 
-  // JUnit5 default @TestInstance(TestInstance.Lifecycle.PER_METHOD) gives us new values per test
   private val nomsNumber = randomNoms()
   private val recallId = ::RecallId.random()
   private val recall = Recall(recallId, nomsNumber)

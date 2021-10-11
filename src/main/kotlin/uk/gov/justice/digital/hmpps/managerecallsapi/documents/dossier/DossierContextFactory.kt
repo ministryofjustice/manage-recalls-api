@@ -24,7 +24,7 @@ class DossierContextFactory(
   fun createContext(recallId: RecallId): DossierContext {
     val recall = recallRepository.getByRecallId(recallId)
     val prisoner = prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber)).block()!!.first()
-    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison()!!)
+    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
     return DossierContext(recall, prisoner, currentPrisonName)
   }
 }

@@ -24,7 +24,7 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       recallLength = sentencingInfo?.calculateRecallLength() ?: recallLength,
       recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime
         ?: recallEmailReceivedDateTime,
-      lastReleasePrison = updateRecallRequest.lastReleasePrison?.value ?: lastReleasePrison,
+      lastReleasePrison = updateRecallRequest.lastReleasePrison ?: lastReleasePrison,
       lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,
       localPoliceForce = updateRecallRequest.localPoliceForce ?: localPoliceForce,
       contraband = updateRecallRequest.contraband ?: contraband,
@@ -42,7 +42,7 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
       agreeWithRecall = updateRecallRequest.agreeWithRecall ?: agreeWithRecall,
       agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail ?: agreeWithRecallDetail,
-      currentPrison = updateRecallRequest.currentPrison?.value ?: currentPrison,
+      currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
       additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
       additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail ?: additionalLicenceConditionsDetail,
       differentNomsNumber = updateRecallRequest.differentNomsNumber ?: differentNomsNumber,

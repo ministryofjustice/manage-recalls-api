@@ -13,8 +13,8 @@ class PrisonValidationService(@Autowired private val prisonRegisterClient: Priso
 
   fun isValid(prisonId: PrisonId?): Boolean = prisonFoundWith(prisonId) { true }
 
-  private fun prisonFoundWith(prisonId: PrisonId?, matchingFn: (Prison) -> Boolean): Boolean =
+  private fun prisonFoundWith(prisonId: PrisonId?, validationFn: (Prison) -> Boolean): Boolean =
     prisonId?.let {
-      prisonRegisterClient.findPrisonById(prisonId).mapNotNull(matchingFn).block()
-    } ?: false
+      prisonRegisterClient.findPrisonById(prisonId).mapNotNull(validationFn).block()
+    } ?: true
 }
