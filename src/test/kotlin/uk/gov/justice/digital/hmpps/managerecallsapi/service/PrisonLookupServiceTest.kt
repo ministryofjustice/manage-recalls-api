@@ -11,24 +11,19 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 
 class PrisonLookupServiceTest {
   private val prisonRegisterClient = mockk<PrisonRegisterClient>()
 
   private val underTest = PrisonLookupService(prisonRegisterClient)
 
-  private val prisonId = PrisonId("prisonId")
+  private val prisonId = PrisonId("AAA")
+  private val prisonName = PrisonName("Active Prison")
+  private val prison = Prison(prisonId, prisonName, true)
 
   @Test
-  fun `get prison name from prison register`() {
-    val prisonName = PrisonName("prisonName")
-
-    every { prisonRegisterClient.getAllPrisons() } returns Mono.just(
-      listOf(
-        Prison(prisonId, prisonName, true), fullyPopulatedInstance(), fullyPopulatedInstance(), fullyPopulatedInstance()
-      )
-    )
+  fun `can get prison name for a prison`() {
+    every { prisonRegisterClient.findPrisonById(prisonId) } returns Mono.just(prison)
 
     val result = underTest.getPrisonName(prisonId)
 
@@ -36,12 +31,8 @@ class PrisonLookupServiceTest {
   }
 
   @Test
-  fun `throws exception if no prison found for the supplied prisonId`() {
-    every { prisonRegisterClient.getAllPrisons() } returns Mono.just(
-      listOf(
-        fullyPopulatedInstance(), fullyPopulatedInstance(), fullyPopulatedInstance()
-      )
-    )
+  fun `throws PrisonNotFoundException if no prison found for the supplied prisonId`() {
+    every { prisonRegisterClient.findPrisonById(prisonId) } returns Mono.empty()
 
     assertThrows<PrisonNotFoundException> { underTest.getPrisonName(prisonId) }
   }
