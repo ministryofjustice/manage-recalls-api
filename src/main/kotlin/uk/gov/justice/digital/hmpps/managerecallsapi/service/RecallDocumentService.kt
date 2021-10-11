@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -23,47 +22,33 @@ class RecallDocumentService(
   @Autowired private val recallDocumentRepository: RecallDocumentRepository,
   @Autowired private val virusScanner: VirusScanner
 ) {
-  private val log = LoggerFactory.getLogger(this::class.java)
 
-  fun scanAndStoreDocument(
+  fun scanUploadAndAddDocumentForRecall(
     recallId: RecallId,
     documentBytes: ByteArray,
     documentCategory: RecallDocumentCategory,
     fileName: String? = null
-  ): Result<UUID, VirusScanResult> =
-    forExistingRecall(recallId) {
-      when (val virusScanResult = virusScanner.scan(documentBytes)) {
-        NoVirusFound -> Success(storeDocument(recallId, documentBytes, documentCategory, fileName))
-        is VirusFound -> {
-          log.info(VirusFoundEvent(recallId, documentCategory, virusScanResult.foundViruses).toString())
-          Failure(virusScanResult)
-        }
-      }
+  ): Result<UUID, VirusScanResult> {
+    return when (val virusScanResult = virusScanner.scan(documentBytes)) {
+      NoVirusFound -> Success(uploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, fileName))
+      VirusFound -> Failure(virusScanResult)
     }
+  }
 
-  fun storeDocument(
+  fun uploadAndAddDocumentForRecall(
     recallId: RecallId,
     documentBytes: ByteArray,
     documentCategory: RecallDocumentCategory,
     fileName: String? = null
   ): UUID =
     forExistingRecall(recallId) {
-      uploadToS3AndSaveDocument(recallId, documentCategory, documentBytes, fileName)
+      val documentId =
+        recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id ?: UUID.randomUUID()
+      s3Service.uploadFile(documentId, documentBytes)
+      // TODO: [KF] delete the document from S3 if saving fails?
+      recallDocumentRepository.save(RecallDocument(documentId, recallId.value, documentCategory, fileName))
+      return documentId
     }
-
-  private fun uploadToS3AndSaveDocument(
-    recallId: RecallId,
-    documentCategory: RecallDocumentCategory,
-    documentBytes: ByteArray,
-    fileName: String?
-  ): UUID {
-    val documentId = recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id
-      ?: UUID.randomUUID()
-    s3Service.uploadFile(documentId, documentBytes)
-    // TODO: [KF] delete the document from S3 if saving fails?
-    recallDocumentRepository.save(RecallDocument(documentId, recallId.value, documentCategory, fileName))
-    return documentId
-  }
 
   fun getDocument(recallId: RecallId, documentId: UUID): Pair<RecallDocument, ByteArray> =
     forExistingRecall(recallId) {
@@ -98,9 +83,3 @@ data class RecallDocumentWithCategoryNotFoundException(
 ) : NotFoundException()
 
 open class NotFoundException : Exception()
-
-data class VirusFoundEvent(
-  val recallId: RecallId,
-  val documentCategory: RecallDocumentCategory,
-  val foundViruses: Map<String, Collection<String>>
-)
