@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
 
+import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
+import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -56,8 +58,15 @@ class PrisonRegisterIntegrationTest(
     val prison = Prison(prisonId, PrisonName("Medway (STC)"), true)
     prisonRegisterMockServer.stubPrison(prison)
 
-    val result = prisonRegisterClient.getPrison(prisonId).block()!!
+    val result = prisonRegisterClient.findPrisonById(prisonId).block()
 
-    assertThat(result, equalTo(prison))
+    assertThat(result, present(equalTo(prison)))
+  }
+
+  @Test
+  fun `get prison returns empty if prison does not exist`() {
+    val result = prisonRegisterClient.findPrisonById(PrisonId("XXX")).block()
+
+    assertThat(result, absent())
   }
 }
