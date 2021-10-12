@@ -14,4 +14,4 @@ class PrisonLookupService(@Autowired private val prisonRegisterClient: PrisonReg
       .block() ?: throw PrisonNotFoundException(prisonId)
 }
 
-data class PrisonNotFoundException(val prisonId: PrisonId) : Exception()
+data class PrisonNotFoundException(val prisonId: PrisonId) : NotFoundException()
