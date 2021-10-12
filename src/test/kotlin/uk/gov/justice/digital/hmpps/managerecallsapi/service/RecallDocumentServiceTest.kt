@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import com.nhaarman.mockitokotlin2.any
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.get
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -46,38 +47,37 @@ internal class RecallDocumentServiceTest {
 
   @Test
   fun `can scan and upload a document to S3 and add it to the existing recall`() {
-    val documentIdSlot = slot<UUID>()
+    val uploadedToS3DocumentIdSlot = slot<UUID>()
     val savedDocumentSlot = slot<RecallDocument>()
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
-    every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
     every { virusScanner.scan(documentBytes) } returns NoVirusFound
-    every { s3Service.uploadFile(capture(documentIdSlot), documentBytes) } just runs
+    every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
+    every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } just runs
     every { recallDocumentRepository.save(capture(savedDocumentSlot)) } returns any()
 
-    val result = underTest.scanUploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, fileName)
+    val result = underTest.scanAndStoreDocument(recallId, documentBytes, documentCategory, fileName)
 
-    val uploadedDocumentId = documentIdSlot.captured
-    assertThat(result.get(), equalTo(uploadedDocumentId))
+    assertThat(result.get(), equalTo(uploadedToS3DocumentIdSlot.captured))
     assertThat(
       savedDocumentSlot.captured,
-      equalTo(RecallDocument(uploadedDocumentId, recallId.value, documentCategory, fileName))
+      equalTo(RecallDocument(uploadedToS3DocumentIdSlot.captured, recallId.value, documentCategory, fileName))
     )
   }
 
   @Test
   fun `uploading a document with a virus does not add to S3 or add to the recall`() {
+    val expectedVirusScanResult = VirusFound(emptyMap())
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
-    every { recallDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
-    every { virusScanner.scan(documentBytes) } returns VirusFound
+    every { virusScanner.scan(documentBytes) } returns expectedVirusScanResult
 
-    val result = underTest.scanUploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, fileName)
+    val result = underTest.scanAndStoreDocument(recallId, documentBytes, documentCategory, fileName)
 
-    assertThat(result, equalTo(Failure(VirusFound)))
+    assertThat(result, equalTo(Failure(expectedVirusScanResult)))
 
     verify(exactly = 0) { s3Service.uploadFile(any(), documentBytes) }
     verify(exactly = 0) { recallRepository.addDocumentToRecall(recallId, any()) }
-    verify(exactly = 0) { recallDocumentRepository.save(any()) }
+    verify { recallDocumentRepository wasNot Called }
   }
 
   @Test
@@ -93,7 +93,7 @@ internal class RecallDocumentServiceTest {
     every { s3Service.uploadFile(existingDocumentId, documentBytes) } just runs
     every { recallDocumentRepository.save(updatedDocument) } returns updatedDocument
 
-    val actualDocumentId = underTest.uploadAndAddDocumentForRecall(recallId, documentBytes, documentCategory, newFileName)
+    val actualDocumentId = underTest.storeDocument(recallId, documentBytes, documentCategory, newFileName)
 
     assertThat(actualDocumentId, equalTo(existingDocumentId))
   }

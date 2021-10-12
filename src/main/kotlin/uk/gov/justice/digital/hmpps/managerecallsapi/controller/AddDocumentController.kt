@@ -48,7 +48,7 @@ class AddDocumentController(
     recallId: RecallId,
     body: AddDocumentRequest
   ) = try {
-    recallDocumentService.scanUploadAndAddDocumentForRecall(
+    recallDocumentService.scanAndStoreDocument(
       recallId = recallId,
       documentBytes = body.fileContent.toBase64DecodedByteArray(),
       documentCategory = body.category,
