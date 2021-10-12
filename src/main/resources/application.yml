@@ -96,6 +96,10 @@ gotenberg:
   endpoint:
     url: http://localhost:9093
 
+clamav:
+  hostname: localhost
+  port: 3310
+
 aws:
   region: eu-west-2
   credentials:

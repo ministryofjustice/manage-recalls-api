@@ -21,6 +21,8 @@ generic-service:
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
     GOTENBERG_ENDPOINT_URL: http://manage-recalls-api-gotenberg
     SENTRY_DSN: https://ea6c4e03abe840319aee1bc1b2a6a58a@o345774.ingest.sentry.io/5940644
+    CLAMAV_HOSTNAME: manage-recalls-api-clamav
+    CLAMAV_PORT: 3310
 
   namespace_secrets:
     manage-recalls-api:
