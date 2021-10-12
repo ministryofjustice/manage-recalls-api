@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)
@@ -91,6 +92,7 @@ class UpdateRecallServiceTest {
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
     bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
     dossierCreatedByUserId = fullyPopulatedUpdateRecallRequest.dossierCreatedByUserId!!.value,
+    dossierTargetDate = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime?.let { fullyPopulatedUpdateRecallRequest.findDossierTargetDate() } ?: existingRecall.dossierTargetDate
   )
 
   @Test
@@ -113,6 +115,20 @@ class UpdateRecallServiceTest {
     val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
 
     assertThat(response, equalTo(fullyPopulatedRecall))
+  }
+
+  @Test
+  fun `return dossierTargetDate when recallNotificationEmailSentDateTime is on Wednesday`() {
+    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-06T12:00-06:00")).findDossierTargetDate()
+
+    assertThat(emptyUpdateRecallRequest, equalTo(LocalDate.of(2021, 10, 7)))
+  }
+
+  @Test
+  fun `return dossierTargetDate when recallNotificationEmailSentDateTime is on Friday`() {
+    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-08T12:00-06:00")).findDossierTargetDate()
+
+    assertThat(emptyUpdateRecallRequest, equalTo(LocalDate.of(2021, 10, 11)))
   }
 
   @Suppress("unused")

@@ -140,7 +140,8 @@ fun Recall.toResponse() = RecallResponse(
   previousConvictionMainName = this.previousConvictionMainName,
   assessedByUserId = this.assessedByUserId(),
   bookedByUserId = this.bookedByUserId(),
-  dossierCreatedByUserId = this.dossierCreatedByUserId()
+  dossierCreatedByUserId = this.dossierCreatedByUserId(),
+  dossierTargetDate = this.dossierTargetDate
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -190,6 +191,7 @@ data class RecallResponse(
   val assessedByUserId: UserId? = null,
   val bookedByUserId: UserId? = null,
   val dossierCreatedByUserId: UserId? = null,
+  val dossierTargetDate: LocalDate? = null
 ) {
   val recallAssessmentDueDateTime: OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
   val status: Status? = calculateStatus()
