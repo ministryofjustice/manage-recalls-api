@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -79,7 +80,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       LocalDate.now(),
       LocalDate.now(),
       LocalDate.now(),
-      "ACCRYC",
+      CourtId("ACCRYC"),
       "index offence",
       SentenceLength(2, 5, 31)
     )
@@ -90,7 +91,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         sentenceDate = sentencingInfo.sentenceDate,
         licenceExpiryDate = sentencingInfo.licenceExpiryDate,
         sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
-        sentencingCourt = sentencingInfo.sentencingCourt(),
+        sentencingCourt = sentencingInfo.sentencingCourt,
         indexOffence = sentencingInfo.indexOffence,
         conditionalReleaseDate = sentencingInfo.conditionalReleaseDate,
         sentenceLength = Api.SentenceLength(
@@ -111,7 +112,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
           sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
-          sentencingCourt = sentencingInfo.sentencingCourt(),
+          sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
           sentenceLength = Api.SentenceLength(2, 5, 31)
         )

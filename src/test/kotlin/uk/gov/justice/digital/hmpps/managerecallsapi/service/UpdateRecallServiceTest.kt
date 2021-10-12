@@ -42,7 +42,7 @@ class UpdateRecallServiceTest {
     fullyPopulatedUpdateRecallRequest.sentenceDate!!,
     fullyPopulatedUpdateRecallRequest.licenceExpiryDate!!,
     fullyPopulatedUpdateRecallRequest.sentenceExpiryDate!!,
-    fullyPopulatedUpdateRecallRequest.sentencingCourt!!.value,
+    fullyPopulatedUpdateRecallRequest.sentencingCourt!!,
     fullyPopulatedUpdateRecallRequest.indexOffence!!,
     SentenceLength(
       fullyPopulatedUpdateRecallRequest.sentenceLength!!.years,

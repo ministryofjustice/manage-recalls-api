@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -59,7 +61,7 @@ class RecallNotificationContextTest {
       lastReleaseDate,
       LocalDate.of(2020, 11, 1),
       LocalDate.of(2020, 10, 29),
-      "High Court",
+      CourtId("ABCDE"),
       "Some offence",
       SentenceLength(2, 3, 10),
     ),
@@ -94,6 +96,7 @@ class RecallNotificationContextTest {
   private val currentPrisonName = PrisonName("Prison B")
 
   private val lastReleasePrisonName = PrisonName("Prison A")
+  private val sentencingCourtName = CourtName("Court 1")
 
   private val underTest = RecallNotificationContext(
     recall,
@@ -101,6 +104,7 @@ class RecallNotificationContextTest {
     assessedByUserDetails,
     currentPrisonName,
     lastReleasePrisonName,
+    sentencingCourtName,
     fixedClock
   )
 
@@ -153,6 +157,7 @@ class RecallNotificationContextTest {
       assessedByUserDetails,
       currentPrisonName,
       lastReleasePrisonName,
+      sentencingCourtName,
       fixedClock
     )
 
@@ -168,6 +173,7 @@ class RecallNotificationContextTest {
       assessedByUserDetails,
       currentPrisonName,
       lastReleasePrisonName,
+      sentencingCourtName,
       fixedClock
     )
 

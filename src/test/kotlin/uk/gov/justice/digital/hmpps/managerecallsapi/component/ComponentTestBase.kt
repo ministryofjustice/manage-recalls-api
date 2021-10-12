@@ -99,7 +99,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     prisonerOffenderSearch.resetAll()
     prisonRegisterMockServer.resetAll()
     prisonRegisterMockServer.stubPrisons()
-    courtRegisterMockServer.respondsWith200()
+    courtRegisterMockServer.stubCourts()
     if (!useRealGotenbergServer) gotenbergMockServer.resetAll()
   }
 

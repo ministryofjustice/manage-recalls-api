@@ -18,15 +18,10 @@ class CourtValidationServiceTest {
 
   @Test
   fun `check court is in register`() {
-    val courtList: MutableList<Court> = ArrayList()
-    courtList.add(Court(CourtId("HPI"), CourtName("HPI name")))
-    courtList.add(Court(CourtId("MWI"), CourtName("MWI name")))
-    courtList.add(Court(CourtId("ALI"), CourtName("ALI name")))
-    courtList.add(Court(CourtId("FYI"), CourtName("FYI name")))
+    val courtId = CourtId("MWI")
+    every { courtRegister.findById(courtId) } returns Mono.just(Court(courtId, CourtName("MWI name")))
 
-    every { courtRegister.getAllCourts() } returns Mono.just(courtList)
-
-    val courtValidationResult = underTest.isValid(CourtId("MWI"))
+    val courtValidationResult = underTest.isValid(courtId)
 
     assertThat(courtValidationResult, equalTo(true))
   }

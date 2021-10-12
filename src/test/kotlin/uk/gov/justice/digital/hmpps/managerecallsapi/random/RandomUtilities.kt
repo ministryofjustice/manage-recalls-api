@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.random
 import org.apache.commons.lang3.RandomStringUtils
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -63,6 +64,7 @@ private fun KClass<*>.createStandardInstance(type: KType): Any? =
       UUID::class -> UUID.randomUUID()
       NomsNumber::class -> randomNoms()
       PrisonId::class -> randomPrisonId()
+      CourtId::class -> randomCourtId()
       Boolean::class -> Random.nextBoolean()
       LocalDate::class -> LocalDate.now()
       OffsetDateTime::class -> OffsetDateTime.now()
@@ -80,6 +82,7 @@ fun <T : Validated<UUID>> ((UUID) -> T).zeroes() = this(UUID(0, 0))
 fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
+fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))
 fun randomDocumentCategory() = RecallDocumentCategory.values().random()
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)

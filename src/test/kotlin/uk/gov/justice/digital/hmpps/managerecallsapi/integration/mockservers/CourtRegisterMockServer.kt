@@ -22,21 +22,34 @@ class CourtRegisterMockServer(
   @Autowired private val objectMapper: ObjectMapper
 ) : WireMockServer(9095) {
 
-  fun respondsWith200() {
+  fun stubCourts() {
+    val courts =
+      listOf(
+        Court(CourtId("ACCRYC"), CourtName("Accrington Youth Court")),
+        Court(CourtId("BANBCT"), CourtName("Banbury County Court")),
+        Court(CourtId("CARLCT"), CourtName("Carlisle Combined Court Centre")),
+        Court(CourtId("HVRFCT"), CourtName("Haverfordwest County Court")),
+      )
+    stubAll(courts)
+    courts.forEach { stub(it) }
+  }
+
+  fun stubAll(courts: List<Court>) {
+    stubGet("/courts/all", courts)
+  }
+
+  fun stub(court: Court) {
+    stubGet("/courts/id/${court.courtId}", court)
+  }
+
+  fun <T> stubGet(url: String, response: T) {
     stubFor(
-      get(urlEqualTo("/courts/all"))
+      get(urlEqualTo(url))
         .willReturn(
           aResponse()
             .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
             .withBody(
-              objectMapper.writeValueAsString(
-                listOf(
-                  Court(CourtId("ACCRYC"), CourtName("Accrington Youth Court")),
-                  Court(CourtId("BANBCT"), CourtName("Banbury County Court")),
-                  Court(CourtId("CARLCT"), CourtName("Carlisle Combined Court Centre")),
-                  Court(CourtId("HVRFCT"), CourtName("Haverfordwest County Court")),
-                )
-              )
+              objectMapper.writeValueAsString(response)
             )
             .withStatus(OK.value())
         )

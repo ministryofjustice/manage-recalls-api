@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -21,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.Clock
@@ -33,7 +35,8 @@ class RecallNotificationContextFactory(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val prisonLookupService: PrisonLookupService,
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
-  @Autowired private val userDetailsService: UserDetailsService
+  @Autowired private val userDetailsService: UserDetailsService,
+  @Autowired private val courtLookupService: CourtLookupService,
 ) {
   fun createContext(recallId: RecallId, userId: UserId): RecallNotificationContext {
     val recall = recallRepository.getByRecallId(recallId)
@@ -41,7 +44,8 @@ class RecallNotificationContextFactory(
     val userDetails = userDetailsService.get(userId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
-    return RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName)
+    val sentencingCourtName = courtLookupService.getCourtName(recall.sentencingInfo!!.sentencingCourt)
+    return RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName, sentencingCourtName)
   }
 }
 
@@ -51,6 +55,7 @@ data class RecallNotificationContext(
   val assessedByUserDetails: UserDetails,
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
+  val sentencingCourtName: CourtName,
   private val clock: Clock = Clock.systemUTC()
 ) {
   fun getRevocationOrderContext(): RevocationOrderContext {
@@ -79,7 +84,7 @@ data class RecallNotificationContext(
       recall.mappaLevel!!,
       recall.sentencingInfo!!.sentenceLength,
       recall.sentencingInfo.indexOffence,
-      recall.sentencingInfo.sentencingCourt,
+      sentencingCourtName,
       recall.sentencingInfo.sentenceDate,
       recall.sentencingInfo.sentenceExpiryDate,
       recall.probationInfo!!.probationOfficerName,
@@ -133,7 +138,7 @@ data class RecallSummaryContext(
   val mappaLevel: MappaLevel,
   val lengthOfSentence: SentenceLength,
   val indexOffence: String,
-  val sentencingCourt: String,
+  val sentencingCourt: CourtName,
   val sentenceDate: LocalDate,
   val sentenceExpiryDate: LocalDate,
   val probationOfficerName: String,

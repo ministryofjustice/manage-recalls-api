@@ -10,7 +10,7 @@ class CourtValidationService(@Autowired private val courtRegisterClient: CourtRe
 
   fun isValid(courtId: CourtId?): Boolean {
     return courtId?.let {
-      courtRegisterClient.getAllCourts().block()?.any { (it.courtId == courtId) } ?: false
+      courtRegisterClient.findById(courtId).mapNotNull { true }.block()
     } ?: true
   }
 }

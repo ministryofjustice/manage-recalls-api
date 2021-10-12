@@ -163,7 +163,6 @@ data class Recall(
   fun assessedByUserId() = assessedByUserId?.let(::UserId)
   fun bookedByUserId() = bookedByUserId?.let(::UserId)
   fun dossierCreatedByUserId() = dossierCreatedByUserId?.let(::UserId)
-  fun sentencingCourt() = sentencingInfo?.sentencingCourt()
 }
 
 @Embeddable
@@ -171,13 +170,13 @@ data class SentencingInfo(
   val sentenceDate: LocalDate,
   val licenceExpiryDate: LocalDate,
   val sentenceExpiryDate: LocalDate,
-  val sentencingCourt: String,
+  @Convert(converter = CourtIdJpaConverter::class)
+  val sentencingCourt: CourtId,
   val indexOffence: String,
   @Embedded
   val sentenceLength: SentenceLength,
   val conditionalReleaseDate: LocalDate? = null
 ) {
-  fun sentencingCourt(): CourtId = CourtId(sentencingCourt)
   fun calculateRecallLength(): RecallLength {
     return if (sentenceLength.sentenceDays >= 366 || sentenceLength.sentenceMonths >= 12 || sentenceLength.sentenceYears >= 1) {
       RecallLength.TWENTY_EIGHT_DAYS
