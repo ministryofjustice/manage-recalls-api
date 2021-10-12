@@ -17,6 +17,7 @@ class HealthCheckComponentTest : ComponentTestBase() {
     prisonerOffenderSearch.isHealthy()
     gotenbergMockServer.isHealthy()
     prisonRegisterMockServer.isHealthy()
+    courtRegisterMockServer.isHealthy()
 
     healthCheckIsUpWith(
       "/health",
@@ -26,7 +27,8 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
       "components.db.status" to "UP",
       "components.s3.status" to "UP",
-      "components.prisonRegister.status" to "UP"
+      "components.prisonRegister.status" to "UP",
+      "components.courtRegister.status" to "UP"
     )
   }
 
@@ -37,6 +39,16 @@ class HealthCheckComponentTest : ComponentTestBase() {
     healthCheckIsDownWith(
       SERVICE_UNAVAILABLE,
       "components.prisonerOffenderSearch.details.status" to INTERNAL_SERVER_ERROR.name
+    )
+  }
+
+  @Test
+  fun `service is unhealthy when courtRegister is unhealthy`() {
+    courtRegisterMockServer.isUnhealthy()
+
+    healthCheckIsDownWith(
+      SERVICE_UNAVAILABLE,
+      "components.courtRegister.details.status" to INTERNAL_SERVER_ERROR.name
     )
   }
 

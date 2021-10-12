@@ -16,7 +16,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
 
 @Component
 class PrisonRegisterMockServer(
@@ -24,24 +24,34 @@ class PrisonRegisterMockServer(
 ) : WireMockServer(9094) {
 
   fun stubPrisons() {
-    listOf(
+    val prisons = listOf(
       Prison(PrisonId("MWI"), PrisonName("Medway (STC)"), true),
       Prison(PrisonId("AKI"), PrisonName("Acklington (HMP)"), false),
       Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
       Prison(PrisonId("KTI"), PrisonName("KTI (HMP)"), true),
       Prison(PrisonId("BAI"), PrisonName("BAI (HMP)"), true),
       Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true)
-    ).forEach { stubPrison(it) }
+    )
+    stubAllPrisons(prisons)
+    prisons.forEach { stubPrison(it) }
+  }
+
+  fun stubAllPrisons(prisons: List<Prison>) {
+    stubGet("/prisons", prisons)
   }
 
   fun stubPrison(prison: Prison) {
+    stubGet("/prisons/id/${prison.prisonId}", prison)
+  }
+
+  fun <T> stubGet(url: String, response: T) {
     stubFor(
-      get(urlEqualTo("/prisons/id/${prison.prisonId}"))
+      get(urlEqualTo(url))
         .willReturn(
           aResponse()
             .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
             .withBody(
-              objectMapper.writeValueAsString(prison)
+              objectMapper.writeValueAsString(response)
             )
             .withStatus(OK.value())
         )

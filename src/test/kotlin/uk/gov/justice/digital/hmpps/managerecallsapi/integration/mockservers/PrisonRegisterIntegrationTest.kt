@@ -17,8 +17,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJack
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.Prison
-import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.PrisonRegisterClient
 
 @ExtendWith(SpringExtension::class)
 @TestInstance(PER_CLASS)

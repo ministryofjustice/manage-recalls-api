@@ -65,7 +65,7 @@ internal class RevocationOrderServiceTest {
       )
     } returns Mono.just(expectedBytes)
     every {
-      recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER)
+      recallDocumentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER)
     } returns UUID.randomUUID()
 
     val result = underTest.createPdf(recallNotificationContext)
@@ -74,7 +74,7 @@ internal class RevocationOrderServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-        verify { recallDocumentService.uploadAndAddDocumentForRecall(recallId, expectedBytes, REVOCATION_ORDER) }
+        verify { recallDocumentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER) }
       }.verifyComplete()
   }
 

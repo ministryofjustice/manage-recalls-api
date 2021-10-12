@@ -88,9 +88,17 @@ prisonRegister:
   endpoint:
     url: https://prison-register-dev.hmpps.service.justice.gov.uk
 
+courtRegister:
+  endpoint:
+    url: http://localhost:9095
+
 gotenberg:
   endpoint:
     url: http://localhost:9093
+
+clamav:
+  hostname: localhost
+  port: 3310
 
 aws:
   region: eu-west-2

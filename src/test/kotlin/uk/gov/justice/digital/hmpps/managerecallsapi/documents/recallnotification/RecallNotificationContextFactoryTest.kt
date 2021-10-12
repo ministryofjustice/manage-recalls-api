@@ -19,6 +19,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -31,6 +33,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
@@ -42,9 +45,10 @@ class RecallNotificationContextFactoryTest {
   private val prisonLookupService = mockk<PrisonLookupService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val userDetailsService = mockk<UserDetailsService>()
+  private val courtLookupService = mockk<CourtLookupService>()
 
   private val underTest = RecallNotificationContextFactory(
-    recallRepository, prisonLookupService, prisonerOffenderSearchClient, userDetailsService
+    recallRepository, prisonLookupService, prisonerOffenderSearchClient, userDetailsService, courtLookupService
   )
 
   @Test
@@ -56,21 +60,26 @@ class RecallNotificationContextFactoryTest {
     val currentPrisonName = PrisonName("Current Prison Name")
     val lastReleasePrisonId = PrisonId("XXX")
     val lastReleasePrisonName = PrisonName("Last Prison Name")
+    val sentencingInfo = mockk<SentencingInfo>()
+    val sentencingCourtId = CourtId("ABCDEF")
+    val sentencingCourtName = CourtName("A Court")
     val prisoner = mockk<Prisoner>()
-    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrisonId, lastReleasePrison = lastReleasePrisonId)
+    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrisonId, lastReleasePrison = lastReleasePrisonId, sentencingInfo = sentencingInfo)
     val userDetails = mockk<UserDetails>()
 
+    every { sentencingInfo.sentencingCourt } returns sentencingCourtId
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
+    every { courtLookupService.getCourtName(sentencingCourtId) } returns sentencingCourtName
     every { userDetailsService.get(userIdGeneratingRecallNotification) } returns userDetails
 
     val result = underTest.createContext(recallId, userIdGeneratingRecallNotification)
 
     assertThat(
       result,
-      equalTo(RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName))
+      equalTo(RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName, sentencingCourtName))
     )
   }
 
@@ -98,8 +107,9 @@ class RecallNotificationContextFactoryTest {
       dateOfBirth = LocalDate.of(2000, 1, 10)
     )
     val probationInfo = ProbationInfo("", "", "", LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, "")
+    val sentencingCourtId = CourtId("ABCDE")
     val sentencingInfo =
-      SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), "", "", SentenceLength(3, 1, 0))
+      SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))
     val recall = Recall(
       recallId,
       nomsNumber,
@@ -123,6 +133,7 @@ class RecallNotificationContextFactoryTest {
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
     every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
+    every { courtLookupService.getCourtName(sentencingCourtId) } returns CourtName("County Court")
     every { userDetailsService.get(userIdGeneratingRecallNotification) } returns userDetails
 
     val result = underTest.createContext(recallId, userIdGeneratingRecallNotification).getRecallSummaryContext()

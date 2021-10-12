@@ -1,0 +1,2 @@
+-- workaround to ensure all test data in preprod/dev has a valid court ID. No data in prod to be impacted at this time.
+UPDATE recall SET sentencing_court = 'ACCRYC' WHERE sentencing_court IS NOT NULL;

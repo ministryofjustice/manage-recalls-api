@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -27,12 +29,16 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.CourtRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import xyz.capybara.clamav.ClamavClient
+import xyz.capybara.clamav.commands.scan.result.ScanResult
 import java.io.File
+import java.io.InputStream
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -61,10 +67,16 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   protected lateinit var prisonRegisterMockServer: PrisonRegisterMockServer
 
   @Autowired
+  protected lateinit var courtRegisterMockServer: CourtRegisterMockServer
+
+  @Autowired
   protected lateinit var gotenbergMockServer: GotenbergMockServer
 
   @Autowired
   protected lateinit var s3Service: S3Service
+
+  @MockkBean
+  protected lateinit var clamavClient: ClamavClient
 
   protected val authenticatedClient: AuthenticatedClient by lazy {
     AuthenticatedClient(webTestClient, jwtAuthenticationHelper)
@@ -75,6 +87,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     hmppsAuthMockServer.start()
     prisonerOffenderSearch.start()
     prisonRegisterMockServer.start()
+    courtRegisterMockServer.start()
     if (!useRealGotenbergServer) gotenbergMockServer.start()
   }
 
@@ -83,6 +96,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     hmppsAuthMockServer.stop()
     prisonerOffenderSearch.stop()
     prisonRegisterMockServer.stop()
+    courtRegisterMockServer.stop()
     if (!useRealGotenbergServer) gotenbergMockServer.stop()
   }
 
@@ -93,6 +107,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     prisonerOffenderSearch.resetAll()
     prisonRegisterMockServer.resetAll()
     prisonRegisterMockServer.stubPrisons()
+    courtRegisterMockServer.stubCourts()
     if (!useRealGotenbergServer) gotenbergMockServer.resetAll()
   }
 
@@ -131,5 +146,13 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
         PhoneNumber("09876543210")
       )
     )
+  }
+
+  protected fun expectNoVirusesWillBeFound() {
+    every { clamavClient.scan(any<InputStream>()) } returns ScanResult.OK
+  }
+
+  protected fun expectAVirusWillBeFound() {
+    every { clamavClient.scan(any<InputStream>()) } returns ScanResult.VirusFound(mapOf())
   }
 }

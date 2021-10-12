@@ -161,6 +161,18 @@ workflows:
               only:
                 - main
 
+  fake-court-register-api-build:
+    unless: << pipeline.parameters.only_run_pact_workflow >>
+    jobs:
+      - hmpps/build_docker:
+          name: build_fake_court_register_api
+          image_name: quay.io/hmpps/ppud-fake-court-register-api
+          dockerfile_dir: fake-court-register-api
+          filters:
+            branches:
+              only:
+                - main
+
   build-test-and-deploy:
     unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:
@@ -180,11 +192,13 @@ workflows:
           name: trivy_scan_low_medium_cves
           fail_build: false
           cve_severities_to_check: UNKNOWN,LOW,MEDIUM
+          additional_args: --light
           requires:
             - build_docker
 
       - hmpps/trivy_pipeline_scan:
           name: trivy_scan
+          additional_args: --light
           requires:
             - build_docker
 

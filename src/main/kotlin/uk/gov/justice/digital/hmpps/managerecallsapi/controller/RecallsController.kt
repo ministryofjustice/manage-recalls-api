@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierSe
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -162,7 +163,7 @@ data class RecallResponse(
   val sentenceDate: LocalDate? = null,
   val licenceExpiryDate: LocalDate? = null,
   val sentenceExpiryDate: LocalDate? = null,
-  val sentencingCourt: String? = null,
+  val sentencingCourt: CourtId? = null,
   val indexOffence: String? = null,
   val conditionalReleaseDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,

@@ -1,16 +1,29 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.PrisonRegisterClient
 
 @RestController
 @RequestMapping("/reference-data", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ReferenceDataController {
+class ReferenceDataController(
+  @Autowired private val courtRegisterClient: CourtRegisterClient,
+  @Autowired private val prisonRegisterClient: PrisonRegisterClient,
+) {
 
   @GetMapping("/local-delivery-units")
   fun localDeliveryUnits(): List<LocalDeliveryUnitResponse> = LocalDeliveryUnit.values().map { ldu -> LocalDeliveryUnitResponse(ldu.name, ldu.label) }.toList()
+
+  @GetMapping("/courts")
+  fun courts(): List<CourtRegisterClient.Court> = courtRegisterClient.getAllCourts().block()!!
+
+  @GetMapping("/prisons")
+  fun prisons(): List<Prison> = prisonRegisterClient.getAllPrisons().block()!!
 }
 
 data class LocalDeliveryUnitResponse(val name: String, val label: String)

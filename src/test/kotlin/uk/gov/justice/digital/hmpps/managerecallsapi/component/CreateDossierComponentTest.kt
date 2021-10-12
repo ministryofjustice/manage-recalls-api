@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.R
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
@@ -58,12 +59,14 @@ class CreateDossierComponentTest : ComponentTestBase() {
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),
         sentenceLength = Api.SentenceLength(10, 1, 5),
-        sentencingCourt = "Badger court",
+        sentencingCourt = CourtId("CARLCT"),
         indexOffence = "Badgering",
         bookingNumber = "booking number",
         licenceConditionsBreached = "he was a very naughty boy"
       )
     )
+    expectNoVirusesWillBeFound()
+
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
       AddDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"))

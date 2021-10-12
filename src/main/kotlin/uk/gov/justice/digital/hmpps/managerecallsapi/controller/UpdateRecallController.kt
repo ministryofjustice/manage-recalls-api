@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UpdateRecallService
 import java.time.LocalDate
@@ -21,7 +23,8 @@ import java.time.OffsetDateTime
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
 class UpdateRecallController(
   private val updateRecallService: UpdateRecallService,
-  private val prisonValidationService: PrisonValidationService
+  private val prisonValidationService: PrisonValidationService,
+  private val courtValidationService: CourtValidationService
 ) {
 
   @PatchMapping("/recalls/{recallId}")
@@ -29,9 +32,9 @@ class UpdateRecallController(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody updateRecallRequest: UpdateRecallRequest
   ): ResponseEntity<RecallResponse> =
-    if (
-      prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) &&
-      prisonValidationService.isValid(updateRecallRequest.lastReleasePrison)
+    if (prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) &&
+      prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) &&
+      courtValidationService.isValid(updateRecallRequest.sentencingCourt)
     ) {
       ResponseEntity.ok(
         updateRecallService.updateRecall(recallId, updateRecallRequest)
@@ -55,7 +58,7 @@ data class UpdateRecallRequest(
   val sentenceDate: LocalDate? = null,
   val licenceExpiryDate: LocalDate? = null,
   val sentenceExpiryDate: LocalDate? = null,
-  val sentencingCourt: String? = null,
+  val sentencingCourt: CourtId? = null,
   val indexOffence: String? = null,
   val conditionalReleaseDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,
