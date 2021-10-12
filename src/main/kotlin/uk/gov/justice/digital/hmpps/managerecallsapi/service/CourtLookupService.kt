@@ -14,4 +14,4 @@ class CourtLookupService(@Autowired private val courtRegisterClient: CourtRegist
       .block() ?: throw CourtNotFoundException(courtId)
 }
 
-data class CourtNotFoundException(val courtId: CourtId) : Exception()
+data class CourtNotFoundException(val courtId: CourtId) : NotFoundException()

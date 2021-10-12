@@ -28,3 +28,7 @@ pact:
 prisonRegister:
   endpoint:
     url: http://localhost:9094
+
+courtRegister:
+  endpoint:
+    url: http://localhost:9095
