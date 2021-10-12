@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -79,7 +80,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       LocalDate.now(),
       LocalDate.now(),
       LocalDate.now(),
-      "court",
+      CourtId("ACCRYC"),
       "index offence",
       SentenceLength(2, 5, 31)
     )

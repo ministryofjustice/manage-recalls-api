@@ -12,8 +12,8 @@ import org.junit.jupiter.params.provider.MethodSource
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.Prison
-import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.PrisonRegisterClient
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)

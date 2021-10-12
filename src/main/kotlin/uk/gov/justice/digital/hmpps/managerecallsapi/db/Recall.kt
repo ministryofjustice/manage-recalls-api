@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -159,9 +160,9 @@ data class Recall(
     )
 
   fun recallId() = RecallId(id)
-  fun assessedByUserId() = assessedByUserId?.let { UserId(it) }
-  fun bookedByUserId() = bookedByUserId?.let { UserId(it) }
-  fun dossierCreatedByUserId() = dossierCreatedByUserId?.let { UserId(it) }
+  fun assessedByUserId() = assessedByUserId?.let(::UserId)
+  fun bookedByUserId() = bookedByUserId?.let(::UserId)
+  fun dossierCreatedByUserId() = dossierCreatedByUserId?.let(::UserId)
 }
 
 @Embeddable
@@ -169,7 +170,8 @@ data class SentencingInfo(
   val sentenceDate: LocalDate,
   val licenceExpiryDate: LocalDate,
   val sentenceExpiryDate: LocalDate,
-  val sentencingCourt: String,
+  @Convert(converter = CourtIdJpaConverter::class)
+  val sentencingCourt: CourtId,
   val indexOffence: String,
   @Embedded
   val sentenceLength: SentenceLength,

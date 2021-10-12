@@ -1,0 +1,2041 @@
+[
+  {
+    "courtId": "ABDRCT",
+    "courtName": "Aberdare County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 767,
+        "courtId": "ABDRCT",
+        "buildingName": "Crown Building",
+        "street": "Green Street",
+        "town": "M GLAM",
+        "county": "Aberdare",
+        "postcode": "CF44 7DW",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "SUNDMC",
+    "courtName": "Sunderland Magistrates Court",
+    "type": {
+      "courtType": "MAG",
+      "courtName": "Magistrates Court"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 585,
+        "courtId": "SUNDMC",
+        "buildingName": "Gillbridge Avenue",
+        "street": "Sunderland",
+        "county": "Tyne & Wear",
+        "postcode": "SR1 3AP",
+        "country": "England",
+        "contacts": [
+          {
+            "id": 915,
+            "courtId": "SUNDMC",
+            "buildingId": 585,
+            "type": "TEL",
+            "detail": "0191 568 0750"
+          }
+        ],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRKNCT",
+    "courtName": "Birkenhead County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 801,
+        "courtId": "BRKNCT",
+        "buildingName": "76",
+        "street": "Hamilton Street",
+        "town": "MERSEYSIDE",
+        "county": "Birkenhead Merseyside",
+        "postcode": "CH41 5EN",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BISHCT",
+    "courtName": "Bishop Auckland",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 802,
+        "courtId": "BISHCT",
+        "buildingName": "Saddler House",
+        "street": "Saddler Street",
+        "town": "CO DURHAM",
+        "county": "Bishop Auckland",
+        "postcode": "DL14 7HF",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BLKBCT",
+    "courtName": "Blackburn County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 803,
+        "courtId": "BLKBCT",
+        "buildingName": "64",
+        "street": "Victoria Street",
+        "town": "LANCS",
+        "county": "Blackburn Lancashire",
+        "postcode": "BB1 6DJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BLKPCT",
+    "courtName": "Blackpool County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 804,
+        "courtId": "BLKPCT",
+        "buildingName": "The Law Courts",
+        "street": "Chapel Street",
+        "town": "LANCS",
+        "county": "Blackpool Lancashire",
+        "postcode": "FY1 5RJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BLKWCT",
+    "courtName": "Blackwood County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 805,
+        "courtId": "BLKWCT",
+        "buildingName": "COUNTY COURT OFFICES",
+        "street": "Blackwood Road",
+        "county": "Blackwood",
+        "postcode": "NP2 2XB",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BODMCT",
+    "courtName": "Bodmin County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 806,
+        "courtId": "BODMCT",
+        "buildingName": "Cockswell House",
+        "street": "Market Street",
+        "town": "CORNWALL",
+        "county": "Bodmin Cornwall",
+        "postcode": "PL31 2HJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BOLTCT",
+    "courtName": "Bolton County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 807,
+        "courtId": "BOLTCT",
+        "buildingName": "The Law Courts",
+        "street": "Blackhorse Street",
+        "town": "LANCS",
+        "county": "Bolton Lancashire",
+        "postcode": "BL1 1SU",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BOSTCT",
+    "courtName": "Boston County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 808,
+        "courtId": "BOSTCT",
+        "buildingName": "55",
+        "street": "Norfolk Street",
+        "town": "LINCS",
+        "county": "Boston Lincolnshire",
+        "postcode": "PE21 6PE",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRNMCT",
+    "courtName": "Bournemouth County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 809,
+        "courtId": "BRNMCT",
+        "buildingName": "Courts of Justice",
+        "street": "Deansleigh Road",
+        "county": "Bournemouth",
+        "postcode": "BH7 7DS",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BOWCT",
+    "courtName": "Bow County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 810,
+        "courtId": "BOWCT",
+        "buildingName": "96",
+        "street": "Romford Road",
+        "locality": "Stratford",
+        "county": "Stratford London",
+        "postcode": "E15 4EG",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRADCT",
+    "courtName": "Bradford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 811,
+        "courtId": "BRADCT",
+        "buildingName": "Bradford Combined Court Centre",
+        "street": "Exchange Square",
+        "locality": "Drake Street",
+        "town": "W YORKSHIRE",
+        "county": "Drake Street Bradford",
+        "postcode": "BD1 1JA",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRCKCT",
+    "courtName": "Brecknock County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 812,
+        "courtId": "BRCKCT",
+        "buildingName": "Brecknock County Court",
+        "street": "Cambrian Way",
+        "town": "POWYS",
+        "county": "Brecon Powys",
+        "postcode": "LD3 7HR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRTFCT",
+    "courtName": "Brentford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 813,
+        "courtId": "BRTFCT",
+        "buildingName": "Alexandra Road",
+        "street": "High Street",
+        "town": "MIDDX",
+        "county": "Brentford Middlesex",
+        "postcode": "TW8 0JJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRIDCT",
+    "courtName": "Bridgend County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 814,
+        "courtId": "BRIDCT",
+        "buildingName": "Crown Buildings",
+        "street": "Angel Street",
+        "town": "M GLAM",
+        "county": "Bridgend",
+        "postcode": "CF31 4AS",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRGHCT",
+    "courtName": "Brighton County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 815,
+        "courtId": "BRGHCT",
+        "buildingName": "Brighton County Court",
+        "street": "1 Edward Street",
+        "town": "E SUSSEX",
+        "county": "Brighton",
+        "postcode": "BN2 2JD",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRSTCT",
+    "courtName": "Bristol County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 816,
+        "courtId": "BRSTCT",
+        "buildingName": "Greyfriars",
+        "street": "Lewins Mead",
+        "county": "Bristol",
+        "postcode": "BS1 2NR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRMLCT",
+    "courtName": "Bromley County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 817,
+        "courtId": "BRMLCT",
+        "buildingName": "Court House",
+        "street": "College Road",
+        "town": "KENT",
+        "county": "Bromley Kent",
+        "postcode": "BR1 3PX",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BURNCT",
+    "courtName": "Burnley County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 818,
+        "courtId": "BURNCT",
+        "buildingName": "The Law Courts",
+        "street": "Hammerton Street",
+        "town": "LANCS",
+        "county": "Burnley Lancashire",
+        "postcode": "BB11 1XD",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRTNCT",
+    "courtName": "Burton-upon-Trent County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 819,
+        "courtId": "BRTNCT",
+        "buildingName": "165",
+        "street": "Station Street",
+        "town": "STAFFS",
+        "county": "Burton-On-Trent Staffordshire",
+        "postcode": "DE14 1BP",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BURYCT",
+    "courtName": "Bury County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 820,
+        "courtId": "BURYCT",
+        "buildingName": "Bury County Court",
+        "street": "Tenterden Street",
+        "town": "LANCS",
+        "county": "Bury Lancashire",
+        "postcode": "BL9 0HJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BRSECT",
+    "courtName": "Bury St. Edmunds County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 821,
+        "courtId": "BRSECT",
+        "buildingName": "Triton House (Entrance B)",
+        "street": "St. Andrews Street North",
+        "town": "SUFFOLK",
+        "county": "Bury St. Edmunds Suffolk",
+        "postcode": "IP33 1TR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "BUXTCT",
+    "courtName": "Buxton County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 822,
+        "courtId": "BUXTCT",
+        "buildingName": "\"1-3,\"",
+        "street": "Hardwick Street",
+        "town": "DERBYSHIRE",
+        "county": "Buxton Derbyshire",
+        "postcode": "SK17 6DH",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CRNRCT",
+    "courtName": "Caernarfon County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 823,
+        "courtId": "CRNRCT",
+        "buildingName": "Court House",
+        "street": "Llanberis Road",
+        "town": "GWYNEDD",
+        "county": "Caernarfon Gwynedd",
+        "postcode": "LL55 2DF",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CAMBCT",
+    "courtName": "Cambridge County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 824,
+        "courtId": "CAMBCT",
+        "buildingName": "Bridge House",
+        "street": "Bridge Street",
+        "county": "Cambridge",
+        "postcode": "CB2 1UA",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CANTCT",
+    "courtName": "Canterbury County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 825,
+        "courtId": "CANTCT",
+        "buildingName": "Canterbury Combined Crt Centre",
+        "street": "Law Courts",
+        "locality": "Chaucer Road",
+        "town": "KENT",
+        "county": "Chaucer Road Canterbury Kent",
+        "postcode": "CT1 1ZA",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CRDFCT",
+    "courtName": "Cardiff County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 826,
+        "courtId": "CRDFCT",
+        "buildingName": "Cardiff Civil Justice Centre",
+        "street": "2 Park Street",
+        "county": "Cardiff",
+        "postcode": "CF10 1ET",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CARLCT",
+    "courtName": "Carlisle County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 827,
+        "courtId": "CARLCT",
+        "buildingName": "Carlisle Combined Court Centre",
+        "street": "Courts of Justice",
+        "locality": "Earl Street",
+        "county": "Earl Street Carlisle",
+        "postcode": "CA1 1DJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CARMCT",
+    "courtName": "Carmarthen County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 828,
+        "courtId": "CARMCT",
+        "buildingName": "The Old Vicarage",
+        "street": "Picton Terrace",
+        "town": "DYFED",
+        "county": "Carmarthen Dyfed",
+        "postcode": "SA31 1BJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "LONDCT",
+    "courtName": "Central London County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 829,
+        "courtId": "LONDCT",
+        "buildingName": "13-14",
+        "street": "Park Crescent",
+        "county": "London",
+        "postcode": "W1N 4HT",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CHLMCT",
+    "courtName": "Chelmsford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 830,
+        "courtId": "CHLMCT",
+        "buildingName": "London House",
+        "street": "New London Road",
+        "town": "ESSEX",
+        "county": "Chelmsford Essex",
+        "postcode": "CM2 0QR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CHELCT",
+    "courtName": "Cheltenham County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 831,
+        "courtId": "CHELCT",
+        "buildingName": "The Court House",
+        "street": "County Court Road",
+        "town": "GLOS",
+        "county": "Cheltenham Gloucestershire",
+        "postcode": "GL50 1HB",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CHESCT",
+    "courtName": "Chester County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 832,
+        "courtId": "CHESCT",
+        "buildingName": "Trident House",
+        "street": "Little St. John Street",
+        "county": "Chester",
+        "postcode": "CH1 1SN",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CHSTCT",
+    "courtName": "Chesterfield County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 833,
+        "courtId": "CHSTCT",
+        "buildingName": "St. Mary's Gate",
+        "town": "DERBYSHIRE",
+        "county": "Chesterfield Derbyshire",
+        "postcode": "S41 7TD",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CHCHCT",
+    "courtName": "Chichester County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 834,
+        "courtId": "CHCHCT",
+        "buildingName": "Chichester Combined Crt Centre",
+        "street": "Southgate",
+        "town": "W SUSSEX",
+        "county": "Chichester",
+        "postcode": "PO19 1SX",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CHRLCT",
+    "courtName": "Chorley County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 835,
+        "courtId": "CHRLCT",
+        "buildingName": "59",
+        "street": "St. Thomas's Road",
+        "town": "LANCS",
+        "county": "Chorley Lancashire",
+        "postcode": "PR7 1JE",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CLRKCT",
+    "courtName": "Clerkenwell County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 836,
+        "courtId": "CLRKCT",
+        "buildingName": "33",
+        "street": "Duncan Terrace",
+        "locality": "Islington",
+        "county": "Islington London",
+        "postcode": "N1 8AN",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CLCHCT",
+    "courtName": "Colchester County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 837,
+        "courtId": "CLCHCT",
+        "buildingName": "Falkland House",
+        "street": "25 Southway",
+        "town": "ESSEX",
+        "county": "Colchester Essex",
+        "postcode": "CO3 3EG",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CNSTCT",
+    "courtName": "Consett County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 838,
+        "courtId": "CNSTCT",
+        "buildingName": "Consett County Court",
+        "street": "Victoria Road",
+        "town": "CO DURHAM",
+        "county": "Consett",
+        "postcode": "DH8 5AU",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CNWYCT",
+    "courtName": "Conwy and Colwyn County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 839,
+        "courtId": "CNWYCT",
+        "buildingName": "36",
+        "street": "Princes Drive",
+        "county": "Colwyn Bay",
+        "postcode": "LL29 8LA",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CVNTCT",
+    "courtName": "Coventry County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 840,
+        "courtId": "CVNTCT",
+        "buildingName": "Coventry Combined Court Centre",
+        "street": "140 Much Park Street",
+        "county": "Coventry",
+        "postcode": "CV1 2SN",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CREWCT",
+    "courtName": "Crewe County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 841,
+        "courtId": "CREWCT",
+        "buildingName": "The Law Courts",
+        "street": "Civic Centre",
+        "town": "CHESHIRE",
+        "county": "Crewe Cheshire",
+        "postcode": "CW1 2DP",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "CRYDCT",
+    "courtName": "Croydon County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 842,
+        "courtId": "CRYDCT",
+        "buildingName": "The Law Courts",
+        "street": "Altyre Road",
+        "county": "Croydon",
+        "postcode": "CR9 5AB",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "DARLCT",
+    "courtName": "Darlington County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 843,
+        "courtId": "DARLCT",
+        "buildingName": "4",
+        "street": "Coniscliffe Road",
+        "town": "CO DURHAM",
+        "county": "Darlington",
+        "postcode": "DL3 7RL",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "DRTFCT",
+    "courtName": "Dartford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 844,
+        "courtId": "DRTFCT",
+        "buildingName": "Court House",
+        "street": "Home Gardens",
+        "town": "KENT",
+        "county": "Dartford Kent",
+        "postcode": "DA1 1DX",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "DRBYCT",
+    "courtName": "Derby County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 845,
+        "courtId": "DRBYCT",
+        "buildingName": "Derby Combined Court Centre",
+        "locality": "Morledge",
+        "town": "DERBYSHIRE",
+        "county": "Morledge Derby Derbyshire",
+        "postcode": "DE1 2XE",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "DEWSCT",
+    "courtName": "Dewsbury County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 846,
+        "courtId": "DEWSCT",
+        "buildingName": "County Court House",
+        "street": "Eightlands Road",
+        "town": "W YORKSHIRE",
+        "county": "Dewsbury",
+        "postcode": "WF13 2PE",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "DONCCT",
+    "courtName": "Doncaster County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 847,
+        "courtId": "DONCCT",
+        "buildingName": "74",
+        "street": "Waterdale",
+        "town": "S YORKSHIRE",
+        "county": "Doncaster",
+        "postcode": "DN1 3BT",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "DUDLCT",
+    "courtName": "Dudley County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 848,
+        "courtId": "DUDLCT",
+        "buildingName": "Harbour Buildings",
+        "street": "Waterfront West",
+        "locality": "Brierley Hill",
+        "county": "Brierley Hill Dudley",
+        "postcode": "DY5 1LN",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "DURHCT",
+    "courtName": "Durham County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 849,
+        "courtId": "DURHCT",
+        "buildingName": "Durham County Court",
+        "street": "Hallgarth Street",
+        "county": "Durham",
+        "postcode": "DH1 3RG",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "EASBCT",
+    "courtName": "Eastbourne County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 850,
+        "courtId": "EASBCT",
+        "buildingName": "4",
+        "street": "The Avenue",
+        "town": "E SUSSEX",
+        "county": "Eastbourne",
+        "postcode": "BN21 3SZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "EDMNCT",
+    "courtName": "Edmonton County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 851,
+        "courtId": "EDMNCT",
+        "buildingName": "Court House",
+        "street": "59 Fore Street",
+        "locality": "Upper Edmonton",
+        "county": "Upper Edmonton London",
+        "postcode": "N18 2TN",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "EPSMCT",
+    "courtName": "Epsom County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 852,
+        "courtId": "EPSMCT",
+        "buildingName": "Epsom County Court",
+        "street": "The Parade",
+        "town": "SURREY",
+        "county": "Epsom Surrey",
+        "postcode": "KT18 5DN",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "EVSHCT",
+    "courtName": "Evesham County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 853,
+        "courtId": "EVSHCT",
+        "buildingName": "87",
+        "street": "High Street",
+        "town": "WORCS",
+        "county": "Evesham Worcestershire",
+        "postcode": "WR11 4EE",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "EXETCT",
+    "courtName": "Exeter County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 854,
+        "courtId": "EXETCT",
+        "buildingName": "Exeter Combined Court Centre",
+        "street": "The Castle",
+        "town": "DEVON",
+        "county": "Exeter Devon",
+        "postcode": "EX4 3PS",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "GTSHCT",
+    "courtName": "Gateshead County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 855,
+        "courtId": "GTSHCT",
+        "buildingName": "Chad House",
+        "street": "Tyngate Precinct",
+        "town": "TYNE & WEAR",
+        "county": "Gateshead",
+        "postcode": "NE8 3HZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "GLOCCT",
+    "courtName": "Gloucester County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 856,
+        "courtId": "GLOCCT",
+        "buildingName": "County Court Offices",
+        "street": "Kimbrose Way",
+        "county": "Gloucester",
+        "postcode": "GL1 2DE",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "GRNTCT",
+    "courtName": "Grantham County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 857,
+        "courtId": "GRNTCT",
+        "buildingName": "10",
+        "street": "Guildhall Street",
+        "town": "LINCS",
+        "county": "Grantham Lincolnshire",
+        "postcode": "NG31 6NJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "GRVSCT",
+    "courtName": "Gravesend County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 858,
+        "courtId": "GRVSCT",
+        "buildingName": "26",
+        "street": "King Street",
+        "town": "KENT",
+        "county": "Gravesend Kent",
+        "postcode": "DA12 2DU",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "GRIMCT",
+    "courtName": "Great Grimsby County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 859,
+        "courtId": "GRIMCT",
+        "buildingName": "Grt Grimsby Combined Crt Centr",
+        "street": "Town Hall Square",
+        "town": "LINCS",
+        "county": "Grimsby Lincolnshire",
+        "postcode": "DN31 1HX",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "GLDFCT",
+    "courtName": "Guildford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 860,
+        "courtId": "GLDFCT",
+        "buildingName": "The Law Courts",
+        "street": "Mary Road",
+        "town": "SURREY",
+        "county": "Guildford Surrey",
+        "postcode": "GU1 4PS",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HLFXCT",
+    "courtName": "Halifax County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 861,
+        "courtId": "HLFXCT",
+        "buildingName": "Halifax County Court",
+        "street": "Prescott Street",
+        "town": "W YORKSHIRE",
+        "county": "Halifax",
+        "postcode": "HX1 2JJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HRLWCT",
+    "courtName": "Harlow County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 862,
+        "courtId": "HRLWCT",
+        "buildingName": "Gate House",
+        "street": "The High",
+        "town": "ESSEX",
+        "county": "Harlow Essex",
+        "postcode": "CM20 1UW",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HRRGCT",
+    "courtName": "Harrogate County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 863,
+        "courtId": "HRRGCT",
+        "buildingName": "2",
+        "street": "Victoria Avenue",
+        "town": "N YORKSHIRE",
+        "county": "Harrogate",
+        "postcode": "HG1 2EL",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HRTLCT",
+    "courtName": "Hartlepool County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 864,
+        "courtId": "HRTLCT",
+        "buildingName": "Law Courts",
+        "street": "Victoria Road",
+        "county": "Hartlepool",
+        "postcode": "TS24 8BS",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HSTNCT",
+    "courtName": "Hastings County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 865,
+        "courtId": "HSTNCT",
+        "buildingName": "Law Courts",
+        "street": "Bohemia Road",
+        "town": "E SUSSEX",
+        "county": "Hastings",
+        "postcode": "TN34 1QX",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HVRFCT",
+    "courtName": "Haverfordwest County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 866,
+        "courtId": "HVRFCT",
+        "buildingName": "Penffynnon",
+        "street": "Hawthorn Rise",
+        "town": "PEMBROKE",
+        "county": "Haverfordwest Pembrokeshire",
+        "postcode": "SA61 2AZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HYWHCT",
+    "courtName": "Haywards Heath County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 867,
+        "courtId": "HYWHCT",
+        "buildingName": "Milton House",
+        "street": "Milton Road",
+        "town": "W SUSSEX",
+        "county": "Haywards Heath",
+        "postcode": "RH16 1YZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HRFRCT",
+    "courtName": "Hereford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 868,
+        "courtId": "HRFRCT",
+        "buildingName": "Barclays Bank Chambers",
+        "street": "1/3 Broad Street",
+        "county": "Hereford",
+        "postcode": "HR4 9BA",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HERTCT",
+    "courtName": "Hertford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 869,
+        "courtId": "HERTCT",
+        "buildingName": "Sovereign House",
+        "street": "Hale Road",
+        "county": "Hertford",
+        "postcode": "SG13 8DY",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HWYCCT",
+    "courtName": "High Wycombe County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 870,
+        "courtId": "HWYCCT",
+        "buildingName": "The Law Courts",
+        "street": "Easton Street",
+        "town": "BUCKS",
+        "county": "High Wycombe Buckinghamshire",
+        "postcode": "HP11 1LR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HTCHCT",
+    "courtName": "Hitchin County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 871,
+        "courtId": "HTCHCT",
+        "buildingName": "Park House",
+        "street": "1-12 Old Park Road",
+        "town": "HERTS",
+        "county": "Hitchin Hertfordshire",
+        "postcode": "SG5 1LX",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HRSHCT",
+    "courtName": "Horsham County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 872,
+        "courtId": "HRSHCT",
+        "buildingName": "The Law Courts",
+        "street": "Hurst Road",
+        "town": "W SUSSEX",
+        "county": "Horsham",
+        "postcode": "RH12 2EU",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HUDRCT",
+    "courtName": "Huddersfield County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 873,
+        "courtId": "HUDRCT",
+        "buildingName": "Queensgate House",
+        "street": "Queensgate",
+        "county": "Huddersfield",
+        "postcode": "HD1 2RR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "HUNTCT",
+    "courtName": "Huntingdon County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 874,
+        "courtId": "HUNTCT",
+        "buildingName": "Godwin House",
+        "street": "George Street",
+        "town": "CAMBS",
+        "county": "Huntingdon Cambridgeshire",
+        "postcode": "PE29 3BD",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "ILFDCT",
+    "courtName": "Ilford County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 875,
+        "courtId": "ILFDCT",
+        "buildingName": "Buckingham Road",
+        "town": "ESSEX",
+        "county": "Ilford Essex",
+        "postcode": "IG1 1BR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "IPSWCT",
+    "courtName": "Ipswich County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 876,
+        "courtId": "IPSWCT",
+        "buildingName": "8",
+        "street": "Arcade Street",
+        "town": "SUFFOLK",
+        "county": "Ipswich Suffolk",
+        "postcode": "IP1 1EJ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "KGHLCT",
+    "courtName": "Keighley County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 877,
+        "courtId": "KGHLCT",
+        "buildingName": "Yorkshire Bank Chambers",
+        "street": "North Street",
+        "town": "W YORKSHIRE",
+        "county": "Keighley",
+        "postcode": "BD21 3SH",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "KENDCT",
+    "courtName": "Kendal County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 878,
+        "courtId": "KENDCT",
+        "buildingName": "The Court House",
+        "street": "Burneside Road",
+        "town": "CUMBRIA",
+        "county": "Kendal Cumbria",
+        "postcode": "LA9 4NF",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "KTTRCT",
+    "courtName": "Kettering County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 879,
+        "courtId": "KTTRCT",
+        "buildingName": "Kettering County Court",
+        "street": "Dryland Street",
+        "town": "NORTHANTS",
+        "county": "Kettering Northamptonshire",
+        "postcode": "NN16 0BE",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "KDDRCT",
+    "courtName": "Kidderminster County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 880,
+        "courtId": "KDDRCT",
+        "buildingName": "10",
+        "street": "Comberton Place",
+        "county": "Kidderminster",
+        "postcode": "DY10 1QR",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "KNGSCT",
+    "courtName": "King's Lynn County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 881,
+        "courtId": "KNGSCT",
+        "buildingName": "Chequer House",
+        "street": "12 King Street",
+        "town": "NORFOLK",
+        "county": "Norfolk",
+        "postcode": "PE30 1ES",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "KNGHCT",
+    "courtName": "Kingston-upon-Hull County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 882,
+        "courtId": "KNGHCT",
+        "buildingName": "Kingston-upon-Hull Combined Court",
+        "street": "Lowgate",
+        "county": "Hull",
+        "postcode": "HU1 2EZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "KNGTCT",
+    "courtName": "Kingston-upon-Thames County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 883,
+        "courtId": "KNGTCT",
+        "buildingName": "Kingston-upon-Thames County Court",
+        "street": "St. James's Road",
+        "town": "SURREY",
+        "county": "Kingston Upon Thames Surrey",
+        "postcode": "KT1 2AD",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "LMBTCT",
+    "courtName": "Lambeth County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 884,
+        "courtId": "LMBTCT",
+        "buildingName": "Court House",
+        "street": "Cleaver Street",
+        "locality": "Kennington Road",
+        "county": "Kennington Road London",
+        "postcode": "SE11 4DZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "LANCCT",
+    "courtName": "Lancaster County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 885,
+        "courtId": "LANCCT",
+        "buildingName": "Mitre House",
+        "street": "Church Street",
+        "county": "Lancaster",
+        "postcode": "LA1 1UZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "LEEDCT",
+    "courtName": "Leeds County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 886,
+        "courtId": "LEEDCT",
+        "buildingName": "Leeds Combined Court Centre",
+        "street": "1 Oxford Row",
+        "county": "Leeds",
+        "postcode": "LS1 3BG",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "LEICCT",
+    "courtName": "Leicester County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 887,
+        "courtId": "LEICCT",
+        "buildingName": "90",
+        "street": "Wellington Street",
+        "county": "Leicester",
+        "postcode": "LE1 6ZZ",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "LEIGCT",
+    "courtName": "Leigh County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 888,
+        "courtId": "LEIGCT",
+        "buildingName": "22",
+        "street": "Walmesley Road",
+        "town": "LANCS",
+        "county": "Leigh Lancashire",
+        "postcode": "WN7 1YF",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "IOM",
+    "courtName": "Isle Of Man Courts",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": []
+  },
+  {
+    "courtId": "ELONCT",
+    "courtName": "East London County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": [
+      {
+        "id": 890,
+        "courtId": "ELONCT",
+        "buildingName": "6 - 7",
+        "street": "11 Westferry Circus",
+        "locality": "Entrance in Collumbus Courtyard",
+        "town": "LONDON",
+        "county": "Entrance in Collumbus Courtyard London London",
+        "contacts": [],
+        "active": true
+      }
+    ]
+  },
+  {
+    "courtId": "PRCORC",
+    "courtName": "Preston Coroners Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": []
+  },
+  {
+    "courtId": "BANBCT",
+    "courtName": "Banbury County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": []
+  },
+  {
+    "courtId": "LEAMCT",
+    "courtName": "Leamington Spa County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": []
+  },
+  {
+    "courtId": "SOUTCT",
+    "courtName": "Southport County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "County Court/County Divorce Ct"
+    },
+    "active": true,
+    "buildings": []
+  }
+]

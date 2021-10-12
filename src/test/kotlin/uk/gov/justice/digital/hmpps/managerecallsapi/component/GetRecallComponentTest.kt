@@ -52,7 +52,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.licenceExpiryDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.sentenceExpiryDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.sentencingCourt").isEqualTo(fullyPopulatedRecall.sentencingInfo!!.sentencingCourt)
+      .jsonPath("$.sentencingCourt").isEqualTo(fullyPopulatedRecall.sentencingInfo!!.sentencingCourt.value)
       .jsonPath("$.indexOffence").isEqualTo(fullyPopulatedRecall.sentencingInfo!!.indexOffence)
       .jsonPath("$.conditionalReleaseDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.bookingNumber").isEqualTo(fullyPopulatedRecall.bookingNumber!!)

@@ -56,6 +56,17 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
     command: --verbose
 
+  fake-court-register-api:
+    build: ./fake-court-register-api
+    networks:
+      - manage-recalls-api
+    container_name: fake-court-register-api_manage-recalls-api
+    ports:
+      - "9095:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
+    command: --verbose
+
   gotenberg:
     image: thecodingmachine/gotenberg:6
     networks:

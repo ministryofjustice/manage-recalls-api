@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -41,7 +42,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),
         sentenceLength = Api.SentenceLength(10, 1, 5),
-        sentencingCourt = "Badger court",
+        sentencingCourt = CourtId("ACCRYC"),
         indexOffence = "Some index offence",
         reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
         probationOfficerName = "Percy Pig",
@@ -80,7 +81,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),
         sentenceLength = Api.SentenceLength(10, 1, 5),
-        sentencingCourt = "Badger court",
+        sentencingCourt = CourtId("HVRFCT"),
         indexOffence = "Some index offence",
         reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
         probationOfficerName = "Percy Pig",

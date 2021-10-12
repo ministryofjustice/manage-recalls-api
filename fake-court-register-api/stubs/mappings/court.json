@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/courts/all"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "courts.json"
+  }
+}

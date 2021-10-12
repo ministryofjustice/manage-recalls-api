@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.CourtRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
@@ -66,6 +67,9 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   protected lateinit var prisonRegisterMockServer: PrisonRegisterMockServer
 
   @Autowired
+  protected lateinit var courtRegisterMockServer: CourtRegisterMockServer
+
+  @Autowired
   protected lateinit var gotenbergMockServer: GotenbergMockServer
 
   @Autowired
@@ -83,6 +87,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     hmppsAuthMockServer.start()
     prisonerOffenderSearch.start()
     prisonRegisterMockServer.start()
+    courtRegisterMockServer.start()
     if (!useRealGotenbergServer) gotenbergMockServer.start()
   }
 
@@ -91,6 +96,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     hmppsAuthMockServer.stop()
     prisonerOffenderSearch.stop()
     prisonRegisterMockServer.stop()
+    courtRegisterMockServer.stop()
     if (!useRealGotenbergServer) gotenbergMockServer.stop()
   }
 
@@ -101,6 +107,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     prisonerOffenderSearch.resetAll()
     prisonRegisterMockServer.resetAll()
     prisonRegisterMockServer.stubPrisons()
+    courtRegisterMockServer.stubCourts()
     if (!useRealGotenbergServer) gotenbergMockServer.resetAll()
   }
 

@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -39,7 +40,7 @@ class RecallSummaryHtmlGenerationTest(
           MappaLevel.LEVEL_3,
           SentenceLength(2, 3, 10),
           "Some offence",
-          "High Court",
+          CourtName("High Court"),
           LocalDate.of(2020, 10, 1),
           LocalDate.of(2020, 10, 29),
           "Mr Probation Officer",

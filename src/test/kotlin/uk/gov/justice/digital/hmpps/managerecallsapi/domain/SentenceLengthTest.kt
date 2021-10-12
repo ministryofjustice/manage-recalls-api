@@ -32,7 +32,7 @@ class SentenceLengthTest {
           LocalDate.now(),
           LocalDate.now(),
           LocalDate.now(),
-          "court",
+          CourtId("HIGHCT"),
           "offence",
           sentenceLength
         ).calculateRecallLength()

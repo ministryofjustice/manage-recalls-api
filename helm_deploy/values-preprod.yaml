@@ -16,6 +16,7 @@ generic-service:
     PRISONERSEARCH_ENDPOINT_URL: https://prisoner-offender-search-preprod.prison.service.justice.gov.uk
     MANAGE_RECALLS_API_BASE_URI: https://manage-recalls-api-preprod.hmpps.service.justice.gov.uk
     PRISONREGISTER_ENDPOINT_URL:  https://prison-register-preprod.hmpps.service.justice.gov.uk
+    COURTREGISTER_ENDPOINT_URL:  https://court-register-preprod.hmpps.service.justice.gov.uk
     SENTRY_ENVIRONMENT: PRE-PROD
 
 generic-prometheus-alerts:
