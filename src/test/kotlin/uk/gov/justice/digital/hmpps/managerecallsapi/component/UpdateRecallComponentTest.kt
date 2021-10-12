@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.findDossierTargetDate
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.stream.Stream
@@ -196,7 +197,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId, nomsNumber,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
-          assessedByUserId = updateRecallRequest.assessedByUserId
+          assessedByUserId = updateRecallRequest.assessedByUserId,
+          dossierTargetDate = updateRecallRequest.findDossierTargetDate()
         )
       )
     )

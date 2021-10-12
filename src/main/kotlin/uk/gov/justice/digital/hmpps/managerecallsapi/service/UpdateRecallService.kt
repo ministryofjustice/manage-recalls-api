@@ -57,7 +57,7 @@ class UpdateRecallService(private val recallRepository: RecallRepository) {
       assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
       dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
-      dossierTargetDate = updateRecallRequest.findDossierTargetDate()
+      dossierTargetDate = updateRecallRequest.findDossierTargetDate() ?: dossierTargetDate
     )
   }
 }

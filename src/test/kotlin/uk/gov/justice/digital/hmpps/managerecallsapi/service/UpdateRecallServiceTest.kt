@@ -92,6 +92,7 @@ class UpdateRecallServiceTest {
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
     bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
     dossierCreatedByUserId = fullyPopulatedUpdateRecallRequest.dossierCreatedByUserId!!.value,
+    dossierTargetDate = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime?.let { fullyPopulatedUpdateRecallRequest.findDossierTargetDate() } ?: existingRecall.dossierTargetDate
   )
 
   @Test
@@ -117,14 +118,17 @@ class UpdateRecallServiceTest {
   }
 
   @Test
-  fun `return dossierTargetDate when updating recallNotificationEmailSentDateTime`() {
-    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-08T12:00-06:00"))
-    val recallWithDossier = existingRecall.copy(recallType = FIXED, recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-08T12:00-06:00"), dossierTargetDate = LocalDate.of(2021, 10, 11))
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    every { recallRepository.save(recallWithDossier) } returns recallWithDossier
-    val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
+  fun `return dossierTargetDate when recallNotificationEmailSentDateTime is on Wednesday`() {
+    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-06T12:00-06:00")).findDossierTargetDate()
 
-    assertThat(response.dossierTargetDate, equalTo(LocalDate.of(2021, 10, 11)))
+    assertThat(emptyUpdateRecallRequest, equalTo(LocalDate.of(2021, 10, 7)))
+  }
+
+  @Test
+  fun `return dossierTargetDate when recallNotificationEmailSentDateTime is on Friday`() {
+    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-08T12:00-06:00")).findDossierTargetDate()
+
+    assertThat(emptyUpdateRecallRequest, equalTo(LocalDate.of(2021, 10, 11)))
   }
 
   @Suppress("unused")
