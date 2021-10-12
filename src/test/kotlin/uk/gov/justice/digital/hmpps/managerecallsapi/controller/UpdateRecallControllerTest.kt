@@ -28,8 +28,8 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can update recall and return a response with all fields populated`() {
-    every { prisonValidateService.isPrisonValidAndActive(updateRecallRequest.currentPrison) } returns true
-    every { prisonValidateService.isPrisonValid(updateRecallRequest.lastReleasePrison) } returns true
+    every { prisonValidateService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
+    every { prisonValidateService.isValid(updateRecallRequest.lastReleasePrison) } returns true
     every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
@@ -39,7 +39,7 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can't update recall when prison is not valid`() {
-    every { prisonValidateService.isPrisonValidAndActive(updateRecallRequest.currentPrison) } returns false
+    every { prisonValidateService.isValidAndActive(updateRecallRequest.currentPrison) } returns false
     every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
@@ -49,8 +49,8 @@ class UpdateRecallControllerTest {
 
   @Test
   fun `can't update recall when last release prison is not valid`() {
-    every { prisonValidateService.isPrisonValid(updateRecallRequest.lastReleasePrison) } returns false
-    every { prisonValidateService.isPrisonValidAndActive(updateRecallRequest.currentPrison) } returns true
+    every { prisonValidateService.isValid(updateRecallRequest.lastReleasePrison) } returns false
+    every { prisonValidateService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
     every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)

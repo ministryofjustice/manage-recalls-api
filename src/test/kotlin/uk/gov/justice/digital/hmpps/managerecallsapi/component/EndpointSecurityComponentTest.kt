@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -41,7 +42,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
       webTestClient.post().uri("/search").bodyValue(apiSearchRequest),
-      webTestClient.get().uri("/reference-data/local-delivery-units")
+
     )
   }
 
@@ -51,5 +52,12 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
     requestBodySpec
       .exchange()
       .expectStatus().isUnauthorized
+  }
+
+  @Test
+  fun `unauthenticated endpoint can be hit without credentials`() {
+    webTestClient.get().uri("/reference-data/local-delivery-units")
+      .exchange()
+      .expectStatus().isOk
   }
 }

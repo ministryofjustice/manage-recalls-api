@@ -9,9 +9,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.prisonData.PrisonRegisterCl
 @Service
 class PrisonLookupService(@Autowired private val prisonRegisterClient: PrisonRegisterClient) {
   fun getPrisonName(prisonId: PrisonId): PrisonName =
-    prisonRegisterClient.getAllPrisons().mapNotNull { prisons ->
-      prisons.find { it.prisonId == prisonId }?.prisonName
-    }.block() ?: throw PrisonNotFoundException(prisonId)
+    prisonRegisterClient.findPrisonById(prisonId)
+      .mapNotNull { it?.prisonName }
+      .block() ?: throw PrisonNotFoundException(prisonId)
 }
 
 data class PrisonNotFoundException(val prisonId: PrisonId) : Exception()

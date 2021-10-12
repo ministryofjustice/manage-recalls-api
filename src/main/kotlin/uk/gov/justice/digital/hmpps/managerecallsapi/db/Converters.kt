@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import javax.persistence.AttributeConverter
 
 class FirstNameJpaConverter : CustomJpaConverter<FirstName, String>({ it.value }, ::FirstName)
@@ -12,6 +13,7 @@ class LastNameJpaConverter : CustomJpaConverter<LastName, String>({ it.value }, 
 class EmailJpaConverter : CustomJpaConverter<Email, String>({ it.value }, ::Email)
 class PhoneNumberJpaConverter : CustomJpaConverter<PhoneNumber, String>({ it.value }, ::PhoneNumber)
 class NomsNumberJpaConverter : CustomJpaConverter<NomsNumber, String>({ it.value }, ::NomsNumber)
+class PrisonIdJpaConverter : CustomJpaConverter<PrisonId?, String?>({ it?.value }, { it?.let { PrisonId(it) } })
 
 abstract class CustomJpaConverter<IN, OUT>(private val toDbFn: (IN) -> OUT, private val fromDbFn: (OUT) -> IN) :
   AttributeConverter<IN, OUT> {

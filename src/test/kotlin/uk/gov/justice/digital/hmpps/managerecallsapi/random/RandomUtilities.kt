@@ -4,6 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -18,14 +19,15 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
-internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random()): Recall = fullyPopulatedInstance<Recall>().let {
-  // ensure recall length is valid for the random sentencing info as it is calculated on the fly
-  it.copy(
-    id = recallId.value,
-    recallLength = it.sentencingInfo?.calculateRecallLength(),
-    documents = it.documents.map { it.copy(recallId = recallId.value) }.toSet()
-  )
-}
+internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random()): Recall =
+  fullyPopulatedInstance<Recall>().let {
+    // ensure recall length is valid for the random sentencing info as it is calculated on the fly
+    it.copy(
+      id = recallId.value,
+      recallLength = it.sentencingInfo?.calculateRecallLength(),
+      documents = it.documents.map { it.copy(recallId = recallId.value) }.toSet()
+    )
+  }
 
 internal inline fun <reified T : Any> fullyPopulatedInstance(): T =
   T::class.createRandomInstance() as T
@@ -60,6 +62,7 @@ private fun KClass<*>.createStandardInstance(type: KType): Any? =
       Int::class -> Random.nextInt()
       UUID::class -> UUID.randomUUID()
       NomsNumber::class -> randomNoms()
+      PrisonId::class -> randomPrisonId()
       Boolean::class -> Random.nextBoolean()
       LocalDate::class -> LocalDate.now()
       OffsetDateTime::class -> OffsetDateTime.now()
@@ -76,6 +79,7 @@ private fun makeRandomSet(kclass: KClass<*>, type: KType): Set<Any> {
 fun <T : Validated<UUID>> ((UUID) -> T).zeroes() = this(UUID(0, 0))
 fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
+fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
 fun randomDocumentCategory() = RecallDocumentCategory.values().random()
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)

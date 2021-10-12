@@ -43,7 +43,8 @@ data class Recall(
   val recallType: RecallType? = null,
   @Enumerated(STRING)
   val recallLength: RecallLength? = null,
-  val lastReleasePrison: String? = null,
+  @Convert(converter = PrisonIdJpaConverter::class)
+  val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceForce: String? = null,
@@ -66,7 +67,8 @@ data class Recall(
   @Enumerated(STRING)
   val agreeWithRecall: AgreeWithRecall? = null,
   val agreeWithRecallDetail: String? = null,
-  val currentPrison: String? = null,
+  @Convert(converter = PrisonIdJpaConverter::class)
+  val currentPrison: PrisonId? = null,
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
   val differentNomsNumber: Boolean? = null,
@@ -126,7 +128,7 @@ data class Recall(
       documents,
       recallType,
       recallLength,
-      lastReleasePrison?.value,
+      lastReleasePrison,
       lastReleaseDate,
       recallEmailReceivedDateTime,
       localPoliceForce,
@@ -143,7 +145,7 @@ data class Recall(
       reasonsForRecallOtherDetail,
       agreeWithRecall,
       agreeWithRecallDetail,
-      currentPrison?.value,
+      currentPrison,
       additionalLicenceConditions,
       additionalLicenceConditionsDetail,
       differentNomsNumber,
@@ -163,8 +165,6 @@ data class Recall(
   fun assessedByUserId() = assessedByUserId?.let { UserId(it) }
   fun bookedByUserId() = bookedByUserId?.let { UserId(it) }
   fun dossierCreatedByUserId() = dossierCreatedByUserId?.let { UserId(it) }
-  fun lastReleasePrison() = lastReleasePrison?.let { PrisonId(it) }
-  fun currentPrison() = currentPrison?.let { PrisonId(it) }
 }
 
 @Embeddable

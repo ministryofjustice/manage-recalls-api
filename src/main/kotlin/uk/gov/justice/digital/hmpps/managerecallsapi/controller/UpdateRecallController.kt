@@ -19,15 +19,19 @@ import java.time.OffsetDateTime
 @RestController
 @RequestMapping(produces = [APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
-class UpdateRecallController(private val updateRecallService: UpdateRecallService, private val prisonValidationService: PrisonValidationService) {
+class UpdateRecallController(
+  private val updateRecallService: UpdateRecallService,
+  private val prisonValidationService: PrisonValidationService
+) {
 
   @PatchMapping("/recalls/{recallId}")
   fun updateRecall(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody updateRecallRequest: UpdateRecallRequest
   ): ResponseEntity<RecallResponse> =
-    if (prisonValidationService.isPrisonValidAndActive(updateRecallRequest.currentPrison) &&
-      prisonValidationService.isPrisonValid(updateRecallRequest.lastReleasePrison)
+    if (
+      prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) &&
+      prisonValidationService.isValid(updateRecallRequest.lastReleasePrison)
     ) {
       ResponseEntity.ok(
         updateRecallService.updateRecall(recallId, updateRecallRequest)

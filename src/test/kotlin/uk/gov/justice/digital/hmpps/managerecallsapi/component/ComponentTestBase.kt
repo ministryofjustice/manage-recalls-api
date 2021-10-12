@@ -92,7 +92,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     hmppsAuthMockServer.stubClientToken()
     prisonerOffenderSearch.resetAll()
     prisonRegisterMockServer.resetAll()
-    prisonRegisterMockServer.respondsWith200()
+    prisonRegisterMockServer.stubPrisons()
     if (!useRealGotenbergServer) gotenbergMockServer.resetAll()
   }
 
@@ -109,11 +109,14 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   protected fun testJwt(role: String) = authenticatedClient.testJwt(role)
 
   protected fun unauthenticatedGet(path: String, expectedStatus: HttpStatus = OK): WebTestClient.BodyContentSpec =
+    unauthenticatedGetResponse(path, expectedStatus)
+      .expectBody()
+
+  fun unauthenticatedGetResponse(path: String, expectedStatus: HttpStatus = OK) =
     webTestClient.get().uri(path)
       .headers { it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE) }
       .exchange()
       .expectStatus().isEqualTo(expectedStatus)
-      .expectBody()
 
   protected fun writeBase64EncodedStringToFile(fileName: String, content: String) {
     File(fileName).writeBytes(content.toBase64DecodedByteArray())

@@ -55,7 +55,7 @@ class UpdateRecallServiceTest {
   private val fullyPopulatedRecallWithoutDocuments = existingRecall.copy(
     recallType = FIXED,
     recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
-    lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison!!.value,
+    lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
     localPoliceForce = fullyPopulatedUpdateRecallRequest.localPoliceForce,
@@ -78,7 +78,7 @@ class UpdateRecallServiceTest {
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
     agreeWithRecall = fullyPopulatedUpdateRecallRequest.agreeWithRecall,
     agreeWithRecallDetail = fullyPopulatedUpdateRecallRequest.agreeWithRecallDetail,
-    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison!!.value,
+    currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison,
     additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
     differentNomsNumber = fullyPopulatedUpdateRecallRequest.differentNomsNumber,
