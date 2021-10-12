@@ -7,6 +7,8 @@ generic-service:
   ingress:
     host: manage-recalls-api.hmpps.service.justice.gov.uk
     tlsSecretName: ppud-replacement-prod-cert
+    # which cluster are we on: live-1 is blue, live is green
+    contextColour: blue
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
