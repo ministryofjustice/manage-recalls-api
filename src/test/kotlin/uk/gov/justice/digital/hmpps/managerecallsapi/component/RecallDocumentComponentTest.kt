@@ -61,8 +61,8 @@ class RecallDocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `add a recall document returns 400 if recall does not exist`() {
-    authenticatedClient.uploadRecallDocument(::RecallId.random(), addDocumentRequest, expectedStatus = BAD_REQUEST)
+  fun `add a recall document returns 404 if recall does not exist`() {
+    authenticatedClient.uploadRecallDocument(::RecallId.random(), addDocumentRequest, expectedStatus = NOT_FOUND)
   }
 
   @Test
