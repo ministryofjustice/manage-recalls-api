@@ -56,8 +56,8 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("com.ninja-squad:springmockk:3.0.1")
 
-  testImplementation("au.com.dius.pact.provider:junit5:4.2.13")
-  testImplementation("au.com.dius.pact.provider:junit5spring:4.2.13")
+  testImplementation("au.com.dius.pact.provider:junit5:4.2.14")
+  testImplementation("au.com.dius.pact.provider:junit5spring:4.2.14")
   testImplementation("org.http4k:http4k-testing-approval:4.13.1.0")
 }
 
