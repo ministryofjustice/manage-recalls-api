@@ -24,14 +24,16 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
 @Component
 class PrisonRegisterMockServer(
   @Autowired private val objectMapper: ObjectMapper
-) : WireMockServer(WireMockConfiguration().apply {
-  port(9094)
-  extensions(
-    ResponseTemplateTransformer.builder()
-      .global(false)
-      .build()
-  )
-}) {
+) : WireMockServer(
+  WireMockConfiguration().apply {
+    port(9094)
+    extensions(
+      ResponseTemplateTransformer.builder()
+        .global(false)
+        .build()
+    )
+  }
+) {
 
   fun stubPrisons() {
     val prisons = listOf(
@@ -55,16 +57,22 @@ class PrisonRegisterMockServer(
   }
 
   fun stubFindAnyPrisonById() {
-    stubFor(get(urlPathMatching("/prisons/id/(.*)"))
-      .willReturn(aResponse()
-        .withStatus(OK.value())
-        .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
-        .withBody("{\n" +
-          "      \"prisonId\": \"{{request.path.[2]}}\",\n" +
-          "      \"prisonName\": \"Test prison {{request.path.[2]}}\",\n" +
-          "      \"active\": true\n" +
-          "    }")
-        .withTransformers("response-template")));
+    stubFor(
+      get(urlPathMatching("/prisons/id/(.*)"))
+        .willReturn(
+          aResponse()
+            .withStatus(OK.value())
+            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
+            .withBody(
+              "{\n" +
+                "      \"prisonId\": \"{{request.path.[2]}}\",\n" +
+                "      \"prisonName\": \"Test prison {{request.path.[2]}}\",\n" +
+                "      \"active\": true\n" +
+                "    }"
+            )
+            .withTransformers("response-template")
+        )
+    )
   }
 
   fun <T> stubGet(url: String, response: T) {

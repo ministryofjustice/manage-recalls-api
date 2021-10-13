@@ -86,8 +86,7 @@ prisonerSearch:
 
 prisonRegister:
   endpoint:
-    url: https://prison-register-dev.hmpps.service.justice.gov.uk
-#    url: http://localhost:9094
+    url: http://localhost:9094
 
 courtRegister:
   endpoint:

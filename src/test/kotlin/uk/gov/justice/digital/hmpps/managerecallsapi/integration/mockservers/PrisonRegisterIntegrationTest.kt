@@ -71,13 +71,12 @@ class PrisonRegisterIntegrationTest(
     assertThat(result, present(equalTo(prison)))
   }
 
-  private fun prisonIds(): List<PrisonId> {
-    return listOf(
+  private fun prisonIds(): List<PrisonId> =
+    listOf(
       PrisonId("AAA"),
       PrisonId("XXX"),
       PrisonId("YYY"),
     )
-  }
 
   @ParameterizedTest(name = "find prison with id {0}")
   @MethodSource("prisonIds")
