@@ -100,7 +100,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a search by blank NOMS number",
     "a create recall request with blank nomsNumber",
     "a recall can be created",
-    "a recall does not exist"
+    "a recall does not exist",
+    "a list of local delivery units exists",
+    "a list of prisons exists",
+    "a list of courts exists"
   )
   fun `no state required`() {
   }
