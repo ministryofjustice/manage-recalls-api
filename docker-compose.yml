@@ -54,7 +54,7 @@ services:
       - "9094:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
-    command: --verbose
+    command: --verbose --local-response-templating
 
   fake-court-register-api:
     build: ./fake-court-register-api
