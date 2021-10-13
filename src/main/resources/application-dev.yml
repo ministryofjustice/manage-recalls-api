@@ -25,3 +25,8 @@ aws:
 
 manage-recalls-api:
   base-uri: http://localhost:8080
+
+clamav:
+  virus:
+    scan:
+      enabled: false

@@ -6,7 +6,7 @@ services:
     networks:
       - manage-recalls-api
     container_name: manage-recalls-api
-    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg, localstack, clamav ]
+    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg, localstack ]
     ports:
       - "8080:8080"
     healthcheck:
