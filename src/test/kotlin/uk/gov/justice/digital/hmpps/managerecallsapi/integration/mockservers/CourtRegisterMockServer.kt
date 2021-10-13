@@ -77,7 +77,6 @@ class CourtRegisterMockServer(
       )
     )
 
-
   fun stubFindAnyCourtById() {
     stubFor(
       get(WireMock.urlPathMatching("/courts/id/(.*)"))
@@ -95,5 +94,4 @@ class CourtRegisterMockServer(
         )
     )
   }
-
 }
