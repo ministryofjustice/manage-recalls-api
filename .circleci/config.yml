@@ -208,13 +208,11 @@ workflows:
           name: trivy_scan_low_medium_cves
           fail_build: false
           cve_severities_to_check: UNKNOWN,LOW,MEDIUM
-          additional_args: --light
           requires:
             - build_docker
 
       - hmpps/trivy_pipeline_scan:
           name: trivy_scan
-          additional_args: --light
           requires:
             - build_docker
 
