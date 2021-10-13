@@ -65,7 +65,7 @@ services:
       - "9095:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
-    command: --verbose
+    command: --verbose --local-response-templating
 
   gotenberg:
     image: thecodingmachine/gotenberg:6
