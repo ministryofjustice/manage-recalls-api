@@ -38,6 +38,7 @@ class WebClientConfig {
   private fun webClient(endpointUrl: String) = WebClient.builder()
     .baseUrl(endpointUrl)
     .codecs {
+      it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024)
       it.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
       it.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
     }
