@@ -5,6 +5,9 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
 import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,7 +24,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
 @Component
 class PrisonRegisterMockServer(
   @Autowired private val objectMapper: ObjectMapper
-) : WireMockServer(9094) {
+) : WireMockServer(WireMockConfiguration().apply {
+  port(9094)
+  extensions(
+    ResponseTemplateTransformer.builder()
+      .global(false)
+      .build()
+  )
+}) {
 
   fun stubPrisons() {
     val prisons = listOf(
@@ -42,6 +52,19 @@ class PrisonRegisterMockServer(
 
   fun stubPrison(prison: Prison) {
     stubGet("/prisons/id/${prison.prisonId}", prison)
+  }
+
+  fun stubFindAnyPrisonById() {
+    stubFor(get(urlPathMatching("/prisons/id/(.*)"))
+      .willReturn(aResponse()
+        .withStatus(OK.value())
+        .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
+        .withBody("{\n" +
+          "      \"prisonId\": \"{{request.path.[2]}}\",\n" +
+          "      \"prisonName\": \"Test prison {{request.path.[2]}}\",\n" +
+          "      \"active\": true\n" +
+          "    }")
+        .withTransformers("response-template")));
   }
 
   fun <T> stubGet(url: String, response: T) {

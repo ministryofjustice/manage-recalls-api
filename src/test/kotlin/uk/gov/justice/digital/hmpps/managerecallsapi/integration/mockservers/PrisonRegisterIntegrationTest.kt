@@ -3,13 +3,17 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -42,8 +46,22 @@ class PrisonRegisterIntegrationTest(
     prisonRegisterMockServer.stop()
   }
 
+  @BeforeEach
+  fun resetMocks() {
+    prisonRegisterMockServer.resetAll()
+  }
+
   @Test
-  fun `can retrieve prison by id`() {
+  fun `can retrieve all prisons`() {
+    prisonRegisterMockServer.stubPrisons()
+
+    val result = prisonRegisterClient.getAllPrisons().block()!!
+
+    assertThat(result, hasSize(equalTo(6)))
+  }
+
+  @Test
+  fun `can retrieve stubbed prison by id`() {
     val prisonId = PrisonId("MWI")
     val prison = Prison(prisonId, PrisonName("Medway (STC)"), true)
     prisonRegisterMockServer.stubPrison(prison)
@@ -51,6 +69,26 @@ class PrisonRegisterIntegrationTest(
     val result = prisonRegisterClient.findPrisonById(prisonId).block()
 
     assertThat(result, present(equalTo(prison)))
+  }
+
+  private fun prisonIds(): List<PrisonId> {
+    return listOf(
+      PrisonId("AAA"),
+      PrisonId("XXX"),
+      PrisonId("YYY"),
+    )
+  }
+
+  @ParameterizedTest(name = "find prison with id {0}")
+  @MethodSource("prisonIds")
+  fun `can retrieve find prison by id using response template`(prisonId: PrisonId) {
+    prisonRegisterMockServer.stubFindAnyPrisonById()
+
+    val result = prisonRegisterClient.findPrisonById(prisonId).block()
+    assertThat(
+      result,
+      present(equalTo(Prison(prisonId, PrisonName("Test prison $prisonId"), true)))
+    )
   }
 
   @Test

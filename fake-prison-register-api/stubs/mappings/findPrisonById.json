@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/prisons/id/(.*)"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "prisonId": "{{request.path.[2]}}",
+      "prisonName": "Test prison {{request.path.[2]}}",
+      "active": true
+    },
+    "transformers": ["response-template"]
+  }
+}
