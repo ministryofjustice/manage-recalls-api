@@ -27,11 +27,7 @@ class PrisonRegisterMockServer(
 ) : WireMockServer(
   WireMockConfiguration().apply {
     port(9094)
-    extensions(
-      ResponseTemplateTransformer.builder()
-        .global(false)
-        .build()
-    )
+    extensions(ResponseTemplateTransformer.builder().global(false).build())
   }
 ) {
 

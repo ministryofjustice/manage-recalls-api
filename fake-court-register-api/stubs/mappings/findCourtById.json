@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/courts/id/(.*)"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "courtId": "{{request.path.[2]}}",
+      "courtName": "Test court {{request.path.[2]}}"
+    },
+    "transformers": ["response-template"]
+  }
+}

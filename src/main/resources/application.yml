@@ -90,8 +90,7 @@ prisonRegister:
 
 courtRegister:
   endpoint:
-    url: https://court-register-dev.hmpps.service.justice.gov.uk
-#    url: http://localhost:9095
+    url: http://localhost:9095
 
 gotenberg:
   endpoint:
