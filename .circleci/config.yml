@@ -134,6 +134,58 @@ jobs:
       - store_artifacts:
           path: build/reports/tests
 
+  trivy_scan:
+    executor: hmpps/default
+    parameters:
+      fail_build:
+        type: boolean
+        default: true
+        description: Fail the build if any CVEs are detected.
+      cve_severities_to_check:
+        type: string
+        default: HIGH,CRITICAL
+        description: What severity of CVE to look for? Options are UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL.
+      additional_args:
+        type: string
+        default: ""
+        description: Additional CLI args to pass into the trivy command.
+      cache_key:
+        type: string
+        default: v1
+        description: Cache key for the vulnerability database - change to break the cache.
+      docker_version:
+        type: string
+        default: "20.10.6"
+    steps:
+      - setup_remote_docker:
+          version: << parameters.docker_version >>
+      - hmpps/recall_container_image
+      - hmpps/install_trivy
+      - restore_cache:
+          key: trivy_cache_<< parameters.cache_key >>
+      - run:
+          name: Trivy scan for << parameters.cve_severities_to_check >> CVEs
+          command: |
+            EXIT_CODE=0
+
+            if [ "<< parameters.fail_build >>" == "true" ]; then
+              EXIT_CODE=100
+            fi
+
+            /tmp/trivy \
+              --cache-dir .trivy \
+              image \
+              --exit-code ${EXIT_CODE} \
+              --no-progress \
+              --severity << parameters.cve_severities_to_check >> \
+              --ignore-unfixed \
+              --skip-dirs /usr/local/lib/node_modules/npm \
+              << parameters.additional_args >> "${IMAGE_NAME}:${APP_VERSION}"
+      - save_cache:
+          key: trivy_cache_<< parameters.cache_key >>
+          paths:
+            - .trivy
+
 workflows:
   version: 2
 
@@ -188,19 +240,30 @@ workflows:
           publish: false
           persist_container_image: true
 
-      - hmpps/trivy_pipeline_scan:
+      # - hmpps/trivy_pipeline_scan:
+      #     name: trivy_scan_low_medium_cves
+      #     fail_build: false
+      #     cve_severities_to_check: UNKNOWN,LOW,MEDIUM
+      #     additional_args: --light
+      #     requires:
+      #       - build_docker
+
+      - trivy_scan:
           name: trivy_scan_low_medium_cves
           fail_build: false
           cve_severities_to_check: UNKNOWN,LOW,MEDIUM
-          additional_args: --light
           requires:
             - build_docker
 
-      - hmpps/trivy_pipeline_scan:
-          name: trivy_scan
-          additional_args: --light
+      - trivy_scan:
           requires:
             - build_docker
+
+      # - hmpps/trivy_pipeline_scan:
+      #     name: trivy_scan
+      #     additional_args: --light
+      #     requires:
+      #       - build_docker
 
       - hmpps/publish_docker:
           name: publish_docker
