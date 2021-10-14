@@ -134,6 +134,22 @@ jobs:
       - store_artifacts:
           path: build/reports/tests
 
+  can_i_deploy:
+    environment:
+      PACT_BROKER_BASE_URL: "https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk"
+      PACT_BROKER_DISABLE_SSL_VERIFICATION: "true"
+    executor: hmpps/node
+    parameters:
+      env:
+        type: string
+    steps:
+      - run:
+          name: Run Pact can-i-deploy
+          command: |
+            pact-broker can-i-deploy --pacticipant manage-recalls-api --broker-base-url $PACT_BROKER_BASE_URL \
+                    --version $CIRCLE_SHA1 \
+                    --to deployed:<< parameters.env >>
+
   tag_pact_version:
     environment:
       PACT_BROKER_BASE_URL: "https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk"
@@ -272,6 +288,12 @@ workflows:
           requires:
             - end-to-end-tests-dev
 
+      - can_i_deploy:
+          name: "can_i_deploy_to_preprod"
+          environment: "preprod"
+          requires: [ request-preprod-approval ]
+          context: [ hmpps-common-vars ]
+
       - hmpps/deploy_env:
           name: deploy_preprod
           env: preprod
@@ -279,7 +301,7 @@ workflows:
             - hmpps-common-vars
             - ppud-replacement-preprod
           requires:
-            - request-preprod-approval
+            - can_i_deploy_to_preprod
 
       - tag_pact_version:
           name: "tag_pact_version_preprod"
@@ -312,6 +334,13 @@ workflows:
           type: approval
           requires:
             - end-to-end-tests-preprod
+
+      - can_i_deploy:
+          name: "can_i_deploy_to_prod"
+          environment: "prod"
+          requires: [ request-prod-approval ]
+          context: [ hmpps-common-vars ]
+
       - hmpps/deploy_env:
           name: deploy_prod
           env: prod
@@ -319,7 +348,7 @@ workflows:
             - hmpps-common-vars
             - ppud-replacement-prod
           requires:
-            - request-prod-approval
+            - can_i_deploy_to_prod
           slack_notification: true
           slack_channel_name: << pipeline.parameters.releases-slack-channel >>
 
