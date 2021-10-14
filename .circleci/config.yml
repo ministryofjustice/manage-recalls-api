@@ -233,12 +233,6 @@ workflows:
           requires:
             - build_docker
 
-      - can_i_deploy:
-          name: "can_i_deploy_to_dev"
-          environment: "dev"
-          requires: [ validate ]
-          context: [ hmpps-common-vars ]
-
       - hmpps/publish_docker:
           name: publish_docker
           requires:
