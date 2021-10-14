@@ -597,7 +597,8 @@
     margin-left: -5.4pt;
     border-spacing: 0;
     border-collapse: collapse;
-    margin-right: auto
+    margin-right: auto;
+    width: 100%
   }
 
   .c25 {
@@ -687,7 +688,14 @@
   }
 
   .c7 {
-    font-size: 10pt
+    font-size: 10pt;
+    width: 100%;
+  }
+
+  pre {
+    font-family: "Arial";
+    font-size: 10pt;
+    white-space: pre-wrap;
   }
 
   .c61 {
@@ -918,7 +926,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
     <td class="c12" colspan="1" rowspan="1"><p class="c0"><span class="c6 c7"><span th:text="${assessedByUserName}"/>, Public Protection Casework Section</span>
     </p></td>
     <td class="c42" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">No. of pages</span></p></td>
-    <td class="c9" colspan="1" rowspan="1"><p class="c0"><span class="c1">&nbsp;</span><span class="c3" th:text="${recallNotificationTotalNumberOfPages}"></span><span
+    <td class="c9" colspan="1" rowspan="1"><p class="c0"><span class="c1">&nbsp;</span><span class="c3" th:text="${recallNotificationTotalNumberOfPages}"/><span
       class="c1">&nbsp;(includes this one)</span></p></td>
   </tr>
   <tr class="c61">
@@ -928,7 +936,7 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
   </tr>
   <tr class="c33">
     <td class="c40" colspan="1" rowspan="1"><p class="c0"><span class="c25 c1 c7">Date</span></p></td>
-    <td class="c12" colspan="1" rowspan="1"><p class="c0 c28"><span class="c13" th:text="${createdDate}"></span></p>
+    <td class="c12" colspan="1" rowspan="1"><p class="c0 c28"><span class="c13" th:text="${createdDate}"/></p>
       <p class="c0 c28 c11"><span class="c20 c13"></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p></td>
     <td class="c47" colspan="2" rowspan="2"><p class="c0"><span
@@ -1012,14 +1020,15 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
 <table class="c57">
   <tbody>
   <tr class="c49">
-    <td class="c39" colspan="1" rowspan="1"><p class="c0">
-      <p class="c24"><span class="c1">VULNERABILITY ISSUES: <span th:text="${vulnerabilityDiversityDetail}"></span></p>
+    <td class="c39" colspan="1" rowspan="1"><p class="c0 c24">
+        <span class="c1">VULNERABILITY ISSUES: </span>
+        <pre class="c24" th:text="${vulnerabilityDiversityDetail}"/>
     </p></td>
   </tr>
   <tr class="c49">
     <td class="c39" colspan="1" rowspan="1"><p class="c0">
       <span class="c1">IS IT BELIEVED THAT THE OFFENDER MAY BE USING RECALL TO BRING CONTRABAND INTO THE PRISON ESTATE? </span>
-      <span class="c6 c7" th:text="${hasContrabandDetail}"></span>. <span th:text="${contrabandDetail}"></span>
+      <span class="c6 c7" th:text="${hasContrabandDetail}"></span>. <pre class="c6 c7" th:text="${contrabandDetail}"/>
     </p></td>
   </tr>
   </tbody>

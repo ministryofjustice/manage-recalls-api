@@ -21,7 +21,7 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheLetterToPrison(recall.recallId, assessedByUserId = assessedByUserId)
+    updateRecallWithRequiredInformationForTheLetterToPrison(recall.recallId, assessedByUserId = assessedByUserId, vulnerabilityDiversityDetail = "Diversity 1\nDiversity 2", contrabandDetail = "Contraband 1\nContraband 2")
 
     val letterToPrison = authenticatedClient.getLetterToPrison(recall.recallId)
 //    writeBase64EncodedStringToFile("letter-to-prison.pdf", letterToPrison.content)

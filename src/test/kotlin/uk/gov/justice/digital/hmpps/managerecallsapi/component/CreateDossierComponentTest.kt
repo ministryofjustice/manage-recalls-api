@@ -46,7 +46,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
       ClassPathResource("/document/licence.pdf").file.readText(),
       ClassPathResource("/document/part_a.pdf").file.readText(),
       revocationOrderFile.readText(),
-      reasonsForRecallContentsFile.readText()
+      // PS - not stubbing the reasonsForRecall since we now decorate this in the flow
     )
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
