@@ -87,7 +87,7 @@ services:
     container_name: localstack_manage-recalls-api
     environment:
       - SERVICES=s3
-      - DATA_DIR=/tmp/localstack/dataCLAM_ENDPOINT
+      - DATA_DIR=/tmp/localstack/data
 
   clamav:
     image: mkodockx/docker-clamav

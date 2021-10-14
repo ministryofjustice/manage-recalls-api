@@ -26,9 +26,9 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
   protected fun updateRecallWithRequiredInformationForTheDossier(
     recallId: RecallId,
     contraband: Boolean = true,
-    contrabandDetail: String = "Lots of naughty contraband",
+    contrabandDetail: String = "Lots of naughty contraband\n with a line break",
     vulnerabilityDiversity: Boolean = true,
-    vulnerabilityDiversityDetail: String = "Very diverse",
+    vulnerabilityDiversityDetail: String = "Very diverse\n with a line break",
   ) {
     authenticatedClient.updateRecall(
       recallId,
@@ -56,7 +56,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         contrabandDetail = contrabandDetail,
         vulnerabilityDiversity = vulnerabilityDiversity,
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
-        licenceConditionsBreached = "licenceConditionsBreached"
+        licenceConditionsBreached = "licenceConditionsBreached1\nlicenceConditionsBreached2"
       )
     )
   }
@@ -97,7 +97,9 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
         assessedByUserId = assessedByUserId,
         differentNomsNumber = true,
-        differentNomsNumberDetail = "ABC123"
+        differentNomsNumberDetail = "ABC123",
+        additionalLicenceConditions = true,
+        additionalLicenceConditionsDetail = "Additional licence detail 1\n\nAdditional license detail 2"
       )
     )
   }

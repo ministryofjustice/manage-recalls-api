@@ -113,7 +113,7 @@
   .c11 {
     background-color: #ffffff;
     max-width: 451.4pt;
-    padding: 72pt 72pt 72pt 72pt
+    padding: 0 0 72pt 72pt
   }
 
   .c5 {
@@ -236,7 +236,11 @@
     orphans: 2;
     widows: 2;
     text-align: left
-  }</style>
+  }
+  pre {
+    white-space: pre-line;
+  }
+  </style>
 </head>
 <body class="c11"><p class="c4"><span class="c1">SECRETARY OF STATE&rsquo;S REASONS FOR </span><span
   class="c7">&nbsp;</span></p>
@@ -246,8 +250,8 @@
 </p>
 <p class="c12"><span class="c0">You have been recalled to prison because the Secretary of State is satisfied that you have breached the following conditions of your licence: </span>
 </p>
-<p class="c9"><span class="c3"><span>(i) breach one
-(ii) breach two</span></span></p>
+<p class="c9"><span class="c3"><pre class="c3 c9">(i) breach one
+(ii) breach two</pre></span></p>
 <p class="c10"><span class="c5">In view of the offences for which you were originally sentenced, the risk suggested by your offending history and your behaviour as described in the recall report completed by the Probation Service, and which is attached, the Secretary of State revokes your licence and recalls you to prison. </span>
 </p></body>
 </html>

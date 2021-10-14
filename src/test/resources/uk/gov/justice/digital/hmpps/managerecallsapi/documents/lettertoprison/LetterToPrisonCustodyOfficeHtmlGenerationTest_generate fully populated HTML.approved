@@ -33,7 +33,7 @@
     {font-family:Univers;
       panose-1:2 11 5 3 2 2 2 2 2 4;}
     /* Style Definitions */
-    p.MsoNormal, li.MsoNormal, div.MsoNormal
+    p.MsoNormal, li.MsoNormal, div.MsoNormal, pre.MsoNormal
     {margin-top:0cm;
       margin-right:0cm;
       margin-bottom:0cm;
@@ -267,18 +267,16 @@ border:none'><span style='color:black'>&nbsp;</span></p>
   <div>
     <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Additional Licence Conditions requested by Offender Manager - Please ensure these are included on the licence when the offender is re-released:</p>
 
-    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><span>Blah blah blah</span></p>
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><pre class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;white-space: pre-wrap'>Blah blah blah</pre></p>
   </div>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-border:none'><span style='color:black'>Please note that it has been brought to our attention that </span><span>Billie Bob Badger</span><span style='color:black'> shows issues of vulnerability in custody in that: </span><span>Yes, yadda yadda</span></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><span style='color:black'>Please note that it has been brought to our attention that </span><span>Billie Bob Badger</span><span style='color:black'> shows issues of vulnerability in custody in that: </span><pre class="MsoNormal" style="white-space: pre-wrap">Yes, yadda yadda</pre></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-border:none'><b><span style='color:red'>&nbsp;</span></b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><b><span style='color:red'>&nbsp;</span></b></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <span>Because...</span></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <pre class="MsoNormal" style="white-space: pre-wrap">Because...</pre></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 

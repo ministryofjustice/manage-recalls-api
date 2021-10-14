@@ -597,7 +597,8 @@
     margin-left: -5.4pt;
     border-spacing: 0;
     border-collapse: collapse;
-    margin-right: auto
+    margin-right: auto;
+    width: 100%
   }
 
   .c25 {
@@ -687,7 +688,14 @@
   }
 
   .c7 {
-    font-size: 10pt
+    font-size: 10pt;
+    width: 100%;
+  }
+
+  pre {
+    font-family: "Arial";
+    font-size: 10pt;
+    white-space: pre-wrap;
   }
 
   .c61 {
@@ -1012,14 +1020,15 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
 <table class="c57">
   <tbody>
   <tr class="c49">
-    <td class="c39" colspan="1" rowspan="1"><p class="c0">
-      <p class="c24"><span class="c1">VULNERABILITY ISSUES: <span>Some stuff</span></p>
+    <td class="c39" colspan="1" rowspan="1"><p class="c0 c24">
+        <span class="c1">VULNERABILITY ISSUES: </span>
+        <pre class="c24">Some stuff</pre>
     </p></td>
   </tr>
   <tr class="c49">
     <td class="c39" colspan="1" rowspan="1"><p class="c0">
       <span class="c1">IS IT BELIEVED THAT THE OFFENDER MAY BE USING RECALL TO BRING CONTRABAND INTO THE PRISON ESTATE? </span>
-      <span class="c6 c7">YES</span>. <span>I believe that they will bring contraband to prison</span>
+      <span class="c6 c7">YES</span>. <pre class="c6 c7">I believe that they will bring contraband to prison</pre>
     </p></td>
   </tr>
   </tbody>
