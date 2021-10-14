@@ -140,15 +140,16 @@ jobs:
       PACT_BROKER_DISABLE_SSL_VERIFICATION: "true"
     executor: hmpps/node
     parameters:
-      env:
+      environment:
         type: string
     steps:
       - run:
           name: Run Pact can-i-deploy
           command: |
-            pact-broker can-i-deploy --pacticipant manage-recalls-api --broker-base-url $PACT_BROKER_BASE_URL \
-                    --version $CIRCLE_SHA1 \
-                    --to deployed:<< parameters.env >>
+            npx --package='@pact-foundation/pact-node' \
+                pact-broker can-i-deploy --pacticipant manage-recalls-api --broker-base-url $PACT_BROKER_BASE_URL \
+                --version $CIRCLE_SHA1 \
+                --to deployed:<< parameters.environment >>
 
   tag_pact_version:
     environment:
@@ -235,7 +236,7 @@ workflows:
       - can_i_deploy:
           name: "can_i_deploy_to_dev"
           environment: "dev"
-          requires: [ request-dev-approval ]
+          requires: [ validate ]
           context: [ hmpps-common-vars ]
 
       - hmpps/publish_docker:
