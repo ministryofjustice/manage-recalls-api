@@ -84,4 +84,26 @@ class PdfDecorator {
       }
       output.toByteArray()
     }
+
+  fun centralHeader(
+    pdfContent: ByteArray,
+    headerText: String,
+  ): ByteArray =
+    ByteArrayOutputStream().use { output ->
+      PdfReader(pdfContent).use { pdfReader ->
+        val pdfStamper = PdfStamper(pdfReader, output)
+
+        (1..pdfReader.numberOfPages).forEach { pageNumber ->
+          val headerPhrase = Phrase(headerText, Liberation.SERIF_BOLD.create(10))
+          val xRightPos: Float = pdfReader.getPageSize(pageNumber).width / 2
+          val yPosHeader: Float = pdfReader.getPageSize(pageNumber).getTop(20f)
+          ColumnText.showTextAligned(
+            pdfStamper.getOverContent(pageNumber), Element.ALIGN_CENTER,
+            headerPhrase, xRightPos, yPosHeader, 0f
+          )
+        }
+        pdfStamper.close()
+      }
+      output.toByteArray()
+    }
 }
