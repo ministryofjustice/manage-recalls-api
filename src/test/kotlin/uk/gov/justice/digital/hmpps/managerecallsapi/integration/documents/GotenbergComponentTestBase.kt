@@ -124,11 +124,11 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
       listOf(
         Prisoner(
           prisonerNumber = nomsNumber.value,
+          croNumber = "CRO Num/456",
           firstName = prisonerFirstName,
           lastName = "Badger",
           dateOfBirth = LocalDate.of(2000, 1, 31),
-          bookNumber = "Book Num 123",
-          croNumber = "CRO Num/456"
+          bookNumber = "Book Num 123"
         )
       )
     )

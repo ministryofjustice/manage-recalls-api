@@ -95,7 +95,7 @@
       <th>
         NAME:
       </th>
-      <td COLSPAN='3'>PrisonerFirstName PrisonerMiddleNames PrisonerLastName</td>
+      <td COLSPAN='3'>PrisonerFirstName PrisonerLastName</td>
     </tr>
     <tr>
       <th>

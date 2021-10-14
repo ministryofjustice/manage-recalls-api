@@ -78,12 +78,11 @@ class RecallNotificationContextTest {
   )
 
   private val prisoner = Prisoner(
+    croNumber = prisonerCroNumber,
     firstName = "Bertie",
-    middleNames = "Basset",
     lastName = "Badger",
     dateOfBirth = dateOfBirth,
-    bookNumber = "prisonerBookNumber",
-    croNumber = prisonerCroNumber
+    bookNumber = "prisonerBookNumber"
   )
   private val assessedByUserDetails = UserDetails(
     assessedByUserId,
@@ -111,7 +110,7 @@ class RecallNotificationContextTest {
   @Test
   fun getRevocationOrderContext() {
     val expectedPersonName =
-      PersonName("Bertie", "Basset", "Badger")
+      PersonName("Bertie", "Badger")
     val expectedRevocationOrderContext = RevocationOrderContext(
       recallId,
       expectedPersonName,
@@ -139,7 +138,7 @@ class RecallNotificationContextTest {
           LocalDate.of(2021, 10, 4),
           RecallLengthDescription(recallLength),
           probationOfficerName,
-          PersonName("Bertie", "Basset", "Badger"),
+          PersonName("Bertie", "Badger"),
           recallBookingNumber,
           currentPrisonName,
           PersonName("Maria", lastName = "Badger")

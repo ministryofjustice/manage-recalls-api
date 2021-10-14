@@ -11,7 +11,7 @@ class ReasonsForRecallGenerator(
 ) {
   fun generateHtml(reasonsForRecallContext: ReasonsForRecallContext): String =
     Context().apply {
-      setVariable("firstAndMiddleNames", reasonsForRecallContext.personName.firstAndMiddleNames())
+      setVariable("firstName", reasonsForRecallContext.personName.firstName)
       setVariable("lastName", reasonsForRecallContext.personName.lastName)
       setVariable("bookingNumber", reasonsForRecallContext.bookingNumber)
       setVariable("nomsNumber", reasonsForRecallContext.nomsNumber)

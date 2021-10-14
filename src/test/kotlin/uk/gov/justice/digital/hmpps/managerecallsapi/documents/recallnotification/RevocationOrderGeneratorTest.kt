@@ -31,7 +31,7 @@ class RevocationOrderGeneratorTest {
     val result = underTest.generateHtml(
       RevocationOrderContext(
         ::RecallId.random(),
-        PersonName("Bertie", "Basset", "Badger"),
+        PersonName("Bertie", "Badger"),
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",
@@ -46,7 +46,7 @@ class RevocationOrderGeneratorTest {
       contextSlot.captured,
       allOf(
         has("logoFileName", { it.variable("logoFileName") }, equalTo(RevocationOrderLogo.fileName)),
-        has("firstAndMiddleNames", { it.variable("firstAndMiddleNames") }, equalTo("Bertie Basset")),
+        has("firstName", { it.variable("firstName") }, equalTo("Bertie")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("1995-10-03")),
         has("bookingNumber", { it.variable("bookingNumber") }, equalTo("bookNumber")),

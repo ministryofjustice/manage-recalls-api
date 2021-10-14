@@ -17,7 +17,6 @@ class DossierContextTest {
   private val bookingNumber = "B1234"
   private val licenceConditionsBreached = "(i) breach one\n(ii) breach two"
   private val firstName = "Bertie"
-  private val middleNames = "Basset"
   private val lastName = "Badger"
   private val recall = Recall(
     ::RecallId.random(),
@@ -25,7 +24,7 @@ class DossierContextTest {
     bookingNumber = bookingNumber,
     licenceConditionsBreached = licenceConditionsBreached
   )
-  private val prisoner = Prisoner(firstName = firstName, middleNames = middleNames, lastName = lastName)
+  private val prisoner = Prisoner(firstName = firstName, lastName = lastName)
 
   @Test
   fun `create ReasonsForRecallContext with all values populated`() {
@@ -37,27 +36,7 @@ class DossierContextTest {
       result,
       equalTo(
         ReasonsForRecallContext(
-          PersonName(firstName, middleNames, lastName),
-          bookingNumber,
-          nomsNumber,
-          licenceConditionsBreached
-        )
-      )
-    )
-  }
-
-  @Test
-  fun `create ReasonsForRecallContext without prisoner middles names`() {
-    val prisonerWithoutMiddlesNames = prisoner.copy(middleNames = null)
-    val underTest = DossierContext(recall, prisonerWithoutMiddlesNames, PrisonName("N/A"))
-
-    val result = underTest.getReasonsForRecallContext()
-
-    assertThat(
-      result,
-      equalTo(
-        ReasonsForRecallContext(
-          PersonName(firstName, lastName = lastName),
+          PersonName(firstName, lastName),
           bookingNumber,
           nomsNumber,
           licenceConditionsBreached
