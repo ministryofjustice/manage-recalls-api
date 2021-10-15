@@ -78,7 +78,7 @@ data class RecallNotificationContext(
       prisonerName,
       prisoner.dateOfBirth!!,
       prisoner.croNumber,
-      PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName),
+      PersonName(assessedByUserDetails.firstName, assessedByUserDetails.lastName),
       assessedByUserDetails.email,
       assessedByUserDetails.phoneNumber,
       recall.mappaLevel!!,
@@ -90,7 +90,7 @@ data class RecallNotificationContext(
       recall.probationInfo!!.probationOfficerName,
       recall.probationInfo.probationOfficerPhoneNumber,
       recall.probationInfo.localDeliveryUnit,
-      if (recall.hasOtherPreviousConvictionMainName == true) recall.previousConvictionMainName!! else prisonerName.firstAndLastName(),
+      if (recall.hasOtherPreviousConvictionMainName == true) recall.previousConvictionMainName!! else prisonerName.toString(),
       recall.bookingNumber!!,
       recall.nomsNumber,
       recall.lastReleaseDate!!,
@@ -113,7 +113,7 @@ data class RecallNotificationContext(
       prisoner.personName(),
       recall.bookingNumber!!,
       currentPrisonName,
-      PersonName(assessedByUserDetails.firstName, null, assessedByUserDetails.lastName)
+      PersonName(assessedByUserDetails.firstName, assessedByUserDetails.lastName)
     )
 }
 

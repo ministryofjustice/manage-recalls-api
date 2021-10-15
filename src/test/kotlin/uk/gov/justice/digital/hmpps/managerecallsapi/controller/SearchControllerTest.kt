@@ -84,12 +84,12 @@ class SearchControllerTest {
     dateOfBirth: LocalDate?
   ) = Prisoner(
     prisonerNumber = nomsNumber,
+    pncNumber = UUID.randomUUID().toString(),
+    croNumber = UUID.randomUUID().toString(),
     firstName = firstName,
     lastName = lastName,
     middleNames = middleNames,
     dateOfBirth = dateOfBirth,
     gender = UUID.randomUUID().toString(),
-    croNumber = UUID.randomUUID().toString(),
-    pncNumber = UUID.randomUUID().toString(),
   )
 }

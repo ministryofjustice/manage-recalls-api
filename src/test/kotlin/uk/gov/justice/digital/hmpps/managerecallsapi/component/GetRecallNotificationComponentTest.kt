@@ -91,10 +91,10 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       listOf(
         Prisoner(
           prisonerNumber = nomsNumber.value,
+          croNumber = "CRO Num/456",
           firstName = firstName,
           lastName = "Badger",
-          dateOfBirth = LocalDate.of(2000, 1, 31),
-          croNumber = "CRO Num/456"
+          dateOfBirth = LocalDate.of(2000, 1, 31)
         )
       )
     )

@@ -33,7 +33,7 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
             recallLength = RecallLength.FOURTEEN_DAYS,
             bookingNumber = "B1234",
           ),
-          Prisoner(firstName = "Billie", middleNames = "Bob", lastName = "Badger"),
+          Prisoner(firstName = "Billie", lastName = "Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
           UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))

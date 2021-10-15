@@ -102,7 +102,6 @@ class RecallNotificationContextFactoryTest {
     val lastReleasePrisonName = PrisonName("Last Prison Name")
     val prisoner = Prisoner(
       firstName = "Bobbie",
-      middleNames = "Bertrude",
       lastName = "Badger",
       dateOfBirth = LocalDate.of(2000, 1, 10)
     )

@@ -31,7 +31,7 @@ class RecallSummaryHtmlGenerationTest(
       underTest.generateHtml(
         RecallSummaryContext(
           ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(17, 48), ZoneId.of("Europe/London")),
-          PersonName("Bertie", "Basset", "Badger"),
+          PersonName("Bertie", "Badger"),
           LocalDate.of(1995, 10, 3),
           "croNumber",
           PersonName("Maria", lastName = "Badger"),
