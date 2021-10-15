@@ -55,4 +55,31 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       )
     )
   }
+
+  @Test
+  fun `generate html when no additional license conditions`(approver: ContentApprover) {
+    approver.assertApproved(
+      underTest.generateHtml(
+        LetterToPrisonContext(
+          Recall(
+            ::RecallId.random(), NomsNumber("AA1234A"),
+            recallLength = RecallLength.FOURTEEN_DAYS,
+            bookingNumber = "B1234",
+            differentNomsNumber = true,
+            differentNomsNumberDetail = "ABC1234F",
+            mappaLevel = MappaLevel.LEVEL_2,
+            additionalLicenceConditions = false,
+            contraband = true,
+            contrabandDetail = "Because...",
+            vulnerabilityDiversity = true,
+            vulnerabilityDiversityDetail = "Yes, yadda yadda",
+          ),
+          Prisoner(firstName = "Billie", lastName = "Badger"),
+          PrisonName("Prison A"),
+          PrisonName("Prison B"),
+          UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
+        )
+      )
+    )
+  }
 }
