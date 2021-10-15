@@ -112,7 +112,7 @@ jobs:
       consumer_tags:
         type: string
     environment:
-      PACTBROKER_HOST: "pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk"
+      PACTBROKER_HOST: pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
     executor: hmpps/java
     docker: *db_localstack_docker_config
     steps:
@@ -136,7 +136,7 @@ jobs:
 
   can_i_deploy:
     environment:
-      PACT_BROKER_BASE_URL: "https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk"
+      PACT_BROKER_BASE_URL: https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
       PACT_BROKER_DISABLE_SSL_VERIFICATION: "true"
     executor: hmpps/node
     parameters:
@@ -153,7 +153,7 @@ jobs:
 
   tag_pact_version:
     environment:
-      PACT_BROKER_BASE_URL: "https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk"
+      PACT_BROKER_BASE_URL: https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
       PACT_BROKER_DISABLE_SSL_VERIFICATION: "true"
     executor: hmpps/node
     parameters:
@@ -257,10 +257,12 @@ workflows:
             - publish_docker
 
       - tag_pact_version:
-          name: "tag_pact_version_dev"
-          tag: "deployed:dev"
-          requires: [deploy_dev]
-          context: [hmpps-common-vars]
+          name: tag_pact_version_dev
+          tag: deployed:dev
+          requires:
+            - deploy_dev
+          context:
+            - hmpps-common-vars
 
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_dev
@@ -290,25 +292,29 @@ workflows:
             - end-to-end-tests-dev
 
       - can_i_deploy:
-          name: "can_i_deploy_to_preprod"
-          environment: "preprod"
-          requires: [ request-preprod-approval ]
-          context: [ hmpps-common-vars ]
+          name: can_i_deploy_to_preprod
+          environment: preprod
+          requires:
+            - request-preprod-approval
+          context:
+            - hmpps-common-vars
 
       - hmpps/deploy_env:
           name: deploy_preprod
           env: preprod
           context:
             - hmpps-common-vars
-            - ppud-replacement-preprod
+            - manage-recalls-api-preprod
           requires:
             - can_i_deploy_to_preprod
 
       - tag_pact_version:
-          name: "tag_pact_version_preprod"
-          tag: "deployed:preprod"
-          requires: [deploy_preprod]
-          context: [hmpps-common-vars]
+          name: tag_pact_version_preprod
+          tag: deployed:preprod
+          requires:
+            - deploy_preprod
+          context:
+            - hmpps-common-vars
 
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_preprod
@@ -337,17 +343,19 @@ workflows:
             - end-to-end-tests-preprod
 
       - can_i_deploy:
-          name: "can_i_deploy_to_prod"
-          environment: "prod"
-          requires: [ request-prod-approval ]
-          context: [ hmpps-common-vars ]
+          name: can_i_deploy_to_prod
+          environment: prod
+          requires:
+            - request-prod-approval
+          context:
+            - hmpps-common-vars
 
       - hmpps/deploy_env:
           name: deploy_prod
           env: prod
           context:
             - hmpps-common-vars
-            - ppud-replacement-prod
+            - manage-recalls-api-prod
           requires:
             - can_i_deploy_to_prod
           slack_notification: true
@@ -356,8 +364,10 @@ workflows:
       - tag_pact_version:
           name: "tag_pact_version_prod"
           tag: "deployed:prod"
-          requires: [deploy_prod]
-          context: [hmpps-common-vars]
+          requires:
+            - deploy_prod
+          context:
+            - hmpps-common-vars
 
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_prod
