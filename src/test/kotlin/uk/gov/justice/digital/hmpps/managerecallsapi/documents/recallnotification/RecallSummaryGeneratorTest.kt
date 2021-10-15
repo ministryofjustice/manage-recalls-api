@@ -42,7 +42,7 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        PersonName("Bertie", "Basset", "Badger"),
+        PersonName("Bertie", "Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
         PersonName("Maria", lastName = "Badger"),
@@ -87,7 +87,7 @@ class RecallSummaryGeneratorTest {
         has("mappaLevel1", { it.variable("mappaLevel1") }, equalTo("false")),
         has("mappaLevel2", { it.variable("mappaLevel2") }, equalTo("false")),
         has("mappaLevel3", { it.variable("mappaLevel3") }, equalTo("true")),
-        has("firstAndMiddleNames", { it.variable("firstAndMiddleNames") }, equalTo("Bertie Basset")),
+        has("firstName", { it.variable("firstName") }, equalTo("Bertie")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("03 Oct 1995")),
         has("previousConvictionMainName", { it.variable("previousConvictionMainName") }, equalTo("Bryan Badger")),
@@ -124,7 +124,7 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        PersonName("Bertie", "Basset", "Badger"),
+        PersonName("Bertie", "Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
         PersonName("Maria", lastName = "Badger"),
@@ -169,7 +169,7 @@ class RecallSummaryGeneratorTest {
         has("mappaLevel1", { it.variable("mappaLevel1") }, equalTo("false")),
         has("mappaLevel2", { it.variable("mappaLevel2") }, equalTo("false")),
         has("mappaLevel3", { it.variable("mappaLevel3") }, equalTo("true")),
-        has("firstAndMiddleNames", { it.variable("firstAndMiddleNames") }, equalTo("Bertie Basset")),
+        has("firstName", { it.variable("firstName") }, equalTo("Bertie")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("03 Oct 1995")),
         has("previousConvictionMainName", { it.variable("previousConvictionMainName") }, equalTo("Bryan Badger")),

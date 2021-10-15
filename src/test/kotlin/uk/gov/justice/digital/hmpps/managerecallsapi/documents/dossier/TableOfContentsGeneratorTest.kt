@@ -49,7 +49,7 @@ class TableOfContentsGeneratorTest {
 
     val result = underTest.generateHtml(
       TableOfContentsContext(
-        PersonName("Bertie", "Basset", "Badger"),
+        PersonName("Bertie", "Badger"),
         RecallLengthDescription(recallLength),
         currentPrisonName,
         bookingNumber
@@ -67,7 +67,7 @@ class TableOfContentsGeneratorTest {
           { it.variableAsString("recallLengthAndSentenceHeading") },
           equalTo(expectedText)
         ),
-        has("fullName", { it.variableAsString("fullName") }, equalTo("Bertie Basset Badger")),
+        has("fullName", { it.variableAsString("fullName") }, equalTo("Bertie Badger")),
         has("currentPrisonName", { it.variableAsString("currentPrisonName") }, equalTo(currentPrisonName.value)),
         has("category", { it.variableAsString("category") }, equalTo("Not Applicable")),
         has("bookingNumber", { it.variableAsString("bookingNumber") }, equalTo(bookingNumber)),

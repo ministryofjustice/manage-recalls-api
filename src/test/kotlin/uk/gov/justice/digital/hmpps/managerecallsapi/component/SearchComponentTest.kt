@@ -87,13 +87,13 @@ class SearchComponentTest : ComponentTestBase() {
   )
 
   private fun testPrisoner(nomsNumber: NomsNumber?) = Prisoner(
+    prisonerNumber = nomsNumber?.value,
+    pncNumber = randomAlphanumeric(1, 32),
+    croNumber = randomAlphanumeric(1, 32),
     firstName = randomAlphanumeric(1, 32),
     middleNames = randomAlphanumeric(1, 32),
     lastName = randomAlphanumeric(1, 32),
     dateOfBirth = randomAdultDateOfBirth(),
     gender = randomAlphanumeric(1, 32),
-    prisonerNumber = nomsNumber?.value,
-    pncNumber = randomAlphanumeric(1, 32),
-    croNumber = randomAlphanumeric(1, 32),
   )
 }

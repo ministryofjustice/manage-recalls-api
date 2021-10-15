@@ -74,23 +74,23 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       listOf(
         Prisoner(
           prisonerNumber = nomsNumber.value,
+          pncNumber = "98/7654Z",
+          croNumber = "1234/56A",
           firstName = "Bobby",
           middleNames = "John",
           lastName = "Badger",
           dateOfBirth = LocalDate.of(1999, 5, 28),
-          gender = "Male",
-          croNumber = "1234/56A",
-          pncNumber = "98/7654Z"
+          gender = "Male"
         ),
         Prisoner(
           prisonerNumber = nomsNumber.value,
+          pncNumber = "98/7654Z",
+          croNumber = "1234/56A",
           firstName = "Bertie",
           middleNames = "Barry",
           lastName = "Badger",
           dateOfBirth = LocalDate.of(1990, 10, 30),
-          gender = "Male",
-          croNumber = "1234/56A",
-          pncNumber = "98/7654Z"
+          gender = "Male"
         )
       )
     )

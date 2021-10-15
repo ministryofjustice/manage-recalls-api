@@ -8,15 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 
 class DocumentFormattersTest {
   @Test
-  fun `should format PersonName with middleNames`() {
-    assertThat(
-      PersonName("Bernard", "McTavish", "Smythe").toString(),
-      equalTo("Bernard McTavish Smythe")
-    )
-  }
-
-  @Test
-  fun `should format PersonName without middleNames`() {
-    assertThat(PersonName(FirstName("Bernard"), null, LastName("Smythe")).toString(), equalTo("Bernard Smythe"))
+  fun `should format PersonName`() {
+    assertThat(PersonName(FirstName("Bernard"), LastName("Smythe")).toString(), equalTo("Bernard Smythe"))
   }
 }

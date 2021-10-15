@@ -27,7 +27,7 @@ class ReasonsForRecallGeneratorTest {
 
     val result = underTest.generateHtml(
       ReasonsForRecallContext(
-        PersonName("Bertie", "Basset", "Badger"),
+        PersonName("Bertie", "Badger"),
         "B1234",
         NomsNumber("A1234AA"),
         "(i) breach one\n(ii) breach two"
@@ -38,7 +38,7 @@ class ReasonsForRecallGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("firstAndMiddleNames", { it.variable("firstAndMiddleNames") }, equalTo("Bertie Basset")),
+        has("firstName", { it.variable("firstName") }, equalTo("Bertie")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
         has("bookingNumber", { it.variable("bookingNumber") }, equalTo("B1234")),
         has("nomsNumber", { it.variable("nomsNumber") }, equalTo("A1234AA")),
