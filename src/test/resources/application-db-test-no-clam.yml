@@ -32,3 +32,8 @@ prisonRegister:
 courtRegister:
   endpoint:
     url: http://localhost:9095
+
+clamav:
+  virus:
+    scan:
+      enabled: false

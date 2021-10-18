@@ -5,11 +5,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
 
+@ActiveProfiles("db-test-no-clam")
 class HealthCheckComponentTest : ComponentTestBase() {
 
   @Test
@@ -28,7 +30,8 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.db.status" to "UP",
       "components.s3.status" to "UP",
       "components.prisonRegister.status" to "UP",
-      "components.courtRegister.status" to "UP"
+      "components.courtRegister.status" to "UP",
+      "components.clamAV.status" to "UP"
     )
   }
 
