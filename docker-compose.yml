@@ -90,7 +90,7 @@ services:
       - DATA_DIR=/tmp/localstack/data
 
   clamav:
-    image: mkodockx/docker-clamav
+    image: ghcr.io/ministryofjustice/hmpps-clamav-freshclammed
     networks:
       - manage-recalls-api
     container_name: clamav-manage-recalls-api
