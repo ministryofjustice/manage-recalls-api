@@ -1,6 +1,10 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component.health
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
@@ -8,10 +12,13 @@ import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HealthServer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_DATE
+import java.util.stream.Stream
 
 @ActiveProfiles("db-test-no-clam")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HealthCheckComponentTest : ComponentTestBase() {
 
   @Test
@@ -20,6 +27,7 @@ class HealthCheckComponentTest : ComponentTestBase() {
     gotenbergMockServer.isHealthy()
     prisonRegisterMockServer.isHealthy()
     courtRegisterMockServer.isHealthy()
+    hmppsAuthMockServer.isHealthy()
 
     healthCheckIsUpWith(
       "/health",
@@ -31,47 +39,32 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.s3.status" to "UP",
       "components.prisonRegister.status" to "UP",
       "components.courtRegister.status" to "UP",
-      "components.clamAV.status" to "UP"
+      "components.clamAV.status" to "UP",
+      "components.hmppsAuth.status" to "UP"
     )
   }
 
-  @Test
-  fun `service is unhealthy when prisonerOffenderSearch is unhealthy`() {
-    prisonerOffenderSearch.isUnhealthy()
+  @ParameterizedTest(name = "service is unhealthy when {0} is unhealthy")
+  @MethodSource("parameterArrays")
+  fun `service is unhealthy when dependency is unhealthy`(
+    dependency: String,
+    mockServer: HealthServer
+  ) {
+    mockServer.isUnhealthy()
 
     healthCheckIsDownWith(
       SERVICE_UNAVAILABLE,
-      "components.prisonerOffenderSearch.details.status" to INTERNAL_SERVER_ERROR.name
+      "components.$dependency.details.status" to INTERNAL_SERVER_ERROR.name
     )
   }
 
-  @Test
-  fun `service is unhealthy when courtRegister is unhealthy`() {
-    courtRegisterMockServer.isUnhealthy()
-
-    healthCheckIsDownWith(
-      SERVICE_UNAVAILABLE,
-      "components.courtRegister.details.status" to INTERNAL_SERVER_ERROR.name
-    )
-  }
-
-  @Test
-  fun `service is unhealthy when prisonRegister is unhealthy`() {
-    prisonRegisterMockServer.isUnhealthy()
-
-    healthCheckIsDownWith(
-      SERVICE_UNAVAILABLE,
-      "components.prisonRegister.details.status" to INTERNAL_SERVER_ERROR.name
-    )
-  }
-
-  @Test
-  fun `service is unhealthy when gotenberg is unhealthy`() {
-    gotenbergMockServer.isUnhealthy()
-
-    healthCheckIsDownWith(
-      SERVICE_UNAVAILABLE,
-      "components.gotenberg.details.status" to INTERNAL_SERVER_ERROR.name
+  private fun parameterArrays(): Stream<Arguments>? {
+    return Stream.of(
+      Arguments.of("prisonerOffenderSearch", prisonerOffenderSearch),
+      Arguments.of("courtRegister", courtRegisterMockServer),
+      Arguments.of("prisonRegister", prisonRegisterMockServer),
+      Arguments.of("gotenberg", gotenbergMockServer),
+      Arguments.of("hmppsAuth", hmppsAuthMockServer),
     )
   }
 
