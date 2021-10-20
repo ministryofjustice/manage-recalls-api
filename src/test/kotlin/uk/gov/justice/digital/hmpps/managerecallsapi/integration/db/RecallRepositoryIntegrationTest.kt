@@ -17,12 +17,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.util.UUID
 import javax.transaction.Transactional
+import kotlin.jvm.Throws
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -165,5 +168,41 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
     val updatedRecall = repository.getByRecallId(recallId)
 
     assertThat(updatedRecall.documents, hasElement(newDocument))
+  }
+
+  @Test
+  @Transactional
+  fun `can assign a recall`() {
+    val assignee = ::UserId.random()
+    val expected = Recall(recallId, nomsNumber, assignee = assignee)
+
+    repository.save(Recall(recallId, nomsNumber))
+
+    val assignedRecall = repository.assignRecall(recallId, assignee)
+    assertThat(assignedRecall, equalTo(expected))
+  }
+
+  @Test
+  @Transactional
+  fun `can unassign a recall`() {
+    val assignee = ::UserId.random()
+    val expected = Recall(recallId, nomsNumber)
+
+    repository.save(Recall(recallId, nomsNumber, assignee = assignee))
+
+    val assignedRecall = repository.unassignRecall(recallId, assignee)
+    assertThat(assignedRecall, equalTo(expected))
+  }
+
+  @Test
+  @Transactional
+  @Throws(NotFoundException::class)
+  fun `can't unassign a recall when assignee doesnt match`() {
+    val assignee = ::UserId.random()
+    val otherAssignee = ::UserId.random()
+
+    repository.save(Recall(recallId, nomsNumber, assignee = assignee))
+
+    assertThrows<NotFoundException> { repository.unassignRecall(recallId, otherAssignee) }
   }
 }

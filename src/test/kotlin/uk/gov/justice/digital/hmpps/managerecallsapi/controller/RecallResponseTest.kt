@@ -28,6 +28,14 @@ class RecallResponseTest {
   }
 
   @Test
+  fun `RecallResponse with bookedByUserId and assignee set but without recallNotificationEmailSentDateTime set returns status IN_ASSESSMENT`() {
+    val recall = RecallResponse(
+      RecallId(UUID.randomUUID()), NomsNumber("A12345AA"), bookedByUserId = UserId(UUID.randomUUID()), assignee = UserId(UUID.randomUUID())
+    )
+    assertThat(recall.status, equalTo(Status.IN_ASSESSMENT))
+  }
+
+  @Test
   fun `RecallResponse with recallNotificationEmailSentDateTime set returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = RecallResponse(
       RecallId(UUID.randomUUID()),

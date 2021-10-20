@@ -35,7 +35,13 @@ class RecallsControllerTest {
   private val letterToPrisonService = mockk<LetterToPrisonService>()
 
   private val underTest =
-    RecallsController(recallRepository, recallNotificationService, recallDocumentService, dossierService, letterToPrisonService)
+    RecallsController(
+      recallRepository,
+      recallNotificationService,
+      recallDocumentService,
+      dossierService,
+      letterToPrisonService
+    )
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
@@ -185,5 +191,29 @@ class RecallsControllerTest {
         assertThat(it.body?.content, equalTo(expectedBase64Pdf))
       }
       .verifyComplete()
+  }
+
+  @Test
+  fun `set assignee for recall`() {
+    val assignee = ::UserId.random()
+    val assignedRecall = Recall(recallId, nomsNumber, assignee = assignee)
+
+    every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
+
+    val result = underTest.assignRecall(recallId, assignee)
+
+    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee)))
+  }
+
+  @Test
+  fun `unassign recall`() {
+    val assignee = ::UserId.random()
+    val unassignedRecall = Recall(recallId, nomsNumber)
+
+    every { recallRepository.unassignRecall(recallId, assignee) } returns unassignedRecall
+
+    val result = underTest.unassignRecall(recallId, assignee)
+
+    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber)))
   }
 }

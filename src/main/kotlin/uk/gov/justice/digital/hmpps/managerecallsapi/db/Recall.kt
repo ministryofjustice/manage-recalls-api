@@ -84,6 +84,7 @@ data class Recall(
   val bookedByUserId: UUID? = null,
   val dossierCreatedByUserId: UUID? = null,
   val dossierTargetDate: LocalDate? = null,
+  val assignee: UUID? = null
 ) {
   constructor(
     recallId: RecallId,
@@ -122,6 +123,7 @@ data class Recall(
     bookedByUserId: UserId? = null,
     dossierCreatedByUserId: UserId? = null,
     dossierTargetDate: LocalDate? = null,
+    assignee: UserId? = null,
   ) :
     this(
       recallId.value,
@@ -159,13 +161,15 @@ data class Recall(
       assessedByUserId?.value,
       bookedByUserId?.value,
       dossierCreatedByUserId?.value,
-      dossierTargetDate
+      dossierTargetDate,
+      assignee?.value
     )
 
   fun recallId() = RecallId(id)
   fun assessedByUserId() = assessedByUserId?.let(::UserId)
   fun bookedByUserId() = bookedByUserId?.let(::UserId)
   fun dossierCreatedByUserId() = dossierCreatedByUserId?.let(::UserId)
+  fun assignee() = assignee?.let(::UserId)
 }
 
 @Embeddable

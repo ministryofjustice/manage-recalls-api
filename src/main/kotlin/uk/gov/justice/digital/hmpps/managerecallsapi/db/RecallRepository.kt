@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.util.UUID
 import javax.transaction.Transactional
@@ -50,5 +52,20 @@ class RecallRepository(
       } + recallDocument
       save(recall.copy(documents = updatedDocuments))
     }
+  }
+
+  @Transactional
+  fun assignRecall(recallId: RecallId, assignee: UserId): Recall {
+    return getByRecallId(recallId)
+      .copy(assignee = assignee.value)
+      .let { save(it) }
+  }
+
+  @Transactional
+  fun unassignRecall(recallId: RecallId, assignee: UserId): Recall {
+    return getByRecallId(recallId)
+      .takeIf { it.assignee == assignee.value }
+      ?.copy(assignee = null)
+      ?.let { save(it) } ?: throw NotFoundException()
   }
 }
