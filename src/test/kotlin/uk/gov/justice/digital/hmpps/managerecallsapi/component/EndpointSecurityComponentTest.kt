@@ -13,6 +13,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -42,7 +44,8 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
       webTestClient.post().uri("/search").bodyValue(apiSearchRequest),
-
+      webTestClient.post().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
+      webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}")
     )
   }
 

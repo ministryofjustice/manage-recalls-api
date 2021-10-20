@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -42,7 +43,7 @@ class RecallsController(
 ) {
 
   @PostMapping("/recalls")
-  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest) =
+  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest): ResponseEntity<RecallResponse> =
     ResponseEntity(
       recallRepository.save(bookRecallRequest.toRecall()).toResponse(),
       HttpStatus.CREATED
@@ -60,7 +61,10 @@ class RecallsController(
     recallRepository.getByRecallId(recallId).toResponse()
 
   @GetMapping("/recalls/{recallId}/recallNotification/{userId}")
-  fun getRecallNotification(@PathVariable("recallId") recallId: RecallId, @PathVariable("userId") userId: UserId): Mono<ResponseEntity<Pdf>> =
+  fun getRecallNotification(
+    @PathVariable("recallId") recallId: RecallId,
+    @PathVariable("userId") userId: UserId
+  ): Mono<ResponseEntity<Pdf>> =
     recallNotificationService.getDocument(recallId, userId).map {
       ResponseEntity.ok(Pdf.encode(it))
     }
@@ -92,6 +96,20 @@ class RecallsController(
       )
     )
   }
+
+  @PostMapping("/recalls/{recallId}/assignee/{assignee}")
+  fun assignRecall(
+    @PathVariable("recallId") recallId: RecallId,
+    @PathVariable("assignee") assignee: UserId
+  ): RecallResponse =
+    recallRepository.assignRecall(recallId, assignee).toResponse()
+
+  @DeleteMapping("/recalls/{recallId}/assignee/{assignee}")
+  fun unassignRecall(
+    @PathVariable("recallId") recallId: RecallId,
+    @PathVariable("assignee") assignee: UserId
+  ): RecallResponse =
+    recallRepository.unassignRecall(recallId, assignee).toResponse()
 }
 
 fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
@@ -116,7 +134,13 @@ fun Recall.toResponse() = RecallResponse(
   sentencingCourt = this.sentencingInfo?.sentencingCourt,
   indexOffence = this.sentencingInfo?.indexOffence,
   conditionalReleaseDate = this.sentencingInfo?.conditionalReleaseDate,
-  sentenceLength = this.sentencingInfo?.sentenceLength?.let { Api.SentenceLength(it.sentenceYears, it.sentenceMonths, it.sentenceDays) },
+  sentenceLength = this.sentencingInfo?.sentenceLength?.let {
+    Api.SentenceLength(
+      it.sentenceYears,
+      it.sentenceMonths,
+      it.sentenceDays
+    )
+  },
   bookingNumber = this.bookingNumber,
   probationOfficerName = this.probationInfo?.probationOfficerName,
   probationOfficerPhoneNumber = this.probationInfo?.probationOfficerPhoneNumber,
@@ -141,7 +165,8 @@ fun Recall.toResponse() = RecallResponse(
   assessedByUserId = this.assessedByUserId(),
   bookedByUserId = this.bookedByUserId(),
   dossierCreatedByUserId = this.dossierCreatedByUserId(),
-  dossierTargetDate = this.dossierTargetDate
+  dossierTargetDate = this.dossierTargetDate,
+  assignee = this.assignee()
 )
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
@@ -191,7 +216,8 @@ data class RecallResponse(
   val assessedByUserId: UserId? = null,
   val bookedByUserId: UserId? = null,
   val dossierCreatedByUserId: UserId? = null,
-  val dossierTargetDate: LocalDate? = null
+  val dossierTargetDate: LocalDate? = null,
+  val assignee: UserId? = null
 ) {
   val recallAssessmentDueDateTime: OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
   val status: Status? = calculateStatus()
@@ -202,7 +228,11 @@ data class RecallResponse(
     } else if (recallNotificationEmailSentDateTime != null) {
       Status.RECALL_NOTIFICATION_ISSUED
     } else if (bookedByUserId != null) {
-      Status.BOOKED_ON
+      if (assignee != null) {
+        Status.IN_ASSESSMENT
+      } else {
+        Status.BOOKED_ON
+      }
     } else {
       null
     }
@@ -234,7 +264,8 @@ data class GetDocumentResponse(
 )
 
 enum class Status {
-  RECALL_NOTIFICATION_ISSUED,
   BOOKED_ON,
+  IN_ASSESSMENT,
+  RECALL_NOTIFICATION_ISSUED,
   DOSSIER_ISSUED
 }

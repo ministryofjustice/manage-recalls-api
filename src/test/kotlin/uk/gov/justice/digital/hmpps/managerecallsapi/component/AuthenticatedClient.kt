@@ -44,6 +44,9 @@ class AuthenticatedClient(
   fun get(path: String): WebTestClient.ResponseSpec =
     sendGetRequest(path)
 
+  fun delete(path: String, expectedStatus: HttpStatus): WebTestClient.ResponseSpec =
+    deleteRequest(path, expectedStatus)
+
   fun bookRecall(bookRecallRequest: BookRecallRequest): RecallResponse =
     postRequest("/recalls", bookRecallRequest, RecallResponse::class.java)
 
@@ -85,6 +88,15 @@ class AuthenticatedClient(
 
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
     patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)
+
+  fun assignRecall(recallId: RecallId, assignee: UserId): RecallResponse =
+    postWithoutBody("/recalls/$recallId/assignee/$assignee", responseClass = RecallResponse::class.java)
+
+  fun unassignRecall(recallId: RecallId, assignee: UserId) =
+    deleteRequestWithResponse("/recalls/$recallId/assignee/$assignee", RecallResponse::class.java)
+
+  fun unassignRecall(recallId: RecallId, assignee: UserId, expectedStatus: HttpStatus) =
+    deleteRequest("/recalls/$recallId/assignee/$assignee", expectedStatus)
 
   fun search(searchRequest: SearchRequest) =
     sendPostRequest("/search", searchRequest, OK)
@@ -129,6 +141,18 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
+  private fun <T> postWithoutBody(
+    path: String,
+    responseClass: Class<T>
+  ): T =
+    webTestClient.post()
+      .uri(path)
+      .headers(addHeaders)
+      .exchange()
+      .expectBody(responseClass)
+      .returnResult()
+      .responseBody!!
+
   private fun sendPostRequest(
     path: String,
     request: Any,
@@ -139,6 +163,27 @@ class AuthenticatedClient(
 
   private fun sendPostRequest(path: String, request: Any): WebTestClient.ResponseSpec =
     webTestClient.post().sendRequestWithBody(path, request)
+
+  private fun <T> deleteRequestWithResponse(
+    path: String,
+    responseClass: Class<T>,
+  ) =
+    webTestClient.delete().uri(path)
+      .headers(addHeaders)
+      .exchange()
+      .expectStatus().isOk
+      .expectBody(responseClass)
+      .returnResult()
+      .responseBody!!
+
+  private fun deleteRequest(
+    path: String,
+    expectedStatus: HttpStatus
+  ) =
+    webTestClient.delete().uri(path)
+      .headers(addHeaders)
+      .exchange()
+      .expectStatus().isEqualTo(expectedStatus)
 
   private fun WebTestClient.RequestBodyUriSpec.sendRequestWithBody(
     path: String,

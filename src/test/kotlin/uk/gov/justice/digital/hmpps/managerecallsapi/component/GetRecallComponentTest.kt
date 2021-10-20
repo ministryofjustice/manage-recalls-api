@@ -80,6 +80,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.dossierCreatedByUserId").isEqualTo(fullyPopulatedRecall.dossierCreatedByUserId!!.toString())
       .jsonPath("$.recallAssessmentDueDateTime").value(endsWith("Z"))
       .jsonPath("$.dossierTargetDate").isEqualTo(LocalDate.now().toString())
+      .jsonPath("$.assignee").isEqualTo(fullyPopulatedRecall.assignee!!.toString())
   }
 
   @Test
