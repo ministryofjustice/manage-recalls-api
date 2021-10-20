@@ -8,4 +8,4 @@ import org.springframework.web.reactive.function.client.WebClient
 class PrisonRegisterHealth(
   webClient: WebClient,
   @Value("\${prisonRegister.endpoint.url}") prisonRegisterEndpointUrl: String
-) : PingHealthCheck(webClient, "$prisonRegisterEndpointUrl/health")
+) : PingHealthCheck(webClient, "$prisonRegisterEndpointUrl/health/ping")

@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
@@ -12,7 +11,6 @@ import com.github.tomakehurst.wiremock.http.HttpHeader
 import com.github.tomakehurst.wiremock.http.HttpHeaders
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
@@ -23,11 +21,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegiste
 @Component
 class CourtRegisterMockServer(
   @Autowired private val objectMapper: ObjectMapper
-) : WireMockServer(
+) : HealthServer(
   WireMockConfiguration().apply {
     port(9095)
     extensions(ResponseTemplateTransformer.builder().global(false).build())
-  }
+  },
+  "/health/ping"
 ) {
 
   fun stubCourts() {
@@ -59,23 +58,6 @@ class CourtRegisterMockServer(
         )
     )
   }
-
-  fun isHealthy() {
-    healthCheck(OK)
-  }
-
-  fun isUnhealthy() {
-    healthCheck(HttpStatus.INTERNAL_SERVER_ERROR)
-  }
-
-  private fun healthCheck(status: HttpStatus) =
-    this.stubFor(
-      get("/health").willReturn(
-        aResponse()
-          .withHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-          .withStatus(status.value())
-      )
-    )
 
   fun stubFindAnyCourtById() {
     stubFor(

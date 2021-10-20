@@ -22,3 +22,7 @@ aws:
     accessKey: randomAccessKey
     secretKey: randomSecretKey
   s3.bucketName: test-bucket
+
+oauth:
+  endpoint:
+    url: http://localhost:9090/auth

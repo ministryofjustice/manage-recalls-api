@@ -32,3 +32,7 @@ prisonRegister:
 courtRegister:
   endpoint:
     url: http://localhost:9095
+
+oauth:
+  endpoint:
+    url: http://localhost:9090/auth

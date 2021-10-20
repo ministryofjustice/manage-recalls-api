@@ -49,7 +49,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   private lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
 
   @Autowired
-  private lateinit var hmppsAuthMockServer: HmppsAuthMockServer
+  protected lateinit var hmppsAuthMockServer: HmppsAuthMockServer
 
   @Autowired
   lateinit var webTestClient: WebTestClient
