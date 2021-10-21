@@ -24,6 +24,8 @@ Requires postgres and localstack:
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 ```
 
+You can now access the service on http://localhost:8080
+
 ### Run in docker-compose
 ```bash
 docker-compose pull && docker-compose up -d
