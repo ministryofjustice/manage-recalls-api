@@ -6,23 +6,33 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.UpdateRecallService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -33,6 +43,10 @@ class RecallsControllerTest {
   private val recallDocumentService = mockk<RecallDocumentService>()
   private val dossierService = mockk<DossierService>()
   private val letterToPrisonService = mockk<LetterToPrisonService>()
+  private val userDetailsService = mockk<UserDetailsService>()
+  private val updateRecallService = mockk<UpdateRecallService>()
+  private val prisonValidationService = mockk<PrisonValidationService>()
+  private val courtValidationService = mockk<CourtValidationService>()
 
   private val underTest =
     RecallsController(
@@ -40,7 +54,11 @@ class RecallsControllerTest {
       recallNotificationService,
       recallDocumentService,
       dossierService,
-      letterToPrisonService
+      letterToPrisonService,
+      userDetailsService,
+      updateRecallService,
+      prisonValidationService,
+      courtValidationService
     )
 
   private val recallId = ::RecallId.random()
@@ -199,10 +217,11 @@ class RecallsControllerTest {
     val assignedRecall = Recall(recallId, nomsNumber, assignee = assignee)
 
     every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
+    every { userDetailsService.get(assignee) } returns UserDetails(assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"))
 
     val result = underTest.assignRecall(recallId, assignee)
 
-    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee)))
+    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee, assigneeUserName = "Bertie Badger")))
   }
 
   @Test
@@ -215,5 +234,57 @@ class RecallsControllerTest {
     val result = underTest.unassignRecall(recallId, assignee)
 
     assertThat(result, equalTo(RecallResponse(recallId, nomsNumber)))
+  }
+
+  private val recall = Recall(recallId, nomsNumber)
+
+  private val updateRecallRequest =
+    UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
+
+  @Test
+  fun `can update recall and return a response with all fields populated`() {
+    every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
+    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns true
+    every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
+    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+
+    val response = underTest.updateRecall(recallId, updateRecallRequest)
+
+    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber))))
+  }
+
+  @Test
+  fun `can't update recall when current prison is not valid`() {
+    every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns false
+    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+    every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
+
+    val response = underTest.updateRecall(recallId, updateRecallRequest)
+
+    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
+  }
+
+  @Test
+  fun `can't update recall when last release prison is not valid`() {
+    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns false
+    every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
+    every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
+    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+
+    val response = underTest.updateRecall(recallId, updateRecallRequest)
+
+    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
+  }
+
+  @Test
+  fun `can't update recall when sentencing court is not valid`() {
+    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns true
+    every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
+    every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns false
+    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+
+    val response = underTest.updateRecall(recallId, updateRecallRequest)
+
+    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
   }
 }

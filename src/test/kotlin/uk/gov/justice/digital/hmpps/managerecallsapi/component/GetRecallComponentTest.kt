@@ -8,7 +8,12 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
@@ -32,6 +37,7 @@ class GetRecallComponentTest : ComponentTestBase() {
   fun `get a fully populated recall`() {
     val recallId = ::RecallId.random()
     val fullyPopulatedRecall = fullyPopulatedRecall(recallId)
+    userDetailsRepository.save(UserDetails(fullyPopulatedRecall.assignee()!!, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321")))
     recallRepository.save(fullyPopulatedRecall)
 
     // TODO:  MD Fix assertions, or move somewhere more sensible.
@@ -81,6 +87,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.recallAssessmentDueDateTime").value(endsWith("Z"))
       .jsonPath("$.dossierTargetDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.assignee").isEqualTo(fullyPopulatedRecall.assignee!!.toString())
+      .jsonPath("$.assigneeUserName").isEqualTo("Bertie Badger")
   }
 
   @Test
