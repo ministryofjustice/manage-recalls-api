@@ -190,7 +190,7 @@ class RecallsController(
     dossierCreatedByUserId = this.dossierCreatedByUserId(),
     dossierTargetDate = this.dossierTargetDate,
     assignee = this.assignee(),
-    assigneeUserName = this.assignee()?.let { userDetailsService.get(it).personName() }
+    assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.personName() }
   )
 }
 

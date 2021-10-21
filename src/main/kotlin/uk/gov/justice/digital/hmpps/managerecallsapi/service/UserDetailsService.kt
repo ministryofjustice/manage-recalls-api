@@ -12,4 +12,5 @@ class UserDetailsService(
 ) {
   fun save(userDetails: UserDetails): UserDetails = userDetailsRepository.save(userDetails)
   fun get(userId: UserId): UserDetails = userDetailsRepository.getByUserId(userId)
+  fun find(userId: UserId): UserDetails? = userDetailsRepository.findByUserId(userId)
 }

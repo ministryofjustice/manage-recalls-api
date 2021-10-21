@@ -217,11 +217,24 @@ class RecallsControllerTest {
     val assignedRecall = Recall(recallId, nomsNumber, assignee = assignee)
 
     every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
-    every { userDetailsService.get(assignee) } returns UserDetails(assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"))
+    every { userDetailsService.find(assignee) } returns UserDetails(assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"))
 
     val result = underTest.assignRecall(recallId, assignee)
 
     assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee, assigneeUserName = "Bertie Badger")))
+  }
+
+  @Test
+  fun `set assignee for recall without user details`() {
+    val assignee = ::UserId.random()
+    val assignedRecall = Recall(recallId, nomsNumber, assignee = assignee)
+
+    every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
+    every { userDetailsService.find(assignee) } returns null
+
+    val result = underTest.assignRecall(recallId, assignee)
+
+    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee, assigneeUserName = null)))
   }
 
   @Test
