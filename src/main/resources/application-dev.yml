@@ -30,3 +30,7 @@ clamav:
   virus:
     scan:
       enabled: false
+
+oauth:
+  endpoint:
+    url: http://localhost:9090/auth
