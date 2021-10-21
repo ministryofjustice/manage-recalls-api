@@ -52,12 +52,14 @@ interface JpaUserDetailsRepository : JpaRepository<UserDetails, UUID>
 @NoRepositoryBean
 interface ExtendedUserDetailsRepository : JpaUserDetailsRepository {
   fun getByUserId(userId: UserId): UserDetails
+  fun findByUserId(userId: UserId): UserDetails?
 }
 
 @Component
 class UserDetailsRepository(
   @Qualifier("jpaUserDetailsRepository") @Autowired private val jpaRepository: JpaUserDetailsRepository
 ) : JpaUserDetailsRepository by jpaRepository, ExtendedUserDetailsRepository {
-  override fun getByUserId(userId: UserId): UserDetails =
-    findById(userId.value).orElseThrow { UserDetailsNotFoundException(userId) }
+  override fun getByUserId(userId: UserId): UserDetails = findByUserId(userId) ?: throw UserDetailsNotFoundException(userId)
+
+  override fun findByUserId(userId: UserId): UserDetails? = findById(userId.value).orElse(null)
 }

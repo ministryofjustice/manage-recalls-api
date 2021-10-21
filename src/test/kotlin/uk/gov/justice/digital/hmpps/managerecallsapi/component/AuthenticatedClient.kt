@@ -201,7 +201,7 @@ class AuthenticatedClient(
       .expectStatus().isEqualTo(expectedStatus)
 
   private fun <T> getRequest(path: String, responseClass: Class<T>): T =
-    sendGetRequest(path, OK)
+    sendGetRequest(path)
       .expectBody(responseClass)
       .returnResult()
       .responseBody!!

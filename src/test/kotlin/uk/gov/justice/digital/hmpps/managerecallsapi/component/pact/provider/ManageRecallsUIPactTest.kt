@@ -22,11 +22,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LETTER_TO_PRISON
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
@@ -103,17 +109,31 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a recall does not exist",
     "a list of local delivery units exists",
     "a list of prisons exists",
-    "a list of courts exists"
+    "a list of courts exists",
+    "a missing user ID"
   )
   fun `no state required`() {
   }
 
   @State(
     "a recall exists",
-    "a fully populated recall exists"
+    "a fully populated recall exists",
+    "a user can be unassigned"
   )
   fun `a fully populated recall exists without documents`() {
-    recallRepository.save(fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet()))
+    val assigneeUuid = UUID.fromString("11111111-1111-1111-1111-111111111111")
+    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = assigneeUuid)
+    userDetailsRepository.save(UserDetails(UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321")))
+    recallRepository.save(recall)
+  }
+
+  @State(
+    "a user can be assigned"
+  )
+  fun `an unassigned fully populated recall exists without documents`() {
+    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = null)
+    userDetailsRepository.save(UserDetails(UserId(UUID.fromString("11111111-1111-1111-1111-111111111111")), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321")))
+    recallRepository.save(recall)
   }
 
   @State(
@@ -123,9 +143,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a list of recalls exists`() {
     recallRepository.saveAll(
       listOf(
-        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = nomsNumber, documents = emptySet()),
-        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet()),
-        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet())
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = nomsNumber, documents = emptySet(), assignee = null),
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet(), assignee = null),
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet(), assignee = null)
       )
     )
   }
