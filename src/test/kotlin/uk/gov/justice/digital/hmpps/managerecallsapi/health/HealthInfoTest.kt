@@ -11,6 +11,11 @@ class HealthInfoTest {
     val properties = Properties()
     properties.setProperty("version", "somever")
     Assertions.assertThat(HealthInfo(BuildProperties(properties)).health().details)
-      .isEqualTo(mapOf("version" to "somever"))
+      .isEqualTo(
+        mapOf(
+          "version" to "somever",
+          "build_url" to "BUILD_URL not defined"
+        )
+      )
   }
 }

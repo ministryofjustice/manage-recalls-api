@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class HealthInfo(buildProperties: BuildProperties) : HealthIndicator {
   private val version: String = buildProperties.version
+  private val buildUrl: String = System.getenv("BUILD_URL") ?: "BUILD_URL not defined"
 
-  override fun health(): Health = Health.up().withDetail("version", version).build()
+  override fun health(): Health = Health.up().withDetail("version", version).withDetail("build_url", buildUrl).build()
 }

@@ -74,7 +74,10 @@ jobs:
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"
           steps:
-            - run: ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
+            - run:
+                name: Run check
+                command: |
+                  ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
       - store_test_results:
           path: build/test-results
       - store_artifacts:
@@ -220,6 +223,7 @@ workflows:
           name: build_docker
           publish: false
           persist_container_image: true
+          additional_docker_build_args: --build-arg BUILD_URL=${CIRCLE_BUILD_URL}
 
       - hmpps/trivy_pipeline_scan:
           name: trivy_scan_low_medium_cves
