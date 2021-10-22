@@ -14,6 +14,9 @@ ARG BUILD_NUMBER
 ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
 ENV SENTRY_RELEASE ${BUILD_NUMBER:-1_0_0}
 
+ARG BUILD_URL
+ENV BUILD_URL ${BUILD_URL}
+
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y curl && \
