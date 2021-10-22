@@ -16,7 +16,7 @@ parameters:
     default: false
   pact_consumer_tags:
     type: string
-    default: main
+    default: main, deployed:preprod, deployed:prod
 
 _db_localstack_docker_config: &db_localstack_docker_config
   - image: cimg/openjdk:16.0
