@@ -28,7 +28,7 @@ interface ExtendedRecallRepository : JpaRecallRepository {
   fun getByRecallId(recallId: RecallId): Recall
   fun search(searchRequest: RecallSearchRequest): List<Recall>
   fun findByRecallId(recallId: RecallId): Recall?
-  fun addDocumentToRecall(recallId: RecallId, recallDocument: RecallDocument)
+  fun addDocumentToRecall(recallId: RecallId, recallDocument: VersionedDocument)
 }
 
 @Component
@@ -45,12 +45,12 @@ class RecallRepository(
     findById(recallId.value).orElse(null)
 
   @Transactional
-  override fun addDocumentToRecall(recallId: RecallId, recallDocument: RecallDocument) {
+  override fun addDocumentToRecall(recallId: RecallId, recallDocument: VersionedDocument) {
     getByRecallId(recallId).let { recall ->
-      val updatedDocuments = recall.documents.toMutableSet().apply {
+      val updatedDocuments = recall.versionedDocuments.toMutableSet().apply {
         this.removeIf { it.id == recallDocument.id }
       } + recallDocument
-      save(recall.copy(documents = updatedDocuments))
+      save(recall.copy(versionedDocuments = updatedDocuments))
     }
   }
 

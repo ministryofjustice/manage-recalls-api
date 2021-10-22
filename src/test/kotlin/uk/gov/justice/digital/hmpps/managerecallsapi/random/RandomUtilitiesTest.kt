@@ -10,7 +10,7 @@ import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
 
 class RandomUtilitiesTest {
   @Test
@@ -23,15 +23,15 @@ class RandomUtilitiesTest {
         has(Recall::id, present()),
         has(Recall::nomsNumber, present()),
         has(
-          Recall::documents,
+          Recall::versionedDocuments,
           allOf(
             hasSize(equalTo(1)),
             allElements(
               allOf(
-                has(RecallDocument::id, present()),
-                has(RecallDocument::recallId, present()),
-                has(RecallDocument::category, present()),
-                has(RecallDocument::fileName, present())
+                has(VersionedDocument::id, present()),
+                has(VersionedDocument::recallId, present()),
+                has(VersionedDocument::category, present()),
+                has(VersionedDocument::fileName, present())
               )
             )
           )

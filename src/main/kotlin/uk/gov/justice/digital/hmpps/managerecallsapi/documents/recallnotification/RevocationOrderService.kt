@@ -9,12 +9,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Compani
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 
 @Service
 class RevocationOrderService(
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
-  @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val documentService: DocumentService,
   @Autowired private val revocationOrderGenerator: RevocationOrderGenerator,
 ) {
 
@@ -26,11 +26,11 @@ class RevocationOrderService(
           recallImage(RevocationOrderLogo),
           signature(revocationOrderContext.assessedByUserSignature)
         ).map { bytes ->
-          recallDocumentService.storeDocument(revocationOrderContext.recallId, bytes, REVOCATION_ORDER)
+          documentService.storeDocument(revocationOrderContext.recallId, bytes, REVOCATION_ORDER)
           bytes
         }
       }
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> =
-    Mono.just(recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER))
+    Mono.just(documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER))
 }

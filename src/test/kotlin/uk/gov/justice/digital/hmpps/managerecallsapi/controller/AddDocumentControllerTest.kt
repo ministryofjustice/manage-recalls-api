@@ -13,14 +13,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.P
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.util.UUID
 
 class AddDocumentControllerTest {
-  private val recallDocumentService = mockk<RecallDocumentService>()
+  private val documentService = mockk<DocumentService>()
   private val advertisedBaseUri = "https://api"
 
-  private val underTest = AddDocumentController(recallDocumentService, advertisedBaseUri)
+  private val underTest = AddDocumentController(documentService, advertisedBaseUri)
 
   private val recallId = ::RecallId.random()
   private val fileName = "fileName"
@@ -33,7 +33,7 @@ class AddDocumentControllerTest {
     val documentId = UUID.randomUUID()
 
     every {
-      recallDocumentService.scanAndStoreDocument(
+      documentService.scanAndStoreDocument(
         recallId,
         documentBytes,
         category,

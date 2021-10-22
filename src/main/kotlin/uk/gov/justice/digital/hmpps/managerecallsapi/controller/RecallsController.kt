@@ -29,8 +29,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UpdateRecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
@@ -43,7 +43,7 @@ import java.util.UUID
 class RecallsController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val recallNotificationService: RecallNotificationService,
-  @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val documentService: DocumentService,
   @Autowired private val dossierService: DossierService,
   @Autowired private val letterToPrison: LetterToPrisonService,
   @Autowired private val userDetailsService: UserDetailsService,
@@ -112,7 +112,7 @@ class RecallsController(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("documentId") documentId: UUID
   ): ResponseEntity<GetDocumentResponse> {
-    val (document, bytes) = recallDocumentService.getDocument(recallId, documentId)
+    val (document, bytes) = documentService.getDocument(recallId, documentId)
     return ResponseEntity.ok(
       GetDocumentResponse(
         documentId = documentId,
@@ -140,7 +140,7 @@ class RecallsController(
   fun Recall.toResponse() = RecallResponse(
     recallId = this.recallId(),
     nomsNumber = this.nomsNumber,
-    documents = this.documents.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) },
+    documents = allDocuments(),
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
@@ -192,6 +192,9 @@ class RecallsController(
     assignee = this.assignee(),
     assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.personName() }
   )
+
+  private fun Recall.allDocuments() =
+    this.versionedDocuments.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) } + this.unversionedDocuments.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) }
 }
 
 fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)

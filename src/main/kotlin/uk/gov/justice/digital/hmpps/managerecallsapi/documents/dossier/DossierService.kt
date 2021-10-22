@@ -13,13 +13,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.io.InputStream
 
 @Service
 class DossierService(
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
-  @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val documentService: DocumentService,
   @Autowired private val reasonsForRecallService: ReasonsForRecallService,
   @Autowired private val pdfDecorator: PdfDecorator,
   @Autowired private val tableOfContentsService: TableOfContentsService,
@@ -48,9 +48,9 @@ class DossierService(
     recallId: RecallId,
     reasonsForRecall: ByteArray
   ): MutableMap<String, ByteArrayDocumentData> {
-    val license = recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE)
-    val partARecallReport = recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
-    val revocationOrder = recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER)
+    val license = documentService.getVersionedDocumentContentWithCategory(recallId, LICENCE)
+    val partARecallReport = documentService.getVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
+    val revocationOrder = documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER)
     return mutableMapOf(
       "Recall Information Leaflet [Core Dossier]" to documentData(RecallInformationLeaflet),
       "Licence [Core Dossier]" to documentData(license),

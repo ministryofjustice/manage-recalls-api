@@ -13,9 +13,9 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.transaction.Transactional
 import kotlin.jvm.Throws
@@ -125,7 +126,15 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
     val recallToUpdate = Recall(
       recallId,
       nomsNumber,
-      documents = setOf(RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, null)),
+      documents = setOf(
+        VersionedDocument(
+          UUID.randomUUID(),
+          recallId.value,
+          PART_A_RECALL_REPORT,
+          null,
+          OffsetDateTime.now()
+        )
+      ),
     )
     repository.save(recallToUpdate)
 
@@ -137,19 +146,31 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
   @Test
   @Transactional
   fun `can add a document to an existing recall`() {
-    val recallDocument = RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, null)
+    val recallDocument = VersionedDocument(
+      UUID.randomUUID(),
+      recallId.value,
+      PART_A_RECALL_REPORT,
+      null,
+      OffsetDateTime.now()
+    )
     repository.save(recall)
     repository.addDocumentToRecall(recallId, recallDocument)
 
     val updatedRecall = repository.getByRecallId(recallId)
 
-    assertThat(updatedRecall.documents, hasElement(recallDocument))
+    assertThat(updatedRecall.versionedDocuments, hasElement(recallDocument))
   }
 
   @Test
   @Transactional
   fun `addDocumentToRecall throws RecallNotFoundException if recall does not exist`() {
-    val recallDocument = RecallDocument(UUID.randomUUID(), recallId.value, PART_A_RECALL_REPORT, null)
+    val recallDocument = VersionedDocument(
+      UUID.randomUUID(),
+      recallId.value,
+      PART_A_RECALL_REPORT,
+      null,
+      OffsetDateTime.now()
+    )
 
     assertThrows<RecallNotFoundException> { repository.addDocumentToRecall(recallId, recallDocument) }
   }
@@ -158,8 +179,20 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
   @Transactional
   fun `can add a document to a recall with a document of the same category`() {
     val documentId = UUID.randomUUID()
-    val existingDocument = RecallDocument(documentId, recallId.value, PART_A_RECALL_REPORT, "originalFilename")
-    val newDocument = RecallDocument(documentId, recallId.value, PART_A_RECALL_REPORT, "newFilename")
+    val existingDocument = VersionedDocument(
+      documentId,
+      recallId.value,
+      PART_A_RECALL_REPORT,
+      "originalFilename",
+      OffsetDateTime.now()
+    )
+    val newDocument = VersionedDocument(
+      documentId,
+      recallId.value,
+      PART_A_RECALL_REPORT,
+      "newFilename",
+      OffsetDateTime.now()
+    )
     val existingRecall = Recall(recallId, nomsNumber, documents = setOf(existingDocument))
 
     repository.save(existingRecall)
@@ -167,7 +200,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
     val updatedRecall = repository.getByRecallId(recallId)
 
-    assertThat(updatedRecall.documents, hasElement(newDocument))
+    assertThat(updatedRecall.versionedDocuments, hasElement(newDocument))
   }
 
   @Test

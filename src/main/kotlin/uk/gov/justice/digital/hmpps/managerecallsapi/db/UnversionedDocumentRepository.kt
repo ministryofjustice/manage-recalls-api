@@ -12,30 +12,24 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
 import java.util.UUID
 
-@Repository("jpaRecallDocumentRepository")
-interface JpaRecallDocumentRepository : JpaRepository<RecallDocument, UUID> {
-  @Query("SELECT d from RecallDocument d where d.recallId = :recallId and d.category = :category")
-  fun findByRecallIdAndCategory(
-    @Param("recallId") recallId: UUID,
-    @Param("category") category: RecallDocumentCategory
-  ): RecallDocument?
-
-  @Query("SELECT d from RecallDocument d where d.recallId = :recallId and d.id = :documentId")
+@Repository("jpaRecallUnversionedDocumentRepository")
+interface JpaRecallUnversionedDocumentRepository : JpaRepository<UnversionedDocument, UUID> {
+  @Query("SELECT d from UnversionedDocument d where d.recallId = :recallId and d.id = :documentId")
   fun findByRecallIdAndDocumentId(
     @Param("recallId") recallId: UUID,
     @Param("documentId") documentId: UUID
-  ): RecallDocument?
+  ): UnversionedDocument?
 }
 
 @NoRepositoryBean
-interface ExtendedRecallDocumentRepository : JpaRecallDocumentRepository {
-  fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: UUID): RecallDocument
+interface ExtendedRecallUnversionedDocumentRepository : JpaRecallUnversionedDocumentRepository {
+  fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: UUID): UnversionedDocument
 }
 
 @Component
-class RecallDocumentRepository(
-  @Qualifier("jpaRecallDocumentRepository") @Autowired private val jpaRepository: JpaRecallDocumentRepository
-) : JpaRecallDocumentRepository by jpaRepository, ExtendedRecallDocumentRepository {
+class UnversionedDocumentRepository(
+  @Qualifier("jpaRecallUnversionedDocumentRepository") @Autowired private val jpaRepository: JpaRecallUnversionedDocumentRepository
+) : JpaRecallUnversionedDocumentRepository by jpaRepository, ExtendedRecallUnversionedDocumentRepository {
   override fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: UUID) =
     findByRecallIdAndDocumentId(recallId.value, documentId)
       ?: throw RecallDocumentNotFoundException(recallId, documentId)

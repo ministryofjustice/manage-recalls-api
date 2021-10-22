@@ -8,20 +8,28 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.toRecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.VirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import java.time.Clock
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Service
-class RecallDocumentService(
+class DocumentService(
   @Autowired private val s3Service: S3Service,
   @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val recallDocumentRepository: RecallDocumentRepository,
-  @Autowired private val virusScanner: VirusScanner
+  @Autowired private val versionedDocumentRepository: VersionedDocumentRepository,
+  @Autowired private val unversionedDocumentRepository: UnversionedDocumentRepository,
+  @Autowired private val virusScanner: VirusScanner,
+  @Autowired private val clock: Clock
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -57,29 +65,54 @@ class RecallDocumentService(
     documentBytes: ByteArray,
     fileName: String?
   ): UUID {
-    val documentId = recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id
-      ?: UUID.randomUUID()
+    val documentId = if (documentCategory.versioned) {
+      versionedDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id ?: UUID.randomUUID()
+    } else {
+      UUID.randomUUID()
+    }
+
     s3Service.uploadFile(documentId, documentBytes)
     // TODO: [KF] delete the document from S3 if saving fails?
-    recallDocumentRepository.save(RecallDocument(documentId, recallId.value, documentCategory, fileName))
+    if (documentCategory.versioned) {
+      versionedDocumentRepository.save(
+        VersionedDocument(
+          documentId,
+          recallId.value,
+          documentCategory,
+          fileName,
+          OffsetDateTime.now(clock)
+        )
+      )
+    } else {
+      unversionedDocumentRepository.save(
+        UnversionedDocument(
+          documentId,
+          recallId.value,
+          documentCategory,
+          fileName!!,
+          OffsetDateTime.now(clock)
+        )
+      )
+    }
     return documentId
   }
 
   fun getDocument(recallId: RecallId, documentId: UUID): Pair<RecallDocument, ByteArray> =
     forExistingRecall(recallId) {
       Pair(
-        recallDocumentRepository.getByRecallIdAndDocumentId(recallId, documentId),
+        versionedDocumentRepository.findByRecallIdAndDocumentId(recallId, documentId)?.toRecallDocument()
+          ?: unversionedDocumentRepository.getByRecallIdAndDocumentId(recallId, documentId).toRecallDocument(),
         s3Service.downloadFile(documentId)
       )
     }
 
-  fun getDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
-    getDocumentContentWithCategoryIfExists(recallId, documentCategory)
+  fun getVersionedDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
+    getVersionedDocumentContentWithCategoryIfExists(recallId, documentCategory)
       ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
 
-  fun getDocumentContentWithCategoryIfExists(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray? =
+  fun getVersionedDocumentContentWithCategoryIfExists(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray? =
     forExistingRecall(recallId) {
-      recallDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
+      versionedDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
         s3Service.downloadFile(it.id)
       }
     }

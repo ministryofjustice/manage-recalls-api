@@ -12,11 +12,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 
 @Service
 class LetterToPrisonService(
-  @Autowired private val recallDocumentService: RecallDocumentService,
+  @Autowired private val documentService: DocumentService,
   @Autowired private val letterToPrisonContextFactory: LetterToPrisonContextFactory,
   @Autowired private val letterToPrisonCustodyOfficeGenerator: LetterToPrisonCustodyOfficeGenerator,
   @Autowired private val letterToPrisonGovernorGenerator: LetterToPrisonGovernorGenerator,
@@ -26,11 +26,11 @@ class LetterToPrisonService(
 ) {
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> {
-    val letterToPrison = recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
+    val letterToPrison = documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
 
     return if (letterToPrison == null) {
       createPdf(recallId).map { letterToPrisonBytes ->
-        recallDocumentService.storeDocument(recallId, letterToPrisonBytes, LETTER_TO_PRISON)
+        documentService.storeDocument(recallId, letterToPrisonBytes, LETTER_TO_PRISON)
         letterToPrisonBytes
       }
     } else {
