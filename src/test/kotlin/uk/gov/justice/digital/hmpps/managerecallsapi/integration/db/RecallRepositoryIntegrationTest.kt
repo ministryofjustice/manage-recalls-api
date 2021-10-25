@@ -131,7 +131,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
           UUID.randomUUID(),
           recallId.value,
           PART_A_RECALL_REPORT,
-          null,
+          "PART_A.pdf",
           OffsetDateTime.now()
         )
       ),
@@ -150,7 +150,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
       UUID.randomUUID(),
       recallId.value,
       PART_A_RECALL_REPORT,
-      null,
+      "PART_A.pdf",
       OffsetDateTime.now()
     )
     repository.save(recall)
@@ -168,7 +168,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
       UUID.randomUUID(),
       recallId.value,
       PART_A_RECALL_REPORT,
-      null,
+      "PART_A.pdf",
       OffsetDateTime.now()
     )
 

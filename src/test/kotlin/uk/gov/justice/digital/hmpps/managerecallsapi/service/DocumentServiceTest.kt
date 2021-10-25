@@ -233,17 +233,6 @@ internal class DocumentServiceTest {
   }
 
   @Test
-  fun `throws an exception when saving an unversioned document without filename with`() {
-    val documentBytes = randomString().toByteArray()
-    every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
-    every { s3Service.uploadFile(any(), documentBytes) } just runs
-
-    assertThrows<NullPointerException> {
-      underTest.storeDocument(recallId, documentBytes, OTHER, null)
-    }
-  }
-
-  @Test
   fun `stores a document of type OTHER in unversioned repository`() {
     val documentBytes = randomString().toByteArray()
     val documentId = UUID.randomUUID()

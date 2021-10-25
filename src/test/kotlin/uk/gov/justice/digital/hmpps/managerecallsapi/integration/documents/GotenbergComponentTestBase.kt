@@ -107,14 +107,14 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
   protected fun uploadPartAFor(recall: RecallResponse) {
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(RecallDocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"))
+      AddDocumentRequest(RecallDocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "PART_A.pdf")
     )
   }
 
   protected fun uploadLicenceFor(recall: RecallResponse) {
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(RecallDocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"))
+      AddDocumentRequest(RecallDocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), "PART_A.pdf")
     )
   }
 

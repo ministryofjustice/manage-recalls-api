@@ -22,7 +22,9 @@ data class UnversionedDocument(
   @Enumerated(EnumType.STRING)
   val category: RecallDocumentCategory,
 
+  @Column(nullable = false)
   val fileName: String,
 
+  @Column(nullable = false)
   val createdDateTime: OffsetDateTime
 )

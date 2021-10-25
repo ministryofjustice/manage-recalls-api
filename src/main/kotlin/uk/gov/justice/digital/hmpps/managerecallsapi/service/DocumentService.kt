@@ -37,7 +37,7 @@ class DocumentService(
     recallId: RecallId,
     documentBytes: ByteArray,
     documentCategory: RecallDocumentCategory,
-    fileName: String? = null
+    fileName: String
   ): Result<UUID, VirusScanResult> =
     forExistingRecall(recallId) {
       when (val virusScanResult = virusScanner.scan(documentBytes)) {
@@ -53,7 +53,7 @@ class DocumentService(
     recallId: RecallId,
     documentBytes: ByteArray,
     documentCategory: RecallDocumentCategory,
-    fileName: String? = null
+    fileName: String
   ): UUID =
     forExistingRecall(recallId) {
       uploadToS3AndSaveDocument(recallId, documentCategory, documentBytes, fileName)
@@ -63,7 +63,7 @@ class DocumentService(
     recallId: RecallId,
     documentCategory: RecallDocumentCategory,
     documentBytes: ByteArray,
-    fileName: String?
+    fileName: String
   ): UUID {
     val documentId = if (documentCategory.versioned) {
       versionedDocumentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id ?: UUID.randomUUID()
@@ -89,7 +89,7 @@ class DocumentService(
           documentId,
           recallId.value,
           documentCategory,
-          fileName!!,
+          fileName,
           OffsetDateTime.now(clock)
         )
       )
