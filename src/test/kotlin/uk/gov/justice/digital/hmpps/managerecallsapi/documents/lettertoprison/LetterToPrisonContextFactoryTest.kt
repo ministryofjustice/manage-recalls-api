@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
+import java.time.OffsetDateTime
 
 class LetterToPrisonContextFactoryTest {
   private val recallRepository = mockk<RecallRepository>()
@@ -35,10 +36,10 @@ class LetterToPrisonContextFactoryTest {
     val recallId = ::RecallId.random()
     val assessedByUserId = ::UserId.random()
     val recall = Recall(
-      recallId,
-      NomsNumber("AA1234A"),
-      currentPrison = PrisonId("WIM"),
+      recallId, NomsNumber("AA1234A"), OffsetDateTime.now(),
+      OffsetDateTime.now(),
       lastReleasePrison = PrisonId("BOB"),
+      currentPrison = PrisonId("WIM"),
       assessedByUserId = assessedByUserId
     )
     val prisoner = mockk<Prisoner>()

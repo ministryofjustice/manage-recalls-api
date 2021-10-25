@@ -24,17 +24,21 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.stream.Stream
 
 @TestInstance(PER_CLASS)
 class UpdateRecallServiceTest {
   private val recallRepository = mockk<RecallRepository>()
-  private val underTest = UpdateRecallService(recallRepository)
+  private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
+  private val underTest = UpdateRecallService(recallRepository, fixedClock)
 
   private val recallId = ::RecallId.random()
-  private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"))
+  private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), OffsetDateTime.now())
   private val today = LocalDate.now()
 
   private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance()
@@ -98,23 +102,25 @@ class UpdateRecallServiceTest {
   @Test
   fun `can update recall with all UpdateRecallRequest fields populated`() {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    every { recallRepository.save(fullyPopulatedRecallWithoutDocuments) } returns fullyPopulatedRecallWithoutDocuments
+    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
+    every { recallRepository.save(updatedRecallWithoutDocs) } returns updatedRecallWithoutDocs
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
 
-    assertThat(response, equalTo(fullyPopulatedRecallWithoutDocuments))
+    assertThat(response, equalTo(updatedRecallWithoutDocs))
   }
 
   @Test
   fun `cannot reset recall properties to null with update recall`() {
     val fullyPopulatedRecall: Recall = fullyPopulatedRecall(recallId)
+    val updatedRecall = fullyPopulatedRecall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
     every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecall
-    every { recallRepository.save(fullyPopulatedRecall) } returns fullyPopulatedRecall
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
 
     val emptyUpdateRecallRequest = UpdateRecallRequest()
     val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
 
-    assertThat(response, equalTo(fullyPopulatedRecall))
+    assertThat(response, equalTo(updatedRecall))
   }
 
   @Test
@@ -157,12 +163,12 @@ class UpdateRecallServiceTest {
   private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     // TODO: don't set the recallType unless we need to
-    val recallWithType = existingRecall.copy(recallType = FIXED)
-    every { recallRepository.save(recallWithType) } returns recallWithType
+    val updatedRecallWithType = existingRecall.copy(recallType = FIXED, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
+    every { recallRepository.save(updatedRecallWithType) } returns updatedRecallWithType
 
     val response = underTest.updateRecall(recallId, request)
 
-    assertThat(response, equalTo(recallWithType))
+    assertThat(response, equalTo(updatedRecallWithType))
   }
 
   private fun recallRequestWithMandatorySentencingInfo(

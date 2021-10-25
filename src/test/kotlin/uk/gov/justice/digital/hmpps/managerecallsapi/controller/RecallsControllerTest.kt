@@ -66,28 +66,29 @@ class RecallsControllerTest {
   private val nomsNumber = NomsNumber("A1234AA")
   private val recallRequest = BookRecallRequest(nomsNumber)
   private val fileName = "fileName"
+  private val now = OffsetDateTime.now()
 
   @Test
   fun `book recall returns request with id`() {
-    val recall = recallRequest.toRecall()
+    val recall = recallRequest.toRecall().copy(createdDateTime = now, lastUpdatedDateTime = now)
 
     every { recallRepository.save(any()) } returns recall
 
     val results = underTest.bookRecall(recallRequest)
 
-    val expected = RecallResponse(recallId = recall.recallId(), nomsNumber = nomsNumber)
+    val expected = RecallResponse(recall.recallId(), nomsNumber, now, now)
     assertThat(results.body, equalTo(expected))
   }
 
   @Test
   fun `gets all recalls`() {
-    val recall = Recall(recallId, nomsNumber)
+    val recall = Recall(recallId, nomsNumber, now, now)
 
     every { recallRepository.findAll() } returns listOf(recall)
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber))))
+    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, now, now))))
   }
 
   @Test
@@ -97,13 +98,15 @@ class RecallsControllerTest {
       recallId = UUID.randomUUID(),
       category = RecallDocumentCategory.PART_A_RECALL_REPORT,
       fileName = fileName,
-      createdDateTime = OffsetDateTime.now()
+      createdDateTime = now
     )
-    val recallEmailReceivedDateTime = OffsetDateTime.now()
+    val recallEmailReceivedDateTime = now
     val lastReleaseDate = LocalDate.now()
     val recall = Recall(
-      recallId = recallId,
-      nomsNumber = nomsNumber,
+      recallId,
+      nomsNumber,
+      now,
+      now,
       documents = setOf(document),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
@@ -114,8 +117,10 @@ class RecallsControllerTest {
     val result = underTest.getRecall(recallId)
 
     val expected = RecallResponse(
-      recallId = recallId,
-      nomsNumber = nomsNumber,
+      recallId,
+      nomsNumber,
+      now,
+      now,
       documents = listOf(
         ApiRecallDocument(
           documentId = document.id,
@@ -216,42 +221,69 @@ class RecallsControllerTest {
   @Test
   fun `set assignee for recall`() {
     val assignee = ::UserId.random()
-    val assignedRecall = Recall(recallId, nomsNumber, assignee = assignee)
+    val assignedRecall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
 
     every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
-    every { userDetailsService.find(assignee) } returns UserDetails(assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"))
+    every { userDetailsService.find(assignee) } returns UserDetails(
+      assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
+      OffsetDateTime.now()
+    )
 
     val result = underTest.assignRecall(recallId, assignee)
 
-    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee, assigneeUserName = "Bertie Badger")))
+    assertThat(
+      result,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          now,
+          now,
+          assignee = assignee,
+          assigneeUserName = "Bertie Badger"
+        )
+      )
+    )
   }
 
   @Test
   fun `set assignee for recall without user details`() {
     val assignee = ::UserId.random()
-    val assignedRecall = Recall(recallId, nomsNumber, assignee = assignee)
+    val assignedRecall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
 
     every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
     every { userDetailsService.find(assignee) } returns null
 
     val result = underTest.assignRecall(recallId, assignee)
 
-    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee, assigneeUserName = null)))
+    assertThat(
+      result,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          now,
+          now,
+          assignee = assignee,
+          assigneeUserName = null
+        )
+      )
+    )
   }
 
   @Test
   fun `unassign recall`() {
     val assignee = ::UserId.random()
-    val unassignedRecall = Recall(recallId, nomsNumber)
+    val unassignedRecall = Recall(recallId, nomsNumber, now, now)
 
     every { recallRepository.unassignRecall(recallId, assignee) } returns unassignedRecall
 
     val result = underTest.unassignRecall(recallId, assignee)
 
-    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber)))
+    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, now, now)))
   }
 
-  private val recall = Recall(recallId, nomsNumber)
+  private val recall = Recall(recallId, nomsNumber, now, now)
 
   private val updateRecallRequest =
     UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
@@ -265,7 +297,7 @@ class RecallsControllerTest {
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
-    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber))))
+    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber, now, now))))
   }
 
   @Test

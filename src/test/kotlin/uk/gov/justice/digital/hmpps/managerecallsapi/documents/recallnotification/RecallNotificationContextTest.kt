@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class RecallNotificationContextTest {
@@ -46,17 +47,16 @@ class RecallNotificationContextTest {
   private val probationOfficerName = "Mr Probation Officer"
 
   private val recall = Recall(
-    recallId,
-    NomsNumber("AA1234A"),
+    recallId, NomsNumber("AA1234A"), OffsetDateTime.now(),
+    OffsetDateTime.now(),
+    recallLength = recallLength,
+    lastReleaseDate = lastReleaseDate,
+    localPoliceForce = "London",
     contraband = true,
     contrabandDetail = "I believe that they will bring contraband to prison",
     vulnerabilityDiversity = true,
     vulnerabilityDiversityDetail = "Some stuff",
     mappaLevel = LEVEL_3,
-    previousConvictionMainName = "Bryan Badger",
-    bookingNumber = recallBookingNumber,
-    lastReleaseDate = lastReleaseDate,
-    reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
     sentencingInfo = SentencingInfo(
       lastReleaseDate,
       LocalDate.of(2020, 11, 1),
@@ -65,6 +65,7 @@ class RecallNotificationContextTest {
       "Some offence",
       SentenceLength(2, 3, 10),
     ),
+    bookingNumber = recallBookingNumber,
     probationInfo = ProbationInfo(
       probationOfficerName,
       "01234567890",
@@ -72,9 +73,9 @@ class RecallNotificationContextTest {
       PS_TOWER_HAMLETS,
       "Ms Authoriser"
     ),
-    localPoliceForce = "London",
-    assessedByUserId = assessedByUserId,
-    recallLength = recallLength
+    reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
+    previousConvictionMainName = "Bryan Badger",
+    assessedByUserId = assessedByUserId
   )
 
   private val prisoner = Prisoner(
@@ -90,7 +91,8 @@ class RecallNotificationContextTest {
     LastName("Badger"),
     userSignature,
     Email("maria@thebadgers.set"),
-    PhoneNumber("09876543210")
+    PhoneNumber("09876543210"),
+    OffsetDateTime.now()
   )
   private val currentPrisonName = PrisonName("Prison B")
 

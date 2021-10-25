@@ -140,6 +140,8 @@ class RecallsController(
   fun Recall.toResponse() = RecallResponse(
     recallId = this.recallId(),
     nomsNumber = this.nomsNumber,
+    createdDateTime = this.createdDateTime,
+    lastUpdatedDateTime = this.lastUpdatedDateTime,
     documents = allDocuments(),
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
@@ -197,13 +199,18 @@ class RecallsController(
     this.versionedDocuments.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) } + this.unversionedDocuments.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) }
 }
 
-fun BookRecallRequest.toRecall() = Recall(::RecallId.random(), this.nomsNumber)
+fun BookRecallRequest.toRecall(): Recall {
+  val now = OffsetDateTime.now()
+  return Recall(::RecallId.random(), this.nomsNumber, now, now)
+}
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)
 
 data class RecallResponse(
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
+  val createdDateTime: OffsetDateTime,
+  val lastUpdatedDateTime: OffsetDateTime,
   val documents: List<ApiRecallDocument> = emptyList(),
   val recallLength: RecallLength? = null,
   val lastReleasePrison: PrisonId? = null,

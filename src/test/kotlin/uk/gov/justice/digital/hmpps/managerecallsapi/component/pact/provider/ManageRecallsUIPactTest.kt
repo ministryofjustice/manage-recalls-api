@@ -42,6 +42,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Suppress("unused")
@@ -123,7 +124,12 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a fully populated recall exists without documents`() {
     val assigneeUuid = UUID.fromString("11111111-1111-1111-1111-111111111111")
     val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(versionedDocuments = emptySet(), unversionedDocuments = emptySet(), assignee = assigneeUuid)
-    userDetailsRepository.save(UserDetails(UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321")))
+    userDetailsRepository.save(
+      UserDetails(
+        UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
+        OffsetDateTime.now()
+      )
+    )
     recallRepository.save(recall)
   }
 
@@ -132,7 +138,12 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   )
   fun `an unassigned fully populated recall exists without documents`() {
     val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(versionedDocuments = emptySet(), unversionedDocuments = emptySet(), assignee = null)
-    userDetailsRepository.save(UserDetails(UserId(UUID.fromString("11111111-1111-1111-1111-111111111111")), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321")))
+    userDetailsRepository.save(
+      UserDetails(
+        UserId(UUID.fromString("11111111-1111-1111-1111-111111111111")), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
+        OffsetDateTime.now()
+      )
+    )
     recallRepository.save(recall)
   }
 

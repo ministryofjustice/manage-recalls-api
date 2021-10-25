@@ -3,19 +3,24 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.hasElement
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaUnversionedDocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaVersionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -23,7 +28,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.Clock
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.UUID
 import javax.transaction.Transactional
 import kotlin.jvm.Throws
@@ -31,11 +39,20 @@ import kotlin.jvm.Throws
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 @ActiveProfiles("db-test")
-class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallRepository) {
-
+class RecallRepositoryIntegrationTest(
+  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository,
+  @Qualifier("jpaVersionedDocumentRepository") @Autowired private val jpaDocumentRepository: JpaVersionedDocumentRepository,
+  @Qualifier("jpaUnversionedDocumentRepository") @Autowired private val jpaUnversionedDocumentRepository: JpaUnversionedDocumentRepository,
+) {
+  private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val nomsNumber = randomNoms()
   private val recallId = ::RecallId.random()
-  private val recall = Recall(recallId, nomsNumber)
+  private val now = OffsetDateTime.now()
+  private val recall = Recall(recallId, nomsNumber, now, now)
+
+  private val repository = RecallRepository(jpaRepository, fixedClock)
+  private val versionedDocumentRepository = VersionedDocumentRepository(jpaDocumentRepository)
+  private val unversionedDocumentRepository = UnversionedDocumentRepository(jpaUnversionedDocumentRepository)
 
   @Test
   @Transactional
@@ -44,7 +61,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
     val retrieved = repository.getByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber)))
+    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber, now, now)))
   }
 
   @Test
@@ -76,7 +93,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
     val retrieved = repository.findByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber)))
+    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber, now, now)))
   }
 
   @Test
@@ -91,7 +108,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
     val retrieved = repository.findByNomsNumber(nomsNumber)
 
-    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber))))
+    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber, now, now))))
   }
 
   @Test
@@ -109,7 +126,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
     val retrieved = repository.search(RecallSearchRequest(nomsNumber))
 
-    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber))))
+    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber, now, now))))
   }
 
   @Test
@@ -122,21 +139,26 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
   @Test
   @Transactional
-  fun `can save a document without fileName`() {
+  fun `can save a document by adding to recall`() {
+    val documentId = UUID.randomUUID()
+    val versionedDocument = VersionedDocument(
+      documentId,
+      recallId.value,
+      PART_A_RECALL_REPORT,
+      "PART_A.pdf",
+      now
+    )
     val recallToUpdate = Recall(
-      recallId,
-      nomsNumber,
+      recallId, nomsNumber, now,
+      now,
       documents = setOf(
-        VersionedDocument(
-          UUID.randomUUID(),
-          recallId.value,
-          PART_A_RECALL_REPORT,
-          "PART_A.pdf",
-          OffsetDateTime.now()
-        )
+        versionedDocument
       ),
     )
     repository.save(recallToUpdate)
+
+    val persistedDocument = versionedDocumentRepository.findByRecallIdAndDocumentId(recallId, documentId)
+    assertThat(versionedDocument, equalTo(persistedDocument))
 
     val createdRecall = repository.getByRecallId(recallId)
 
@@ -145,71 +167,11 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
 
   @Test
   @Transactional
-  fun `can add a document to an existing recall`() {
-    val recallDocument = VersionedDocument(
-      UUID.randomUUID(),
-      recallId.value,
-      PART_A_RECALL_REPORT,
-      "PART_A.pdf",
-      OffsetDateTime.now()
-    )
-    repository.save(recall)
-    repository.addDocumentToRecall(recallId, recallDocument)
-
-    val updatedRecall = repository.getByRecallId(recallId)
-
-    assertThat(updatedRecall.versionedDocuments, hasElement(recallDocument))
-  }
-
-  @Test
-  @Transactional
-  fun `addDocumentToRecall throws RecallNotFoundException if recall does not exist`() {
-    val recallDocument = VersionedDocument(
-      UUID.randomUUID(),
-      recallId.value,
-      PART_A_RECALL_REPORT,
-      "PART_A.pdf",
-      OffsetDateTime.now()
-    )
-
-    assertThrows<RecallNotFoundException> { repository.addDocumentToRecall(recallId, recallDocument) }
-  }
-
-  @Test
-  @Transactional
-  fun `can add a document to a recall with a document of the same category`() {
-    val documentId = UUID.randomUUID()
-    val existingDocument = VersionedDocument(
-      documentId,
-      recallId.value,
-      PART_A_RECALL_REPORT,
-      "originalFilename",
-      OffsetDateTime.now()
-    )
-    val newDocument = VersionedDocument(
-      documentId,
-      recallId.value,
-      PART_A_RECALL_REPORT,
-      "newFilename",
-      OffsetDateTime.now()
-    )
-    val existingRecall = Recall(recallId, nomsNumber, documents = setOf(existingDocument))
-
-    repository.save(existingRecall)
-    repository.addDocumentToRecall(recallId, newDocument)
-
-    val updatedRecall = repository.getByRecallId(recallId)
-
-    assertThat(updatedRecall.versionedDocuments, hasElement(newDocument))
-  }
-
-  @Test
-  @Transactional
   fun `can assign a recall`() {
     val assignee = ::UserId.random()
-    val expected = Recall(recallId, nomsNumber, assignee = assignee)
+    val expected = Recall(recallId, nomsNumber, now, OffsetDateTime.now(fixedClock), assignee = assignee)
 
-    repository.save(Recall(recallId, nomsNumber))
+    repository.save(recall)
 
     val assignedRecall = repository.assignRecall(recallId, assignee)
     assertThat(assignedRecall, equalTo(expected))
@@ -219,9 +181,9 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
   @Transactional
   fun `can unassign a recall`() {
     val assignee = ::UserId.random()
-    val expected = Recall(recallId, nomsNumber)
+    val expected = recall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
 
-    repository.save(Recall(recallId, nomsNumber, assignee = assignee))
+    repository.save(Recall(recallId, nomsNumber, now, now, assignee = assignee))
 
     val assignedRecall = repository.unassignRecall(recallId, assignee)
     assertThat(assignedRecall, equalTo(expected))
@@ -234,7 +196,7 @@ class RecallRepositoryIntegrationTest(@Autowired private val repository: RecallR
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
 
-    repository.save(Recall(recallId, nomsNumber, assignee = assignee))
+    repository.save(Recall(recallId, nomsNumber, now, now, assignee = assignee))
 
     assertThrows<NotFoundException> { repository.unassignRecall(recallId, otherAssignee) }
   }

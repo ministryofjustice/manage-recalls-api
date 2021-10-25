@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import java.time.OffsetDateTime
 
 class DossierContextTest {
 
@@ -20,7 +21,8 @@ class DossierContextTest {
   private val lastName = "Badger"
   private val recall = Recall(
     ::RecallId.random(),
-    nomsNumber,
+    nomsNumber, OffsetDateTime.now(),
+    OffsetDateTime.now(),
     bookingNumber = bookingNumber,
     licenceConditionsBreached = licenceConditionsBreached
   )
