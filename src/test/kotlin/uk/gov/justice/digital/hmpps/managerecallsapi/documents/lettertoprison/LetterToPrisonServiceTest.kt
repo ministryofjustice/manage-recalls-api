@@ -28,7 +28,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.util.UUID
 
 @Suppress("ReactiveStreamsUnusedPublisher")
@@ -36,7 +36,7 @@ internal class LetterToPrisonServiceTest {
 
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val letterToPrisonContextFactory = mockk<LetterToPrisonContextFactory>()
-  private val recallDocumentService = mockk<RecallDocumentService>()
+  private val documentService = mockk<DocumentService>()
   private val recallRepository = mockk<RecallRepository>()
   private val letterToPrisonCustodyOfficeGenerator = mockk<LetterToPrisonCustodyOfficeGenerator>()
   private val letterToPrisonGovernorGenerator = mockk<LetterToPrisonGovernorGenerator>()
@@ -44,7 +44,7 @@ internal class LetterToPrisonServiceTest {
   private val pdfDecorator = mockk<PdfDecorator>()
 
   private val underTest = LetterToPrisonService(
-    recallDocumentService,
+    documentService,
     letterToPrisonContextFactory,
     letterToPrisonCustodyOfficeGenerator,
     letterToPrisonGovernorGenerator,
@@ -59,7 +59,7 @@ internal class LetterToPrisonServiceTest {
 
   @Test
   fun `returns a letter to prison for a recall if one exists already`() {
-    every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns expectedBytes
+    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns expectedBytes
 
     val result = underTest.getPdf(recallId)
 
@@ -91,7 +91,7 @@ internal class LetterToPrisonServiceTest {
     val mergedBytes = randomString().toByteArray()
     val mergedNumberedBytes = randomString().toByteArray()
 
-    every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
+    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
     every { letterToPrisonContextFactory.createContext(recallId) } returns context
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns custodyOfficeHtml
@@ -107,7 +107,7 @@ internal class LetterToPrisonServiceTest {
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPagesOnRightWithHeaderAndFooter(mergedBytes, headerText = "Annex H – Appeal Papers", firstHeaderPage = 4, footerText = "OFFICIAL") } returns mergedNumberedBytes
     every {
-      recallDocumentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON)
+      documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON)
     } returns documentId
 
     val result = underTest.getPdf(recallId)
@@ -116,7 +116,7 @@ internal class LetterToPrisonServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(mergedNumberedBytes))
-        verify { recallDocumentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON) }
+        verify { documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON) }
       }.verifyComplete()
   }
 }

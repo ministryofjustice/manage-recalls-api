@@ -15,24 +15,24 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.net.URI
 import java.util.UUID
 
 @RestController
 @RequestMapping(produces = [APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
-class AddDocumentController(
-  @Autowired private val recallDocumentService: RecallDocumentService,
+class DocumentController(
+  @Autowired private val documentService: DocumentService,
   @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
 ) {
 
+  // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
   @PostMapping("/recalls/{recallId}/documents")
   fun addDocument(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody addDocumentRequest: AddDocumentRequest
   ): ResponseEntity<AddDocumentResponse> =
-    // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
     uploadDocument(recallId, addDocumentRequest).map { documentId ->
       ResponseEntity
         .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
@@ -44,7 +44,7 @@ class AddDocumentController(
   private fun uploadDocument(
     recallId: RecallId,
     addDocumentRequest: AddDocumentRequest
-  ) = recallDocumentService.scanAndStoreDocument(
+  ) = documentService.scanAndStoreDocument(
     recallId = recallId,
     documentBytes = addDocumentRequest.fileContent.toBase64DecodedByteArray(),
     documentCategory = addDocumentRequest.category,

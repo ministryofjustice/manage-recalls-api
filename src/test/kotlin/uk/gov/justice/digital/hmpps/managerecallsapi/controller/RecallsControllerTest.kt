@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
@@ -29,8 +30,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UpdateRecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
@@ -40,7 +41,7 @@ import java.util.UUID
 class RecallsControllerTest {
   private val recallRepository = mockk<RecallRepository>()
   private val recallNotificationService = mockk<RecallNotificationService>()
-  private val recallDocumentService = mockk<RecallDocumentService>()
+  private val documentService = mockk<DocumentService>()
   private val dossierService = mockk<DossierService>()
   private val letterToPrisonService = mockk<LetterToPrisonService>()
   private val userDetailsService = mockk<UserDetailsService>()
@@ -52,7 +53,7 @@ class RecallsControllerTest {
     RecallsController(
       recallRepository,
       recallNotificationService,
-      recallDocumentService,
+      documentService,
       dossierService,
       letterToPrisonService,
       userDetailsService,
@@ -91,11 +92,12 @@ class RecallsControllerTest {
 
   @Test
   fun `gets a recall`() {
-    val document = RecallDocument(
+    val document = VersionedDocument(
       id = UUID.randomUUID(),
       recallId = UUID.randomUUID(),
       category = RecallDocumentCategory.PART_A_RECALL_REPORT,
-      fileName = fileName
+      fileName = fileName,
+      createdDateTime = OffsetDateTime.now()
     )
     val recallEmailReceivedDateTime = OffsetDateTime.now()
     val lastReleaseDate = LocalDate.now()
@@ -179,7 +181,7 @@ class RecallsControllerTest {
     )
     val bytes = "Hello".toByteArray()
 
-    every { recallDocumentService.getDocument(recallId1, documentId) } returns Pair(aRecallDocument, bytes)
+    every { documentService.getDocument(recallId1, documentId) } returns Pair(aRecallDocument, bytes)
 
     val response = underTest.getRecallDocument(recallId1, documentId)
 

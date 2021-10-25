@@ -39,7 +39,10 @@ data class Recall(
   val nomsNumber: NomsNumber,
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
-  val documents: Set<RecallDocument> = emptySet(),
+  val versionedDocuments: Set<VersionedDocument> = emptySet(),
+  @OneToMany(cascade = [ALL])
+  @JoinColumn(name = "recall_id")
+  val unversionedDocuments: Set<UnversionedDocument> = emptySet(),
   @Enumerated(STRING)
   val recallType: RecallType? = null,
   @Enumerated(STRING)
@@ -89,7 +92,8 @@ data class Recall(
   constructor(
     recallId: RecallId,
     nomsNumber: NomsNumber,
-    documents: Set<RecallDocument> = emptySet(),
+    documents: Set<VersionedDocument> = emptySet(),
+    unversionedDocuments: Set<UnversionedDocument> = emptySet(),
     recallType: RecallType? = null,
     recallLength: RecallLength? = null,
     lastReleasePrison: PrisonId? = null,
@@ -129,6 +133,7 @@ data class Recall(
       recallId.value,
       nomsNumber,
       documents,
+      unversionedDocuments,
       recallType,
       recallLength,
       lastReleasePrison,

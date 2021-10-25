@@ -19,7 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.onlyContainsInOrder
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.util.UUID
 
 @Suppress("ReactiveStreamsUnusedPublisher")
@@ -30,7 +30,7 @@ internal class RecallNotificationServiceTest {
   private val recallSummaryService = mockk<RecallSummaryService>()
   private val letterToProbationService = mockk<LetterToProbationService>()
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
-  private val recallDocumentService = mockk<RecallDocumentService>()
+  private val documentService = mockk<DocumentService>()
 
   private val underTest = RecallNotificationService(
     recallNotificationContextFactory,
@@ -38,7 +38,7 @@ internal class RecallNotificationServiceTest {
     recallSummaryService,
     letterToProbationService,
     pdfDocumentGenerationService,
-    recallDocumentService
+    documentService
   )
 
   @Test
@@ -53,14 +53,14 @@ internal class RecallNotificationServiceTest {
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
     val recallNotificationContext = mockk<RecallNotificationContext>()
 
-    every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
+    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
     every { recallNotificationContextFactory.createContext(recallId, userId) } returns recallNotificationContext
     every { letterToProbationService.createPdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { recallSummaryService.createPdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
     every { revocationOrderService.createPdf(recallNotificationContext) } returns Mono.just(revocationOrderContent.toByteArray())
 
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
-    every { recallDocumentService.storeDocument(recallId, mergedBytes, RECALL_NOTIFICATION) } returns documentId
+    every { documentService.storeDocument(recallId, mergedBytes, RECALL_NOTIFICATION) } returns documentId
 
     val recallNotification = underTest.getDocument(recallId, userId).block()!!
 
@@ -83,7 +83,7 @@ internal class RecallNotificationServiceTest {
     val recallNotificationBytes = randomString().toByteArray()
     val userId = UserId(UUID.randomUUID())
 
-    every { recallDocumentService.getDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns recallNotificationBytes
+    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns recallNotificationBytes
 
     val result = underTest.getDocument(recallId, userId)
 

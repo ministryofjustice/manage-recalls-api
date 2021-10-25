@@ -11,29 +11,36 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 @ActiveProfiles("db-test")
-class RecallDocumentRepositoryIntegrationTest(
-  @Autowired private val documentRepository: RecallDocumentRepository,
+class VersionedDocumentRepositoryIntegrationTest(
+  @Autowired private val documentRepository: VersionedDocumentRepository,
   @Autowired private val recallRepository: RecallRepository
 ) {
 
   private val recallId = ::RecallId.random()
   private val documentId = UUID.randomUUID()
   private val category = RECALL_NOTIFICATION
-  private val recallDocument = RecallDocument(documentId, recallId.value, category, "file_name")
+  private val recallDocument = VersionedDocument(
+    documentId,
+    recallId.value,
+    category,
+    "file_name",
+    OffsetDateTime.now()
+  )
 
   @Test
   @Transactional

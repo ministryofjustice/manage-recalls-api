@@ -18,7 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.Revoc
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.time.LocalDate
 import java.util.UUID
 
@@ -26,12 +26,12 @@ import java.util.UUID
 internal class RevocationOrderServiceTest {
 
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
-  private val recallDocumentService = mockk<RecallDocumentService>()
+  private val documentService = mockk<DocumentService>()
   private val revocationOrderGenerator = mockk<RevocationOrderGenerator>()
 
   private val underTest = RevocationOrderService(
     pdfDocumentGenerationService,
-    recallDocumentService,
+    documentService,
     revocationOrderGenerator
   )
 
@@ -65,7 +65,7 @@ internal class RevocationOrderServiceTest {
       )
     } returns Mono.just(expectedBytes)
     every {
-      recallDocumentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER)
+      documentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER)
     } returns UUID.randomUUID()
 
     val result = underTest.createPdf(recallNotificationContext)
@@ -74,14 +74,14 @@ internal class RevocationOrderServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-        verify { recallDocumentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER) }
+        verify { documentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER) }
       }.verifyComplete()
   }
 
   @Test
   fun `gets existing revocation order for a recall`() {
 
-    every { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns expectedBytes
+    every { documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns expectedBytes
 
     val result = underTest.getPdf(recallId)
 
@@ -91,7 +91,7 @@ internal class RevocationOrderServiceTest {
         assertThat(it, equalTo(expectedBytes))
         verify { pdfDocumentGenerationService wasNot Called }
         verify { revocationOrderGenerator wasNot Called }
-        verify { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) }
+        verify { documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) }
       }
       .verifyComplete()
   }

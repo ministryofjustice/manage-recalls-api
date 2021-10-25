@@ -19,14 +19,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.onlyContainsInOrder
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class DossierServiceTest {
 
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val tableOfContentsService = mockk<TableOfContentsService>()
-  private val recallDocumentService = mockk<RecallDocumentService>()
+  private val documentService = mockk<DocumentService>()
   private val reasonsForRecallService = mockk<ReasonsForRecallService>()
   private val pdfDecorator = mockk<PdfDecorator>()
   private val dossierContextFactory = mockk<DossierContextFactory>()
@@ -34,7 +34,7 @@ internal class DossierServiceTest {
 
   private val underTest = DossierService(
     pdfDocumentGenerationService,
-    recallDocumentService,
+    documentService,
     reasonsForRecallService,
     pdfDecorator,
     tableOfContentsService,
@@ -54,9 +54,9 @@ internal class DossierServiceTest {
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
-    every { recallDocumentService.getDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
-    every { recallDocumentService.getDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
-    every { recallDocumentService.getDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
+    every { documentService.getVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
+    every { documentService.getVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
+    every { documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
     every { reasonsForRecallService.createPdf(dossierContext) } returns Mono.just(reasonsForRecallContentBytes)
     every { tableOfContentsService.createPdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
