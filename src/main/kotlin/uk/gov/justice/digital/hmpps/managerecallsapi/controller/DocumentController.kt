@@ -55,7 +55,7 @@ class DocumentController(
 data class AddDocumentRequest(
   val category: RecallDocumentCategory,
   val fileContent: String,
-  val fileName: String? = null
+  val fileName: String
 )
 
 data class AddDocumentResponse(val documentId: UUID)

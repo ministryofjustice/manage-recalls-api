@@ -107,7 +107,7 @@ internal class LetterToPrisonServiceTest {
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPagesOnRightWithHeaderAndFooter(mergedBytes, headerText = "Annex H – Appeal Papers", firstHeaderPage = 4, footerText = "OFFICIAL") } returns mergedNumberedBytes
     every {
-      documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON)
+      documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
     } returns documentId
 
     val result = underTest.getPdf(recallId)
@@ -116,7 +116,7 @@ internal class LetterToPrisonServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(mergedNumberedBytes))
-        verify { documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON) }
+        verify { documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf") }
       }.verifyComplete()
   }
 }

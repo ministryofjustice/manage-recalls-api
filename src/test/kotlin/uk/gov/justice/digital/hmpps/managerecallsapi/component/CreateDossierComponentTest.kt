@@ -69,16 +69,16 @@ class CreateDossierComponentTest : ComponentTestBase() {
 
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"))
+      AddDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"), "filename.pdf")
     )
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"))
+      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "part_a.pdf")
     )
     // TODO:  This shouldn't be allowed by the API, temporary way of setting up the revocation order for this test to pass
     authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(REVOCATION_ORDER, base64EncodedFileContents("/document/revocation-order.pdf"))
+      AddDocumentRequest(REVOCATION_ORDER, base64EncodedFileContents("/document/revocation-order.pdf"), "rev_o.pdf")
     )
 
     val dossier = authenticatedClient.getDossier(recall.recallId)

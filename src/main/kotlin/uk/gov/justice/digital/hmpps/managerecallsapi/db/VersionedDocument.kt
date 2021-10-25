@@ -22,7 +22,9 @@ data class VersionedDocument(
   @Enumerated(EnumType.STRING)
   val category: RecallDocumentCategory,
 
-  val fileName: String?,
+  @Column(nullable = false)
+  val fileName: String,
 
+  @Column(nullable = false)
   val createdDateTime: OffsetDateTime
 )
