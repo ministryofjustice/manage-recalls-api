@@ -22,7 +22,7 @@ import java.util.UUID
 @RestController
 @RequestMapping(produces = [APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
-class AddDocumentController(
+class DocumentController(
   @Autowired private val documentService: DocumentService,
   @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
 ) {

@@ -55,6 +55,8 @@ internal class DocumentServiceTest {
   private val documentCategory = PART_A_RECALL_REPORT
   private val fileName = randomString()
 
+  // TODO - parameterise tests for versioned and unversioned category
+
   @Test
   fun `can scan and upload a versioned document to S3 and add it to the existing recall`() {
     val uploadedToS3DocumentIdSlot = slot<UUID>()

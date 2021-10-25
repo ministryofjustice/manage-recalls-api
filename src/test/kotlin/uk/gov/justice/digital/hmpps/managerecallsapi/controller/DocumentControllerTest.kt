@@ -16,11 +16,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.util.UUID
 
-class AddDocumentControllerTest {
+class DocumentControllerTest {
   private val documentService = mockk<DocumentService>()
   private val advertisedBaseUri = "https://api"
 
-  private val underTest = AddDocumentController(documentService, advertisedBaseUri)
+  private val underTest = DocumentController(documentService, advertisedBaseUri)
 
   private val recallId = ::RecallId.random()
   private val fileName = "fileName"
