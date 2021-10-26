@@ -53,6 +53,11 @@ data class RecallLengthDescription(val recallLength: RecallLength) {
       FOURTEEN_DAYS -> "14 Day FTR under 12 months"
       TWENTY_EIGHT_DAYS -> "28 Day FTR 12 months & over"
     }
+  fun letterToPrisonAppealsPapersHeading() =
+    when (recallLength) {
+      FOURTEEN_DAYS -> "Annex H – Appeal Papers"
+      TWENTY_EIGHT_DAYS -> "Annex I – Appeal Papers"
+    }
 }
 
 fun MappaLevel.shouldShowOnDocuments(): Boolean {

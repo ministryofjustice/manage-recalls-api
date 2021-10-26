@@ -6,10 +6,12 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -35,17 +37,20 @@ class LetterToPrisonContextFactoryTest {
 
     val recallId = ::RecallId.random()
     val assessedByUserId = ::UserId.random()
+    val recallLength = RecallLength.TWENTY_EIGHT_DAYS
     val recall = Recall(
       recallId, NomsNumber("AA1234A"), OffsetDateTime.now(),
       OffsetDateTime.now(),
       lastReleasePrison = PrisonId("BOB"),
       currentPrison = PrisonId("WIM"),
-      assessedByUserId = assessedByUserId
+      assessedByUserId = assessedByUserId,
+      recallLength = recallLength
     )
     val prisoner = mockk<Prisoner>()
     val assessedByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
     val lastReleasePrisonName = PrisonName("Bobbins Prison")
+    val recallLengthDescription = RecallLengthDescription(recallLength)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
@@ -58,7 +63,14 @@ class LetterToPrisonContextFactoryTest {
     assertThat(
       result,
       equalTo(
-        LetterToPrisonContext(recall, prisoner, currentPrisonName, lastReleasePrisonName, assessedByUserDetails)
+        LetterToPrisonContext(
+          recall,
+          prisoner,
+          currentPrisonName,
+          lastReleasePrisonName,
+          recallLengthDescription,
+          assessedByUserDetails
+        )
       )
     )
   }

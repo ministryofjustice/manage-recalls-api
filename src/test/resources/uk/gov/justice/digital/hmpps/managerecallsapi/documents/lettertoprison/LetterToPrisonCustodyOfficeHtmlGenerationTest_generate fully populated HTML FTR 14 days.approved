@@ -73,7 +73,7 @@ border:none'><span style='line-height:115%;color:black'>&nbsp;</span></p>
       <td width=389 colspan=2 valign=top style='width:291.85pt;border:solid white 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
         <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-  border:none'><span style='color:black'><img width=187 height=82 th:src="${logoFileName}"></span></p>
+  border:none'><span style='color:black'><img width=187 height=82 src="hmpps-logo.png"></span></p>
       </td>
       <td width=16 valign=top style='width:11.8pt;border:solid white 1.0pt;
   border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
@@ -106,9 +106,9 @@ border:none'><span style='line-height:115%;color:black'>&nbsp;</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'><span style='font-size:10.0pt'>&nbsp;</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt'>Team: <span th:text="${teamName}"/></span></b></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt'>Team: <span>Recall Team</span></span></b></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt'>T</span></b><span style='font-size:10.0pt'>: <span th:text="${teamPhoneNumber}"/></span></span></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt'>T</span></b><span style='font-size:10.0pt'>: <span>N/K</span></span></span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'>&nbsp;</p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
@@ -205,7 +205,7 @@ border:none'><span style='line-height:115%;color:black'>&nbsp;</span></p>
         <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
   border:none'><span style='color:black'>&nbsp;</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt;line-height:normal;border:none' th:text="${todaysDate}"></p>
+  text-indent:-.1pt;line-height:normal;border:none'>04 Oct 2021</p>
       </td>
     </tr>
     <tr height=0>
@@ -222,67 +222,67 @@ text-indent:-.15pt'><u><span style='font-size:16.0pt'><span style='text-decorati
  none'>&nbsp;</span></span></u></p>
 
   <p class=MsoNormal align=center style='margin-left:.05pt;text-align:center;
-text-indent:-.15pt'><b><u><span style='font-size:16.0pt' th:text="${recallLengthDescription}"/></u></b></p>
+text-indent:-.15pt'><b><u><span style='font-size:16.0pt'>14 DAY FIXED TERM RECALL</span></u></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>&nbsp;</span></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>To Custody Office, <span th:text="${currentEstablishment}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>To Custody Office, <span>Prison A</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>&nbsp;</span></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>Licensee: <span th:text="${fullName}"/></b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>Licensee: <span>Billie Badger</span></b></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>Our Ref: <span th:text="${bookingNumber}"/></b>      <b>PNomis Number: <span th:text="${originalNomisNumber}"/></b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>Our Ref: <span>B1234</span></b>      <b>PNomis Number: <span>AA1234A</span></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>Please find attached licence revocation order for <span th:text="${fullName}"/> who is currently
-    in your custody, PNomis number <a></a><span th:text="${nomisNumberHeldUnder}"/>.</p>
+  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>Please find attached licence revocation order for <span>Billie Badger</span> who is currently
+    in your custody, PNomis number <a></a><span>ABC1234F</span>.</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt' th:if="${differentNomsNumber}">The number to which they should revert is <span th:text="${originalNomisNumber}"/>.</p>
+  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>The number to which they should revert is <span>AA1234A</span>.</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span th:text="${fullName}"/>’s licence has been revoked as a Fixed Term Recall under Section 254 of the Criminal Justice Act 2003, as amended.  </p>
+  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span>Billie Badger</span>’s licence has been revoked as a Fixed Term Recall under Section 254 of the Criminal Justice Act 2003, as amended.  </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span th:text="${fullName}"/> must be released automatically <b>at the end of the <span th:text="${recallLengthDays}"/> days in custody</b>,
+  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span>Billie Badger</span> must be released automatically <b>at the end of the <span>14</span> days in custody</b>,
   beginning on the date that they return to custody, unless an expedited date for release has been specified.  This date will need to be urgently calculated and provided to the Offender Manager
   and the Public Protection Casework Section.</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><b>PLEASE NOTE: </b>
-    If <span th:text="${fullName}"/>’s custodial SED expires in less than <span th:text="${recallLengthDays}"/> days,
+    If <span>Billie Badger</span>’s custodial SED expires in less than <span>14</span> days,
     they must be released at the custodial SED
-    <span th:if="${recallLengthDays == 14}"> and subject to post-sentence supervision requirements.</span>
-    <span th:unless="${recallLengthDays == 14}">. Please ensure that checks are made as to whether they should be released subject to post-sentence supervision requirements.</span>
+    <span> and subject to post-sentence supervision requirements.</span>
+    
   </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <div th:if="${hasAdditionalLicenceConditions}">
+  <div>
     <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><u>Offenders being released before their custodial SED Only</u></b></p>
 
     <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
     <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Additional Licence Conditions requested by Offender Manager - Please ensure these are included on the licence when the offender is re-released:</p>
 
-    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><pre class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;white-space: pre-wrap' th:text="${additionalLicenceConditionsDetail}"></pre></p>
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><pre class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;white-space: pre-wrap'>Blah blah blah</pre></p>
   </div>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none' th:if="${hasVulnerabilities}"><span style='color:black'>Please note that it has been brought to our attention that </span><span th:text="${fullName}"/><span style='color:black'> shows issues of vulnerability in custody in that: </span><pre class="MsoNormal" style="white-space: pre-wrap" th:text="${vulnerabilityDiversityDetail}"></pre></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><span style='color:black'>Please note that it has been brought to our attention that </span><span>Billie Badger</span><span style='color:black'> shows issues of vulnerability in custody in that: </span><pre class="MsoNormal" style="white-space: pre-wrap">Yes, yadda yadda</pre></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><b><span style='color:red'>&nbsp;</span></b></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt' th:if="${hasContraband}">Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <pre class="MsoNormal" style="white-space: pre-wrap" th:text="${contrabandDetail}"></pre></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <pre class="MsoNormal" style="white-space: pre-wrap">Because...</pre></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
@@ -292,7 +292,7 @@ border:none'>&nbsp;</p>
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black' th:if="${hasMappaLevel}">Please note that <span th:text="${fullName}"/> is registered as MAPPA <span th:text="${mappaLevel}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black'>Please note that <span>Billie Badger</span> is registered as MAPPA <span>Level 2</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>&nbsp;</span></p>
@@ -306,7 +306,7 @@ border:none'><span style='color:black'>&nbsp;</span></p>
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><span
-    style='color:#222222;background:white'><span th:text="${assessorName}"/></span></p>
+    style='color:#222222;background:white'><span>Mandy Pandy</span></span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>Public Protection Casework Section </b></p>
 </div>

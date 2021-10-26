@@ -69,7 +69,13 @@
   <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:6.0pt;
 margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none'><b><span style='color:black'>Part 1</span></b></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><u>Please complete, scan and return by e-mail within 2 working days</u>. </b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>
+    <b><u>Please complete, scan and return by e-mail within
+      <span th:if="${recallLengthDays == 14}">2</span>
+      <span th:unless="${recallLengthDays == 14}">5</span>
+      working days
+    </u>.</b>
+  </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
@@ -78,7 +84,8 @@ text-indent:-.15pt'><b><u><span style='font-size:14.0pt' th:text="${recallLength
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span th:text="${fullName}"/>                          Prison Number:</b> <b><span th:text="${bookingNumber}"/></b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span th:text="${fullName}"/>                          Prison Number:</b>
+    <b><span th:text="${bookingNumber}"/></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 

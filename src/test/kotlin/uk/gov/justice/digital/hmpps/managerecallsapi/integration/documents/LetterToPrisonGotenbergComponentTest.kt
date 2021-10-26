@@ -21,10 +21,18 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
-    updateRecallWithRequiredInformationForTheLetterToPrison(recall.recallId, assessedByUserId = assessedByUserId, vulnerabilityDiversityDetail = "Diversity 1\nDiversity 2", contrabandDetail = "Contraband 1\nContraband 2")
+    updateRecallWithRequiredInformationForTheLetterToPrison(
+      recall.recallId,
+      assessedByUserId = assessedByUserId,
+      vulnerabilityDiversityDetail = "Diversity 1\nDiversity 2",
+      contrabandDetail = "Contraband 1\nContraband 2",
+      sentenceYears = 10
+    )
 
     val letterToPrison = authenticatedClient.getLetterToPrison(recall.recallId)
-//    writeBase64EncodedStringToFile("letter-to-prison.pdf", letterToPrison.content)
+    // writeBase64EncodedStringToFile("letter-to-prison-14-day-FTR-example.pdf", letterToPrison.content)  // i.e. sentence duration < 1 year
+    // writeBase64EncodedStringToFile("letter-to-prison-28-day-FTR-example.pdf", letterToPrison.content)  // i.e. sentence duration >= 1 year
+
     assertThat(letterToPrison, hasNumberOfPages(equalTo(5)))
   }
 }

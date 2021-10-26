@@ -6,31 +6,15 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.springframework.core.io.ClassPathResource
-import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
-import java.time.OffsetDateTime
-import java.util.UUID
 
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class LetterToPrisonServiceTest {
@@ -56,7 +40,6 @@ internal class LetterToPrisonServiceTest {
 
   private val recallId = ::RecallId.random()
   private val expectedBytes = randomString().toByteArray()
-  private val nomsNumber = randomNoms()
 
   @Test
   fun `returns a letter to prison for a recall if one exists already`() {
@@ -77,50 +60,6 @@ internal class LetterToPrisonServiceTest {
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-      }.verifyComplete()
-  }
-
-  @Test
-  fun `creates a letter to prison for a recall `() {
-    val aRecall = Recall(recallId, nomsNumber, OffsetDateTime.now())
-    val documentId = UUID.randomUUID()
-    val assessor = UserDetails(
-      ::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"),
-      OffsetDateTime.now()
-    )
-    val context = LetterToPrisonContext(aRecall, Prisoner(), PrisonName("A Prison"), PrisonName("Prison B"), assessor)
-    val custodyOfficeHtml = "Some CO html, honest"
-    val generatedHtml = "Some html, honest"
-    val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
-    val mergedBytes = randomString().toByteArray()
-    val mergedNumberedBytes = randomString().toByteArray()
-
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
-    every { letterToPrisonContextFactory.createContext(recallId) } returns context
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
-    every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns custodyOfficeHtml
-    every { letterToPrisonGovernorGenerator.generateHtml(context) } returns generatedHtml
-    every { letterToPrisonConfirmationGenerator.generateHtml(context) } returns generatedHtml
-    every {
-      pdfDocumentGenerationService.generatePdf(custodyOfficeHtml, 1.0, 1.0, recallImage(HmppsLogo))
-    } returns Mono.just(pdfWith3Pages)
-    every {
-      pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0, recallImage(HmppsLogo))
-    } returns Mono.just(expectedBytes)
-    every { pdfDocumentGenerationService.generatePdf(generatedHtml) } returns Mono.just(expectedBytes)
-    every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
-    every { pdfDecorator.numberPagesOnRightWithHeaderAndFooter(mergedBytes, headerText = "Annex H – Appeal Papers", firstHeaderPage = 4, footerText = "OFFICIAL") } returns mergedNumberedBytes
-    every {
-      documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
-    } returns documentId
-
-    val result = underTest.getPdf(recallId)
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it, equalTo(mergedNumberedBytes))
-        verify { documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf") }
       }.verifyComplete()
   }
 }

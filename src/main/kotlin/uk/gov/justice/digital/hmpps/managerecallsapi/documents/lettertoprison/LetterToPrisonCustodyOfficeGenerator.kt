@@ -30,12 +30,13 @@ class LetterToPrisonCustodyOfficeGenerator(
       setVariable("fullName", context.prisoner.personName())
 
       with(context.recall) {
-        setVariable("recallLengthDescription", RecallLengthDescription(this.recallLength!!).asFixedTermLengthDescription())
+        val recallLengthDescription = RecallLengthDescription(this.recallLength!!)
+        setVariable("recallLengthDescription", recallLengthDescription.asFixedTermLengthDescription())
+        setVariable("recallLengthDays", recallLengthDescription.numberOfDays())
         setVariable("bookingNumber", this.bookingNumber)
         setVariable("nomisNumberHeldUnder", if (this.differentNomsNumber!!) this.differentNomsNumberDetail else this.nomsNumber.value)
         setVariable("differentNomsNumber", this.differentNomsNumber)
         setVariable("originalNomisNumber", this.nomsNumber.value)
-        setVariable("recallLengthDays", RecallLengthDescription(this.recallLength).numberOfDays())
         setVariable("hasAdditionalLicenceConditions", this.additionalLicenceConditions)
         setVariable("additionalLicenceConditionsDetail", this.additionalLicenceConditionsDetail)
         setVariable("hasContraband", this.contraband!!)
