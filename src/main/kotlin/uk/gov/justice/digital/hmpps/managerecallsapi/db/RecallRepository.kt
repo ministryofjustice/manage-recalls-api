@@ -11,13 +11,8 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
-import java.time.Clock
-import java.time.OffsetDateTime
 import java.util.UUID
-import javax.transaction.Transactional
 
 @Repository("jpaRecallRepository")
 interface JpaRecallRepository : JpaRepository<Recall, UUID> {
@@ -34,8 +29,7 @@ interface ExtendedRecallRepository : JpaRecallRepository {
 
 @Component
 class RecallRepository(
-  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository,
-  @Autowired private val clock: Clock
+  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
 ) : JpaRecallRepository by jpaRepository, ExtendedRecallRepository {
   override fun getByRecallId(recallId: RecallId): Recall =
     findByRecallId(recallId) ?: throw RecallNotFoundException(recallId)
@@ -45,25 +39,4 @@ class RecallRepository(
 
   override fun findByRecallId(recallId: RecallId): Recall? =
     findById(recallId.value).orElse(null)
-
-  @Transactional
-  fun assignRecall(recallId: RecallId, assignee: UserId): Recall {
-    return getByRecallId(recallId)
-      .copy(
-        assignee = assignee.value,
-        lastUpdatedDateTime = OffsetDateTime.now(clock)
-      )
-      .let { save(it) }
-  }
-
-  @Transactional
-  fun unassignRecall(recallId: RecallId, assignee: UserId): Recall {
-    return getByRecallId(recallId)
-      .takeIf { it.assignee == assignee.value }
-      ?.copy(
-        assignee = null,
-        lastUpdatedDateTime = OffsetDateTime.now(clock)
-      )
-      ?.let { save(it) } ?: throw NotFoundException()
-  }
 }

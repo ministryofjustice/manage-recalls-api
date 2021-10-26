@@ -7,6 +7,7 @@ import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
@@ -21,21 +22,24 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.stream.Stream
+import kotlin.jvm.Throws
 
 @TestInstance(PER_CLASS)
-class UpdateRecallServiceTest {
+class RecallServiceTest {
   private val recallRepository = mockk<RecallRepository>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
-  private val underTest = UpdateRecallService(recallRepository, fixedClock)
+  private val underTest = RecallService(recallRepository, fixedClock)
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), OffsetDateTime.now())
@@ -169,6 +173,48 @@ class UpdateRecallServiceTest {
     val response = underTest.updateRecall(recallId, request)
 
     assertThat(response, equalTo(updatedRecallWithType))
+  }
+
+  @Test
+  fun `can assign a recall`() {
+    val nomsNumber = randomNoms()
+    val now = OffsetDateTime.now()
+    val recall = Recall(recallId, nomsNumber, now, now)
+    val assignee = ::UserId.random()
+    val expected = Recall(recallId, nomsNumber, now, OffsetDateTime.now(fixedClock), assignee = assignee)
+
+    every { recallRepository.getByRecallId(recallId) } returns recall
+    every { recallRepository.save(expected) } returns expected
+
+    val assignedRecall = underTest.assignRecall(recallId, assignee)
+    assertThat(assignedRecall, equalTo(expected))
+  }
+
+  @Test
+  fun `can unassign a recall`() {
+    val nomsNumber = randomNoms()
+    val now = OffsetDateTime.now()
+    val recall = Recall(recallId, nomsNumber, now, now)
+    val assignee = ::UserId.random()
+    val expected = recall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
+
+    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, now, now, assignee = assignee)
+    every { recallRepository.save(expected) } returns expected
+
+    val assignedRecall = underTest.unassignRecall(recallId, assignee)
+    assertThat(assignedRecall, equalTo(expected))
+  }
+
+  @Test
+  @Throws(NotFoundException::class)
+  fun `can't unassign a recall when assignee doesnt match`() {
+    val assignee = ::UserId.random()
+    val otherAssignee = ::UserId.random()
+    val nomsNumber = randomNoms()
+
+    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, OffsetDateTime.now(), OffsetDateTime.now(), assignee = assignee)
+
+    assertThrows<NotFoundException> { underTest.unassignRecall(recallId, otherAssignee) }
   }
 
   private fun recallRequestWithMandatorySentencingInfo(

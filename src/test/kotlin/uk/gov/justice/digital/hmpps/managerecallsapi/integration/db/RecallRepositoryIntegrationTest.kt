@@ -18,23 +18,16 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaVersionedDocumentRepo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
-import java.time.Clock
-import java.time.Instant
 import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.util.UUID
 import javax.transaction.Transactional
-import kotlin.jvm.Throws
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
@@ -44,15 +37,13 @@ class RecallRepositoryIntegrationTest(
   @Qualifier("jpaVersionedDocumentRepository") @Autowired private val jpaDocumentRepository: JpaVersionedDocumentRepository,
   @Qualifier("jpaUnversionedDocumentRepository") @Autowired private val jpaUnversionedDocumentRepository: JpaUnversionedDocumentRepository,
 ) {
-  private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val nomsNumber = randomNoms()
   private val recallId = ::RecallId.random()
   private val now = OffsetDateTime.now()
   private val recall = Recall(recallId, nomsNumber, now, now)
 
-  private val repository = RecallRepository(jpaRepository, fixedClock)
+  private val repository = RecallRepository(jpaRepository)
   private val versionedDocumentRepository = VersionedDocumentRepository(jpaDocumentRepository)
-  private val unversionedDocumentRepository = UnversionedDocumentRepository(jpaUnversionedDocumentRepository)
 
   @Test
   @Transactional
@@ -163,41 +154,5 @@ class RecallRepositoryIntegrationTest(
     val createdRecall = repository.getByRecallId(recallId)
 
     assertThat(createdRecall, equalTo(recallToUpdate))
-  }
-
-  @Test
-  @Transactional
-  fun `can assign a recall`() {
-    val assignee = ::UserId.random()
-    val expected = Recall(recallId, nomsNumber, now, OffsetDateTime.now(fixedClock), assignee = assignee)
-
-    repository.save(recall)
-
-    val assignedRecall = repository.assignRecall(recallId, assignee)
-    assertThat(assignedRecall, equalTo(expected))
-  }
-
-  @Test
-  @Transactional
-  fun `can unassign a recall`() {
-    val assignee = ::UserId.random()
-    val expected = recall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
-
-    repository.save(Recall(recallId, nomsNumber, now, now, assignee = assignee))
-
-    val assignedRecall = repository.unassignRecall(recallId, assignee)
-    assertThat(assignedRecall, equalTo(expected))
-  }
-
-  @Test
-  @Transactional
-  @Throws(NotFoundException::class)
-  fun `can't unassign a recall when assignee doesnt match`() {
-    val assignee = ::UserId.random()
-    val otherAssignee = ::UserId.random()
-
-    repository.save(Recall(recallId, nomsNumber, now, now, assignee = assignee))
-
-    assertThrows<NotFoundException> { repository.unassignRecall(recallId, otherAssignee) }
   }
 }
