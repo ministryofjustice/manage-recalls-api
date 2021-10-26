@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
@@ -21,7 +22,7 @@ class DocumentComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val documentCategory = PART_A_RECALL_REPORT
-  private val documentContents = "Expected Generated PDF".toByteArray()
+  private val documentContents = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = "emailfileName"
   private val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, fileName)

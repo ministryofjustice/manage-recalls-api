@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
+import net.sf.jmimemagic.Magic
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -33,18 +34,22 @@ class DocumentService(
 ) {
   private val log = LoggerFactory.getLogger(this::class.java)
 
+  private val validMimeTypes = setOf("pdf", "msg", "eml")
+
   fun scanAndStoreDocument(
     recallId: RecallId,
     documentBytes: ByteArray,
     documentCategory: RecallDocumentCategory,
     fileName: String
   ): Result<UUID, VirusScanResult> =
-    forExistingRecall(recallId) {
-      when (val virusScanResult = virusScanner.scan(documentBytes)) {
-        NoVirusFound -> Success(storeDocument(recallId, documentBytes, documentCategory, fileName))
-        is VirusFound -> {
-          log.info(VirusFoundEvent(recallId, documentCategory, virusScanResult.foundViruses).toString())
-          Failure(virusScanResult)
+    forValidDocumentMimeType(documentBytes) {
+      forExistingRecall(recallId) {
+        when (val virusScanResult = virusScanner.scan(documentBytes)) {
+          NoVirusFound -> Success(storeDocument(recallId, documentBytes, documentCategory, fileName))
+          is VirusFound -> {
+            log.info(VirusFoundEvent(recallId, documentCategory, virusScanResult.foundViruses).toString())
+            Failure(virusScanResult)
+          }
         }
       }
     }
@@ -121,6 +126,13 @@ class DocumentService(
     recallRepository.getByRecallId(recallId)
     return fn()
   }
+
+  private inline fun <reified T : Any?> forValidDocumentMimeType(bytes: ByteArray, fn: () -> T): T {
+    val magicMatch = Magic.getMagicMatch(bytes, true)
+    if (!validMimeTypes.contains(magicMatch.extension))
+      throw UnsupportedFileTypeException(magicMatch.extension)
+    return fn()
+  }
 }
 
 data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
@@ -131,6 +143,7 @@ data class RecallDocumentWithCategoryNotFoundException(
 ) : NotFoundException()
 
 open class NotFoundException : Exception()
+open class UnsupportedFileTypeException(val fileType: String) : Exception()
 
 data class VirusFoundEvent(
   val recallId: RecallId,

@@ -14,6 +14,7 @@ import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
@@ -49,7 +50,8 @@ internal class DocumentServiceTest {
   private val underTest = DocumentService(s3Service, recallRepository, versionedDocumentRepository, unversionedDocumentRepository, virusScanner, fixedClock)
 
   private val recallId = ::RecallId.random()
-  private val documentBytes = randomString().toByteArray()
+  private val pdfDocumentBytes = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
+
   private val nomsNumber = NomsNumber("A1235B")
   private val aRecallWithoutDocuments = Recall(recallId, nomsNumber)
   private val documentCategory = PART_A_RECALL_REPORT
@@ -63,12 +65,12 @@ internal class DocumentServiceTest {
     val savedDocumentSlot = slot<VersionedDocument>()
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
-    every { virusScanner.scan(documentBytes) } returns NoVirusFound
+    every { virusScanner.scan(pdfDocumentBytes) } returns NoVirusFound
     every { versionedDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
-    every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } just runs
+    every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), pdfDocumentBytes) } just runs
     every { versionedDocumentRepository.save(capture(savedDocumentSlot)) } returns any()
 
-    val result = underTest.scanAndStoreDocument(recallId, documentBytes, documentCategory, fileName)
+    val result = underTest.scanAndStoreDocument(recallId, pdfDocumentBytes, documentCategory, fileName)
 
     assertThat(result.get(), equalTo(uploadedToS3DocumentIdSlot.captured))
     assertThat(
@@ -89,16 +91,29 @@ internal class DocumentServiceTest {
   }
 
   @Test
+  fun `unsupported document not stored`() {
+    assertThrows<UnsupportedFileTypeException> {
+      underTest.scanAndStoreDocument(recallId, randomString().toByteArray(), documentCategory, fileName)
+    }
+
+    verify { recallRepository wasNot Called }
+    verify { virusScanner wasNot Called }
+    verify { s3Service wasNot Called }
+    verify { versionedDocumentRepository wasNot Called }
+    verify { unversionedDocumentRepository wasNot Called }
+  }
+
+  @Test
   fun `uploading a versioned document with a virus does not add to S3 or add to the recall`() {
     val expectedVirusScanResult = VirusFound(emptyMap())
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
-    every { virusScanner.scan(documentBytes) } returns expectedVirusScanResult
+    every { virusScanner.scan(pdfDocumentBytes) } returns expectedVirusScanResult
 
-    val result = underTest.scanAndStoreDocument(recallId, documentBytes, documentCategory, fileName)
+    val result = underTest.scanAndStoreDocument(recallId, pdfDocumentBytes, documentCategory, fileName)
 
     assertThat(result, equalTo(Failure(expectedVirusScanResult)))
 
-    verify(exactly = 0) { s3Service.uploadFile(any(), documentBytes) }
+    verify(exactly = 0) { s3Service.uploadFile(any(), pdfDocumentBytes) }
     verify(exactly = 0) { recallRepository.addDocumentToRecall(recallId, any()) }
     verify { versionedDocumentRepository wasNot Called }
   }
@@ -125,10 +140,10 @@ internal class DocumentServiceTest {
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
     every { versionedDocumentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns existingDocument
-    every { s3Service.uploadFile(existingDocumentId, documentBytes) } just runs
+    every { s3Service.uploadFile(existingDocumentId, pdfDocumentBytes) } just runs
     every { versionedDocumentRepository.save(updatedDocument) } returns updatedDocument
 
-    val actualDocumentId = underTest.storeDocument(recallId, documentBytes, documentCategory, newFileName)
+    val actualDocumentId = underTest.storeDocument(recallId, pdfDocumentBytes, documentCategory, newFileName)
 
     assertThat(actualDocumentId, equalTo(existingDocumentId))
   }
