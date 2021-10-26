@@ -17,7 +17,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
+import java.time.Instant
 import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.ZoneId
 
 class GetRecallComponentTest : ComponentTestBase() {
 
@@ -26,18 +29,29 @@ class GetRecallComponentTest : ComponentTestBase() {
   @Test
   fun `get a recall that has just been booked`() {
     val recallId = ::RecallId.random()
-    recallRepository.save(Recall(recallId, nomsNumber))
+    val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), ZoneId.of("UTC"))
+    recallRepository.save(Recall(recallId, nomsNumber, now, now))
 
     val response = authenticatedClient.getRecall(recallId)
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber)))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, now, now)))
   }
 
   @Test
   fun `get a fully populated recall`() {
     val recallId = ::RecallId.random()
     val fullyPopulatedRecall = fullyPopulatedRecall(recallId)
-    userDetailsRepository.save(UserDetails(fullyPopulatedRecall.assignee()!!, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321")))
+    userDetailsRepository.save(
+      UserDetails(
+        fullyPopulatedRecall.assignee()!!,
+        FirstName("Bertie"),
+        LastName("Badger"),
+        "",
+        Email("b@b.com"),
+        PhoneNumber("0987654321"),
+        OffsetDateTime.now()
+      )
+    )
     recallRepository.save(fullyPopulatedRecall)
 
     // TODO:  MD Fix assertions, or move somewhere more sensible.
@@ -78,7 +92,8 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
       .jsonPath("$.dossierEmailSentDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.status").isEqualTo(Status.DOSSIER_ISSUED.toString())
-      .jsonPath("$.hasOtherPreviousConvictionMainName").isEqualTo(fullyPopulatedRecall.hasOtherPreviousConvictionMainName!!)
+      .jsonPath("$.hasOtherPreviousConvictionMainName")
+      .isEqualTo(fullyPopulatedRecall.hasOtherPreviousConvictionMainName!!)
       .jsonPath("$.hasDossierBeenChecked").isEqualTo(fullyPopulatedRecall.hasDossierBeenChecked!!)
       .jsonPath("$.previousConvictionMainName").isEqualTo(fullyPopulatedRecall.previousConvictionMainName!!)
       .jsonPath("$.assessedByUserId").isEqualTo(fullyPopulatedRecall.assessedByUserId!!.toString())

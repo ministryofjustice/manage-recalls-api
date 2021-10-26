@@ -22,22 +22,30 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.io.File
+import java.time.Clock
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneId
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [UserController::class])
 class UserControllerTest(@Autowired private val userController: UserController) : ApprovalTestCase() {
 
   @MockkBean private lateinit var userDetailsService: UserDetailsService
+  @MockkBean private lateinit var fixedClock: Clock
 
   @Test
   fun `can add user details`(approver: ContentApprover) {
+    every { fixedClock.instant() } returns Instant.parse("2021-10-04T13:15:50.00Z")
+    every { fixedClock.zone } returns ZoneId.of("UTC")
+
     val userId = ::UserId.zeroes()
     val firstName = FirstName("Jimmy")
     val lastName = LastName("Ppud")
     val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
-    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
+    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now(fixedClock))
 
     every { userDetailsService.save(userDetails) } returns userDetails
 
@@ -54,7 +62,7 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
     val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
-    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
+    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now())
 
     every { userDetailsService.get(userId) } returns userDetails
 

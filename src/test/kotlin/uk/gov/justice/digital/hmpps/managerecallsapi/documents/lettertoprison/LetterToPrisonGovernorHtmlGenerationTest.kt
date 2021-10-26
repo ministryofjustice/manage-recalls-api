@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
@@ -34,15 +35,18 @@ class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEn
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"),
+            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
             recallLength = RecallLength.FOURTEEN_DAYS,
-            bookingNumber = "B1234",
-            lastReleaseDate = LocalDate.of(2020, 10, 1)
+            lastReleaseDate = LocalDate.of(2020, 10, 1),
+            bookingNumber = "B1234"
           ),
           Prisoner(firstName = "Billie", lastName = "Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
+          UserDetails(
+            ::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"),
+            OffsetDateTime.now()
+          )
         )
       )
     )

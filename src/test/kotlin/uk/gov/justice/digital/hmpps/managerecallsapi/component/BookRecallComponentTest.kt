@@ -22,6 +22,8 @@ class BookRecallComponentTest : ComponentTestBase() {
       allOf(
         has(RecallResponse::recallId, present()),
         has(RecallResponse::nomsNumber, equalTo(nomsNumber)),
+        has(RecallResponse::createdDateTime, present()),
+        has(RecallResponse::lastUpdatedDateTime, present()),
       )
     )
   }

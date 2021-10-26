@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Suppress("ReactiveStreamsUnusedPublisher")
@@ -81,9 +82,12 @@ internal class LetterToPrisonServiceTest {
 
   @Test
   fun `creates a letter to prison for a recall `() {
-    val aRecall = Recall(recallId, nomsNumber)
+    val aRecall = Recall(recallId, nomsNumber, OffsetDateTime.now())
     val documentId = UUID.randomUUID()
-    val assessor = UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
+    val assessor = UserDetails(
+      ::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"),
+      OffsetDateTime.now()
+    )
     val context = LetterToPrisonContext(aRecall, Prisoner(), PrisonName("A Prison"), PrisonName("Prison B"), assessor)
     val custodyOfficeHtml = "Some CO html, honest"
     val generatedHtml = "Some html, honest"

@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,13 +25,21 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.findDossierTargetDate
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.stream.Stream
 
 class UpdateRecallComponentTest : ComponentTestBase() {
+  @MockkBean
+  private lateinit var fixedClock: Clock
 
   private val nomsNumber = NomsNumber("123456")
+  private val zone = ZoneId.of("UTC")
+  private val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), zone)
+  private lateinit var fixedClockTime: OffsetDateTime
 
   private lateinit var recallId: RecallId
   private lateinit var recallPath: String
@@ -38,14 +48,30 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   fun setupExistingRecall() {
     recallId = ::RecallId.random()
     recallPath = "/recalls/$recallId"
-    recallRepository.save(Recall(recallId, nomsNumber))
+    recallRepository.save(Recall(recallId, nomsNumber, now, now))
+    val instant = Instant.parse("2021-10-04T13:15:50.00Z")
+    fixedClockTime = OffsetDateTime.ofInstant(instant, zone)
+    every { fixedClock.instant() } returns instant
+    every { fixedClock.zone } returns zone
   }
 
   @Test
   fun `update a recall returns updated recall`() {
     val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(lastReleasePrison = PrisonId("MWI"), currentPrison = PrisonId("BMI")))
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, lastReleasePrison = PrisonId("MWI"), currentPrison = PrisonId("BMI"))))
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
+          lastReleasePrison = PrisonId("MWI"),
+          currentPrison = PrisonId("BMI")
+        )
+      )
+    )
   }
 
   @Suppress("unused")
@@ -109,6 +135,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          now,
+          fixedClockTime,
           recallLength = TWENTY_EIGHT_DAYS,
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
@@ -126,7 +154,18 @@ class UpdateRecallComponentTest : ComponentTestBase() {
     val bookingNumber = "BN12345"
     val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(bookingNumber = bookingNumber))
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, bookingNumber = bookingNumber)))
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
+          bookingNumber = bookingNumber
+        )
+      )
+    )
   }
 
   @Test
@@ -134,7 +173,18 @@ class UpdateRecallComponentTest : ComponentTestBase() {
     val policeForce = "London"
     val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(localPoliceForce = policeForce))
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, localPoliceForce = policeForce)))
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
+          localPoliceForce = policeForce
+        )
+      )
+    )
   }
 
   @Test
@@ -152,7 +202,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       response,
       equalTo(
         RecallResponse(
-          recallId, nomsNumber,
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
           licenceConditionsBreached = "Breached",
           reasonsForRecall = listOf(BREACH_EXCLUSION_ZONE),
           reasonsForRecallOtherDetail = "Other reasons"
@@ -175,7 +228,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       response,
       equalTo(
         RecallResponse(
-          recallId, nomsNumber,
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
           agreeWithRecall = AgreeWithRecall.YES,
           agreeWithRecallDetail = "Other reasons"
         )
@@ -195,7 +251,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       response,
       equalTo(
         RecallResponse(
-          recallId, nomsNumber,
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = updateRecallRequest.assessedByUserId,
           dossierTargetDate = updateRecallRequest.findDossierTargetDate()
@@ -217,7 +276,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       response,
       equalTo(
         RecallResponse(
-          recallId, nomsNumber,
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
           dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId
         )
@@ -239,8 +301,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       response,
       equalTo(
         RecallResponse(
-          recallId = recallId,
-          nomsNumber = nomsNumber,
+          recallId,
+          nomsNumber,
+          now,
+          fixedClockTime,
           additionalLicenceConditions = request.additionalLicenceConditions,
           additionalLicenceConditionsDetail = request.additionalLicenceConditionsDetail,
           differentNomsNumber = request.differentNomsNumber,

@@ -39,6 +39,7 @@ import xyz.capybara.clamav.ClamavClient
 import xyz.capybara.clamav.commands.scan.result.ScanResult
 import java.io.File
 import java.io.InputStream
+import java.time.OffsetDateTime
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
@@ -143,7 +144,8 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
         userId, FirstName("Bertie"), LastName("Badger"),
         base64EncodedFileContents("/signature.jpg"),
         Email("bertie@thebadgers.org"),
-        PhoneNumber("09876543210")
+        PhoneNumber("09876543210"),
+        OffsetDateTime.now()
       )
     )
   }

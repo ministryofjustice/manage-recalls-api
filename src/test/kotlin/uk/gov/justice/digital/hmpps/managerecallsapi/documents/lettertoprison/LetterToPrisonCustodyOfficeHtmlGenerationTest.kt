@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
 import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
@@ -34,23 +35,26 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"),
+            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
             recallLength = RecallLength.FOURTEEN_DAYS,
-            bookingNumber = "B1234",
-            differentNomsNumber = true,
-            differentNomsNumberDetail = "ABC1234F",
-            mappaLevel = MappaLevel.LEVEL_2,
-            additionalLicenceConditions = true,
-            additionalLicenceConditionsDetail = "Blah blah blah",
             contraband = true,
             contrabandDetail = "Because...",
             vulnerabilityDiversity = true,
             vulnerabilityDiversityDetail = "Yes, yadda yadda",
+            mappaLevel = MappaLevel.LEVEL_2,
+            bookingNumber = "B1234",
+            additionalLicenceConditions = true,
+            additionalLicenceConditionsDetail = "Blah blah blah",
+            differentNomsNumber = true,
+            differentNomsNumberDetail = "ABC1234F",
           ),
           Prisoner(firstName = "Billie", lastName = "Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
+          UserDetails(
+            ::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"),
+            OffsetDateTime.now()
+          )
         )
       )
     )
@@ -62,22 +66,25 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"),
+            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
             recallLength = RecallLength.FOURTEEN_DAYS,
-            bookingNumber = "B1234",
-            differentNomsNumber = true,
-            differentNomsNumberDetail = "ABC1234F",
-            mappaLevel = MappaLevel.LEVEL_2,
-            additionalLicenceConditions = false,
             contraband = true,
             contrabandDetail = "Because...",
             vulnerabilityDiversity = true,
             vulnerabilityDiversityDetail = "Yes, yadda yadda",
+            mappaLevel = MappaLevel.LEVEL_2,
+            bookingNumber = "B1234",
+            additionalLicenceConditions = false,
+            differentNomsNumber = true,
+            differentNomsNumberDetail = "ABC1234F",
           ),
           Prisoner(firstName = "Billie", lastName = "Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
+          UserDetails(
+            ::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"),
+            OffsetDateTime.now()
+          )
         )
       )
     )

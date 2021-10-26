@@ -12,8 +12,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
 import java.util.UUID
 
-@Repository("jpaRecallDocumentRepository")
-interface JpaRecallDocumentRepository : JpaRepository<VersionedDocument, UUID> {
+@Repository("jpaVersionedDocumentRepository")
+interface JpaVersionedDocumentRepository : JpaRepository<VersionedDocument, UUID> {
   @Query("SELECT d from VersionedDocument d where d.recallId = :recallId and d.category = :category")
   fun findByRecallIdAndCategory(
     @Param("recallId") recallId: UUID,
@@ -28,15 +28,15 @@ interface JpaRecallDocumentRepository : JpaRepository<VersionedDocument, UUID> {
 }
 
 @NoRepositoryBean
-interface ExtendedRecallDocumentRepository : JpaRecallDocumentRepository {
+interface ExtendedVersionedDocumentRepository : JpaVersionedDocumentRepository {
   fun findByRecallIdAndDocumentId(recallId: RecallId, documentId: UUID): VersionedDocument?
   fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: UUID): VersionedDocument
 }
 
 @Component
 class VersionedDocumentRepository(
-  @Qualifier("jpaRecallDocumentRepository") @Autowired private val jpaRepository: JpaRecallDocumentRepository
-) : JpaRecallDocumentRepository by jpaRepository, ExtendedRecallDocumentRepository {
+  @Qualifier("jpaVersionedDocumentRepository") @Autowired private val jpaRepository: JpaVersionedDocumentRepository
+) : JpaVersionedDocumentRepository by jpaRepository, ExtendedVersionedDocumentRepository {
   override fun findByRecallIdAndDocumentId(recallId: RecallId, documentId: UUID): VersionedDocument? =
     findByRecallIdAndDocumentId(recallId.value, documentId)
 

@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.OffsetDateTime
 import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
@@ -32,7 +33,7 @@ class UserDetailsRepositoryIntegrationTest(@Autowired private val repository: Us
   private val signature = base64EncodedFileContents("/signature.jpg")
   private val email = Email("bertie@badger.org")
   private val phoneNumber = PhoneNumber("01234567890")
-  private val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber)
+  private val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now())
 
   @Test
   @Transactional

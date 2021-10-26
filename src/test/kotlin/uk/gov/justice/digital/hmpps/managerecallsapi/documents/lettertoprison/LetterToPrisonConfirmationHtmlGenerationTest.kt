@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import java.time.OffsetDateTime
 
 class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
   HtmlGenerationTestCase() {
@@ -29,14 +30,17 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"),
+            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
             recallLength = RecallLength.FOURTEEN_DAYS,
             bookingNumber = "B1234",
           ),
           Prisoner(firstName = "Billie", lastName = "Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          UserDetails(::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"))
+          UserDetails(
+            ::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"),
+            OffsetDateTime.now()
+          )
         )
       )
     )

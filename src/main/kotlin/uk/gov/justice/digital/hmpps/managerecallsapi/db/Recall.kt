@@ -37,6 +37,10 @@ data class Recall(
   @Column(nullable = false)
   @Convert(converter = NomsNumberJpaConverter::class)
   val nomsNumber: NomsNumber,
+  @Column(nullable = false)
+  val createdDateTime: OffsetDateTime,
+  @Column(nullable = false)
+  val lastUpdatedDateTime: OffsetDateTime,
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val versionedDocuments: Set<VersionedDocument> = emptySet(),
@@ -92,6 +96,8 @@ data class Recall(
   constructor(
     recallId: RecallId,
     nomsNumber: NomsNumber,
+    createdDateTime: OffsetDateTime,
+    lastUpdatedDateTime: OffsetDateTime = createdDateTime,
     documents: Set<VersionedDocument> = emptySet(),
     unversionedDocuments: Set<UnversionedDocument> = emptySet(),
     recallType: RecallType? = null,
@@ -132,6 +138,8 @@ data class Recall(
     this(
       recallId.value,
       nomsNumber,
+      createdDateTime,
+      lastUpdatedDateTime,
       documents,
       unversionedDocuments,
       recallType,

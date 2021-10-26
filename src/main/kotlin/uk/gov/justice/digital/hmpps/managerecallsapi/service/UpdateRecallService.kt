@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -9,19 +10,22 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.time.Clock
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.OffsetDateTime
 
 @Service
-class UpdateRecallService(private val recallRepository: RecallRepository) {
+class UpdateRecallService(@Autowired private val recallRepository: RecallRepository, @Autowired private val clock: Clock) {
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): Recall =
     recallRepository.getByRecallId(recallId)
       .updateWithRequestDetails(updateRecallRequest)
       .let(recallRepository::save)
 
-  protected fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
+  private fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
+      lastUpdatedDateTime = OffsetDateTime.now(clock),
       recallType = FIXED,
       recallLength = sentencingInfo?.calculateRecallLength() ?: recallLength,
       recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime

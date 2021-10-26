@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.Clock
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.transaction.Transactional
 
@@ -28,12 +30,12 @@ interface ExtendedRecallRepository : JpaRecallRepository {
   fun getByRecallId(recallId: RecallId): Recall
   fun search(searchRequest: RecallSearchRequest): List<Recall>
   fun findByRecallId(recallId: RecallId): Recall?
-  fun addDocumentToRecall(recallId: RecallId, recallDocument: VersionedDocument)
 }
 
 @Component
 class RecallRepository(
-  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
+  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository,
+  @Autowired private val clock: Clock
 ) : JpaRecallRepository by jpaRepository, ExtendedRecallRepository {
   override fun getByRecallId(recallId: RecallId): Recall =
     findByRecallId(recallId) ?: throw RecallNotFoundException(recallId)
@@ -45,19 +47,12 @@ class RecallRepository(
     findById(recallId.value).orElse(null)
 
   @Transactional
-  override fun addDocumentToRecall(recallId: RecallId, recallDocument: VersionedDocument) {
-    getByRecallId(recallId).let { recall ->
-      val updatedDocuments = recall.versionedDocuments.toMutableSet().apply {
-        this.removeIf { it.id == recallDocument.id }
-      } + recallDocument
-      save(recall.copy(versionedDocuments = updatedDocuments))
-    }
-  }
-
-  @Transactional
   fun assignRecall(recallId: RecallId, assignee: UserId): Recall {
     return getByRecallId(recallId)
-      .copy(assignee = assignee.value)
+      .copy(
+        assignee = assignee.value,
+        lastUpdatedDateTime = OffsetDateTime.now(clock)
+      )
       .let { save(it) }
   }
 
@@ -65,7 +60,10 @@ class RecallRepository(
   fun unassignRecall(recallId: RecallId, assignee: UserId): Recall {
     return getByRecallId(recallId)
       .takeIf { it.assignee == assignee.value }
-      ?.copy(assignee = null)
+      ?.copy(
+        assignee = null,
+        lastUpdatedDateTime = OffsetDateTime.now(clock)
+      )
       ?.let { save(it) } ?: throw NotFoundException()
   }
 }

@@ -37,6 +37,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -64,7 +65,15 @@ class RecallNotificationContextFactoryTest {
     val sentencingCourtId = CourtId("ABCDEF")
     val sentencingCourtName = CourtName("A Court")
     val prisoner = mockk<Prisoner>()
-    val recall = Recall(recallId, nomsNumber, currentPrison = currentPrisonId, lastReleasePrison = lastReleasePrisonId, sentencingInfo = sentencingInfo)
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      OffsetDateTime.now(),
+      OffsetDateTime.now(),
+      lastReleasePrison = lastReleasePrisonId,
+      sentencingInfo = sentencingInfo,
+      currentPrison = currentPrisonId
+    )
     val userDetails = mockk<UserDetails>()
 
     every { sentencingInfo.sentencingCourt } returns sentencingCourtId
@@ -110,23 +119,26 @@ class RecallNotificationContextFactoryTest {
     val sentencingInfo =
       SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))
     val recall = Recall(
-      recallId,
-      nomsNumber,
-      currentPrison = currentPrisonId,
+      recallId, nomsNumber, OffsetDateTime.now(),
+      OffsetDateTime.now(),
       lastReleasePrison = lastReleasePrisonId,
-      mappaLevel = MappaLevel.LEVEL_2,
-      probationInfo = probationInfo,
-      sentencingInfo = sentencingInfo,
-      hasOtherPreviousConvictionMainName = hasPrevConsMainName,
-      previousConvictionMainName = prevConsMainName,
-      bookingNumber = "1243A",
       lastReleaseDate = LocalDate.now(),
       localPoliceForce = "A Force",
       contraband = true,
       vulnerabilityDiversity = true,
+      mappaLevel = MappaLevel.LEVEL_2,
+      sentencingInfo = sentencingInfo,
+      bookingNumber = "1243A",
+      probationInfo = probationInfo,
+      currentPrison = currentPrisonId,
+      hasOtherPreviousConvictionMainName = hasPrevConsMainName,
+      previousConvictionMainName = prevConsMainName,
     )
     val userDetails =
-      UserDetails(::UserId.random(), FirstName("Sue"), LastName("Smith"), "", Email("s@smith.com"), PhoneNumber("0123"))
+      UserDetails(
+        ::UserId.random(), FirstName("Sue"), LastName("Smith"), "", Email("s@smith.com"), PhoneNumber("0123"),
+        OffsetDateTime.now()
+      )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))

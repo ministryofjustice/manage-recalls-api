@@ -14,7 +14,12 @@ class RecallResponseTest {
 
   @Test
   fun `RecallResponse without recallNotificationEmailSentDateTime or bookedByUserId set returns null status`() {
-    val recall = RecallResponse(RecallId(UUID.randomUUID()), NomsNumber("A12345AA"))
+    val recall = RecallResponse(
+      RecallId(UUID.randomUUID()),
+      NomsNumber("A12345AA"),
+      OffsetDateTime.now(),
+      OffsetDateTime.now()
+    )
 
     assertThat(recall.status, equalTo(null))
   }
@@ -22,7 +27,7 @@ class RecallResponseTest {
   @Test
   fun `RecallResponse with bookedByUserId set but without recallNotificationEmailSentDateTime set returns status BOOKED_ON`() {
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()), NomsNumber("A12345AA"), bookedByUserId = UserId(UUID.randomUUID())
+      RecallId(UUID.randomUUID()), NomsNumber("A12345AA"), OffsetDateTime.now(), OffsetDateTime.now(), bookedByUserId = UserId(UUID.randomUUID())
     )
     assertThat(recall.status, equalTo(Status.BOOKED_ON))
   }
@@ -30,7 +35,12 @@ class RecallResponseTest {
   @Test
   fun `RecallResponse with bookedByUserId and assignee set but without recallNotificationEmailSentDateTime set returns status IN_ASSESSMENT`() {
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()), NomsNumber("A12345AA"), bookedByUserId = UserId(UUID.randomUUID()), assignee = UserId(UUID.randomUUID())
+      RecallId(UUID.randomUUID()),
+      NomsNumber("A12345AA"),
+      OffsetDateTime.now(),
+      OffsetDateTime.now(),
+      bookedByUserId = UserId(UUID.randomUUID()),
+      assignee = UserId(UUID.randomUUID())
     )
     assertThat(recall.status, equalTo(Status.IN_ASSESSMENT))
   }
@@ -38,8 +48,8 @@ class RecallResponseTest {
   @Test
   fun `RecallResponse with recallNotificationEmailSentDateTime set returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()),
-      NomsNumber("A12345AA"),
+      RecallId(UUID.randomUUID()), NomsNumber("A12345AA"), OffsetDateTime.now(),
+      OffsetDateTime.now(),
       recallNotificationEmailSentDateTime = OffsetDateTime.now()
     )
 
@@ -49,8 +59,12 @@ class RecallResponseTest {
   @Test
   fun `RecallResponse with recallNotificationEmailSentDateTime set and bookedByUserId set returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()), NomsNumber("A12345AA"), bookedByUserId = UserId(UUID.randomUUID()),
-      recallNotificationEmailSentDateTime = OffsetDateTime.now()
+      RecallId(UUID.randomUUID()),
+      NomsNumber("A12345AA"),
+      OffsetDateTime.now(),
+      OffsetDateTime.now(),
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      bookedByUserId = UserId(UUID.randomUUID())
     )
 
     assertThat(recall.status, equalTo(Status.RECALL_NOTIFICATION_ISSUED))
@@ -59,7 +73,7 @@ class RecallResponseTest {
   @Test
   fun `RecallResponse with dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()), randomNoms(),
+      RecallId(UUID.randomUUID()), randomNoms(), OffsetDateTime.now(), OffsetDateTime.now(),
       dossierCreatedByUserId = UserId(UUID.randomUUID())
     )
 
@@ -69,10 +83,10 @@ class RecallResponseTest {
   @Test
   fun `RecallResponse with dossierCreatedByUserId set and recallNotificationEmailSentDateTime set and bookedByUserId set returns status DOSSIER_ISSUED`() {
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()), randomNoms(),
-      dossierCreatedByUserId = UserId(UUID.randomUUID()),
+      RecallId(UUID.randomUUID()), randomNoms(), OffsetDateTime.now(), OffsetDateTime.now(),
       recallNotificationEmailSentDateTime = OffsetDateTime.now(),
       bookedByUserId = UserId(UUID.randomUUID()),
+      dossierCreatedByUserId = UserId(UUID.randomUUID()),
     )
 
     assertThat(recall.status, equalTo(Status.DOSSIER_ISSUED))
@@ -82,7 +96,7 @@ class RecallResponseTest {
   fun `RecallResponse with recallEmailReceivedDateTime set returns recallAssessmentDueDateTime as 24 hours later`() {
     val dateTime = OffsetDateTime.now()
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()), randomNoms(),
+      RecallId(UUID.randomUUID()), randomNoms(), OffsetDateTime.now(), OffsetDateTime.now(),
       recallEmailReceivedDateTime = dateTime
     )
 
@@ -92,7 +106,7 @@ class RecallResponseTest {
   @Test
   fun `RecallResponse without recallEmailReceivedDateTime set returns recallAssessmentDueDateTime as null`() {
     val recall = RecallResponse(
-      RecallId(UUID.randomUUID()), randomNoms()
+      RecallId(UUID.randomUUID()), randomNoms(), OffsetDateTime.now(), OffsetDateTime.now()
     )
 
     assertThat(recall.recallAssessmentDueDateTime, equalTo(null))

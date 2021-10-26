@@ -2,6 +2,9 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
@@ -17,9 +20,24 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.Clock
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import kotlin.jvm.Throws
 
 class AssignRecallComponentTest : ComponentTestBase() {
+  @MockkBean
+  private lateinit var fixedClock: Clock
+
+  private val zone = ZoneId.of("UTC")
+  private val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), zone)
+
+  @BeforeEach
+  fun `set up clock`() {
+    every { fixedClock.instant() } returns Instant.parse("2021-10-04T13:15:50.00Z")
+    every { fixedClock.zone } returns zone
+  }
 
   @Test
   fun `assign recall`() {
@@ -27,14 +45,34 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber)
+    val recall = Recall(recallId, nomsNumber, now, now)
     recallRepository.save(recall)
-    userDetailsRepository.save(UserDetails(assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321")))
+    userDetailsRepository.save(
+      UserDetails(
+        assignee,
+        FirstName("Bertie"),
+        LastName("Badger"),
+        "",
+        Email("b@b.com"),
+        PhoneNumber("0987654321"),
+        OffsetDateTime.now()
+      )
+    )
 
     val response = authenticatedClient.assignRecall(recallId, assignee)
 
     assertThat(
-      response, equalTo(RecallResponse(recallId, nomsNumber, assignee = assignee, assigneeUserName = "Bertie Badger"))
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          now,
+          OffsetDateTime.now(fixedClock),
+          assignee = assignee,
+          assigneeUserName = "Bertie Badger"
+        )
+      )
     )
   }
 
@@ -44,13 +82,13 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, assignee = assignee)
+    val recall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
     recallRepository.save(recall)
 
     val response = authenticatedClient.unassignRecall(recallId, assignee)
 
     assertThat(
-      response, equalTo(RecallResponse(recallId, nomsNumber))
+      response, equalTo(RecallResponse(recallId, nomsNumber, now, OffsetDateTime.now(fixedClock)))
     )
   }
 
@@ -61,7 +99,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, assignee = assignee)
+    val recall = Recall(recallId, nomsNumber, OffsetDateTime.now(), assignee = assignee)
     recallRepository.save(recall)
 
     authenticatedClient.unassignRecall(recallId, otherAssignee, HttpStatus.NOT_FOUND)

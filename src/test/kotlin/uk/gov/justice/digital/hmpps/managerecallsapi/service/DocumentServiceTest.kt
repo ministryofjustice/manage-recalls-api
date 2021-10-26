@@ -51,7 +51,7 @@ internal class DocumentServiceTest {
   private val recallId = ::RecallId.random()
   private val documentBytes = randomString().toByteArray()
   private val nomsNumber = NomsNumber("A1235B")
-  private val aRecallWithoutDocuments = Recall(recallId, nomsNumber)
+  private val aRecallWithoutDocuments = Recall(recallId, nomsNumber, OffsetDateTime.now())
   private val documentCategory = PART_A_RECALL_REPORT
   private val fileName = randomString()
 
@@ -99,7 +99,7 @@ internal class DocumentServiceTest {
     assertThat(result, equalTo(Failure(expectedVirusScanResult)))
 
     verify(exactly = 0) { s3Service.uploadFile(any(), documentBytes) }
-    verify(exactly = 0) { recallRepository.addDocumentToRecall(recallId, any()) }
+    verify { unversionedDocumentRepository wasNot Called }
     verify { versionedDocumentRepository wasNot Called }
   }
 
@@ -113,7 +113,13 @@ internal class DocumentServiceTest {
       fileName,
       OffsetDateTime.now(fixedClock)
     )
-    val aRecallWithDocument = Recall(recallId, nomsNumber, documents = setOf(existingDocument))
+    val aRecallWithDocument = Recall(
+      recallId,
+      nomsNumber,
+      OffsetDateTime.now(),
+      OffsetDateTime.now(),
+      documents = setOf(existingDocument)
+    )
     val newFileName = randomString()
     val updatedDocument = VersionedDocument(
       existingDocumentId,

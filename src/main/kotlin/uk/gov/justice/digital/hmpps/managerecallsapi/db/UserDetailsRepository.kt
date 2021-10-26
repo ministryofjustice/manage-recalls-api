@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Convert
@@ -37,9 +38,19 @@ data class UserDetails(
   val email: Email,
   @Column(nullable = false)
   @Convert(converter = PhoneNumberJpaConverter::class)
-  val phoneNumber: PhoneNumber
+  val phoneNumber: PhoneNumber,
+  @Column(nullable = false)
+  val createdDateTime: OffsetDateTime
 ) {
-  constructor(userId: UserId, firstName: FirstName, lastName: LastName, signature: String, email: Email, phoneNumber: PhoneNumber) : this(userId.value, firstName, lastName, signature, email, phoneNumber)
+  constructor(userId: UserId, firstName: FirstName, lastName: LastName, signature: String, email: Email, phoneNumber: PhoneNumber, createdDateTime: OffsetDateTime) : this(
+    userId.value,
+    firstName,
+    lastName,
+    signature,
+    email,
+    phoneNumber,
+    createdDateTime
+  )
 
   fun userId() = UserId(id)
 }
