@@ -8,7 +8,7 @@ import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 
 @Service
 class S3StorageService(
@@ -18,13 +18,13 @@ class S3StorageService(
 
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  override fun downloadFile(documentId: UUID): ByteArray {
+  override fun downloadFile(documentId: DocumentId): ByteArray {
     log.debug("downloading file s3://$bucketName/$documentId")
     val request = GetObjectRequest.builder().bucket(bucketName).key(documentId.toString()).build()
     return s3Client.getObject(request).readAllBytes()
   }
 
-  override fun uploadFile(documentId: UUID, fileBytes: ByteArray) {
+  override fun uploadFile(documentId: DocumentId, fileBytes: ByteArray) {
     log.debug("Uploading file to s3://$bucketName/$documentId")
     val request = PutObjectRequest.builder().bucket(bucketName).key(documentId.toString()).build()
     val body = RequestBody.fromBytes(fileBytes)

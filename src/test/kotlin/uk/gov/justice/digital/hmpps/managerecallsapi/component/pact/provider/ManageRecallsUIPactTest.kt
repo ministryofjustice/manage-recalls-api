@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -179,7 +180,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a document can be created")
   fun `a document can be created`() {
-    val documentId = UUID.fromString("3fa85f64-5718-4562-b3fc-2c963f66afa8")
+    val documentId = DocumentId(UUID.fromString("3fa85f64-5718-4562-b3fc-2c963f66afa8"))
     every {
       documentService.scanAndStoreDocument(any(), any(), any(), any())
     } returns Success(documentId)

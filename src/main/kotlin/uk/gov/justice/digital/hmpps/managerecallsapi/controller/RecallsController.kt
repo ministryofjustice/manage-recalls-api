@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.Le
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -35,7 +36,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.util.UUID
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -106,22 +106,6 @@ class RecallsController(
     letterToPrison.getPdf(recallId).map {
       ResponseEntity.ok(Pdf.encode(it))
     }
-
-  @GetMapping("/recalls/{recallId}/documents/{documentId}")
-  fun getRecallDocument(
-    @PathVariable("recallId") recallId: RecallId,
-    @PathVariable("documentId") documentId: UUID
-  ): ResponseEntity<GetDocumentResponse> {
-    val (document, bytes) = documentService.getDocument(recallId, documentId)
-    return ResponseEntity.ok(
-      GetDocumentResponse(
-        documentId = documentId,
-        category = document.category,
-        content = bytes.encodeToBase64String(),
-        fileName = document.fileName
-      )
-    )
-  }
 
   @PostMapping("/recalls/{recallId}/assignee/{assignee}")
   fun assignRecall(
@@ -196,7 +180,7 @@ class RecallsController(
   )
 
   private fun Recall.allDocuments() =
-    this.versionedDocuments.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) } + this.unversionedDocuments.map { doc -> ApiRecallDocument(doc.id, doc.category, doc.fileName) }
+    this.versionedDocuments.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) } + this.unversionedDocuments.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) }
 }
 
 fun BookRecallRequest.toRecall(): Recall {
@@ -281,7 +265,7 @@ class Api {
 }
 
 data class ApiRecallDocument(
-  val documentId: UUID,
+  val documentId: DocumentId,
   val category: RecallDocumentCategory,
   val fileName: String?
 )
@@ -295,7 +279,7 @@ data class Pdf(val content: String) {
 data class RecallSearchRequest(val nomsNumber: NomsNumber)
 
 data class GetDocumentResponse(
-  val documentId: UUID,
+  val documentId: DocumentId,
   val category: RecallDocumentCategory,
   val content: String,
   val fileName: String?

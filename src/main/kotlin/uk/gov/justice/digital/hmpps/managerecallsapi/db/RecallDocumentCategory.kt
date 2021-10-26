@@ -16,5 +16,6 @@ enum class RecallDocumentCategory(val versioned: Boolean) {
   RECALL_NOTIFICATION(true),
   REVOCATION_ORDER(true),
   LETTER_TO_PRISON(true),
-  OTHER(false)
+  OTHER(false),
+  UNCATEGORISED(false)
 }

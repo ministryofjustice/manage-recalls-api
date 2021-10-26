@@ -9,12 +9,14 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
-import java.util.UUID
+import java.time.OffsetDateTime
 
 class DocumentControllerTest {
   private val documentService = mockk<DocumentService>()
@@ -30,7 +32,7 @@ class DocumentControllerTest {
     val document = "a document"
     val documentBytes = document.toByteArray()
     val category = PART_A_RECALL_REPORT
-    val documentId = UUID.randomUUID()
+    val documentId = ::DocumentId.random()
 
     every {
       documentService.scanAndStoreDocument(
@@ -50,5 +52,32 @@ class DocumentControllerTest {
       present(allElements(equalTo("$advertisedBaseUri/recalls/$recallId/documents/$documentId")))
     )
     assertThat(response.body, equalTo(AddDocumentResponse(documentId)))
+  }
+
+  @Test
+  fun `gets a document`() {
+    val recallId1 = ::RecallId.random()
+    val documentId = ::DocumentId.random()
+    val aRecallDocument = RecallDocument(
+      documentId,
+      recallId1,
+      PART_A_RECALL_REPORT,
+      fileName,
+      OffsetDateTime.now()
+    )
+    val bytes = "Hello".toByteArray()
+
+    every { documentService.getDocument(recallId1, documentId) } returns Pair(aRecallDocument, bytes)
+
+    val response = underTest.getRecallDocument(recallId1, documentId)
+
+    assertThat(response.statusCode, equalTo(HttpStatus.OK))
+    val expected = GetDocumentResponse(
+      documentId,
+      aRecallDocument.category,
+      content = bytes.encodeToBase64String(),
+      fileName
+    )
+    assertThat(response.body, equalTo(expected))
   }
 }

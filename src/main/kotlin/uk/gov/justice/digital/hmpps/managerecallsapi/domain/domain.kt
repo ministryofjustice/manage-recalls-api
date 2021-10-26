@@ -14,6 +14,7 @@ import java.util.UUID
 
 class NomsNumber(value: String) : Validated<String>(value, notBlank, alphanumeric)
 class RecallId(value: UUID) : Validated<UUID>(value)
+class DocumentId(value: UUID) : Validated<UUID>(value)
 class UserId(value: UUID) : Validated<UUID>(value)
 class FirstName(value: String) : Validated<String>(value, notBlank)
 class LastName(value: String) : Validated<String>(value, notBlank)

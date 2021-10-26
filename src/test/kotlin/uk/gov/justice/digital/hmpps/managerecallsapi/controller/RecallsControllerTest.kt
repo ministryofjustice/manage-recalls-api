@@ -5,12 +5,10 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
@@ -121,13 +119,7 @@ class RecallsControllerTest {
       nomsNumber,
       now,
       now,
-      documents = listOf(
-        ApiRecallDocument(
-          documentId = document.id,
-          category = document.category,
-          fileName = fileName
-        )
-      ),
+      documents = listOf(ApiRecallDocument(document.id(), document.category, fileName)),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
@@ -172,32 +164,6 @@ class RecallsControllerTest {
         assertThat(it.body?.content, equalTo(expectedBase64Pdf))
       }
       .verifyComplete()
-  }
-
-  @Test
-  fun `gets a document`() {
-    val recallId1 = ::RecallId.random()
-    val documentId = UUID.randomUUID()
-    val aRecallDocument = RecallDocument(
-      documentId,
-      recallId1.value,
-      RecallDocumentCategory.PART_A_RECALL_REPORT,
-      fileName
-    )
-    val bytes = "Hello".toByteArray()
-
-    every { documentService.getDocument(recallId1, documentId) } returns Pair(aRecallDocument, bytes)
-
-    val response = underTest.getRecallDocument(recallId1, documentId)
-
-    assertThat(response.statusCode, equalTo(HttpStatus.OK))
-    val expected = GetDocumentResponse(
-      documentId,
-      aRecallDocument.category,
-      content = bytes.encodeToBase64String(),
-      fileName
-    )
-    assertThat(response.body, equalTo(expected))
   }
 
   @Test

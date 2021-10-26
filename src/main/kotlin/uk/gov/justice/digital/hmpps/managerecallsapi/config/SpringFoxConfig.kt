@@ -9,6 +9,7 @@ import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -38,6 +39,7 @@ class SpringFoxConfig {
       .directModelSubstitute(PhoneNumber::class.java, String::class.java)
       .directModelSubstitute(PrisonName::class.java, String::class.java)
       .directModelSubstitute(RecallId::class.java, UUID::class.java)
+      .directModelSubstitute(DocumentId::class.java, UUID::class.java)
       .directModelSubstitute(UserId::class.java, UUID::class.java)
       .directModelSubstitute(PrisonId::class.java, String::class.java)
       .directModelSubstitute(CourtId::class.java, String::class.java)

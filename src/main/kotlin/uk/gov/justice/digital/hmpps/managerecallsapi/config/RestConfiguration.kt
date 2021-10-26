@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -64,6 +65,7 @@ private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply 
   text(::CourtId)
   text(::CourtName)
   text(StringBiDiMappings.uuid().map(::RecallId, RecallId::value))
+  text(StringBiDiMappings.uuid().map(::DocumentId, DocumentId::value))
   text(StringBiDiMappings.uuid().map(::UserId, UserId::value))
 }
 
