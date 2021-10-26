@@ -32,7 +32,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.UpdateRecallService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -45,7 +45,7 @@ class RecallsControllerTest {
   private val dossierService = mockk<DossierService>()
   private val letterToPrisonService = mockk<LetterToPrisonService>()
   private val userDetailsService = mockk<UserDetailsService>()
-  private val updateRecallService = mockk<UpdateRecallService>()
+  private val recallService = mockk<RecallService>()
   private val prisonValidationService = mockk<PrisonValidationService>()
   private val courtValidationService = mockk<CourtValidationService>()
 
@@ -57,7 +57,7 @@ class RecallsControllerTest {
       dossierService,
       letterToPrisonService,
       userDetailsService,
-      updateRecallService,
+      recallService,
       prisonValidationService,
       courtValidationService
     )
@@ -223,7 +223,7 @@ class RecallsControllerTest {
     val assignee = ::UserId.random()
     val assignedRecall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
 
-    every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
+    every { recallService.assignRecall(recallId, assignee) } returns assignedRecall
     every { userDetailsService.find(assignee) } returns UserDetails(
       assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
       OffsetDateTime.now()
@@ -251,7 +251,7 @@ class RecallsControllerTest {
     val assignee = ::UserId.random()
     val assignedRecall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
 
-    every { recallRepository.assignRecall(recallId, assignee) } returns assignedRecall
+    every { recallService.assignRecall(recallId, assignee) } returns assignedRecall
     every { userDetailsService.find(assignee) } returns null
 
     val result = underTest.assignRecall(recallId, assignee)
@@ -276,7 +276,7 @@ class RecallsControllerTest {
     val assignee = ::UserId.random()
     val unassignedRecall = Recall(recallId, nomsNumber, now, now)
 
-    every { recallRepository.unassignRecall(recallId, assignee) } returns unassignedRecall
+    every { recallService.unassignRecall(recallId, assignee) } returns unassignedRecall
 
     val result = underTest.unassignRecall(recallId, assignee)
 
@@ -293,7 +293,7 @@ class RecallsControllerTest {
     every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
     every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns true
     every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
-    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+    every { recallService.updateRecall(recallId, updateRecallRequest) } returns recall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
@@ -303,7 +303,7 @@ class RecallsControllerTest {
   @Test
   fun `can't update recall when current prison is not valid`() {
     every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns false
-    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+    every { recallService.updateRecall(recallId, updateRecallRequest) } returns recall
     every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
@@ -316,7 +316,7 @@ class RecallsControllerTest {
     every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns false
     every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
     every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
-    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+    every { recallService.updateRecall(recallId, updateRecallRequest) } returns recall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
@@ -328,7 +328,7 @@ class RecallsControllerTest {
     every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns true
     every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
     every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns false
-    every { updateRecallService.updateRecall(recallId, updateRecallRequest) } returns recall
+    every { recallService.updateRecall(recallId, updateRecallRequest) } returns recall
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 

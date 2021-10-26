@@ -10,13 +10,38 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.time.Clock
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import javax.transaction.Transactional
 
 @Service
-class UpdateRecallService(@Autowired private val recallRepository: RecallRepository, @Autowired private val clock: Clock) {
+class RecallService(@Autowired private val recallRepository: RecallRepository, @Autowired private val clock: Clock) {
+
+  @Transactional
+  fun assignRecall(recallId: RecallId, assignee: UserId): Recall {
+    return recallRepository.getByRecallId(recallId)
+      .copy(
+        assignee = assignee.value,
+        lastUpdatedDateTime = OffsetDateTime.now(clock)
+      )
+      .let { recallRepository.save(it) }
+  }
+
+  @Transactional
+  fun unassignRecall(recallId: RecallId, assignee: UserId): Recall {
+    return recallRepository.getByRecallId(recallId)
+      .takeIf { it.assignee == assignee.value }
+      ?.copy(
+        assignee = null,
+        lastUpdatedDateTime = OffsetDateTime.now(clock)
+      )
+      ?.let { recallRepository.save(it) } ?: throw NotFoundException()
+  }
+
+  @Transactional
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): Recall =
     recallRepository.getByRecallId(recallId)
       .updateWithRequestDetails(updateRecallRequest)

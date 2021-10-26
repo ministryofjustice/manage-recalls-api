@@ -31,7 +31,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.UpdateRecallService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -47,7 +47,7 @@ class RecallsController(
   @Autowired private val dossierService: DossierService,
   @Autowired private val letterToPrison: LetterToPrisonService,
   @Autowired private val userDetailsService: UserDetailsService,
-  @Autowired private val updateRecallService: UpdateRecallService,
+  @Autowired private val recallService: RecallService,
   @Autowired private val prisonValidationService: PrisonValidationService,
   @Autowired private val courtValidationService: CourtValidationService
 ) {
@@ -80,7 +80,7 @@ class RecallsController(
       courtValidationService.isValid(updateRecallRequest.sentencingCourt)
     ) {
       ResponseEntity.ok(
-        updateRecallService.updateRecall(recallId, updateRecallRequest).toResponse()
+        recallService.updateRecall(recallId, updateRecallRequest).toResponse()
       )
     } else {
       ResponseEntity.badRequest().build()
@@ -128,14 +128,14 @@ class RecallsController(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("assignee") assignee: UserId
   ): RecallResponse =
-    recallRepository.assignRecall(recallId, assignee).toResponse()
+    recallService.assignRecall(recallId, assignee).toResponse()
 
   @DeleteMapping("/recalls/{recallId}/assignee/{assignee}")
   fun unassignRecall(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("assignee") assignee: UserId
   ): RecallResponse =
-    recallRepository.unassignRecall(recallId, assignee).toResponse()
+    recallService.unassignRecall(recallId, assignee).toResponse()
 
   fun Recall.toResponse() = RecallResponse(
     recallId = this.recallId(),
