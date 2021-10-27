@@ -13,7 +13,8 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectResponse
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectResponse
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
 class S3StorageServiceTest {
 
@@ -25,7 +26,7 @@ class S3StorageServiceTest {
   @Test
   fun `can store file in s3`() {
     val fileBytes = "blah".toByteArray()
-    val documentId = UUID.randomUUID()
+    val documentId = ::DocumentId.random()
 
     every { s3Client.putObject(any<PutObjectRequest>(), any<RequestBody>()) } returns
       PutObjectResponse.builder().build()
@@ -51,7 +52,7 @@ class S3StorageServiceTest {
     every { responseInputStream.readAllBytes() } returns fileBytes
     every { s3Client.getObject(any<GetObjectRequest>()) } returns responseInputStream
 
-    val response = underTest.downloadFile(UUID.randomUUID())
+    val response = underTest.downloadFile(::DocumentId.random())
 
     assertThat(response, equalTo(fileBytes))
   }

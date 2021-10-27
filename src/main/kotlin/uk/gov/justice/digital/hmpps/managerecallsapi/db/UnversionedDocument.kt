@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.OffsetDateTime
 import java.util.UUID
 import javax.persistence.Column
@@ -27,4 +29,20 @@ data class UnversionedDocument(
 
   @Column(nullable = false)
   val createdDateTime: OffsetDateTime
-)
+) {
+  constructor(
+    id: DocumentId,
+    recallId: RecallId,
+    category: RecallDocumentCategory,
+    fileName: String,
+    createdDateTime: OffsetDateTime
+  ) : this(
+    id.value, recallId.value, category, fileName, createdDateTime
+  ) {
+    if (category.versioned) throw WrongDocumentTypeException(category)
+  }
+
+  fun toRecallDocument() = RecallDocument(id(), recallId(), category, fileName, createdDateTime)
+  fun id() = DocumentId(id)
+  fun recallId() = RecallId(recallId)
+}

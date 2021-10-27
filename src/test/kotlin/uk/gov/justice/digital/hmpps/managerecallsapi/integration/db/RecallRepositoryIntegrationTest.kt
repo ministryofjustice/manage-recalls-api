@@ -20,13 +20,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.P
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import java.time.OffsetDateTime
-import java.util.UUID
 import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
@@ -131,10 +131,10 @@ class RecallRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can save a document by adding to recall`() {
-    val documentId = UUID.randomUUID()
+    val documentId = ::DocumentId.random()
     val versionedDocument = VersionedDocument(
       documentId,
-      recallId.value,
+      recallId,
       PART_A_RECALL_REPORT,
       "PART_A.pdf",
       now

@@ -28,8 +28,8 @@ class RandomUtilitiesTest {
             hasSize(equalTo(1)),
             allElements(
               allOf(
-                has(VersionedDocument::id, present()),
-                has(VersionedDocument::recallId, present()),
+                has("id", { it.id }, present()),
+                has("recallId", { it.recallId }, present()),
                 has(VersionedDocument::category, present()),
                 has(VersionedDocument::fileName, present())
               )

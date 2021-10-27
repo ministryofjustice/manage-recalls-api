@@ -9,13 +9,16 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import java.util.UUID
 
 class DocumentComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
@@ -58,7 +61,10 @@ class DocumentComponentTest : ComponentTestBase() {
     authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest)
 
     val recallDocument = authenticatedClient.getRecallDocument(recall.recallId, originalDocumentId)
-    assertThat(recallDocument, equalTo(GetDocumentResponse(originalDocumentId, documentCategory, base64EncodedDocumentContents, newFilename)))
+    assertThat(
+      recallDocument,
+      equalTo(GetDocumentResponse(originalDocumentId, documentCategory, base64EncodedDocumentContents, newFilename))
+    )
   }
 
   @Test
@@ -114,6 +120,88 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    authenticatedClient.getRecallDocument(recall.recallId, UUID.randomUUID(), expectedStatus = NOT_FOUND)
+    authenticatedClient.getRecallDocument(recall.recallId, ::DocumentId.random(), expectedStatus = NOT_FOUND)
+  }
+
+  @Test
+  fun `can update category for an unversioned document to versioned`() {
+    expectNoVirusesWillBeFound()
+    val updatedCategory = PART_A_RECALL_REPORT
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val document = authenticatedClient.uploadRecallDocument(
+      recall.recallId,
+      AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName)
+    )
+
+    unversionedDocumentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
+      assertThat(it.id(), equalTo(document.documentId))
+      assertThat(it.recallId(), equalTo(recall.recallId))
+      assertThat(it.category, equalTo(UNCATEGORISED))
+      assertThat(it.fileName, equalTo(fileName))
+    }
+
+    val result = authenticatedClient.updateDocumentCategory(
+      recall.recallId,
+      document.documentId,
+      UpdateDocumentRequest(updatedCategory)
+    )
+
+    assertThat(result, equalTo(UpdateDocumentResponse(document.documentId, recall.recallId, updatedCategory, fileName)))
+
+    val response = authenticatedClient.getRecallDocument(recall.recallId, document.documentId)
+
+    assertThat(
+      response,
+      equalTo(
+        GetDocumentResponse(document.documentId, updatedCategory, base64EncodedDocumentContents, fileName)
+      )
+    )
+
+    assertThat(
+      unversionedDocumentRepository.findByRecallIdAndDocumentId(recall.recallId, document.documentId),
+      equalTo(null)
+    )
+  }
+
+  @Test
+  fun `can update category for a versioned document to unversioned`() {
+    expectNoVirusesWillBeFound()
+    val updatedCategory = UNCATEGORISED
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val document = authenticatedClient.uploadRecallDocument(
+      recall.recallId,
+      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
+    )
+
+    versionedDocumentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
+      assertThat(it.id(), equalTo(document.documentId))
+      assertThat(it.recallId(), equalTo(recall.recallId))
+      assertThat(it.category, equalTo(PART_A_RECALL_REPORT))
+      assertThat(it.fileName, equalTo(fileName))
+    }
+
+    val result = authenticatedClient.updateDocumentCategory(
+      recall.recallId,
+      document.documentId,
+      UpdateDocumentRequest(updatedCategory)
+    )
+
+    assertThat(result, equalTo(UpdateDocumentResponse(document.documentId, recall.recallId, updatedCategory, fileName)))
+
+    val response = authenticatedClient.getRecallDocument(recall.recallId, document.documentId)
+
+    assertThat(
+      response,
+      equalTo(
+        GetDocumentResponse(document.documentId, updatedCategory, base64EncodedDocumentContents, fileName)
+      )
+    )
+
+    assertThat(
+      versionedDocumentRepository.findByRecallIdAndDocumentId(recall.recallId, document.documentId),
+      equalTo(null)
+    )
   }
 }

@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.R
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocumentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -48,7 +49,7 @@ internal class RecallNotificationServiceTest {
     val revocationOrderContent = randomString()
     val letterToProbationContent = randomString()
     val mergedBytes = randomString().toByteArray()
-    val documentId = UUID.randomUUID()
+    val documentId = ::DocumentId.random()
     val userId = UserId(UUID.randomUUID())
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
     val recallNotificationContext = mockk<RecallNotificationContext>()

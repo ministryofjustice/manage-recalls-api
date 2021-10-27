@@ -15,12 +15,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.O
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
 import java.time.OffsetDateTime
-import java.util.UUID
 import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
@@ -32,11 +32,11 @@ class UnversionedDocumentRepositoryIntegrationTest(
 ) {
 
   private val recallId = ::RecallId.random()
-  private val documentId = UUID.randomUUID()
+  private val documentId = ::DocumentId.random()
   private val category = OTHER
   private val document = UnversionedDocument(
     documentId,
-    recallId.value,
+    recallId,
     category,
     "file_name",
     OffsetDateTime.now()
@@ -72,7 +72,7 @@ class UnversionedDocumentRepositoryIntegrationTest(
     recallRepository.save(Recall(recallId, NomsNumber("AB1234C"), OffsetDateTime.now()))
     documentRepository.save(document)
 
-    val retrieved = documentRepository.findByRecallIdAndDocumentId(recallId.value, documentId)
+    val retrieved = documentRepository.findByRecallIdAndDocumentId(recallId.value, documentId.value)
 
     assertThat(retrieved, equalTo(document))
   }
@@ -82,7 +82,7 @@ class UnversionedDocumentRepositoryIntegrationTest(
   fun `findByRecallIdAndDocumentId returns null if no document exists`() {
     recallRepository.save(Recall(recallId, NomsNumber("AB1234C"), OffsetDateTime.now()))
 
-    val retrieved = documentRepository.findByRecallIdAndDocumentId(recallId.value, documentId)
+    val retrieved = documentRepository.findByRecallIdAndDocumentId(recallId.value, documentId.value)
 
     assertThat(retrieved, absent())
   }

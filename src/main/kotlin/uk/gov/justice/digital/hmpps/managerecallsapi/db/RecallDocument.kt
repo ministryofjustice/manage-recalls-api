@@ -1,16 +1,19 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.time.OffsetDateTime
 
 data class RecallDocument(
-  val id: UUID,
-  val recallId: UUID,
+  val id: DocumentId,
+  val recallId: RecallId,
   val category: RecallDocumentCategory,
-  val fileName: String?
-)
+  val fileName: String,
+  val createdDateTime: OffsetDateTime
+) {
+  fun toVersionedDocument() = VersionedDocument(id, recallId, category, fileName, createdDateTime)
 
-fun VersionedDocument.toRecallDocument() =
-  RecallDocument(this.id, this.recallId, this.category, this.fileName)
+  fun toUnversionedDocument() = UnversionedDocument(id, recallId, category, fileName, createdDateTime)
+}
 
-fun UnversionedDocument.toRecallDocument() =
-  RecallDocument(this.id, this.recallId, this.category, this.fileName)
+class WrongDocumentTypeException(val category: RecallDocumentCategory) : Exception()

@@ -1,10 +1,10 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.storage
 
-import java.util.UUID
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 
 interface S3Service {
 
-  fun downloadFile(documentId: UUID): ByteArray
+  fun downloadFile(documentId: DocumentId): ByteArray
 
-  fun uploadFile(documentId: UUID, fileBytes: ByteArray)
+  fun uploadFile(documentId: DocumentId, fileBytes: ByteArray)
 }

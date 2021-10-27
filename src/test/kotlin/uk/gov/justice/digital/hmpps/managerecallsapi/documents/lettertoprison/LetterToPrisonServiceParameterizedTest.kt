@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -35,7 +36,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.time.OffsetDateTime
-import java.util.UUID
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -77,7 +77,7 @@ internal class LetterToPrisonServiceParameterizedTest {
   @MethodSource("letterToPrisonParameters")
   fun `creates a letter to prison for a recall `(recallLength: RecallLength, annexHeaderText: String) {
     val aRecall = Recall(recallId, nomsNumber, OffsetDateTime.now(), recallLength = recallLength)
-    val documentId = UUID.randomUUID()
+    val documentId = ::DocumentId.random()
     val assessor = UserDetails(
       ::UserId.random(),
       FirstName("Mandy"),

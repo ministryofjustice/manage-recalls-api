@@ -20,8 +20,10 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -60,6 +62,10 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
 
   @Autowired
   protected lateinit var userDetailsRepository: UserDetailsRepository
+  @Autowired
+  protected lateinit var versionedDocumentRepository: VersionedDocumentRepository
+  @Autowired
+  protected lateinit var unversionedDocumentRepository: UnversionedDocumentRepository
 
   @Autowired
   protected lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer

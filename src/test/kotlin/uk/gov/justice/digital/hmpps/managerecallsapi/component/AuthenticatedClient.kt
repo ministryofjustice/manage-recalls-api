@@ -19,11 +19,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import java.util.UUID
 
 class AuthenticatedClient(
   private val webTestClient: WebTestClient,
@@ -79,10 +81,13 @@ class AuthenticatedClient(
     sendPostRequest("/recalls/$recallId/documents", addDocumentRequest, expectedStatus)
   }
 
-  fun getRecallDocument(recallId: RecallId, documentId: UUID): GetDocumentResponse =
+  fun updateDocumentCategory(recallId: RecallId, documentId: DocumentId, updateDocumentRequest: UpdateDocumentRequest): UpdateDocumentResponse =
+    patchRequest("/recalls/$recallId/documents/$documentId", updateDocumentRequest, UpdateDocumentResponse::class.java)
+
+  fun getRecallDocument(recallId: RecallId, documentId: DocumentId): GetDocumentResponse =
     getRequest("/recalls/$recallId/documents/$documentId", GetDocumentResponse::class.java)
 
-  fun getRecallDocument(recallId: RecallId, documentId: UUID, expectedStatus: HttpStatus) {
+  fun getRecallDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus) {
     sendGetRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
   }
 
@@ -118,7 +123,7 @@ class AuthenticatedClient(
   fun getUserDetails(userId: UserId) =
     getRequest("/users/${userId.value}", UserDetailsResponse::class.java)
 
-  private fun patchRequest(path: String, request: Any, responseClass: Class<RecallResponse>): RecallResponse =
+  private fun <T> patchRequest(path: String, request: Any, responseClass: Class<T>): T =
     sendPatchRequest(path, request)
       .expectStatus().isOk
       .expectBody(responseClass)
