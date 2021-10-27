@@ -21,8 +21,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJack
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient.Court
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
 
 @ExtendWith(SpringExtension::class)
 @TestInstance(PER_CLASS)

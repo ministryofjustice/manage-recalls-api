@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient.Court
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
 
 class CourtValidationServiceTest {
 

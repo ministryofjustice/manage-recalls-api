@@ -18,7 +18,11 @@ import java.time.OffsetDateTime
 import javax.transaction.Transactional
 
 @Service
-class RecallService(@Autowired private val recallRepository: RecallRepository, @Autowired private val clock: Clock) {
+class RecallService(
+  @Autowired private val recallRepository: RecallRepository,
+  @Autowired private val bankHolidayService: BankHolidayService,
+  @Autowired private val clock: Clock
+) {
 
   @Transactional
   fun assignRecall(recallId: RecallId, assignee: UserId): Recall {
@@ -86,8 +90,18 @@ class RecallService(@Autowired private val recallRepository: RecallRepository, @
       assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
       dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
-      dossierTargetDate = updateRecallRequest.findDossierTargetDate() ?: dossierTargetDate
+      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest.recallNotificationEmailSentDateTime) ?: dossierTargetDate
     )
+  }
+
+  fun calculateDossierTargetDate(recallNotificationEmailSentDateTime: OffsetDateTime?): LocalDate? {
+    return recallNotificationEmailSentDateTime?.let {
+      var dossierTargetDate = it.toLocalDate().plusDays(1)
+      while (dossierTargetDate.dayOfWeek == DayOfWeek.SATURDAY || dossierTargetDate.dayOfWeek == DayOfWeek.SUNDAY || bankHolidayService.isHoliday(dossierTargetDate)) {
+        dossierTargetDate = dossierTargetDate.plusDays(1)
+      }
+      dossierTargetDate
+    }
   }
 }
 
@@ -133,13 +147,3 @@ fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? 
   } else {
     existingRecall.probationInfo
   }
-
-fun UpdateRecallRequest.findDossierTargetDate(): LocalDate? {
-  return recallNotificationEmailSentDateTime?.let {
-    var dossierTargetDate = it.toLocalDate().plusDays(1)
-    while (dossierTargetDate?.dayOfWeek == DayOfWeek.SATURDAY || dossierTargetDate?.dayOfWeek == DayOfWeek.SUNDAY) {
-      dossierTargetDate = dossierTargetDate.plusDays(1)
-    }
-    dossierTargetDate
-  }
-}

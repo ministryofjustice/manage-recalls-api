@@ -5,9 +5,9 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.PrisonRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
 
 @RestController
 @RequestMapping("/reference-data", produces = [MediaType.APPLICATION_JSON_VALUE])

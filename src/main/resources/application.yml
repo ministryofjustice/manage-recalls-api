@@ -96,6 +96,10 @@ gotenberg:
   endpoint:
     url: http://localhost:9093
 
+bankHolidayRegister:
+  endpoint:
+    url: https://www.gov.uk/bank-holidays
+
 clamav:
   hostname: localhost
   port: 3310
