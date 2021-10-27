@@ -24,12 +24,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.findDossierTargetDate
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.stream.Stream
 
 class UpdateRecallComponentTest : ComponentTestBase() {
@@ -240,9 +240,9 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `complete assessment of a recall updates recallNotificationEmailSentDateTime and assessedByUserId`() {
+  fun `complete assessment of a recall updates recallNotificationEmailSentDateTime and assessedByUserId and calculates dossierTargetDate`() {
     val updateRecallRequest = UpdateRecallRequest(
-      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      recallNotificationEmailSentDateTime = OffsetDateTime.of(2021, 12, 24, 12, 0, 0, 0, ZoneOffset.UTC),
       assessedByUserId = ::UserId.random()
     )
     val response = authenticatedClient.updateRecall(recallId, updateRecallRequest)
@@ -257,7 +257,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = updateRecallRequest.assessedByUserId,
-          dossierTargetDate = updateRecallRequest.findDossierTargetDate()
+          dossierTargetDate = LocalDate.parse("2021-12-29")
         )
       )
     )

@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.register.prison
+package uk.gov.justice.digital.hmpps.managerecallsapi.register
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.ParameterizedTypeReference

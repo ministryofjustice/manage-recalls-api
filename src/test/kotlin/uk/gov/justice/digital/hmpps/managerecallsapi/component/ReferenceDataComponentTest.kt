@@ -10,8 +10,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient.Court
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 
 class ReferenceDataComponentTest : ComponentTestBase() {
 

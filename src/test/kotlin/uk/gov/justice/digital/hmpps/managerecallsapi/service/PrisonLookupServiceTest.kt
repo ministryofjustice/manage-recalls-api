@@ -9,8 +9,8 @@ import org.junit.jupiter.api.assertThrows
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.PrisonRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
 
 class PrisonLookupServiceTest {
   private val prisonRegisterClient = mockk<PrisonRegisterClient>()

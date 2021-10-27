@@ -38,14 +38,15 @@ import kotlin.jvm.Throws
 @TestInstance(PER_CLASS)
 class RecallServiceTest {
   private val recallRepository = mockk<RecallRepository>()
+  private val bankHolidayService = mockk<BankHolidayService>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
-  private val underTest = RecallService(recallRepository, fixedClock)
+  private val underTest = RecallService(recallRepository, bankHolidayService, fixedClock)
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), OffsetDateTime.now())
   private val today = LocalDate.now()
 
-  private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance()
+  private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
     fullyPopulatedUpdateRecallRequest.sentenceDate!!,
@@ -100,13 +101,15 @@ class RecallServiceTest {
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
     bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
     dossierCreatedByUserId = fullyPopulatedUpdateRecallRequest.dossierCreatedByUserId!!.value,
-    dossierTargetDate = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime?.let { fullyPopulatedUpdateRecallRequest.findDossierTargetDate() } ?: existingRecall.dossierTargetDate
+    dossierTargetDate = LocalDate.of(2021, 10, 5)
   )
 
   @Test
   fun `can update recall with all UpdateRecallRequest fields populated`() {
+    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 5)) } returns false
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
+    val fixedClockTime = OffsetDateTime.now(fixedClock)
+    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = fixedClockTime, recallNotificationEmailSentDateTime = fixedClockTime)
     every { recallRepository.save(updatedRecallWithoutDocs) } returns updatedRecallWithoutDocs
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
@@ -128,17 +131,29 @@ class RecallServiceTest {
   }
 
   @Test
-  fun `return dossierTargetDate when recallNotificationEmailSentDateTime is on Wednesday`() {
-    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-06T12:00-06:00")).findDossierTargetDate()
+  fun `dossierTargetDate when recallNotificationEmailSentDateTime is on Wednesday should be Thursday`() {
+    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 7)) } returns false
+    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-10-06T12:00Z"))
 
-    assertThat(emptyUpdateRecallRequest, equalTo(LocalDate.of(2021, 10, 7)))
+    assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 10, 7)))
   }
 
   @Test
-  fun `return dossierTargetDate when recallNotificationEmailSentDateTime is on Friday`() {
-    val emptyUpdateRecallRequest = UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-08T12:00-06:00")).findDossierTargetDate()
+  fun `dossierTargetDate when recallNotificationEmailSentDateTime is on Friday should be Monday`() {
+    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 11)) } returns false
+    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-10-08T12:00Z"))
 
-    assertThat(emptyUpdateRecallRequest, equalTo(LocalDate.of(2021, 10, 11)))
+    assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 10, 11)))
+  }
+
+  @Test
+  fun `dossierTargetDate when recallNotificationEmailSentDateTime is day before bank holiday should be first non-weekend and non-bank-holiday`() {
+    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 27)) } returns true
+    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 28)) } returns true
+    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 29)) } returns false
+    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-12-24T12:00Z"))
+
+    assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 12, 29)))
   }
 
   @Suppress("unused")

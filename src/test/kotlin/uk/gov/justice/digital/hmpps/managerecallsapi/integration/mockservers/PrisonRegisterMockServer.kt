@@ -16,7 +16,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.prison.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 
 @Component
 class PrisonRegisterMockServer(

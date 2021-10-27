@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.court.CourtRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
 
 @Service
 class CourtLookupService(@Autowired private val courtRegisterClient: CourtRegisterClient) {

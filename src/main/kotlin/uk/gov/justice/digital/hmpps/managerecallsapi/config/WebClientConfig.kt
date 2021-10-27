@@ -35,6 +35,12 @@ class WebClientConfig {
   @Bean("courtRegisterWebClient")
   fun courtRegisterWebClient(): WebClient = webClient(courtRegisterEndpointUrl)
 
+  @Value("\${bankHolidayRegister.endpoint.url}")
+  private lateinit var bankHolidayRegisterEndpointUrl: String
+
+  @Bean("bankHolidayRegisterWebClient")
+  fun bankHolidayRegisterWebClient(): WebClient = webClient(bankHolidayRegisterEndpointUrl)
+
   private fun webClient(endpointUrl: String) = WebClient.builder()
     .baseUrl(endpointUrl)
     .codecs {
