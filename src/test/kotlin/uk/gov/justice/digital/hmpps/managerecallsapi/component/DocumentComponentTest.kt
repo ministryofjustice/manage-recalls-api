@@ -134,6 +134,13 @@ class DocumentComponentTest : ComponentTestBase() {
       AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName)
     )
 
+    unversionedDocumentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
+      assertThat(it.id(), equalTo(document.documentId))
+      assertThat(it.recallId(), equalTo(recall.recallId))
+      assertThat(it.category, equalTo(UNCATEGORISED))
+      assertThat(it.fileName, equalTo(fileName))
+    }
+
     val result = authenticatedClient.updateDocumentCategory(
       recall.recallId,
       document.documentId,
@@ -167,6 +174,13 @@ class DocumentComponentTest : ComponentTestBase() {
       recall.recallId,
       AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
     )
+
+    versionedDocumentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
+      assertThat(it.id(), equalTo(document.documentId))
+      assertThat(it.recallId(), equalTo(recall.recallId))
+      assertThat(it.category, equalTo(PART_A_RECALL_REPORT))
+      assertThat(it.fileName, equalTo(fileName))
+    }
 
     val result = authenticatedClient.updateDocumentCategory(
       recall.recallId,

@@ -11,19 +11,9 @@ data class RecallDocument(
   val fileName: String,
   val createdDateTime: OffsetDateTime
 ) {
-  fun toVersionedDocument() =
-    if (category.versioned) {
-      VersionedDocument(id, recallId, category, fileName, createdDateTime)
-    } else {
-      throw WrongDocumentTypeException(category)
-    }
+  fun toVersionedDocument() = VersionedDocument(id, recallId, category, fileName, createdDateTime)
 
-  fun toUnversionedDocument() =
-    if (!category.versioned) {
-      UnversionedDocument(id, recallId, category, fileName, createdDateTime)
-    } else {
-      throw WrongDocumentTypeException(category)
-    }
+  fun toUnversionedDocument() = UnversionedDocument(id, recallId, category, fileName, createdDateTime)
 }
 
 class WrongDocumentTypeException(val category: RecallDocumentCategory) : Exception()

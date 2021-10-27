@@ -84,7 +84,7 @@ fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
 fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))
-fun randomDocumentCategory() = RecallDocumentCategory.values().random()
+fun randomVersionedDocumentCategory() = RecallDocumentCategory.values().filter { it.versioned }.random()
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)
   val endEpochDay = age18.toEpochDay()

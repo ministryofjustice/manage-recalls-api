@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.nhaarman.mockitokotlin2.any
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.get
 import io.mockk.Called
@@ -28,8 +27,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomVersionedDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.VirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
@@ -175,7 +174,7 @@ internal class DocumentServiceTest {
 
   @Test
   fun `gets a versioned document by recall ID and document category`() {
-    val aDocumentCategory = randomDocumentCategory()
+    val aDocumentCategory = randomVersionedDocumentCategory()
     val documentId = ::DocumentId.random()
     val aDocument = VersionedDocument(
       documentId,
@@ -198,7 +197,7 @@ internal class DocumentServiceTest {
 
   @Test
   fun `gets null if a document by recall ID and document category doesnt exist`() {
-    val aDocumentCategory = randomDocumentCategory()
+    val aDocumentCategory = randomVersionedDocumentCategory()
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every { versionedDocumentRepository.findByRecallIdAndCategory(recallId.value, aDocumentCategory) } returns null
@@ -211,7 +210,7 @@ internal class DocumentServiceTest {
 
   @Test
   fun `getDocumentContentWithCategory throws a custom 'document with category not found' error if no document of category is found for recall`() {
-    val randomDocumentCategory = randomDocumentCategory()
+    val randomDocumentCategory = randomVersionedDocumentCategory()
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every { versionedDocumentRepository.findByRecallIdAndCategory(recallId.value, randomDocumentCategory) } returns null
 
@@ -222,7 +221,7 @@ internal class DocumentServiceTest {
 
   @Test
   fun `getDocumentContentWithCategory ignores all but one document matching recall ID and document category`() {
-    val theDocumentCategory = randomDocumentCategory()
+    val theDocumentCategory = randomVersionedDocumentCategory()
     val documentOne = VersionedDocument(
       UUID.randomUUID(),
       recallId.value,
@@ -297,7 +296,7 @@ internal class DocumentServiceTest {
 
   @Test
   fun `update a document category for a document that doesnt exist throws not found`() {
-    val randomDocumentCategory = randomDocumentCategory()
+    val randomDocumentCategory = randomVersionedDocumentCategory()
     val documentId = ::DocumentId.random()
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every { versionedDocumentRepository.findByRecallIdAndDocumentId(recallId, documentId) } returns null

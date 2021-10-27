@@ -278,13 +278,6 @@ data class Pdf(val content: String) {
 
 data class RecallSearchRequest(val nomsNumber: NomsNumber)
 
-data class GetDocumentResponse(
-  val documentId: DocumentId,
-  val category: RecallDocumentCategory,
-  val content: String,
-  val fileName: String?
-)
-
 enum class Status {
   BOOKED_ON,
   IN_ASSESSMENT,

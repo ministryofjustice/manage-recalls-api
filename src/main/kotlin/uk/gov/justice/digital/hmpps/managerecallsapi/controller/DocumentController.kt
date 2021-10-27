@@ -94,3 +94,10 @@ data class AddDocumentRequest(
 )
 
 data class AddDocumentResponse(val documentId: DocumentId)
+
+data class GetDocumentResponse(
+  val documentId: DocumentId,
+  val category: RecallDocumentCategory,
+  val content: String,
+  val fileName: String
+)

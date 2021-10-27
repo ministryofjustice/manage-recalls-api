@@ -36,9 +36,12 @@ data class VersionedDocument(
     category: RecallDocumentCategory,
     fileName: String,
     createdDateTime: OffsetDateTime
-  ) : this(
-    id.value, recallId.value, category, fileName, createdDateTime
-  )
+  ) :
+    this(
+      id.value, recallId.value, category, fileName, createdDateTime
+    ) {
+      if (!category.versioned) throw WrongDocumentTypeException(category)
+    }
 
   fun toRecallDocument() = RecallDocument(id(), recallId(), category, fileName, createdDateTime)
   fun id() = DocumentId(id)
