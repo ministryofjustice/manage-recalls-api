@@ -67,7 +67,8 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     contrabandDetail: String = "Lots of naughty contraband",
     vulnerabilityDiversity: Boolean = true,
     vulnerabilityDiversityDetail: String = "Very diverse",
-    assessedByUserId: UserId? = null
+    assessedByUserId: UserId? = null,
+    sentenceYears: Int = 10
   ) {
     authenticatedClient.updateRecall(
       recallId,
@@ -80,7 +81,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         sentenceDate = LocalDate.of(2012, 5, 17),
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),
-        sentenceLength = Api.SentenceLength(10, 1, 5),
+        sentenceLength = Api.SentenceLength(sentenceYears, 1, 5),
         sentencingCourt = CourtId("HVRFCT"),
         indexOffence = "Some index offence",
         reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),

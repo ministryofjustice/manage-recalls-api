@@ -29,8 +29,9 @@ class LetterToPrisonGovernorGenerator(
       setVariable("fullName", context.prisoner.personName())
 
       with(context.recall) {
-        setVariable("recallLengthDescription", RecallLengthDescription(this.recallLength!!).asFixedTermLengthDescription())
-        setVariable("recallLength", RecallLengthDescription(this.recallLength).numberOfDays())
+        val recallLengthDescription = RecallLengthDescription(this.recallLength!!)
+        setVariable("recallLengthDescription", recallLengthDescription.asFixedTermLengthDescription())
+        setVariable("recallLengthDays", recallLengthDescription.numberOfDays())
         setVariable("bookingNumber", this.bookingNumber)
         setVariable("lastReleaseDate", this.lastReleaseDate!!.asStandardDateFormat())
       }

@@ -16,7 +16,9 @@ class LetterToPrisonConfirmationGenerator(
       setVariable("fullName", context.prisoner.personName())
 
       with(context.recall) {
-        setVariable("recallLengthDescription", RecallLengthDescription(this.recallLength!!).asFixedTermLengthDescription())
+        val recallLengthDescription = RecallLengthDescription(this.recallLength!!)
+        setVariable("recallLengthDescription", recallLengthDescription.asFixedTermLengthDescription())
+        setVariable("recallLengthDays", recallLengthDescription.numberOfDays())
         setVariable("bookingNumber", this.bookingNumber)
       }
     }.let {

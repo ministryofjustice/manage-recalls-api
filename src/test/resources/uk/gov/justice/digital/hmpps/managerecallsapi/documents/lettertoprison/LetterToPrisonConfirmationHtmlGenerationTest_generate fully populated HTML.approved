@@ -69,7 +69,13 @@
   <p class=MsoNormal style='margin-top:0cm;margin-right:0cm;margin-bottom:6.0pt;
 margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none'><b><span style='color:black'>Part 1</span></b></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><u>Please complete, scan and return by e-mail within 2 working days</u>. </b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>
+    <b><u>Please complete, scan and return by e-mail within
+      <span>2</span>
+      
+      working days
+    </u>.</b>
+  </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
@@ -78,7 +84,8 @@ text-indent:-.15pt'><b><u><span style='font-size:14.0pt'>14 DAY FIXED TERM RECAL
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span>Billie Badger</span>                          Prison Number:</b> <b><span>B1234</span></b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span>Billie Badger</span>                          Prison Number:</b>
+    <b><span>B1234</span></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
