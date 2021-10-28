@@ -72,7 +72,7 @@ class DocumentController(
     @RequestBody updateDocumentRequest: UpdateDocumentRequest
   ): ResponseEntity<UpdateDocumentResponse> {
     val document = documentService.updateDocumentCategory(recallId, documentId, updateDocumentRequest.category)
-    return ResponseEntity.ok(UpdateDocumentResponse(document.id, document.recallId, document.category, document.fileName))
+    return ResponseEntity.ok(UpdateDocumentResponse(document.documentId, document.recallId, document.category, document.fileName))
   }
 }
 
@@ -81,7 +81,7 @@ data class UpdateDocumentRequest(
 )
 
 data class UpdateDocumentResponse(
-  val id: DocumentId,
+  val documentId: DocumentId,
   val recallId: RecallId,
   val category: RecallDocumentCategory,
   val fileName: String
