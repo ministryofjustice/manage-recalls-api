@@ -240,7 +240,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `complete assessment of a recall updates recallNotificationEmailSentDateTime and assessedByUserId and calculates dossierTargetDate`() {
+  fun `complete assessment of a recall updates recallNotificationEmailSentDateTime and assessedByUserId and calculates dossierTargetDate as after weekend and bank holidays`() {
     val updateRecallRequest = UpdateRecallRequest(
       recallNotificationEmailSentDateTime = OffsetDateTime.of(2021, 12, 24, 12, 0, 0, 0, ZoneOffset.UTC),
       assessedByUserId = ::UserId.random()
