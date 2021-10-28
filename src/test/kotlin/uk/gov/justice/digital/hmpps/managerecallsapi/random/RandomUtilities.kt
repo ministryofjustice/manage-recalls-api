@@ -26,8 +26,7 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random()): Rec
     it.copy(
       id = recallId.value,
       recallLength = it.sentencingInfo?.calculateRecallLength(),
-      versionedDocuments = it.versionedDocuments.map { it.copy(recallId = recallId.value) }.toSet(),
-      unversionedDocuments = it.unversionedDocuments.map { it.copy(recallId = recallId.value) }.toSet()
+      documents = it.documents.map { it.copy(recallId = recallId.value) }.toSet()
     )
   }
 

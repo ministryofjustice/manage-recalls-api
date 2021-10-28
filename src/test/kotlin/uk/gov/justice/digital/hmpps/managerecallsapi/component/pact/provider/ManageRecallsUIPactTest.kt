@@ -127,7 +127,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   )
   fun `a fully populated recall exists without documents`() {
     val assigneeUuid = UUID.fromString("11111111-1111-1111-1111-111111111111")
-    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(versionedDocuments = emptySet(), unversionedDocuments = emptySet(), assignee = assigneeUuid)
+    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = assigneeUuid)
     userDetailsRepository.save(
       UserDetails(
         UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
@@ -141,7 +141,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user can be assigned"
   )
   fun `an unassigned fully populated recall exists without documents`() {
-    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(versionedDocuments = emptySet(), unversionedDocuments = emptySet(), assignee = null)
+    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = null)
     userDetailsRepository.save(
       UserDetails(
         UserId(UUID.fromString("11111111-1111-1111-1111-111111111111")), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
@@ -158,9 +158,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a list of recalls exists`() {
     recallRepository.saveAll(
       listOf(
-        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = nomsNumber, versionedDocuments = emptySet(), unversionedDocuments = emptySet(), assignee = null),
-        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), versionedDocuments = emptySet(), unversionedDocuments = emptySet(), assignee = null),
-        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), versionedDocuments = emptySet(), unversionedDocuments = emptySet(), assignee = null)
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = nomsNumber, documents = emptySet(), assignee = null),
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet(), assignee = null),
+        fullyPopulatedRecall(::RecallId.random()).copy(nomsNumber = randomNoms(), documents = emptySet(), assignee = null)
       )
     )
   }
@@ -213,7 +213,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         documentBytes
       )
     every { documentService.updateDocumentCategory(any(), any(), any()) } returns
-      RecallDocument(::DocumentId.random(), ::RecallId.random(), LICENCE, "filename.txt", OffsetDateTime.now())
+      RecallDocument(::DocumentId.random(), ::RecallId.random(), LICENCE, "filename.txt", 1, OffsetDateTime.now())
   }
 
   @State("a letter can be downloaded")

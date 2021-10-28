@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocument
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UnversionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -26,19 +26,20 @@ import javax.transaction.Transactional
 @ExtendWith(SpringExtension::class)
 @SpringBootTest
 @ActiveProfiles("db-test")
-class UnversionedDocumentRepositoryIntegrationTest(
-  @Autowired private val documentRepository: UnversionedDocumentRepository,
+class DocumentRepositoryIntegrationTest(
+  @Autowired private val documentRepository: DocumentRepository,
   @Autowired private val recallRepository: RecallRepository
 ) {
 
   private val recallId = ::RecallId.random()
   private val documentId = ::DocumentId.random()
-  private val category = OTHER
-  private val document = UnversionedDocument(
+  private val category = RECALL_NOTIFICATION
+  private val recallDocument = Document(
     documentId,
     recallId,
     category,
     "file_name",
+    1,
     OffsetDateTime.now()
   )
 
@@ -46,11 +47,11 @@ class UnversionedDocumentRepositoryIntegrationTest(
   @Transactional
   fun `getByRecallIdAndDocumentId for an existing recall`() {
     recallRepository.save(Recall(recallId, NomsNumber("AB1234C"), OffsetDateTime.now()))
-    documentRepository.save(document)
+    documentRepository.save(recallDocument)
 
     val retrieved = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
 
-    assertThat(retrieved, equalTo(document))
+    assertThat(retrieved, equalTo(recallDocument))
   }
 
   @Test
@@ -68,21 +69,21 @@ class UnversionedDocumentRepositoryIntegrationTest(
 
   @Test
   @Transactional
-  fun `findByRecallIdAndDocumentId for an existing recall`() {
+  fun `findByRecallIdAndCategory for an existing recall`() {
     recallRepository.save(Recall(recallId, NomsNumber("AB1234C"), OffsetDateTime.now()))
-    documentRepository.save(document)
+    documentRepository.save(recallDocument)
 
-    val retrieved = documentRepository.findByRecallIdAndDocumentId(recallId.value, documentId.value)
+    val retrieved = documentRepository.findByRecallIdAndCategory(recallId.value, category)
 
-    assertThat(retrieved, equalTo(document))
+    assertThat(retrieved, equalTo(recallDocument))
   }
 
   @Test
   @Transactional
-  fun `findByRecallIdAndDocumentId returns null if no document exists`() {
+  fun `findByRecallIdAndCategory returns null if no document exists`() {
     recallRepository.save(Recall(recallId, NomsNumber("AB1234C"), OffsetDateTime.now()))
 
-    val retrieved = documentRepository.findByRecallIdAndDocumentId(recallId.value, documentId.value)
+    val retrieved = documentRepository.findByRecallIdAndCategory(recallId.value, category)
 
     assertThat(retrieved, absent())
   }

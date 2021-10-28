@@ -180,7 +180,7 @@ class RecallsController(
   )
 
   private fun Recall.allDocuments() =
-    this.versionedDocuments.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) } + this.unversionedDocuments.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) }
+    this.documents.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) }
 }
 
 fun BookRecallRequest.toRecall(): Recall {

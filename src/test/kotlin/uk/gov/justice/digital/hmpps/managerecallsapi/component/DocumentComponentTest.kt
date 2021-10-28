@@ -137,10 +137,11 @@ class DocumentComponentTest : ComponentTestBase() {
       AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName)
     )
 
-    unversionedDocumentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
+    documentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
       assertThat(it.id(), equalTo(document.documentId))
       assertThat(it.recallId(), equalTo(recall.recallId))
       assertThat(it.category, equalTo(UNCATEGORISED))
+      assertThat(it.version, equalTo(null))
       assertThat(it.fileName, equalTo(fileName))
     }
 
@@ -159,11 +160,6 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         GetDocumentResponse(document.documentId, updatedCategory, base64EncodedDocumentContents, fileName)
       )
-    )
-
-    assertThat(
-      unversionedDocumentRepository.findByRecallIdAndDocumentId(recall.recallId, document.documentId),
-      equalTo(null)
     )
   }
 
@@ -178,10 +174,11 @@ class DocumentComponentTest : ComponentTestBase() {
       AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
     )
 
-    versionedDocumentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
+    documentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
       assertThat(it.id(), equalTo(document.documentId))
       assertThat(it.recallId(), equalTo(recall.recallId))
       assertThat(it.category, equalTo(PART_A_RECALL_REPORT))
+      assertThat(it.version, equalTo(1))
       assertThat(it.fileName, equalTo(fileName))
     }
 
@@ -200,11 +197,6 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         GetDocumentResponse(document.documentId, updatedCategory, base64EncodedDocumentContents, fileName)
       )
-    )
-
-    assertThat(
-      versionedDocumentRepository.findByRecallIdAndDocumentId(recall.recallId, document.documentId),
-      equalTo(null)
     )
   }
 }
