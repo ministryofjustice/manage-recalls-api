@@ -79,7 +79,7 @@ class DocumentService(
   }
 
   private fun saveDocument(recallDocument: RecallDocument): RecallDocument {
-    return saveDocument(recallDocument.id, recallDocument.recallId, recallDocument.category, recallDocument.fileName)
+    return saveDocument(recallDocument.documentId, recallDocument.recallId, recallDocument.category, recallDocument.fileName)
   }
 
   private fun saveDocument(documentId: DocumentId, recallId: RecallId, category: RecallDocumentCategory, fileName: String): RecallDocument {
