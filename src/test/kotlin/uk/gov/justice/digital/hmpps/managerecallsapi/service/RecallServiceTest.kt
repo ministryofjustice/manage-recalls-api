@@ -147,7 +147,7 @@ class RecallServiceTest {
   }
 
   @Test
-  fun `dossierTargetDate when recallNotificationEmailSentDateTime is day before bank holiday should be first non-weekend and non-bank-holiday`() {
+  fun `dossierTargetDate when recallNotificationEmailSentDateTime is day before weekend and bank holidays should be first non-weekend and non-bank-holiday`() {
     every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 27)) } returns true
     every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 28)) } returns true
     every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 29)) } returns false
