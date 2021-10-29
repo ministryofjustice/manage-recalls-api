@@ -98,7 +98,7 @@ gotenberg:
 
 bankHolidayRegister:
   endpoint:
-    url: https://www.gov.uk/bank-holidays
+    url: https://www.gov.uk/bank-holidays/england-and-wales.json
 
 clamav:
   hostname: localhost

@@ -16,7 +16,6 @@ class BankHolidayRegisterClient {
   fun getBankHolidays(): Mono<List<BankHoliday>> {
     return bankHolidayRegisterWebClient
       .get()
-      .uri("/england-and-wales.json")
       .retrieve()
       .bodyToMono(object : ParameterizedTypeReference<BankHolidayResponse>() {}).map { it.events }
   }

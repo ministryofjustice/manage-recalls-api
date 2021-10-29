@@ -40,7 +40,8 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.prisonRegister.status" to "UP",
       "components.courtRegister.status" to "UP",
       "components.clamAV.status" to "UP",
-      "components.hmppsAuth.status" to "UP"
+      "components.hmppsAuth.status" to "UP",
+      "components.bankHoliday.status" to "UP"
     )
   }
 
