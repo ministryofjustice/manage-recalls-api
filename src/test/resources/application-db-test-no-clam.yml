@@ -33,6 +33,10 @@ courtRegister:
   endpoint:
     url: http://localhost:9095
 
+bankHolidayRegister:
+  endpoint:
+    url: http://localhost:9094/health/ping  # using prisonRegister so that we don't depend on a live website in our tests.
+
 clamav:
   virus:
     scan:
