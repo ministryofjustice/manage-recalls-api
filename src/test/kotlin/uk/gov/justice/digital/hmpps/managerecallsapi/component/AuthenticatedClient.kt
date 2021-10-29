@@ -77,8 +77,8 @@ class AuthenticatedClient(
   fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
     postRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
 
-  fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest, expectedStatus: HttpStatus) {
-    sendPostRequest("/recalls/$recallId/documents", addDocumentRequest, expectedStatus)
+  fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest, expectedStatus: HttpStatus): WebTestClient.ResponseSpec {
+    return sendPostRequest("/recalls/$recallId/documents", addDocumentRequest, expectedStatus)
   }
 
   fun updateDocumentCategory(recallId: RecallId, documentId: DocumentId, updateDocumentRequest: UpdateDocumentRequest): UpdateDocumentResponse =

@@ -179,6 +179,7 @@ data class RecallDocumentWithCategoryNotFoundException(
 ) : NotFoundException()
 
 open class NotFoundException : Exception()
+open class VirusFoundException : Exception()
 
 data class VirusFoundEvent(
   val recallId: RecallId,

@@ -1,7 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import dev.forkhandles.result4k.map
-import dev.forkhandles.result4k.recover
+import dev.forkhandles.result4k.onFailure
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedBy
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 import java.net.URI
 
 @RestController
@@ -46,13 +47,13 @@ class DocumentController(
   fun addDocument(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody addDocumentRequest: AddDocumentRequest
-  ): ResponseEntity<AddDocumentResponse> =
+  ) =
     uploadDocument(recallId, addDocumentRequest).map { documentId ->
       ResponseEntity
         .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
         .body(AddDocumentResponse(documentId = documentId))
-    }.recover {
-      ResponseEntity.badRequest().build()
+    }.onFailure {
+      throw VirusFoundException()
     }
 
   private fun uploadDocument(
