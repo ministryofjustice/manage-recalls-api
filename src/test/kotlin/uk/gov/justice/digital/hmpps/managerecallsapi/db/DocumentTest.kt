@@ -7,16 +7,17 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.OffsetDateTime
 
-class VersionedDocumentTest {
+class DocumentTest {
 
   @Test
   fun `versioned document throws exception with unversioned category`() {
     assertThrows<WrongDocumentTypeException> {
-      VersionedDocument(
+      Document(
         ::DocumentId.random(),
         ::RecallId.random(),
         RecallDocumentCategory.OTHER,
         "file.txt",
+        1,
         OffsetDateTime.now()
       )
     }
@@ -24,11 +25,12 @@ class VersionedDocumentTest {
 
   @Test
   fun `versioned document accepts versioned category`() {
-    VersionedDocument(
+    Document(
       ::DocumentId.random(),
       ::RecallId.random(),
       RecallDocumentCategory.LICENCE,
       "file.txt",
+      1,
       OffsetDateTime.now()
     )
   }

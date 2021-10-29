@@ -12,14 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaUnversionedDocumentRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaVersionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -34,8 +33,7 @@ import javax.transaction.Transactional
 @ActiveProfiles("db-test")
 class RecallRepositoryIntegrationTest(
   @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository,
-  @Qualifier("jpaVersionedDocumentRepository") @Autowired private val jpaDocumentRepository: JpaVersionedDocumentRepository,
-  @Qualifier("jpaUnversionedDocumentRepository") @Autowired private val jpaUnversionedDocumentRepository: JpaUnversionedDocumentRepository,
+  @Qualifier("jpaDocumentRepository") @Autowired private val jpaDocumentRepository: JpaDocumentRepository,
 ) {
   private val nomsNumber = randomNoms()
   private val recallId = ::RecallId.random()
@@ -43,7 +41,7 @@ class RecallRepositoryIntegrationTest(
   private val recall = Recall(recallId, nomsNumber, now, now)
 
   private val repository = RecallRepository(jpaRepository)
-  private val versionedDocumentRepository = VersionedDocumentRepository(jpaDocumentRepository)
+  private val documentRepository = DocumentRepository(jpaDocumentRepository)
 
   @Test
   @Transactional
@@ -132,24 +130,25 @@ class RecallRepositoryIntegrationTest(
   @Transactional
   fun `can save a document by adding to recall`() {
     val documentId = ::DocumentId.random()
-    val versionedDocument = VersionedDocument(
+    val document = Document(
       documentId,
       recallId,
       PART_A_RECALL_REPORT,
       "PART_A.pdf",
+      1,
       now
     )
     val recallToUpdate = Recall(
       recallId, nomsNumber, now,
       now,
       documents = setOf(
-        versionedDocument
+        document
       ),
     )
     repository.save(recallToUpdate)
 
-    val persistedDocument = versionedDocumentRepository.findByRecallIdAndDocumentId(recallId, documentId)
-    assertThat(versionedDocument, equalTo(persistedDocument))
+    val persistedDocument = documentRepository.findByRecallIdAndDocumentId(recallId, documentId)
+    assertThat(document, equalTo(persistedDocument))
 
     val createdRecall = repository.getByRecallId(recallId)
 
