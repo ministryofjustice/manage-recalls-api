@@ -248,7 +248,11 @@ data class RecallResponse(
     if (dossierCreatedByUserId != null) {
       Status.DOSSIER_ISSUED
     } else if (recallNotificationEmailSentDateTime != null) {
-      Status.RECALL_NOTIFICATION_ISSUED
+      if (assignee != null) {
+        Status.DOSSIER_IN_PROGRESS
+      } else {
+        Status.RECALL_NOTIFICATION_ISSUED
+      }
     } else if (bookedByUserId != null) {
       if (assignee != null) {
         Status.IN_ASSESSMENT
@@ -277,11 +281,11 @@ data class Pdf(val content: String) {
 }
 
 data class RecallSearchRequest(val nomsNumber: NomsNumber)
-
 enum class Status {
   BOOKED_ON,
   IN_ASSESSMENT,
   RECALL_NOTIFICATION_ISSUED,
+  DOSSIER_IN_PROGRESS,
   DOSSIER_ISSUED
 }
 
