@@ -87,6 +87,7 @@ prisonerSearch:
 prisonRegister:
   endpoint:
     url: http://localhost:9094
+  timeout: 2
 
 courtRegister:
   endpoint:

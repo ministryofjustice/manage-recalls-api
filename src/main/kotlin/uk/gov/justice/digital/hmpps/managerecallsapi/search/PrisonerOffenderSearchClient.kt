@@ -2,15 +2,21 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.search
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import java.time.Duration
 import java.time.LocalDate
+import java.util.concurrent.TimeoutException
 
 @Component
-class PrisonerOffenderSearchClient {
+class PrisonerOffenderSearchClient(
+  @Value("\${prisonerSearch.timeout}") val timeout: Long
+) {
 
   @Autowired
   @Qualifier("prisonerOffenderSearchWebClient")
@@ -21,6 +27,8 @@ class PrisonerOffenderSearchClient {
       .post("/prisoner-search/match-prisoners", PrisonerSearchRequest(searchRequest.nomsNumber))
       .retrieve()
       .bodyToMono(object : ParameterizedTypeReference<List<Prisoner>>() {})
+      .timeout(Duration.ofSeconds(timeout))
+      .onErrorMap(TimeoutException::class.java) { ex -> ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName) }
 }
 
 data class Prisoner(

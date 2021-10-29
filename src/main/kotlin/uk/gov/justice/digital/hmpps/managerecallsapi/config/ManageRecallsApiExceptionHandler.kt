@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.config
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
@@ -69,6 +70,16 @@ class ManageRecallsApiExceptionHandler {
       .status(UNAUTHORIZED)
       .body(ErrorResponse(UNAUTHORIZED, "Access Denied: ${e.message}"))
   }
+
+  @ExceptionHandler(ClientTimeoutException::class)
+  fun handleException(e: ClientTimeoutException): ResponseEntity<ErrorResponse> {
+    log.error("ClientTimeoutException", e)
+    return ResponseEntity
+      .status(GATEWAY_TIMEOUT)
+      .body(ErrorResponse(GATEWAY_TIMEOUT, e.message))
+  }
 }
 
 data class ErrorResponse(val status: HttpStatus, val message: String?)
+
+class ClientTimeoutException(clientName: String, errorType: String) : Exception("$clientName: [$errorType]")

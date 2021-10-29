@@ -103,16 +103,17 @@ class AuthenticatedClient(
   fun unassignRecall(recallId: RecallId, assignee: UserId, expectedStatus: HttpStatus) =
     deleteRequest("/recalls/$recallId/assignee/$assignee", expectedStatus)
 
+  fun search(searchRequest: SearchRequest, expectedStatus: HttpStatus) =
+    sendPostRequest("/search", searchRequest, expectedStatus)
+
   fun search(searchRequest: SearchRequest) =
     sendPostRequest("/search", searchRequest, OK)
-      .expectStatus().isOk
       .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
       .returnResult()
       .responseBody!!
 
   fun searchRecalls(searchRequest: RecallSearchRequest): List<RecallResponse> =
     sendPostRequest("/recalls/search", searchRequest, OK)
-      .expectStatus().isOk
       .expectBody(object : ParameterizedTypeReference<List<RecallResponse>>() {})
       .returnResult()
       .responseBody!!

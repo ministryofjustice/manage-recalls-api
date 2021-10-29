@@ -48,9 +48,10 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val result = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest, BAD_REQUEST).expectBody(ErrorResponse::class.java).returnResult()
+    val result = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest, BAD_REQUEST)
+      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
 
-    assertThat(String(result.responseBodyContent!!), equalTo("{\"status\":\"BAD_REQUEST\",\"message\":\"VirusFoundException\"}"))
+    assertThat(result, equalTo(ErrorResponse(BAD_REQUEST, "VirusFoundException")))
   }
 
   @Test
