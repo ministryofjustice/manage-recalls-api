@@ -21,12 +21,19 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
 internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random()): Recall =
-  fullyPopulatedInstance<Recall>().let {
+  fullyPopulatedInstance<Recall>().let { recall ->
     // ensure recall length is valid for the random sentencing info as it is calculated on the fly
-    it.copy(
+    recall.copy(
       id = recallId.value,
-      recallLength = it.sentencingInfo?.calculateRecallLength(),
-      documents = it.documents.map { it.copy(recallId = recallId.value) }.toSet()
+      recallLength = recall.sentencingInfo?.calculateRecallLength(),
+      documents = recall.documents.map {
+        document ->
+        document.copy(
+          recallId = recallId.value,
+          // ensure document version is valid verus category
+          version = if (document.category.versioned) Random.nextInt() else null
+        )
+      }.toSet()
     )
   }
 
@@ -84,6 +91,7 @@ fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
 fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))
 fun randomVersionedDocumentCategory() = RecallDocumentCategory.values().filter { it.versioned }.random()
+fun randomUnVersionedDocumentCategory() = RecallDocumentCategory.values().filter { !it.versioned }.random()
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)
   val endEpochDay = age18.toEpochDay()

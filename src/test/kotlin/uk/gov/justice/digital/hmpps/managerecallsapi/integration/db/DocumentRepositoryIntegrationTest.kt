@@ -15,13 +15,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomUnVersionedDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomVersionedDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
@@ -37,8 +37,9 @@ class DocumentRepositoryIntegrationTest(
   private val recallId = ::RecallId.random()
   private val nomsNumber = randomNoms()
   private val versioneDocumentId = ::DocumentId.random()
-  private val versionedCategory = RECALL_NOTIFICATION
-  private val unVersionedCategory = OTHER
+  // TODO: parameterized tests driven from RecallDocumentCategory
+  private val versionedCategory = randomVersionedDocumentCategory()
+  private val unVersionedCategory = randomUnVersionedDocumentCategory()
   private val versionedRecallDocument = versionedDocument(versioneDocumentId, recallId, versionedCategory, 1)
 
   // Note: when using @Transactional to clean up after the tests we need to 'flush' to trigger the DB constraints, hence use of saveAndFlush()
