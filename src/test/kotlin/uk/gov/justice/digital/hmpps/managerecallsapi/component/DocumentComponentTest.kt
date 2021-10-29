@@ -24,11 +24,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 class DocumentComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
   private val bookRecallRequest = BookRecallRequest(nomsNumber)
-  private val documentCategory = PART_A_RECALL_REPORT
+  private val versionedDocumentCategory = PART_A_RECALL_REPORT
+  private val unVersionedDocumentCategory = UNCATEGORISED
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
-  private val fileName = "emailfileName"
-  private val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, fileName)
+  private val fileName = "fileName"
+  private val addVersionedDocumentRequest = AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName)
 
   @Test
   fun `add a document uploads the file to S3 and returns the documentId`() {
@@ -36,7 +37,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val response = authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest)
+    val response = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest)
 
     assertThat(response.documentId, present())
   }
@@ -47,7 +48,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val result = authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest, BAD_REQUEST).expectBody(ErrorResponse::class.java).returnResult()
+    val result = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest, BAD_REQUEST).expectBody(ErrorResponse::class.java).returnResult()
 
     assertThat(String(result.responseBodyContent!!), equalTo("{\"status\":\"BAD_REQUEST\",\"message\":\"VirusFoundException\"}"))
   }
@@ -58,15 +59,15 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val originalDocumentId = authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest).documentId
+    val originalDocumentId = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest).documentId
     val newFilename = "newFilename"
-    val addDocumentRequest = AddDocumentRequest(documentCategory, base64EncodedDocumentContents, newFilename)
+    val addDocumentRequest = AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, newFilename)
     authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest)
 
     val recallDocument = authenticatedClient.getRecallDocument(recall.recallId, originalDocumentId)
     assertThat(
       recallDocument,
-      equalTo(GetDocumentResponse(originalDocumentId, documentCategory, base64EncodedDocumentContents, newFilename))
+      equalTo(GetDocumentResponse(originalDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, newFilename))
     )
   }
 
@@ -89,7 +90,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
   @Test
   fun `add a document returns 404 if recall does not exist`() {
-    authenticatedClient.uploadRecallDocument(::RecallId.random(), addDocumentRequest, expectedStatus = NOT_FOUND)
+    authenticatedClient.uploadRecallDocument(::RecallId.random(), addVersionedDocumentRequest, expectedStatus = NOT_FOUND)
   }
 
   @Test
@@ -99,7 +100,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadRecallDocument(
       recall.recallId,
-      AddDocumentRequest(documentCategory, base64EncodedDocumentContents, fileName)
+      AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName)
     )
 
     val response = authenticatedClient.getRecallDocument(recall.recallId, document.documentId)
@@ -109,7 +110,7 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         GetDocumentResponse(
           document.documentId,
-          documentCategory,
+          versionedDocumentCategory,
           base64EncodedDocumentContents,
           fileName
         )

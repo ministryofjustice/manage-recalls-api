@@ -15,6 +15,7 @@ import java.util.UUID
 
 @Repository("jpaDocumentRepository")
 interface JpaDocumentRepository : JpaRepository<Document, UUID> {
+  // TODO: don't use with unversioned categories! This needs to evolve to e.g. getLatest or to return List<Document> or similar.
   @Query("SELECT d from Document d where d.recallId = :recallId and d.category = :category")
   fun findByRecallIdAndCategory(
     @Param("recallId") recallId: UUID,

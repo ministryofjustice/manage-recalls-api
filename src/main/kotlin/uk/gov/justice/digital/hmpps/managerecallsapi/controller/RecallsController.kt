@@ -126,7 +126,7 @@ class RecallsController(
     nomsNumber = this.nomsNumber,
     createdDateTime = this.createdDateTime,
     lastUpdatedDateTime = this.lastUpdatedDateTime,
-    documents = allDocuments(),
+    documents = documents.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) },
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
@@ -178,9 +178,6 @@ class RecallsController(
     assignee = this.assignee(),
     assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.personName() }
   )
-
-  private fun Recall.allDocuments() =
-    this.documents.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) }
 }
 
 fun BookRecallRequest.toRecall(): Recall {
