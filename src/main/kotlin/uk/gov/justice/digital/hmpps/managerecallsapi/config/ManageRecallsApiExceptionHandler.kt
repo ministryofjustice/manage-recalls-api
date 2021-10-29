@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 
 @RestControllerAdvice
 class ManageRecallsApiExceptionHandler {
@@ -34,6 +35,15 @@ class ManageRecallsApiExceptionHandler {
       ResponseEntity
         .status(NOT_FOUND)
         .body(ErrorResponse(NOT_FOUND, e.toString()))
+    }
+
+  @ExceptionHandler(VirusFoundException::class)
+  fun handleException(e: VirusFoundException): ResponseEntity<ErrorResponse> =
+    with(e) {
+      log.info(e.toString())
+      ResponseEntity
+        .status(BAD_REQUEST)
+        .body(ErrorResponse(BAD_REQUEST, e.javaClass.simpleName))
     }
 
   @ExceptionHandler(java.lang.Exception::class)

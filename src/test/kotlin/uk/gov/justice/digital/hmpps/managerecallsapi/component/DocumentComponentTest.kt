@@ -6,6 +6,7 @@ import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
@@ -41,12 +42,14 @@ class DocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `add a document with a virus returns bad request`() {
+  fun `add a document with a virus returns bad request with body`() {
     expectAVirusWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest, BAD_REQUEST)
+    val result = authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest, BAD_REQUEST).expectBody(ErrorResponse::class.java).returnResult()
+
+    assertThat(String(result.responseBodyContent!!), equalTo("{\"status\":\"BAD_REQUEST\",\"message\":\"VirusFoundException\"}"))
   }
 
   @Test
