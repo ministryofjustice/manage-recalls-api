@@ -63,6 +63,7 @@ class DocumentControllerTest {
       recallId1,
       PART_A_RECALL_REPORT,
       fileName,
+      1,
       OffsetDateTime.now()
     )
     val bytes = "Hello".toByteArray()

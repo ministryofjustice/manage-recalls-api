@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.VersionedDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
@@ -91,11 +91,12 @@ class RecallsControllerTest {
 
   @Test
   fun `gets a recall`() {
-    val document = VersionedDocument(
+    val document = Document(
       id = UUID.randomUUID(),
       recallId = UUID.randomUUID(),
       category = RecallDocumentCategory.PART_A_RECALL_REPORT,
       fileName = fileName,
+      1,
       createdDateTime = now
     )
     val recallEmailReceivedDateTime = now

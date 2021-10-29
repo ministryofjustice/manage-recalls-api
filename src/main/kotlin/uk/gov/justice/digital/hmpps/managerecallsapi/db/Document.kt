@@ -12,8 +12,8 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "versioned_document")
-data class VersionedDocument(
+@Table(name = "document")
+data class Document(
   @Id
   val id: UUID,
 
@@ -27,6 +27,9 @@ data class VersionedDocument(
   @Column(nullable = false)
   val fileName: String,
 
+  @Column(nullable = true)
+  val version: Int?,
+
   @Column(nullable = false)
   val createdDateTime: OffsetDateTime
 ) {
@@ -35,15 +38,16 @@ data class VersionedDocument(
     recallId: RecallId,
     category: RecallDocumentCategory,
     fileName: String,
+    version: Int?,
     createdDateTime: OffsetDateTime
   ) :
     this(
-      id.value, recallId.value, category, fileName, createdDateTime
+      id.value, recallId.value, category, fileName, version, createdDateTime
     ) {
-      if (!category.versioned) throw WrongDocumentTypeException(category)
+      if ((category.versioned && version == null) || (!category.versioned && version != null)) throw WrongDocumentTypeException(category)
     }
 
-  fun toRecallDocument() = RecallDocument(id(), recallId(), category, fileName, createdDateTime)
+  fun toRecallDocument() = RecallDocument(id(), recallId(), category, fileName, version, createdDateTime)
   fun id() = DocumentId(id)
   fun recallId() = RecallId(recallId)
 }

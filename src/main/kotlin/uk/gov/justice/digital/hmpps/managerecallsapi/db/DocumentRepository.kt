@@ -13,32 +13,33 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
 import java.util.UUID
 
-@Repository("jpaVersionedDocumentRepository")
-interface JpaVersionedDocumentRepository : JpaRepository<VersionedDocument, UUID> {
-  @Query("SELECT d from VersionedDocument d where d.recallId = :recallId and d.category = :category")
+@Repository("jpaDocumentRepository")
+interface JpaDocumentRepository : JpaRepository<Document, UUID> {
+  // TODO: don't use with unversioned categories! This needs to evolve to e.g. getLatest or to return List<Document> or similar.
+  @Query("SELECT d from Document d where d.recallId = :recallId and d.category = :category")
   fun findByRecallIdAndCategory(
     @Param("recallId") recallId: UUID,
     @Param("category") category: RecallDocumentCategory
-  ): VersionedDocument?
+  ): Document?
 
-  @Query("SELECT d from VersionedDocument d where d.recallId = :recallId and d.id = :documentId")
+  @Query("SELECT d from Document d where d.recallId = :recallId and d.id = :documentId")
   fun findByRecallIdAndDocumentId(
     @Param("recallId") recallId: UUID,
     @Param("documentId") documentId: UUID
-  ): VersionedDocument?
+  ): Document?
 }
 
 @NoRepositoryBean
-interface ExtendedVersionedDocumentRepository : JpaVersionedDocumentRepository {
-  fun findByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): VersionedDocument?
-  fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): VersionedDocument
+interface ExtendedDocumentRepository : JpaDocumentRepository {
+  fun findByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): Document?
+  fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): Document
 }
 
 @Component
-class VersionedDocumentRepository(
-  @Qualifier("jpaVersionedDocumentRepository") @Autowired private val jpaRepository: JpaVersionedDocumentRepository
-) : JpaVersionedDocumentRepository by jpaRepository, ExtendedVersionedDocumentRepository {
-  override fun findByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): VersionedDocument? =
+class DocumentRepository(
+  @Qualifier("jpaDocumentRepository") @Autowired private val jpaRepository: JpaDocumentRepository
+) : JpaDocumentRepository by jpaRepository, ExtendedDocumentRepository {
+  override fun findByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): Document? =
     findByRecallIdAndDocumentId(recallId.value, documentId.value)
 
   override fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId) =
