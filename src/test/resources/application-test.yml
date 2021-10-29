@@ -26,3 +26,6 @@ aws:
 oauth:
   endpoint:
     url: http://localhost:9090/auth
+
+prisonerSearch:
+  timeout: 2

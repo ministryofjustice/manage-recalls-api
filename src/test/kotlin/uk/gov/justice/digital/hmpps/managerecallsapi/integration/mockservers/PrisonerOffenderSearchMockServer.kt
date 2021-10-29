@@ -56,4 +56,17 @@ class PrisonerOffenderSearchMockServer(
         )
     )
   }
+
+  fun delayResponse(request: PrisonerSearchRequest, timeoutMillis: Int) {
+    stubFor(
+      post(urlEqualTo("/prisoner-search/match-prisoners"))
+        .withRequestBody(equalToJson(objectMapper.writeValueAsString(request)))
+        .willReturn(
+          aResponse()
+            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
+            .withFixedDelay(timeoutMillis)
+            .withStatus(OK.value())
+        )
+    )
+  }
 }

@@ -1,15 +1,12 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
-import com.natpryce.hamkrest.allOf
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.containsSubstring
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.isEmpty
-import com.natpryce.hamkrest.present
 import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
@@ -17,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomAdultDateOfBirth
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 
@@ -30,8 +28,19 @@ class SearchComponentTest : ComponentTestBase() {
   fun `returns 500 if prisoner search api returns unauthorized`() {
     prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
 
-    authenticatedClient.post("/search", "{\"nomsNumber\":\"123456\"}")
+    val result = authenticatedClient.post("/search", "{\"nomsNumber\":\"123456\"}")
       .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
+      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+
+    assertThat(
+      result,
+      equalTo(
+        ErrorResponse(
+          INTERNAL_SERVER_ERROR,
+          "Unexpected error: 401 Unauthorized from POST http://localhost:9092/prisoner-search/match-prisoners"
+        )
+      )
+    )
   }
 
   @Test
@@ -48,17 +57,14 @@ class SearchComponentTest : ComponentTestBase() {
     val result = authenticatedClient.post("/search", "{\"nomsNumber\":\"\"}")
       .expectStatus().isBadRequest
       .expectBody(ErrorResponse::class.java)
-      .returnResult()
+      .returnResult().responseBody!!
 
     assertThat(
-      result.responseBody,
-      present(
-        allOf(
-          has(ErrorResponse::status, equalTo(BAD_REQUEST)),
-          has(
-            ErrorResponse::message,
-            present(containsSubstring("'' violated uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber rule"))
-          )
+      result,
+      equalTo(
+        ErrorResponse(
+          BAD_REQUEST,
+          "JSON parse error: '' violated uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber rule; nested exception is com.fasterxml.jackson.databind.JsonMappingException: '' violated uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber rule (through reference chain: uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest[\"nomsNumber\"])"
         )
       )
     )
@@ -73,6 +79,20 @@ class SearchComponentTest : ComponentTestBase() {
     val response = authenticatedClient.search(apiSearchRequest)
 
     assertThat(response, equalTo(listOf(prisoner1.searchResult(), prisoner2.searchResult())))
+  }
+
+  @Test
+  fun `prisoner offender timeout is handled gracefully`() {
+    val nomsNumber = randomNoms()
+    prisonerOffenderSearch.delayResponse(PrisonerSearchRequest(nomsNumber), 3000)
+
+    val result = authenticatedClient.search(SearchRequest(nomsNumber), GATEWAY_TIMEOUT)
+      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+
+    assertThat(
+      result,
+      equalTo(ErrorResponse(GATEWAY_TIMEOUT, "PrisonerOffenderSearchClient: [java.util.concurrent.TimeoutException]"))
+    )
   }
 
   private fun Prisoner.searchResult(): SearchResult = SearchResult(
