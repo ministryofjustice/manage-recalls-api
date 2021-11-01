@@ -122,6 +122,7 @@ class RecallsControllerTest {
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
+      recallAssessmentDueDateTime = recallEmailReceivedDateTime.plusHours(24)
     )
     assertThat(result, equalTo(expected))
   }

@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -183,6 +184,27 @@ data class Recall(
   fun bookedByUserId() = bookedByUserId?.let(::UserId)
   fun dossierCreatedByUserId() = dossierCreatedByUserId?.let(::UserId)
   fun assignee() = assignee?.let(::UserId)
+
+  fun recallAssessmentDueDateTime(): OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
+
+  fun status(): Status? =
+    if (dossierCreatedByUserId != null) {
+      Status.DOSSIER_ISSUED
+    } else if (recallNotificationEmailSentDateTime != null) {
+      if (assignee != null) {
+        Status.DOSSIER_IN_PROGRESS
+      } else {
+        Status.RECALL_NOTIFICATION_ISSUED
+      }
+    } else if (bookedByUserId != null) {
+      if (assignee != null) {
+        Status.IN_ASSESSMENT
+      } else {
+        Status.BOOKED_ON
+      }
+    } else {
+      null
+    }
 }
 
 @Embeddable

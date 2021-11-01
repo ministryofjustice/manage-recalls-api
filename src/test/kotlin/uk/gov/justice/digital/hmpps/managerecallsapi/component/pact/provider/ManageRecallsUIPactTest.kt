@@ -43,8 +43,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -201,7 +201,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a document does not exist")
   fun `a document does not exist`() {
-    every { documentService.updateDocumentCategory(any(), any(), any()) } throws RecallDocumentNotFoundException(::RecallId.random(), ::DocumentId.random())
+    every { documentService.updateDocumentCategory(any(), any(), any()) } throws DocumentNotFoundException(::RecallId.random(), ::DocumentId.random())
   }
 
   @State("a document exists to be updated")

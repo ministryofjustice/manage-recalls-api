@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.UnsupportedFileTypeException
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 
 @RestControllerAdvice
 class ManageRecallsApiExceptionHandler {
@@ -28,24 +26,6 @@ class ManageRecallsApiExceptionHandler {
       ResponseEntity
         .status(BAD_REQUEST)
         .body(ErrorResponse(BAD_REQUEST, this))
-    }
-
-  @ExceptionHandler(NotFoundException::class)
-  fun handleException(e: NotFoundException): ResponseEntity<ErrorResponse> =
-    with(e) {
-      log.info(e.toString())
-      ResponseEntity
-        .status(NOT_FOUND)
-        .body(ErrorResponse(NOT_FOUND, e.toString()))
-    }
-
-  @ExceptionHandler(VirusFoundException::class)
-  fun handleException(e: VirusFoundException): ResponseEntity<ErrorResponse> =
-    with(e) {
-      log.info(e.toString())
-      ResponseEntity
-        .status(BAD_REQUEST)
-        .body(ErrorResponse(BAD_REQUEST, e.javaClass.simpleName))
     }
 
   @ExceptionHandler(java.lang.Exception::class)
@@ -80,15 +60,31 @@ class ManageRecallsApiExceptionHandler {
       .body(ErrorResponse(GATEWAY_TIMEOUT, e.message))
   }
 
-  @ExceptionHandler(UnsupportedFileTypeException::class)
-  fun handleException(e: UnsupportedFileTypeException): ResponseEntity<ErrorResponse> {
-    log.error("UnsupportedFileTypeException", e)
+  @ExceptionHandler(NotFoundException::class)
+  fun handleException(e: NotFoundException): ResponseEntity<ErrorResponse> =
+    with(e) {
+      log.info(e.toString())
+      ResponseEntity
+        .status(NOT_FOUND)
+        .body(ErrorResponse(NOT_FOUND, e.toString()))
+    }
+
+  @ExceptionHandler(ManageRecallsException::class)
+  fun handleException(e: ManageRecallsException): ResponseEntity<ErrorResponse> {
+    log.error("ManageRecallsException", e)
+    val message = if (e.message == null) {
+      e.javaClass.simpleName
+    } else {
+      "${e.javaClass.simpleName}: ${e.message}"
+    }
     return ResponseEntity
       .status(BAD_REQUEST)
-      .body(ErrorResponse(BAD_REQUEST, "${e.javaClass.simpleName}: ${e.fileType}"))
+      .body(ErrorResponse(BAD_REQUEST, message))
   }
 }
 
 data class ErrorResponse(val status: HttpStatus, val message: String?)
 
-class ClientTimeoutException(clientName: String, errorType: String) : Exception("$clientName: [$errorType]")
+open class ManageRecallsException(override val message: String? = null) : Exception(message)
+
+class ClientTimeoutException(clientName: String, errorType: String) : ManageRecallsException("$clientName: [$errorType]")

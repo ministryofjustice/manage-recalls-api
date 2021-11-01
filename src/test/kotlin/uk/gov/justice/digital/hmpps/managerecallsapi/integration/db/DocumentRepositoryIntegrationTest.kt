@@ -23,7 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomUnVersionedDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomVersionedDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentNotFoundException
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
 
@@ -142,14 +142,14 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `getByRecallIdAndDocumentId throws RecallDocumentNotFoundException if the document does not exist`() {
-    val thrown = assertThrows<RecallDocumentNotFoundException> {
+    val thrown = assertThrows<DocumentNotFoundException> {
       documentRepository.getByRecallIdAndDocumentId(
         recallId,
         versioneDocumentId
       )
     }
 
-    assertThat(thrown, equalTo(RecallDocumentNotFoundException(recallId, versioneDocumentId)))
+    assertThat(thrown, equalTo(DocumentNotFoundException(recallId, versioneDocumentId)))
   }
 
   @Test

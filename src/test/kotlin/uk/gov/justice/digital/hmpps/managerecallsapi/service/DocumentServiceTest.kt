@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.get
 import io.mockk.Called
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -19,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -284,9 +286,9 @@ internal class DocumentServiceTest {
         recallId,
         documentId
       )
-    } throws RecallDocumentNotFoundException(recallId, documentId)
+    } throws DocumentNotFoundException(recallId, documentId)
 
-    assertThrows<RecallDocumentNotFoundException> {
+    assertThrows<DocumentNotFoundException> {
       underTest.updateDocumentCategory(recallId, documentId, randomVersionedDocumentCategory())
     }
   }
@@ -372,5 +374,55 @@ internal class DocumentServiceTest {
 
     verify(exactly = 0) { documentRepository.delete(originalDocument) }
     verify { documentRepository.save(updatedDocument) }
+  }
+
+  @Test
+  fun `can delete an uploaded document for a Recall with status null`() {
+    val documentId = ::DocumentId.random()
+    val now = OffsetDateTime.now()
+    val document = Document(documentId, recallId, UNCATEGORISED, "license.pdf", null, now)
+    val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
+    every { documentRepository.getByRecallIdAndDocumentId(recallId, documentId) } returns document
+    every { documentRepository.deleteByDocumentId(documentId) } just Runs
+
+    underTest.deleteDocument(recallId, documentId)
+
+    verify { documentRepository.deleteByDocumentId(documentId) }
+  }
+
+  @Test
+  fun `fails to delete an uploaded document for a Recall with status BOOKED_ON`() {
+    val documentId = ::DocumentId.random()
+    val now = OffsetDateTime.now()
+    val document = Document(documentId, recallId, PART_A_RECALL_REPORT, "license.pdf", 1, now)
+    val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document), bookedByUserId = ::UserId.random().value)
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
+    every { documentRepository.getByRecallIdAndDocumentId(recallId, documentId) } returns document
+
+    assertThrows<DocumentDeleteException> {
+      underTest.deleteDocument(recallId, documentId)
+    }
+
+    verify(exactly = 0) { documentRepository.deleteByDocumentId(documentId) }
+  }
+
+  @Test
+  fun `fails to delete a generated document for a Recall with status null`() {
+    val documentId = ::DocumentId.random()
+    val now = OffsetDateTime.now()
+    val document = Document(documentId, recallId, REVOCATION_ORDER, "revo.pdf", 1, now)
+    val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document), bookedByUserId = ::UserId.random().value)
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
+    every { documentRepository.getByRecallIdAndDocumentId(recallId, documentId) } returns document
+
+    assertThrows<DocumentDeleteException> {
+      underTest.deleteDocument(recallId, documentId)
+    }
+
+    verify(exactly = 0) { documentRepository.deleteByDocumentId(documentId) }
   }
 }
