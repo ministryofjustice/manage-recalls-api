@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
@@ -35,7 +36,7 @@ class DossierContextFactoryTest {
     val currentPrison = PrisonId("AAA")
     val currentPrisonName = PrisonName("Current Prison Name")
     val prisoner = mockk<Prisoner>()
-    val recall = Recall(recallId, nomsNumber, OffsetDateTime.now(), currentPrison = currentPrison)
+    val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), currentPrison = currentPrison)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))

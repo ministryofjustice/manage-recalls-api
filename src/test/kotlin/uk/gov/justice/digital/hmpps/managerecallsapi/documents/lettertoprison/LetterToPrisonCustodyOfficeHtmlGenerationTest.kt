@@ -37,7 +37,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
+            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(),
             recallLength = recallLength,
             contraband = true,
             contrabandDetail = "Because...",
@@ -70,7 +70,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
+            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(),
             recallLength = recallLength,
             bookingNumber = "B1234",
             differentNomsNumber = true,
@@ -103,7 +103,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
+            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(),
             recallLength = recallLength,
             contraband = true,
             contrabandDetail = "Because...",

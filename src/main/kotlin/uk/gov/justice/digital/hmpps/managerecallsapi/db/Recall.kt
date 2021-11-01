@@ -38,6 +38,8 @@ data class Recall(
   @Convert(converter = NomsNumberJpaConverter::class)
   val nomsNumber: NomsNumber,
   @Column(nullable = false)
+  val createdByUserId: UUID,
+  @Column(nullable = false)
   val createdDateTime: OffsetDateTime,
   @Column(nullable = false)
   val lastUpdatedDateTime: OffsetDateTime,
@@ -93,6 +95,7 @@ data class Recall(
   constructor(
     recallId: RecallId,
     nomsNumber: NomsNumber,
+    createdByUserId: UserId,
     createdDateTime: OffsetDateTime,
     lastUpdatedDateTime: OffsetDateTime = createdDateTime,
     documents: Set<Document> = emptySet(),
@@ -134,6 +137,7 @@ data class Recall(
     this(
       recallId.value,
       nomsNumber,
+      createdByUserId.value,
       createdDateTime,
       lastUpdatedDateTime,
       documents,
@@ -174,6 +178,7 @@ data class Recall(
     )
 
   fun recallId() = RecallId(id)
+  fun createdByUserId() = createdByUserId.let(::UserId)
   fun assessedByUserId() = assessedByUserId?.let(::UserId)
   fun bookedByUserId() = bookedByUserId?.let(::UserId)
   fun dossierCreatedByUserId() = dossierCreatedByUserId?.let(::UserId)

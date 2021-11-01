@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
@@ -47,8 +48,7 @@ class RecallNotificationContextTest {
   private val probationOfficerName = "Mr Probation Officer"
 
   private val recall = Recall(
-    recallId, NomsNumber("AA1234A"), OffsetDateTime.now(),
-    OffsetDateTime.now(),
+    recallId, NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), OffsetDateTime.now(),
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
     localPoliceForce = "London",

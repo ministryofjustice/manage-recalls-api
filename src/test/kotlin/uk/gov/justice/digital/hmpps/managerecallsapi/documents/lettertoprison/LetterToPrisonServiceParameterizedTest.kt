@@ -76,7 +76,7 @@ internal class LetterToPrisonServiceParameterizedTest {
   @ParameterizedTest
   @MethodSource("letterToPrisonParameters")
   fun `creates a letter to prison for a recall `(recallLength: RecallLength, annexHeaderText: String) {
-    val aRecall = Recall(recallId, nomsNumber, OffsetDateTime.now(), recallLength = recallLength)
+    val aRecall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), recallLength = recallLength)
     val documentId = ::DocumentId.random()
     val assessor = UserDetails(
       ::UserId.random(),
