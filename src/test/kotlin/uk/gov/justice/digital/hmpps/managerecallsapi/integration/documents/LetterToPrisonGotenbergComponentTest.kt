@@ -20,7 +20,7 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(assessedByUserId)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, ::UserId.random()))
     updateRecallWithRequiredInformationForTheLetterToPrison(
       recall.recallId,
       assessedByUserId = assessedByUserId,

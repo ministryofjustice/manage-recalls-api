@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.P
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
@@ -36,9 +37,10 @@ class RecallRepositoryIntegrationTest(
   @Qualifier("jpaDocumentRepository") @Autowired private val jpaDocumentRepository: JpaDocumentRepository,
 ) {
   private val nomsNumber = randomNoms()
+  private val createdByUserId = ::UserId.random()
   private val recallId = ::RecallId.random()
   private val now = OffsetDateTime.now()
-  private val recall = Recall(recallId, nomsNumber, now, now)
+  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
 
   private val repository = RecallRepository(jpaRepository)
   private val documentRepository = DocumentRepository(jpaDocumentRepository)
@@ -50,7 +52,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.getByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber, now, now)))
+    assertThat(retrieved, equalTo(recall))
   }
 
   @Test
@@ -82,7 +84,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.findByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(Recall(recallId, nomsNumber, now, now)))
+    assertThat(retrieved, equalTo(recall))
   }
 
   @Test
@@ -97,7 +99,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.findByNomsNumber(nomsNumber)
 
-    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber, now, now))))
+    assertThat(retrieved, equalTo(listOf(recall)))
   }
 
   @Test
@@ -115,7 +117,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.search(RecallSearchRequest(nomsNumber))
 
-    assertThat(retrieved, equalTo(listOf(Recall(recallId, nomsNumber, now, now))))
+    assertThat(retrieved, equalTo(listOf(recall)))
   }
 
   @Test
@@ -138,9 +140,7 @@ class RecallRepositoryIntegrationTest(
       1,
       now
     )
-    val recallToUpdate = Recall(
-      recallId, nomsNumber, now,
-      now,
+    val recallToUpdate = recall.copy(
       documents = setOf(
         document
       ),

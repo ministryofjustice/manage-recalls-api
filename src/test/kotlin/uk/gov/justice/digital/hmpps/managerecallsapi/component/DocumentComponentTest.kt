@@ -19,13 +19,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64Str
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
 class DocumentComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
-  private val bookRecallRequest = BookRecallRequest(nomsNumber)
+  private val bookRecallRequest = BookRecallRequest(nomsNumber, ::UserId.random())
   private val versionedDocumentCategory = PART_A_RECALL_REPORT
-  private val unVersionedDocumentCategory = UNCATEGORISED
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = "fileName"

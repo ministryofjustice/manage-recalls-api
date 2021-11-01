@@ -44,8 +44,9 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
+    val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, now, now)
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
     recallRepository.save(recall)
     userDetailsRepository.save(
       UserDetails(
@@ -67,6 +68,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           OffsetDateTime.now(fixedClock),
           assignee = assignee,
@@ -81,14 +83,15 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
+    val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now, assignee = assignee)
     recallRepository.save(recall)
 
     val response = authenticatedClient.unassignRecall(recallId, assignee)
 
     assertThat(
-      response, equalTo(RecallResponse(recallId, nomsNumber, now, OffsetDateTime.now(fixedClock)))
+      response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, OffsetDateTime.now(fixedClock)))
     )
   }
 
@@ -98,8 +101,9 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
+    val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, OffsetDateTime.now(), assignee = assignee)
+    val recall = Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), assignee = assignee)
     recallRepository.save(recall)
 
     authenticatedClient.unassignRecall(recallId, otherAssignee, HttpStatus.NOT_FOUND)

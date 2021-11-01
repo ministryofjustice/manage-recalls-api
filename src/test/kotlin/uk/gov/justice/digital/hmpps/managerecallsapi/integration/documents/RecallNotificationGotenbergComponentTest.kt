@@ -15,6 +15,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
   private val loremIpsum =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
   private val nomsNumber = NomsNumber("123456")
+  private val createdByUserId = ::UserId.random()
   private val prisonerFirstName = "Natalia"
   private val userIdGeneratingTheRecallNotification = ::UserId.random()
 
@@ -23,7 +24,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(userIdGeneratingTheRecallNotification)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, createdByUserId))
     updateRecallWithRequiredInformationForTheDossier(recall.recallId)
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, userIdGeneratingTheRecallNotification)
@@ -38,7 +39,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(userIdGeneratingTheRecallNotification)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, createdByUserId))
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       contraband = true,

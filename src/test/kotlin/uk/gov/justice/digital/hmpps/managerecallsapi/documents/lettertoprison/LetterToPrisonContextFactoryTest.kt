@@ -39,8 +39,8 @@ class LetterToPrisonContextFactoryTest {
     val assessedByUserId = ::UserId.random()
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
     val recall = Recall(
-      recallId, NomsNumber("AA1234A"), OffsetDateTime.now(),
-      OffsetDateTime.now(),
+      recallId, NomsNumber("AA1234A"), ::UserId.random(),
+      OffsetDateTime.now(), OffsetDateTime.now(),
       lastReleasePrison = PrisonId("BOB"),
       currentPrison = PrisonId("WIM"),
       assessedByUserId = assessedByUserId,

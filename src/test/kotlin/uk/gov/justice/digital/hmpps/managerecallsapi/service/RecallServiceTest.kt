@@ -43,7 +43,7 @@ class RecallServiceTest {
   private val underTest = RecallService(recallRepository, bankHolidayService, fixedClock)
 
   private val recallId = ::RecallId.random()
-  private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), OffsetDateTime.now())
+  private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), ::UserId.random(), OffsetDateTime.now())
   private val today = LocalDate.now()
 
   private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
@@ -194,9 +194,11 @@ class RecallServiceTest {
   fun `can assign a recall`() {
     val nomsNumber = randomNoms()
     val now = OffsetDateTime.now()
-    val recall = Recall(recallId, nomsNumber, now, now)
+    val createdByUserId = ::UserId.random()
+
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
     val assignee = ::UserId.random()
-    val expected = Recall(recallId, nomsNumber, now, OffsetDateTime.now(fixedClock), assignee = assignee)
+    val expected = Recall(recallId, nomsNumber, createdByUserId, now, OffsetDateTime.now(fixedClock), assignee = assignee)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { recallRepository.save(expected) } returns expected
@@ -209,11 +211,12 @@ class RecallServiceTest {
   fun `can unassign a recall`() {
     val nomsNumber = randomNoms()
     val now = OffsetDateTime.now()
-    val recall = Recall(recallId, nomsNumber, now, now)
+    val createdByUserId = ::UserId.random()
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
     val assignee = ::UserId.random()
     val expected = recall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
 
-    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, now, now, assignee = assignee)
+    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, now, now, assignee = assignee)
     every { recallRepository.save(expected) } returns expected
 
     val assignedRecall = underTest.unassignRecall(recallId, assignee)
@@ -226,8 +229,9 @@ class RecallServiceTest {
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
     val nomsNumber = randomNoms()
+    val createdByUserId = ::UserId.random()
 
-    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, OffsetDateTime.now(), OffsetDateTime.now(), assignee = assignee)
+    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), OffsetDateTime.now(), assignee = assignee)
 
     assertThrows<NotFoundException> { underTest.unassignRecall(recallId, otherAssignee) }
   }

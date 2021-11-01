@@ -37,7 +37,7 @@ class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEn
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
+            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(),
             recallLength = recallLength,
             lastReleaseDate = LocalDate.of(2020, 10, 1),
             bookingNumber = "B1234"
@@ -62,7 +62,7 @@ class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEn
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
+            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(),
             recallLength = recallLength,
             lastReleaseDate = LocalDate.of(2020, 10, 1),
             bookingNumber = "B1234"

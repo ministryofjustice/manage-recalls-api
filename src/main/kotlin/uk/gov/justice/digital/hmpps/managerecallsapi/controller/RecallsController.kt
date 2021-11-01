@@ -30,7 +30,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
@@ -43,7 +42,6 @@ import java.time.OffsetDateTime
 class RecallsController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val recallNotificationService: RecallNotificationService,
-  @Autowired private val documentService: DocumentService,
   @Autowired private val dossierService: DossierService,
   @Autowired private val letterToPrison: LetterToPrisonService,
   @Autowired private val userDetailsService: UserDetailsService,
@@ -124,6 +122,7 @@ class RecallsController(
   fun Recall.toResponse() = RecallResponse(
     recallId = this.recallId(),
     nomsNumber = this.nomsNumber,
+    createdByUserId = this.createdByUserId(),
     createdDateTime = this.createdDateTime,
     lastUpdatedDateTime = this.lastUpdatedDateTime,
     documents = documents.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) },
@@ -182,14 +181,15 @@ class RecallsController(
 
 fun BookRecallRequest.toRecall(): Recall {
   val now = OffsetDateTime.now()
-  return Recall(::RecallId.random(), this.nomsNumber, now, now)
+  return Recall(::RecallId.random(), this.nomsNumber, this.createdByUserId, now, now)
 }
 
-data class BookRecallRequest(val nomsNumber: NomsNumber)
+data class BookRecallRequest(val nomsNumber: NomsNumber, val createdByUserId: UserId)
 
 data class RecallResponse(
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
+  val createdByUserId: UserId,
   val createdDateTime: OffsetDateTime,
   val lastUpdatedDateTime: OffsetDateTime,
   val documents: List<ApiRecallDocument> = emptyList(),

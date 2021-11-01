@@ -43,12 +43,14 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   private lateinit var recallId: RecallId
   private lateinit var recallPath: String
+  private lateinit var createdByUserId: UserId
 
   @BeforeEach
   fun setupExistingRecall() {
     recallId = ::RecallId.random()
     recallPath = "/recalls/$recallId"
-    recallRepository.save(Recall(recallId, nomsNumber, now, now))
+    createdByUserId = ::UserId.random()
+    recallRepository.save(Recall(recallId, nomsNumber, createdByUserId, now, now))
     val instant = Instant.parse("2021-10-04T13:15:50.00Z")
     fixedClockTime = OffsetDateTime.ofInstant(instant, zone)
     every { fixedClock.instant() } returns instant
@@ -65,6 +67,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           lastReleasePrison = PrisonId("MWI"),
@@ -135,6 +138,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           recallLength = TWENTY_EIGHT_DAYS,
@@ -160,6 +164,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           bookingNumber = bookingNumber
@@ -179,6 +184,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           localPoliceForce = policeForce
@@ -204,6 +210,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           licenceConditionsBreached = "Breached",
@@ -230,6 +237,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           agreeWithRecall = AgreeWithRecall.YES,
@@ -253,6 +261,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
@@ -278,6 +287,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
@@ -303,6 +313,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
           additionalLicenceConditions = request.additionalLicenceConditions,

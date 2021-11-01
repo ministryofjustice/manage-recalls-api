@@ -17,6 +17,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
@@ -49,7 +51,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
       // PS - not stubbing the reasonsForRecall since we now decorate this in the flow
     )
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, ::UserId.random()))
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(
