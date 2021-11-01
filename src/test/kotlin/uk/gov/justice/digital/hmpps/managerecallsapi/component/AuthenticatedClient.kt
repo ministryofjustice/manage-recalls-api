@@ -118,8 +118,8 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun addUserDetails(addUserDetailsRequest: AddUserDetailsRequest) =
-    postRequest("/users", addUserDetailsRequest, UserDetailsResponse::class.java)
+  fun <T> addUserDetails(addUserDetailsRequest: AddUserDetailsRequest, responseClass: Class<T>, expectedStatus: HttpStatus = CREATED): T =
+    postRequest("/users", addUserDetailsRequest, responseClass, expectedStatus)
 
   fun getUserDetails(userId: UserId) =
     getRequest("/users/${userId.value}", UserDetailsResponse::class.java)
@@ -140,9 +140,11 @@ class AuthenticatedClient(
   private fun <T> postRequest(
     path: String,
     request: Any,
-    responseClass: Class<T>
+    responseClass: Class<T>,
+    responseStatus: HttpStatus = CREATED
   ): T =
     sendPostRequest(path, request)
+      .expectStatus().isEqualTo(responseStatus)
       .expectBody(responseClass)
       .returnResult()
       .responseBody!!
