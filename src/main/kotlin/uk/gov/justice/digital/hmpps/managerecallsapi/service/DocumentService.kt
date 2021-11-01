@@ -6,6 +6,7 @@ import dev.forkhandles.result4k.Success
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -129,17 +130,33 @@ class DocumentService(
       )
     }
   }
+
+  @Transactional
+  fun deleteDocument(
+    recallId: RecallId,
+    documentId: DocumentId
+  ) {
+    val recall = recallRepository.getByRecallId(recallId)
+    val document = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
+
+    if (recall.status() == null && document.category.uploaded) {
+      documentRepository.deleteByDocumentId(documentId)
+    } else {
+      throw DocumentDeleteException("Unable to delete document: Wrong status [${recall.status()}] and/or document category [${document.category}]")
+    }
+  }
 }
 
 data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
-data class RecallDocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
+data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
 data class RecallDocumentWithCategoryNotFoundException(
   val recallId: RecallId,
   val documentCategory: RecallDocumentCategory
 ) : NotFoundException()
 
-open class NotFoundException : Exception()
-open class VirusFoundException : Exception()
+open class NotFoundException : ManageRecallsException()
+class VirusFoundException : ManageRecallsException()
+class DocumentDeleteException(override val message: String?) : ManageRecallsException(message)
 
 data class VirusFoundEvent(
   val recallId: RecallId,

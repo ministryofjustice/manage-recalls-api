@@ -125,11 +125,13 @@ class RecallsController(
     createdByUserId = this.createdByUserId(),
     createdDateTime = this.createdDateTime,
     lastUpdatedDateTime = this.lastUpdatedDateTime,
+    status = this.status(),
     documents = documents.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) },
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
     recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
+    recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
     localPoliceForce = this.localPoliceForce,
     contraband = this.contraband,
     contrabandDetail = this.contrabandDetail,
@@ -192,6 +194,7 @@ data class RecallResponse(
   val createdByUserId: UserId,
   val createdDateTime: OffsetDateTime,
   val lastUpdatedDateTime: OffsetDateTime,
+  val status: Status? = null,
   val documents: List<ApiRecallDocument> = emptyList(),
   val recallLength: RecallLength? = null,
   val lastReleasePrison: PrisonId? = null,
@@ -236,30 +239,9 @@ data class RecallResponse(
   val dossierCreatedByUserId: UserId? = null,
   val dossierTargetDate: LocalDate? = null,
   val assignee: UserId? = null,
-  val assigneeUserName: String? = null
-) {
-  val recallAssessmentDueDateTime: OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
-  val status: Status? = calculateStatus()
-
-  private fun calculateStatus(): Status? =
-    if (dossierCreatedByUserId != null) {
-      Status.DOSSIER_ISSUED
-    } else if (recallNotificationEmailSentDateTime != null) {
-      if (assignee != null) {
-        Status.DOSSIER_IN_PROGRESS
-      } else {
-        Status.RECALL_NOTIFICATION_ISSUED
-      }
-    } else if (bookedByUserId != null) {
-      if (assignee != null) {
-        Status.IN_ASSESSMENT
-      } else {
-        Status.BOOKED_ON
-      }
-    } else {
-      null
-    }
-}
+  val assigneeUserName: String? = null,
+  val recallAssessmentDueDateTime: OffsetDateTime? = null
+)
 
 class Api {
   data class SentenceLength(val years: Int, val months: Int, val days: Int)

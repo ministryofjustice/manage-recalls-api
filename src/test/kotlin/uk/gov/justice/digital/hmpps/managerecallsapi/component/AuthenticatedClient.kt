@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -74,10 +75,10 @@ class AuthenticatedClient(
   fun getLetterToPrison(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/letter-to-prison", Pdf::class.java)
 
-  fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
+  fun uploadDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
     postRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
 
-  fun uploadRecallDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest, expectedStatus: HttpStatus): WebTestClient.ResponseSpec {
+  fun uploadDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest, expectedStatus: HttpStatus): WebTestClient.ResponseSpec {
     return sendPostRequest("/recalls/$recallId/documents", addDocumentRequest, expectedStatus)
   }
 
@@ -90,6 +91,9 @@ class AuthenticatedClient(
   fun getRecallDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus) {
     sendGetRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
   }
+
+  fun deleteDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus = NO_CONTENT) =
+    deleteRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
 
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
     patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)

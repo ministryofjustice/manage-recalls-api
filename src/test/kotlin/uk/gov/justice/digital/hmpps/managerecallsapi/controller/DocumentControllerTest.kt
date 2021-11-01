@@ -5,8 +5,11 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Success
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
@@ -80,5 +83,16 @@ class DocumentControllerTest {
       fileName
     )
     assertThat(response.body, equalTo(expected))
+  }
+
+  @Test
+  fun `delete a document`() {
+    val documentId = ::DocumentId.random()
+
+    every { documentService.deleteDocument(recallId, documentId) } just Runs
+
+    underTest.deleteDocument(recallId, documentId)
+
+    verify { documentService.deleteDocument(recallId, documentId) }
   }
 }

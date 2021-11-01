@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentNotFoundException
 import java.util.UUID
 
 @Repository("jpaDocumentRepository")
@@ -33,6 +33,7 @@ interface JpaDocumentRepository : JpaRepository<Document, UUID> {
 interface ExtendedDocumentRepository : JpaDocumentRepository {
   fun findByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): Document?
   fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): Document
+  fun deleteByDocumentId(documentId: DocumentId)
 }
 
 @Component
@@ -44,5 +45,7 @@ class DocumentRepository(
 
   override fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId) =
     findByRecallIdAndDocumentId(recallId, documentId)
-      ?: throw RecallDocumentNotFoundException(recallId, documentId)
+      ?: throw DocumentNotFoundException(recallId, documentId)
+
+  override fun deleteByDocumentId(documentId: DocumentId) = deleteById(documentId.value)
 }

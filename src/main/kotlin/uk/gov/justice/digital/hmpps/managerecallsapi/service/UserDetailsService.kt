@@ -4,6 +4,7 @@ import net.sf.jmimemagic.Magic
 import org.postgresql.util.Base64
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -29,4 +30,4 @@ class UserDetailsService(
     return fn()
   }
 }
-class UnsupportedFileTypeException(val fileType: String) : Exception()
+class UnsupportedFileTypeException(override val message: String?) : ManageRecallsException(message)
