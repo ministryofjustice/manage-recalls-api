@@ -83,11 +83,11 @@ management:
 prisonerSearch:
   endpoint:
     url: http://localhost:9092
+  timeout: 2
 
 prisonRegister:
   endpoint:
     url: http://localhost:9094
-  timeout: 2
 
 courtRegister:
   endpoint:
