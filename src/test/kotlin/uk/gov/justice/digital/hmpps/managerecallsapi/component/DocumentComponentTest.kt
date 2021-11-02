@@ -56,7 +56,7 @@ class DocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `upload a document with a 'versioned' category that already exists overwrites the existing document`() {
+  fun `upload a document with a 'versioned' category that already exists overwrites the existing document and changes filename`() {
     expectNoVirusesWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
