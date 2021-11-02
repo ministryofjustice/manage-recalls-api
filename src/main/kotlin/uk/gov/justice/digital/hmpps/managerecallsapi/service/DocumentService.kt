@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -76,17 +75,17 @@ class DocumentService(
     return documentId
   }
 
-  private fun saveDocument(recallDocument: RecallDocument): RecallDocument {
-    return saveDocument(recallDocument.documentId, recallDocument.recallId, recallDocument.category, recallDocument.fileName)
+  private fun saveDocument(document: Document): Document {
+    return saveDocument(document.id(), document.recallId(), document.category, document.fileName)
   }
 
-  private fun saveDocument(documentId: DocumentId, recallId: RecallId, category: RecallDocumentCategory, fileName: String): RecallDocument {
+  private fun saveDocument(documentId: DocumentId, recallId: RecallId, category: RecallDocumentCategory, fileName: String): Document {
     return documentRepository.save(
       Document(documentId, recallId, category, fileName, if (category.versioned) 1 else null, OffsetDateTime.now(clock))
-    ).toRecallDocument()
+    )
   }
 
-  fun getDocument(recallId: RecallId, documentId: DocumentId): Pair<RecallDocument, ByteArray> =
+  fun getDocument(recallId: RecallId, documentId: DocumentId): Pair<Document, ByteArray> =
     forExistingRecall(recallId) {
       Pair(
         getRecallDocumentById(recallId, documentId),
@@ -97,8 +96,8 @@ class DocumentService(
   private fun getRecallDocumentById(
     recallId: RecallId,
     documentId: DocumentId
-  ): RecallDocument = (
-    documentRepository.getByRecallIdAndDocumentId(recallId, documentId).toRecallDocument()
+  ): Document = (
+    documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
     )
 
   fun getVersionedDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
@@ -122,7 +121,7 @@ class DocumentService(
     recallId: RecallId,
     documentId: DocumentId,
     newCategory: RecallDocumentCategory
-  ): RecallDocument {
+  ): Document {
     return forExistingRecall(recallId) {
       saveDocument(
         getRecallDocumentById(recallId, documentId)

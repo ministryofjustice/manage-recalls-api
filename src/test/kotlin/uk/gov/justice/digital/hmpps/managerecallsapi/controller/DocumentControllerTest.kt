@@ -12,7 +12,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -61,7 +61,7 @@ class DocumentControllerTest {
   fun `gets a document`() {
     val recallId1 = ::RecallId.random()
     val documentId = ::DocumentId.random()
-    val aRecallDocument = RecallDocument(
+    val aRecallDocument = Document(
       documentId,
       recallId1,
       PART_A_RECALL_REPORT,

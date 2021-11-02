@@ -38,7 +38,9 @@ dependencies {
   implementation("com.github.librepdf:openpdf-fonts-extra:1.3.26")
   implementation("xyz.capybara:clamav-client:2.0.2")
   implementation("dev.forkhandles:result4k:1.11.2.1")
-  implementation("net.sf.jmimemagic:jmimemagic:0.1.5")
+  implementation("net.sf.jmimemagic:jmimemagic:0.1.5") {
+    exclude("log4j", "log4j")
+  }
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 

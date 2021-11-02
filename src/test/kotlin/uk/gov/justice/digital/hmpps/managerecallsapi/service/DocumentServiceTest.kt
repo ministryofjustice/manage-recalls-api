@@ -74,7 +74,6 @@ internal class DocumentServiceTest {
     every { virusScanner.scan(documentBytes) } returns NoVirusFound
     every { documentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns null
     every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } just runs
-    every { document.toRecallDocument() } returns mockk()
     every { documentRepository.save(capture(savedDocumentSlot)) } returns document
 
     val result = underTest.scanAndStoreDocument(recallId, documentBytes, documentCategory, fileName)
@@ -165,7 +164,7 @@ internal class DocumentServiceTest {
 
     val (actualDocument, actualBytes) = underTest.getDocument(recallId, aDocumentId)
 
-    assertThat(actualDocument, equalTo(aDocument.toRecallDocument()))
+    assertThat(actualDocument, equalTo(aDocument))
     assertThat(actualBytes, equalTo(fileBytes))
   }
 
@@ -309,7 +308,7 @@ internal class DocumentServiceTest {
 
     val result = underTest.updateDocumentCategory(recallId, documentId, updatedCategory)
 
-    assertThat(result, equalTo(updatedVersionDocument.toRecallDocument()))
+    assertThat(result, equalTo(updatedVersionDocument))
 
     verify { documentRepository.save(updatedVersionDocument) }
   }
@@ -329,7 +328,7 @@ internal class DocumentServiceTest {
 
     val result = underTest.updateDocumentCategory(recallId, documentId, updatedCategory)
 
-    assertThat(result, equalTo(updatedDocument.toRecallDocument()))
+    assertThat(result, equalTo(updatedDocument))
 
     verify { documentRepository.save(updatedDocument) }
   }
@@ -349,7 +348,7 @@ internal class DocumentServiceTest {
 
     val result = underTest.updateDocumentCategory(recallId, documentId, updatedCategory)
 
-    assertThat(result, equalTo(updatedDocument.toRecallDocument()))
+    assertThat(result, equalTo(updatedDocument))
 
     verify(exactly = 0) { documentRepository.delete(originalDocument) }
     verify { documentRepository.save(updatedDocument) }
@@ -370,7 +369,7 @@ internal class DocumentServiceTest {
 
     val result = underTest.updateDocumentCategory(recallId, documentId, updatedCategory)
 
-    assertThat(result, equalTo(updatedDocument.toRecallDocument()))
+    assertThat(result, equalTo(updatedDocument))
 
     verify(exactly = 0) { documentRepository.delete(originalDocument) }
     verify { documentRepository.save(updatedDocument) }
