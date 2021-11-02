@@ -111,7 +111,7 @@ internal class DocumentServiceTest {
   }
 
   @Test
-  fun `add of a versioned category document that is already present for the recall updates the existing document in both S3 and the repository without changing the version`() {
+  fun `add a versioned category document that is already present for the recall updates the existing document in both S3 and the repository without changing the version`() {
     val existingDocumentId = ::DocumentId.random()
     val existingDocument = Document(
       existingDocumentId,
@@ -125,17 +125,10 @@ internal class DocumentServiceTest {
       documents = setOf(existingDocument)
     )
     val newFileName = randomString()
-    val updatedDocument = Document(
-      existingDocumentId,
-      recallId,
-      documentCategory,
-      newFileName,
-      1,
-      OffsetDateTime.now(fixedClock)
-    )
+    val updatedDocument = existingDocument.copy(fileName = newFileName)
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
-    every { documentRepository.findByRecallIdAndCategory(recallId.value, any()) } returns existingDocument
+    every { documentRepository.findByRecallIdAndCategory(recallId.value, documentCategory) } returns existingDocument
     every { s3Service.uploadFile(existingDocumentId, documentBytes) } just runs
     every { documentRepository.save(updatedDocument) } returns updatedDocument
 
@@ -298,8 +291,7 @@ internal class DocumentServiceTest {
     val now = OffsetDateTime.now()
     val document = Document(documentId, recallId, PART_A_RECALL_REPORT, "parta.pdf", 1, now)
     val updatedCategory = LICENCE
-    val updatedVersionDocument =
-      document.copy(category = updatedCategory, createdDateTime = OffsetDateTime.now(fixedClock))
+    val updatedVersionDocument = document.copy(category = updatedCategory)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
@@ -319,7 +311,7 @@ internal class DocumentServiceTest {
     val now = OffsetDateTime.now()
     val document = Document(documentId, recallId, OTHER, "my-document.pdf", null, now)
     val updatedCategory = UNCATEGORISED
-    val updatedDocument = document.copy(category = updatedCategory, createdDateTime = OffsetDateTime.now(fixedClock))
+    val updatedDocument = document.copy(category = updatedCategory)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
@@ -339,7 +331,7 @@ internal class DocumentServiceTest {
     val now = OffsetDateTime.now()
     val originalDocument = Document(documentId, recallId, PART_A_RECALL_REPORT, "part-a.pdf", 1, now)
     val updatedCategory = UNCATEGORISED
-    val updatedDocument = Document(documentId, recallId, updatedCategory, "part-a.pdf", null, OffsetDateTime.now(fixedClock))
+    val updatedDocument = originalDocument.copy(category = updatedCategory, version = null)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(originalDocument))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
@@ -360,7 +352,7 @@ internal class DocumentServiceTest {
     val now = OffsetDateTime.now()
     val originalDocument = Document(documentId, recallId, UNCATEGORISED, "license.pdf", null, now)
     val updatedCategory = LICENCE
-    val updatedDocument = Document(documentId, recallId, updatedCategory, "license.pdf", 1, OffsetDateTime.now(fixedClock))
+    val updatedDocument = originalDocument.copy(category = updatedCategory, version = 1)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(originalDocument))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDoc

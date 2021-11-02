@@ -59,30 +59,21 @@ class DocumentService(
 
   private fun uploadToS3AndSaveDocument(
     recallId: RecallId,
-    documentCategory: RecallDocumentCategory,
+    category: RecallDocumentCategory,
     documentBytes: ByteArray,
     fileName: String
   ): DocumentId {
-    val documentId = if (documentCategory.versioned) {
-      documentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id() ?: ::DocumentId.random()
+    val documentId = if (category.versioned) {
+      documentRepository.findByRecallIdAndCategory(recallId.value, category)?.id()
+        ?: ::DocumentId.random()
     } else {
       ::DocumentId.random()
     }
 
     s3Service.uploadFile(documentId, documentBytes)
     // TODO: [KF] delete the document from S3 if saving fails?
-    saveDocument(documentId, recallId, documentCategory, fileName)
+    documentRepository.save(Document(documentId, recallId, category, fileName, if (category.versioned) 1 else null, OffsetDateTime.now(clock)))
     return documentId
-  }
-
-  private fun saveDocument(document: Document): Document {
-    return saveDocument(document.id(), document.recallId(), document.category, document.fileName)
-  }
-
-  private fun saveDocument(documentId: DocumentId, recallId: RecallId, category: RecallDocumentCategory, fileName: String): Document {
-    return documentRepository.save(
-      Document(documentId, recallId, category, fileName, if (category.versioned) 1 else null, OffsetDateTime.now(clock))
-    )
   }
 
   fun getDocument(recallId: RecallId, documentId: DocumentId): Pair<Document, ByteArray> =
@@ -104,7 +95,10 @@ class DocumentService(
     getVersionedDocumentContentWithCategoryIfExists(recallId, documentCategory)
       ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
 
-  fun getVersionedDocumentContentWithCategoryIfExists(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray? =
+  fun getVersionedDocumentContentWithCategoryIfExists(
+    recallId: RecallId,
+    documentCategory: RecallDocumentCategory
+  ): ByteArray? =
     forExistingRecall(recallId) {
       documentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
         s3Service.downloadFile(it.id())
@@ -123,7 +117,7 @@ class DocumentService(
     newCategory: RecallDocumentCategory
   ): Document {
     return forExistingRecall(recallId) {
-      saveDocument(
+      documentRepository.save(
         getRecallDocumentById(recallId, documentId)
           .copy(category = newCategory, version = if (newCategory.versioned) 1 else null)
       )
