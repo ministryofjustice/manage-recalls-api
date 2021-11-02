@@ -76,7 +76,7 @@ class DocumentController(
     @RequestBody updateDocumentRequest: UpdateDocumentRequest
   ): ResponseEntity<UpdateDocumentResponse> {
     val document = documentService.updateDocumentCategory(recallId, documentId, updateDocumentRequest.category)
-    return ResponseEntity.ok(UpdateDocumentResponse(document.documentId, document.recallId, document.category, document.fileName))
+    return ResponseEntity.ok(UpdateDocumentResponse(document.id(), document.recallId(), document.category, document.fileName))
   }
 
   @DeleteMapping("/recalls/{recallId}/documents/{documentId}")

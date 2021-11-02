@@ -21,7 +21,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
@@ -213,7 +213,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         documentBytes
       )
     every { documentService.updateDocumentCategory(any(), any(), any()) } returns
-      RecallDocument(::DocumentId.random(), ::RecallId.random(), LICENCE, "filename.txt", 1, OffsetDateTime.now())
+      Document(::DocumentId.random(), ::RecallId.random(), LICENCE, "filename.txt", 1, OffsetDateTime.now())
   }
 
   @State("a letter can be downloaded")
