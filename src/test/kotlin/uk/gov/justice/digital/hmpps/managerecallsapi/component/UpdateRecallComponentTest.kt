@@ -71,6 +71,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           lastReleasePrison = PrisonId("MWI"),
           currentPrison = PrisonId("BMI")
         )
@@ -142,6 +143,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           recallLength = TWENTY_EIGHT_DAYS,
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
@@ -168,6 +170,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           bookingNumber = bookingNumber
         )
       )
@@ -188,6 +191,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           localPoliceForce = policeForce
         )
       )
@@ -214,6 +218,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           licenceConditionsBreached = "Breached",
           reasonsForRecall = listOf(BREACH_EXCLUSION_ZONE),
           reasonsForRecallOtherDetail = "Other reasons"
@@ -241,6 +246,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           agreeWithRecall = AgreeWithRecall.YES,
           agreeWithRecallDetail = "Other reasons"
         )
@@ -265,7 +271,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
-          status = Status.RECALL_NOTIFICATION_ISSUED,
+          Status.RECALL_NOTIFICATION_ISSUED,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = updateRecallRequest.assessedByUserId,
           dossierTargetDate = LocalDate.parse("2021-12-29")
@@ -319,6 +325,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           additionalLicenceConditions = request.additionalLicenceConditions,
           additionalLicenceConditionsDetail = request.additionalLicenceConditionsDetail,
           differentNomsNumber = request.differentNomsNumber,

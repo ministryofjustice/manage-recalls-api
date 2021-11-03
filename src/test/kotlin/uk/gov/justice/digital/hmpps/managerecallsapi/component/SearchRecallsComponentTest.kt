@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -31,8 +32,8 @@ class SearchRecallsComponentTest : ComponentTestBase() {
     assertThat(
       response, List<RecallResponse>::equals,
       listOf(
-        RecallResponse(recall2.recallId(), nomsNumberToSearch, createdByUserId, now, now),
-        RecallResponse(recall3.recallId(), nomsNumberToSearch, createdByUserId, now, now)
+        RecallResponse(recall2.recallId(), nomsNumberToSearch, createdByUserId, now, now, Status.BEING_BOOKED_ON),
+        RecallResponse(recall3.recallId(), nomsNumberToSearch, createdByUserId, now, now, Status.BEING_BOOKED_ON)
       )
     )
   }

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -132,7 +133,7 @@ class DocumentService(
     val recall = recallRepository.getByRecallId(recallId)
     val document = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
 
-    if (recall.status() == null && document.category.uploaded) {
+    if (recall.status() == Status.BEING_BOOKED_ON && document.category.uploaded) {
       documentRepository.deleteByDocumentId(documentId)
     } else {
       throw DocumentDeleteException("Unable to delete document: Wrong status [${recall.status()}] and/or document category [${document.category}]")

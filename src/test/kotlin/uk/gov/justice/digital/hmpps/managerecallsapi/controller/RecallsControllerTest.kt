@@ -77,7 +77,7 @@ class RecallsControllerTest {
 
     val results = underTest.bookRecall(recallRequest)
 
-    val expected = RecallResponse(recall.recallId(), nomsNumber, createdByUserId, now, now)
+    val expected = RecallResponse(recall.recallId(), nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)
     assertThat(results.body, equalTo(expected))
   }
 
@@ -87,7 +87,7 @@ class RecallsControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, createdByUserId, now, now))))
+    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON))))
   }
 
   @Test
@@ -118,6 +118,7 @@ class RecallsControllerTest {
       createdByUserId,
       now,
       now,
+      Status.BEING_BOOKED_ON,
       documents = listOf(ApiRecallDocument(document.id(), document.category, fileName)),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
@@ -206,6 +207,7 @@ class RecallsControllerTest {
           createdByUserId,
           now,
           now,
+          Status.BEING_BOOKED_ON,
           assignee = assignee,
           assigneeUserName = "Bertie Badger"
         )
@@ -232,6 +234,7 @@ class RecallsControllerTest {
           createdByUserId,
           now,
           now,
+          Status.BEING_BOOKED_ON,
           assignee = assignee,
           assigneeUserName = null
         )
@@ -248,7 +251,7 @@ class RecallsControllerTest {
 
     val result = underTest.unassignRecall(recallId, assignee)
 
-    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now)))
+    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)))
   }
 
   @Test
@@ -260,7 +263,7 @@ class RecallsControllerTest {
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
-    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber, createdByUserId, now, now))))
+    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON))))
   }
 
   @Test

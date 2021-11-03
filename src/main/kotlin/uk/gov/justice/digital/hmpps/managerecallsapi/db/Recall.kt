@@ -187,7 +187,7 @@ data class Recall(
 
   fun recallAssessmentDueDateTime(): OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
 
-  fun status(): Status? =
+  fun status(): Status =
     if (dossierCreatedByUserId != null) {
       Status.DOSSIER_ISSUED
     } else if (recallNotificationEmailSentDateTime != null) {
@@ -203,7 +203,7 @@ data class Recall(
         Status.BOOKED_ON
       }
     } else {
-      null
+      Status.BEING_BOOKED_ON
     }
 }
 

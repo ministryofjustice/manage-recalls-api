@@ -231,6 +231,6 @@ class DocumentComponentTest : ComponentTestBase() {
       .returnResult()
       .responseBody!!
 
-    assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document: Wrong status [null] and/or document category [RECALL_NOTIFICATION]")))
+    assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document: Wrong status [BEING_BOOKED_ON] and/or document category [RECALL_NOTIFICATION]")))
   }
 }
