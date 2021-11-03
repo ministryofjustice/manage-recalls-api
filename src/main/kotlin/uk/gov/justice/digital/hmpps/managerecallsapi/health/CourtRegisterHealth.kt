@@ -9,4 +9,4 @@ class CourtRegisterHealth(
   webClient: WebClient,
   @Value("courtRegister") componentName: String,
   @Value("\${courtRegister.endpoint.url}") prisonRegisterEndpointUrl: String
-) : PingHealthCheck(webClient, componentName,"$prisonRegisterEndpointUrl/health/ping")
+) : PingHealthCheck(webClient, componentName, "$prisonRegisterEndpointUrl/health/ping")

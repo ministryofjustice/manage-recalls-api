@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import java.time.Duration
 
-
 abstract class PingHealthCheck(
   private val webClient: WebClient,
   private val componentName: String,
@@ -40,7 +39,7 @@ abstract class PingHealthCheck(
   }
 
   private fun recordHealthMetric(result: Health?) {
-    var gaugeVal= 0
+    var gaugeVal = 0
 
     if (result?.status == Status.UP) {
       gaugeVal = 1
