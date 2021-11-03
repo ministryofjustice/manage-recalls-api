@@ -17,8 +17,8 @@ configurations {
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-actuator")
-  implementation("io.micrometer:micrometer-registry-prometheus")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.5.5")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.7.5")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-security")
