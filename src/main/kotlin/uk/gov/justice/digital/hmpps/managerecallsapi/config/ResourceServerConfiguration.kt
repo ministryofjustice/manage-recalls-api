@@ -29,6 +29,7 @@ class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
           .antMatchers(
             "/health/**",
             "/reference-data/**",
+            "/prometheus",
             "/info",
             "/v2/**",
             "/v3/**",
