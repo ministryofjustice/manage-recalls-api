@@ -17,8 +17,8 @@ class RecallTest {
   )
 
   @Test
-  fun `Recall without recallNotificationEmailSentDateTime or bookedByUserId set returns null status`() {
-    assertThat(recall.status(), equalTo(null))
+  fun `Recall without recallNotificationEmailSentDateTime or bookedByUserId set returns BEING_BOOKED_ON status`() {
+    assertThat(recall.status(), equalTo(Status.BEING_BOOKED_ON))
   }
 
   @Test

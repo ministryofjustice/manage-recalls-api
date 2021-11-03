@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -71,6 +72,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           OffsetDateTime.now(fixedClock),
+          Status.BEING_BOOKED_ON,
           assignee = assignee,
           assigneeUserName = "Bertie Badger"
         )
@@ -91,7 +93,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val response = authenticatedClient.unassignRecall(recallId, assignee)
 
     assertThat(
-      response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, OffsetDateTime.now(fixedClock)))
+      response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, OffsetDateTime.now(fixedClock), Status.BEING_BOOKED_ON))
     )
   }
 

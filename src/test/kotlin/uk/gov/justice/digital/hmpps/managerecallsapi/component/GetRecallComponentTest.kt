@@ -37,7 +37,7 @@ class GetRecallComponentTest : ComponentTestBase() {
 
     val response = authenticatedClient.getRecall(recallId)
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now)))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)))
   }
 
   @Test

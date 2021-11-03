@@ -194,7 +194,7 @@ data class RecallResponse(
   val createdByUserId: UserId,
   val createdDateTime: OffsetDateTime,
   val lastUpdatedDateTime: OffsetDateTime,
-  val status: Status? = null,
+  val status: Status,
   val documents: List<ApiRecallDocument> = emptyList(),
   val recallLength: RecallLength? = null,
   val lastReleasePrison: PrisonId? = null,
@@ -261,6 +261,7 @@ data class Pdf(val content: String) {
 
 data class RecallSearchRequest(val nomsNumber: NomsNumber)
 enum class Status {
+  BEING_BOOKED_ON,
   BOOKED_ON,
   IN_ASSESSMENT,
   RECALL_NOTIFICATION_ISSUED,
