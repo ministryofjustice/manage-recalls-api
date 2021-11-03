@@ -79,6 +79,10 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
 
 prisonerSearch:
   endpoint:
