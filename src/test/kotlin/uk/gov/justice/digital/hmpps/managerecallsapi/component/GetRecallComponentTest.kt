@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import java.time.Instant
@@ -29,12 +30,14 @@ class GetRecallComponentTest : ComponentTestBase() {
   @Test
   fun `get a recall that has just been booked`() {
     val recallId = ::RecallId.random()
+    val createdByUserId = ::UserId.random()
+
     val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), ZoneId.of("UTC"))
-    recallRepository.save(Recall(recallId, nomsNumber, now, now))
+    recallRepository.save(Recall(recallId, nomsNumber, createdByUserId, now, now))
 
     val response = authenticatedClient.getRecall(recallId)
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, now, now)))
+    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)))
   }
 
   @Test
@@ -43,7 +46,7 @@ class GetRecallComponentTest : ComponentTestBase() {
     val fullyPopulatedRecall = fullyPopulatedRecall(recallId)
     userDetailsRepository.save(
       UserDetails(
-        fullyPopulatedRecall.assignee()!!,
+        fullyPopulatedRecall.assignee!!,
         FirstName("Bertie"),
         LastName("Badger"),
         "",

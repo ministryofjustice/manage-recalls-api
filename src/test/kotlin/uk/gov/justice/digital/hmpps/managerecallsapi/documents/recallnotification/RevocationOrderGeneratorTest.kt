@@ -48,7 +48,7 @@ class RevocationOrderGeneratorTest {
         has("logoFileName", { it.variable("logoFileName") }, equalTo(RevocationOrderLogo.fileName)),
         has("firstName", { it.variable("firstName") }, equalTo("Bertie")),
         has("lastName", { it.variable("lastName") }, equalTo("Badger")),
-        has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("1995-10-03")),
+        has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("03 Oct 1995")),
         has("bookingNumber", { it.variable("bookingNumber") }, equalTo("bookNumber")),
         has("croNumber", { it.variable("croNumber") }, equalTo("croNumber")),
         has("licenseRevocationDate", { it.variable("licenseRevocationDate") }, equalTo("29 Aug 2017")),

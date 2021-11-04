@@ -32,7 +32,7 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), OffsetDateTime.now(),
+            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(),
             recallLength = recallLength,
             bookingNumber = "B1234",
           ),

@@ -67,7 +67,7 @@ management:
     web:
       base-path: /
       exposure:
-        include: 'info, health'
+        include: 'info, health, metrics, prometheus'
   endpoint:
     health:
       cache:
@@ -79,15 +79,19 @@ management:
     info:
       cache:
         time-to-live: 2000ms
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
 
 prisonerSearch:
   endpoint:
     url: http://localhost:9092
+  timeout: 2
 
 prisonRegister:
   endpoint:
     url: http://localhost:9094
-  timeout: 2
 
 courtRegister:
   endpoint:

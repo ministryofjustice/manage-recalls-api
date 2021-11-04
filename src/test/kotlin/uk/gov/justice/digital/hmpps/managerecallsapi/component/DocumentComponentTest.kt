@@ -14,18 +14,19 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRe
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
 class DocumentComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
-  private val bookRecallRequest = BookRecallRequest(nomsNumber)
+  private val bookRecallRequest = BookRecallRequest(nomsNumber, ::UserId.random())
   private val versionedDocumentCategory = PART_A_RECALL_REPORT
-  private val unVersionedDocumentCategory = UNCATEGORISED
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = "fileName"
@@ -37,7 +38,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val response = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest)
+    val response = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest)
 
     assertThat(response.documentId, present())
   }
@@ -48,22 +49,22 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val result = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest, BAD_REQUEST)
+    val result = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest, BAD_REQUEST)
       .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
 
     assertThat(result, equalTo(ErrorResponse(BAD_REQUEST, "VirusFoundException")))
   }
 
   @Test
-  fun `upload a document with a 'versioned' category that already exists overwrites the existing document`() {
+  fun `upload a document with a 'versioned' category that already exists overwrites the existing document and changes filename`() {
     expectNoVirusesWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val originalDocumentId = authenticatedClient.uploadRecallDocument(recall.recallId, addVersionedDocumentRequest).documentId
+    val originalDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
     val newFilename = "newFilename"
     val addDocumentRequest = AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, newFilename)
-    authenticatedClient.uploadRecallDocument(recall.recallId, addDocumentRequest)
+    authenticatedClient.uploadDocument(recall.recallId, addDocumentRequest)
 
     val recallDocument = authenticatedClient.getRecallDocument(recall.recallId, originalDocumentId)
     assertThat(
@@ -80,8 +81,8 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val otherDocumentRequest = AddDocumentRequest(OTHER, base64EncodedDocumentContents, fileName)
 
-    val firstDocumentId = authenticatedClient.uploadRecallDocument(recall.recallId, otherDocumentRequest).documentId
-    val secondDocumentId = authenticatedClient.uploadRecallDocument(recall.recallId, otherDocumentRequest).documentId
+    val firstDocumentId = authenticatedClient.uploadDocument(recall.recallId, otherDocumentRequest).documentId
+    val secondDocumentId = authenticatedClient.uploadDocument(recall.recallId, otherDocumentRequest).documentId
 
     val recallResponse = authenticatedClient.getRecall(recall.recallId)
 
@@ -91,7 +92,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
   @Test
   fun `add a document returns 404 if recall does not exist`() {
-    authenticatedClient.uploadRecallDocument(::RecallId.random(), addVersionedDocumentRequest, expectedStatus = NOT_FOUND)
+    authenticatedClient.uploadDocument(::RecallId.random(), addVersionedDocumentRequest, expectedStatus = NOT_FOUND)
   }
 
   @Test
@@ -99,7 +100,7 @@ class DocumentComponentTest : ComponentTestBase() {
     expectNoVirusesWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val document = authenticatedClient.uploadRecallDocument(
+    val document = authenticatedClient.uploadDocument(
       recall.recallId,
       AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName)
     )
@@ -134,7 +135,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val updatedCategory = PART_A_RECALL_REPORT
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val document = authenticatedClient.uploadRecallDocument(
+    val document = authenticatedClient.uploadDocument(
       recall.recallId,
       AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName)
     )
@@ -171,7 +172,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val updatedCategory = UNCATEGORISED
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val document = authenticatedClient.uploadRecallDocument(
+    val document = authenticatedClient.uploadDocument(
       recall.recallId,
       AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
     )
@@ -200,5 +201,36 @@ class DocumentComponentTest : ComponentTestBase() {
         GetDocumentResponse(document.documentId, updatedCategory, base64EncodedDocumentContents, fileName)
       )
     )
+  }
+
+  @Test
+  fun `can delete uploaded document for Recall being booked`() {
+    expectNoVirusesWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val document = authenticatedClient.uploadDocument(
+      recall.recallId,
+      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
+    )
+
+    authenticatedClient.deleteDocument(recall.recallId, document.documentId)
+  }
+
+  @Test
+  fun `can't delete generated document for Recall being booked`() {
+    expectNoVirusesWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val document = authenticatedClient.uploadDocument(
+      recall.recallId,
+      AddDocumentRequest(RECALL_NOTIFICATION, base64EncodedDocumentContents, fileName) // This wouldn't be uploaded, but works for now.
+    )
+
+    val response = authenticatedClient.deleteDocument(recall.recallId, document.documentId, BAD_REQUEST)
+      .expectBody(ErrorResponse::class.java)
+      .returnResult()
+      .responseBody!!
+
+    assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document: Wrong status [BEING_BOOKED_ON] and/or document category [RECALL_NOTIFICATION]")))
   }
 }

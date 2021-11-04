@@ -28,7 +28,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
@@ -39,7 +38,6 @@ import java.util.UUID
 class RecallsControllerTest {
   private val recallRepository = mockk<RecallRepository>()
   private val recallNotificationService = mockk<RecallNotificationService>()
-  private val documentService = mockk<DocumentService>()
   private val dossierService = mockk<DossierService>()
   private val letterToPrisonService = mockk<LetterToPrisonService>()
   private val userDetailsService = mockk<UserDetailsService>()
@@ -51,7 +49,6 @@ class RecallsControllerTest {
     RecallsController(
       recallRepository,
       recallNotificationService,
-      documentService,
       dossierService,
       letterToPrisonService,
       userDetailsService,
@@ -62,9 +59,15 @@ class RecallsControllerTest {
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
-  private val recallRequest = BookRecallRequest(nomsNumber)
+  private val createdByUserId = ::UserId.random()
+  private val recallRequest = BookRecallRequest(nomsNumber, createdByUserId)
   private val fileName = "fileName"
   private val now = OffsetDateTime.now()
+
+  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
+
+  private val updateRecallRequest =
+    UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
 
   @Test
   fun `book recall returns request with id`() {
@@ -74,19 +77,17 @@ class RecallsControllerTest {
 
     val results = underTest.bookRecall(recallRequest)
 
-    val expected = RecallResponse(recall.recallId(), nomsNumber, now, now)
+    val expected = RecallResponse(recall.recallId(), nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)
     assertThat(results.body, equalTo(expected))
   }
 
   @Test
   fun `gets all recalls`() {
-    val recall = Recall(recallId, nomsNumber, now, now)
-
     every { recallRepository.findAll() } returns listOf(recall)
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, now, now))))
+    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON))))
   }
 
   @Test
@@ -101,11 +102,7 @@ class RecallsControllerTest {
     )
     val recallEmailReceivedDateTime = now
     val lastReleaseDate = LocalDate.now()
-    val recall = Recall(
-      recallId,
-      nomsNumber,
-      now,
-      now,
+    val recall = recall.copy(
       documents = setOf(document),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
@@ -118,12 +115,15 @@ class RecallsControllerTest {
     val expected = RecallResponse(
       recallId,
       nomsNumber,
+      createdByUserId,
       now,
       now,
+      Status.BEING_BOOKED_ON,
       documents = listOf(ApiRecallDocument(document.id(), document.category, fileName)),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
+      recallAssessmentDueDateTime = recallEmailReceivedDateTime.plusHours(24)
     )
     assertThat(result, equalTo(expected))
   }
@@ -188,7 +188,7 @@ class RecallsControllerTest {
   @Test
   fun `set assignee for recall`() {
     val assignee = ::UserId.random()
-    val assignedRecall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
+    val assignedRecall = recall.copy(assignee = assignee.value)
 
     every { recallService.assignRecall(recallId, assignee) } returns assignedRecall
     every { userDetailsService.find(assignee) } returns UserDetails(
@@ -204,8 +204,10 @@ class RecallsControllerTest {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           now,
+          Status.BEING_BOOKED_ON,
           assignee = assignee,
           assigneeUserName = "Bertie Badger"
         )
@@ -216,7 +218,7 @@ class RecallsControllerTest {
   @Test
   fun `set assignee for recall without user details`() {
     val assignee = ::UserId.random()
-    val assignedRecall = Recall(recallId, nomsNumber, now, now, assignee = assignee)
+    val assignedRecall = recall.copy(assignee = assignee.value)
 
     every { recallService.assignRecall(recallId, assignee) } returns assignedRecall
     every { userDetailsService.find(assignee) } returns null
@@ -229,8 +231,10 @@ class RecallsControllerTest {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           now,
+          Status.BEING_BOOKED_ON,
           assignee = assignee,
           assigneeUserName = null
         )
@@ -241,19 +245,14 @@ class RecallsControllerTest {
   @Test
   fun `unassign recall`() {
     val assignee = ::UserId.random()
-    val unassignedRecall = Recall(recallId, nomsNumber, now, now)
+    val unassignedRecall = recall
 
     every { recallService.unassignRecall(recallId, assignee) } returns unassignedRecall
 
     val result = underTest.unassignRecall(recallId, assignee)
 
-    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, now, now)))
+    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)))
   }
-
-  private val recall = Recall(recallId, nomsNumber, now, now)
-
-  private val updateRecallRequest =
-    UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
 
   @Test
   fun `can update recall and return a response with all fields populated`() {
@@ -264,7 +263,7 @@ class RecallsControllerTest {
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
-    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber, now, now))))
+    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON))))
   }
 
   @Test

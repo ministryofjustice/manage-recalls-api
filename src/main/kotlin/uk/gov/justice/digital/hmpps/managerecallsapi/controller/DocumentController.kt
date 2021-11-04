@@ -4,15 +4,18 @@ import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.onFailure
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
@@ -73,7 +76,16 @@ class DocumentController(
     @RequestBody updateDocumentRequest: UpdateDocumentRequest
   ): ResponseEntity<UpdateDocumentResponse> {
     val document = documentService.updateDocumentCategory(recallId, documentId, updateDocumentRequest.category)
-    return ResponseEntity.ok(UpdateDocumentResponse(document.documentId, document.recallId, document.category, document.fileName))
+    return ResponseEntity.ok(UpdateDocumentResponse(document.id(), document.recallId(), document.category, document.fileName))
+  }
+
+  @DeleteMapping("/recalls/{recallId}/documents/{documentId}")
+  @ResponseStatus(value = NO_CONTENT)
+  fun deleteDocument(
+    @PathVariable("recallId") recallId: RecallId,
+    @PathVariable("documentId") documentId: DocumentId
+  ) {
+    documentService.deleteDocument(recallId, documentId)
   }
 }
 

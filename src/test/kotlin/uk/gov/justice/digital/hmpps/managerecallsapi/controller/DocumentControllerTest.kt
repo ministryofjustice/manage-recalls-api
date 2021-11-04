@@ -5,11 +5,14 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Success
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -58,7 +61,7 @@ class DocumentControllerTest {
   fun `gets a document`() {
     val recallId1 = ::RecallId.random()
     val documentId = ::DocumentId.random()
-    val aRecallDocument = RecallDocument(
+    val aRecallDocument = Document(
       documentId,
       recallId1,
       PART_A_RECALL_REPORT,
@@ -80,5 +83,16 @@ class DocumentControllerTest {
       fileName
     )
     assertThat(response.body, equalTo(expected))
+  }
+
+  @Test
+  fun `delete a document`() {
+    val documentId = ::DocumentId.random()
+
+    every { documentService.deleteDocument(recallId, documentId) } just Runs
+
+    underTest.deleteDocument(recallId, documentId)
+
+    verify { documentService.deleteDocument(recallId, documentId) }
   }
 }

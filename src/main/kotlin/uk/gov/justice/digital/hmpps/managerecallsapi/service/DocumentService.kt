@@ -6,9 +6,10 @@ import dev.forkhandles.result4k.Success
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -59,33 +60,24 @@ class DocumentService(
 
   private fun uploadToS3AndSaveDocument(
     recallId: RecallId,
-    documentCategory: RecallDocumentCategory,
+    category: RecallDocumentCategory,
     documentBytes: ByteArray,
     fileName: String
   ): DocumentId {
-    val documentId = if (documentCategory.versioned) {
-      documentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.id() ?: ::DocumentId.random()
+    val documentId = if (category.versioned) {
+      documentRepository.findByRecallIdAndCategory(recallId.value, category)?.id()
+        ?: ::DocumentId.random()
     } else {
       ::DocumentId.random()
     }
 
     s3Service.uploadFile(documentId, documentBytes)
     // TODO: [KF] delete the document from S3 if saving fails?
-    saveDocument(documentId, recallId, documentCategory, fileName)
+    documentRepository.save(Document(documentId, recallId, category, fileName, if (category.versioned) 1 else null, OffsetDateTime.now(clock)))
     return documentId
   }
 
-  private fun saveDocument(recallDocument: RecallDocument): RecallDocument {
-    return saveDocument(recallDocument.documentId, recallDocument.recallId, recallDocument.category, recallDocument.fileName)
-  }
-
-  private fun saveDocument(documentId: DocumentId, recallId: RecallId, category: RecallDocumentCategory, fileName: String): RecallDocument {
-    return documentRepository.save(
-      Document(documentId, recallId, category, fileName, if (category.versioned) 1 else null, OffsetDateTime.now(clock))
-    ).toRecallDocument()
-  }
-
-  fun getDocument(recallId: RecallId, documentId: DocumentId): Pair<RecallDocument, ByteArray> =
+  fun getDocument(recallId: RecallId, documentId: DocumentId): Pair<Document, ByteArray> =
     forExistingRecall(recallId) {
       Pair(
         getRecallDocumentById(recallId, documentId),
@@ -96,15 +88,18 @@ class DocumentService(
   private fun getRecallDocumentById(
     recallId: RecallId,
     documentId: DocumentId
-  ): RecallDocument = (
-    documentRepository.getByRecallIdAndDocumentId(recallId, documentId).toRecallDocument()
+  ): Document = (
+    documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
     )
 
   fun getVersionedDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
     getVersionedDocumentContentWithCategoryIfExists(recallId, documentCategory)
       ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
 
-  fun getVersionedDocumentContentWithCategoryIfExists(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray? =
+  fun getVersionedDocumentContentWithCategoryIfExists(
+    recallId: RecallId,
+    documentCategory: RecallDocumentCategory
+  ): ByteArray? =
     forExistingRecall(recallId) {
       documentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
         s3Service.downloadFile(it.id())
@@ -121,25 +116,41 @@ class DocumentService(
     recallId: RecallId,
     documentId: DocumentId,
     newCategory: RecallDocumentCategory
-  ): RecallDocument {
+  ): Document {
     return forExistingRecall(recallId) {
-      saveDocument(
+      documentRepository.save(
         getRecallDocumentById(recallId, documentId)
           .copy(category = newCategory, version = if (newCategory.versioned) 1 else null)
       )
     }
   }
+
+  @Transactional
+  fun deleteDocument(
+    recallId: RecallId,
+    documentId: DocumentId
+  ) {
+    val recall = recallRepository.getByRecallId(recallId)
+    val document = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
+
+    if (recall.status() == Status.BEING_BOOKED_ON && document.category.uploaded) {
+      documentRepository.deleteByDocumentId(documentId)
+    } else {
+      throw DocumentDeleteException("Unable to delete document: Wrong status [${recall.status()}] and/or document category [${document.category}]")
+    }
+  }
 }
 
 data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
-data class RecallDocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
+data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
 data class RecallDocumentWithCategoryNotFoundException(
   val recallId: RecallId,
   val documentCategory: RecallDocumentCategory
 ) : NotFoundException()
 
-open class NotFoundException : Exception()
-open class VirusFoundException : Exception()
+open class NotFoundException : ManageRecallsException()
+class VirusFoundException : ManageRecallsException()
+class DocumentDeleteException(override val message: String?) : ManageRecallsException(message)
 
 data class VirusFoundEvent(
   val recallId: RecallId,

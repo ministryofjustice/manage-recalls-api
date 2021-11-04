@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -37,6 +38,8 @@ data class Recall(
   @Column(nullable = false)
   @Convert(converter = NomsNumberJpaConverter::class)
   val nomsNumber: NomsNumber,
+  @Column(nullable = false)
+  val createdByUserId: UUID,
   @Column(nullable = false)
   val createdDateTime: OffsetDateTime,
   @Column(nullable = false)
@@ -93,6 +96,7 @@ data class Recall(
   constructor(
     recallId: RecallId,
     nomsNumber: NomsNumber,
+    createdByUserId: UserId,
     createdDateTime: OffsetDateTime,
     lastUpdatedDateTime: OffsetDateTime = createdDateTime,
     documents: Set<Document> = emptySet(),
@@ -134,6 +138,7 @@ data class Recall(
     this(
       recallId.value,
       nomsNumber,
+      createdByUserId.value,
       createdDateTime,
       lastUpdatedDateTime,
       documents,
@@ -174,10 +179,32 @@ data class Recall(
     )
 
   fun recallId() = RecallId(id)
+  fun createdByUserId() = createdByUserId.let(::UserId)
   fun assessedByUserId() = assessedByUserId?.let(::UserId)
   fun bookedByUserId() = bookedByUserId?.let(::UserId)
   fun dossierCreatedByUserId() = dossierCreatedByUserId?.let(::UserId)
   fun assignee() = assignee?.let(::UserId)
+
+  fun recallAssessmentDueDateTime(): OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
+
+  fun status(): Status =
+    if (dossierCreatedByUserId != null) {
+      Status.DOSSIER_ISSUED
+    } else if (recallNotificationEmailSentDateTime != null) {
+      if (assignee != null) {
+        Status.DOSSIER_IN_PROGRESS
+      } else {
+        Status.RECALL_NOTIFICATION_ISSUED
+      }
+    } else if (bookedByUserId != null) {
+      if (assignee != null) {
+        Status.IN_ASSESSMENT
+      } else {
+        Status.BOOKED_ON
+      }
+    } else {
+      Status.BEING_BOOKED_ON
+    }
 }
 
 @Embeddable

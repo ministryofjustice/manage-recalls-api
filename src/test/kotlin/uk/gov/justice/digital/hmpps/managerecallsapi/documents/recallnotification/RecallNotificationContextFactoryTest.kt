@@ -68,6 +68,7 @@ class RecallNotificationContextFactoryTest {
     val recall = Recall(
       recallId,
       nomsNumber,
+      ::UserId.random(),
       OffsetDateTime.now(),
       OffsetDateTime.now(),
       lastReleasePrison = lastReleasePrisonId,
@@ -119,8 +120,7 @@ class RecallNotificationContextFactoryTest {
     val sentencingInfo =
       SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))
     val recall = Recall(
-      recallId, nomsNumber, OffsetDateTime.now(),
-      OffsetDateTime.now(),
+      recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), OffsetDateTime.now(),
       lastReleasePrison = lastReleasePrisonId,
       lastReleaseDate = LocalDate.now(),
       localPoliceForce = "A Force",

@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import java.time.OffsetDateTime
@@ -47,7 +48,6 @@ data class Document(
       if ((category.versioned && version == null) || (!category.versioned && version != null)) throw WrongDocumentTypeException(category)
     }
 
-  fun toRecallDocument() = RecallDocument(id(), recallId(), category, fileName, version, createdDateTime)
   fun id() = DocumentId(id)
   fun recallId() = RecallId(recallId)
 }

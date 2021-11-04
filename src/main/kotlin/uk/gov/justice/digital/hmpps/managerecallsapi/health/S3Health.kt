@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.health
 
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tags
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.health.Health
@@ -15,13 +17,20 @@ class S3Health(
   @Value("\${aws.s3.bucketName}") val bucketName: String
 ) : HealthIndicator {
 
+  @Autowired
+  private val meterRegistry: MeterRegistry? = null
+
+  private val componentName = "s3"
+
   override fun health(): Health {
     return try {
       s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build()).sdkHttpResponse()
         .let { response ->
           if (response.isSuccessful) {
+            meterRegistry?.gauge("upstream_health", Tags.of("service", componentName), 1)
             Health.up().withDetail("status", response.statusCode()).build()
           } else {
+            meterRegistry?.gauge("upstream_health", Tags.of("service", componentName), 0)
             Health.down().withDetail("status", response.statusCode()).build()
           }
         }

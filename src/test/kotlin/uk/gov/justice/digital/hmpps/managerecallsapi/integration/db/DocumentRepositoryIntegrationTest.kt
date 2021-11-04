@@ -18,11 +18,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomUnVersionedDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomVersionedDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallDocumentNotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentNotFoundException
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
 
@@ -36,6 +37,7 @@ class DocumentRepositoryIntegrationTest(
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = randomNoms()
+  private val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now())
   private val versioneDocumentId = ::DocumentId.random()
   // TODO: parameterized tests driven from RecallDocumentCategory
   private val versionedCategory = randomVersionedDocumentCategory()
@@ -46,7 +48,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can save and flush two distinct copies of an un-versioned document for an existing recall`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
 
     val idOne = ::DocumentId.random()
     val docOne = unVersionedDocument(idOne, recallId, unVersionedCategory)
@@ -65,7 +67,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can save and flush two distinct copies of an versioned document with different versions for an existing recall`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
 
     val idOne = ::DocumentId.random()
     val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
@@ -84,7 +86,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `cannot save and flush two distinct copies of an versioned document with the same version for an existing recall throws DataIntegrityViolationException`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
 
     val idOne = ::DocumentId.random()
     val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
@@ -101,7 +103,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `cannot save and flush a versioned document with null version for an existing recall throws DataIntegrityViolationException`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
 
     val id = ::DocumentId.random()
     val document = versionedDocument(id, recallId, versionedCategory, 1).copy(version = null)
@@ -115,7 +117,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `cannot save and flush an un-versioned document with non-null version for an existing recall throws DataIntegrityViolationException`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
 
     val id = ::DocumentId.random()
     val document = unVersionedDocument(id, recallId, unVersionedCategory).copy(version = 1)
@@ -129,7 +131,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `getByRecallIdAndDocumentId for an existing recall`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
     documentRepository.save(versionedRecallDocument)
 
     val retrieved = documentRepository.getByRecallIdAndDocumentId(recallId, versioneDocumentId)
@@ -140,20 +142,20 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `getByRecallIdAndDocumentId throws RecallDocumentNotFoundException if the document does not exist`() {
-    val thrown = assertThrows<RecallDocumentNotFoundException> {
+    val thrown = assertThrows<DocumentNotFoundException> {
       documentRepository.getByRecallIdAndDocumentId(
         recallId,
         versioneDocumentId
       )
     }
 
-    assertThat(thrown, equalTo(RecallDocumentNotFoundException(recallId, versioneDocumentId)))
+    assertThat(thrown, equalTo(DocumentNotFoundException(recallId, versioneDocumentId)))
   }
 
   @Test
   @Transactional
   fun `findByRecallIdAndCategory for an existing recall`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
     documentRepository.save(versionedRecallDocument)
 
     val retrieved = documentRepository.findByRecallIdAndCategory(recallId.value, versionedCategory)
@@ -164,7 +166,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `findByRecallIdAndCategory returns null if no document exists`() {
-    recallRepository.save(Recall(recallId, nomsNumber, OffsetDateTime.now()))
+    recallRepository.save(recall)
 
     val retrieved = documentRepository.findByRecallIdAndCategory(recallId.value, versionedCategory)
 

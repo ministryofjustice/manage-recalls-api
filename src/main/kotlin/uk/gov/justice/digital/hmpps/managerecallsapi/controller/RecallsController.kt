@@ -30,7 +30,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
@@ -43,7 +42,6 @@ import java.time.OffsetDateTime
 class RecallsController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val recallNotificationService: RecallNotificationService,
-  @Autowired private val documentService: DocumentService,
   @Autowired private val dossierService: DossierService,
   @Autowired private val letterToPrison: LetterToPrisonService,
   @Autowired private val userDetailsService: UserDetailsService,
@@ -124,13 +122,16 @@ class RecallsController(
   fun Recall.toResponse() = RecallResponse(
     recallId = this.recallId(),
     nomsNumber = this.nomsNumber,
+    createdByUserId = this.createdByUserId(),
     createdDateTime = this.createdDateTime,
     lastUpdatedDateTime = this.lastUpdatedDateTime,
+    status = this.status(),
     documents = documents.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) },
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
     recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
+    recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
     localPoliceForce = this.localPoliceForce,
     contraband = this.contraband,
     contrabandDetail = this.contrabandDetail,
@@ -182,16 +183,18 @@ class RecallsController(
 
 fun BookRecallRequest.toRecall(): Recall {
   val now = OffsetDateTime.now()
-  return Recall(::RecallId.random(), this.nomsNumber, now, now)
+  return Recall(::RecallId.random(), this.nomsNumber, this.createdByUserId, now, now)
 }
 
-data class BookRecallRequest(val nomsNumber: NomsNumber)
+data class BookRecallRequest(val nomsNumber: NomsNumber, val createdByUserId: UserId)
 
 data class RecallResponse(
   val recallId: RecallId,
   val nomsNumber: NomsNumber,
+  val createdByUserId: UserId,
   val createdDateTime: OffsetDateTime,
   val lastUpdatedDateTime: OffsetDateTime,
+  val status: Status,
   val documents: List<ApiRecallDocument> = emptyList(),
   val recallLength: RecallLength? = null,
   val lastReleasePrison: PrisonId? = null,
@@ -236,30 +239,9 @@ data class RecallResponse(
   val dossierCreatedByUserId: UserId? = null,
   val dossierTargetDate: LocalDate? = null,
   val assignee: UserId? = null,
-  val assigneeUserName: String? = null
-) {
-  val recallAssessmentDueDateTime: OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
-  val status: Status? = calculateStatus()
-
-  private fun calculateStatus(): Status? =
-    if (dossierCreatedByUserId != null) {
-      Status.DOSSIER_ISSUED
-    } else if (recallNotificationEmailSentDateTime != null) {
-      if (assignee != null) {
-        Status.DOSSIER_IN_PROGRESS
-      } else {
-        Status.RECALL_NOTIFICATION_ISSUED
-      }
-    } else if (bookedByUserId != null) {
-      if (assignee != null) {
-        Status.IN_ASSESSMENT
-      } else {
-        Status.BOOKED_ON
-      }
-    } else {
-      null
-    }
-}
+  val assigneeUserName: String? = null,
+  val recallAssessmentDueDateTime: OffsetDateTime? = null
+)
 
 class Api {
   data class SentenceLength(val years: Int, val months: Int, val days: Int)
@@ -279,6 +261,7 @@ data class Pdf(val content: String) {
 
 data class RecallSearchRequest(val nomsNumber: NomsNumber)
 enum class Status {
+  BEING_BOOKED_ON,
   BOOKED_ON,
   IN_ASSESSMENT,
   RECALL_NOTIFICATION_ISSUED,

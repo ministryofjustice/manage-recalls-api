@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -43,12 +44,14 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   private lateinit var recallId: RecallId
   private lateinit var recallPath: String
+  private lateinit var createdByUserId: UserId
 
   @BeforeEach
   fun setupExistingRecall() {
     recallId = ::RecallId.random()
     recallPath = "/recalls/$recallId"
-    recallRepository.save(Recall(recallId, nomsNumber, now, now))
+    createdByUserId = ::UserId.random()
+    recallRepository.save(Recall(recallId, nomsNumber, createdByUserId, now, now))
     val instant = Instant.parse("2021-10-04T13:15:50.00Z")
     fixedClockTime = OffsetDateTime.ofInstant(instant, zone)
     every { fixedClock.instant() } returns instant
@@ -65,8 +68,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           lastReleasePrison = PrisonId("MWI"),
           currentPrison = PrisonId("BMI")
         )
@@ -135,8 +140,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           recallLength = TWENTY_EIGHT_DAYS,
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
@@ -160,8 +167,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           bookingNumber = bookingNumber
         )
       )
@@ -179,8 +188,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           localPoliceForce = policeForce
         )
       )
@@ -204,8 +215,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           licenceConditionsBreached = "Breached",
           reasonsForRecall = listOf(BREACH_EXCLUSION_ZONE),
           reasonsForRecallOtherDetail = "Other reasons"
@@ -230,8 +243,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           agreeWithRecall = AgreeWithRecall.YES,
           agreeWithRecallDetail = "Other reasons"
         )
@@ -253,8 +268,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.RECALL_NOTIFICATION_ISSUED,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = updateRecallRequest.assessedByUserId,
           dossierTargetDate = LocalDate.parse("2021-12-29")
@@ -278,8 +295,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          status = Status.DOSSIER_ISSUED,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
           dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId
         )
@@ -303,8 +322,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         RecallResponse(
           recallId,
           nomsNumber,
+          createdByUserId,
           now,
           fixedClockTime,
+          Status.BEING_BOOKED_ON,
           additionalLicenceConditions = request.additionalLicenceConditions,
           additionalLicenceConditionsDetail = request.additionalLicenceConditionsDetail,
           differentNomsNumber = request.differentNomsNumber,
