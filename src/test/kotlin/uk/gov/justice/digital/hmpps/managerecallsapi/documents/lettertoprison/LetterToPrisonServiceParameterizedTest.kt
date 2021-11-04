@@ -101,7 +101,7 @@ internal class LetterToPrisonServiceParameterizedTest {
     val mergedBytes = randomString().toByteArray()
     val mergedNumberedBytes = randomString().toByteArray()
 
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
     every { letterToPrisonContextFactory.createContext(recallId) } returns context
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns custodyOfficeHtml

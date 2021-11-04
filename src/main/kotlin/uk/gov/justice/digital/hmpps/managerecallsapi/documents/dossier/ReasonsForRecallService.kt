@@ -18,7 +18,7 @@ class ReasonsForRecallService(
 ) {
 
   fun getDocument(dossierContext: DossierContext): Mono<ByteArray> =
-    documentService.getVersionedDocumentContentWithCategoryIfExists(dossierContext.recall.recallId(), RecallDocumentCategory.DOSSIER)
+    documentService.getLatestVersionedDocumentContentWithCategoryIfExists(dossierContext.recall.recallId(), RecallDocumentCategory.DOSSIER)
       ?.let { Mono.just(it) }
       ?: createDocument(dossierContext)
 

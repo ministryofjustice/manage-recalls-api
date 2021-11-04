@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ApiRecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
@@ -56,25 +57,38 @@ class DocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `upload a document with a 'versioned' category that already exists overwrites the existing document and changes filename`() {
+  fun `upload multiple documents with a 'versioned' category that already exists writes a new document and increments version`() {
     expectNoVirusesWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val originalDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
-    val newFilename = "newFilename"
-    val addDocumentRequest = AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, newFilename)
-    authenticatedClient.uploadDocument(recall.recallId, addDocumentRequest)
+    val firstDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
 
-    val recallDocument = authenticatedClient.getRecallDocument(recall.recallId, originalDocumentId)
+    val secondDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
+    val secondDocument = authenticatedClient.getRecallDocument(recall.recallId, secondDocumentId)
+
+    assertThat(firstDocumentId, !equalTo(secondDocumentId))
+    assertThat(
+      secondDocument,
+      equalTo(GetDocumentResponse(secondDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, fileName, 2, secondDocument.createdDateTime))
+    )
+
+    val thirdDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
+    val recallDocument = authenticatedClient.getRecallDocument(recall.recallId, thirdDocumentId)
+
+    assertThat(firstDocumentId, !equalTo(secondDocumentId))
+    assertThat(firstDocumentId, !equalTo(thirdDocumentId))
     assertThat(
       recallDocument,
-      equalTo(GetDocumentResponse(originalDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, newFilename))
+      equalTo(GetDocumentResponse(thirdDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, fileName, 3, recallDocument.createdDateTime))
     )
+
+    val recallResponse = authenticatedClient.getRecall(recall.recallId)
+    assertThat(recallResponse.documents.size, equalTo(1))
   }
 
   @Test
-  fun `upload two documents with an 'unversioned' category allows both to be persisted`() {
+  fun `upload two documents with an 'unversioned' category allows both to be persisted and returned on a recall`() {
     expectNoVirusesWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
@@ -114,7 +128,9 @@ class DocumentComponentTest : ComponentTestBase() {
           document.documentId,
           versionedDocumentCategory,
           base64EncodedDocumentContents,
-          fileName
+          fileName,
+          1,
+          response.createdDateTime
         )
       )
     )
@@ -135,13 +151,14 @@ class DocumentComponentTest : ComponentTestBase() {
     val updatedCategory = PART_A_RECALL_REPORT
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val document = authenticatedClient.uploadDocument(
+    val documentId = authenticatedClient.uploadDocument(
       recall.recallId,
       AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName)
-    )
+    ).documentId
 
-    documentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
-      assertThat(it.id(), equalTo(document.documentId))
+    val document = documentRepository.getByRecallIdAndDocumentId(recall.recallId, documentId)
+    document.let {
+      assertThat(it.id(), equalTo(documentId))
       assertThat(it.recallId(), equalTo(recall.recallId))
       assertThat(it.category, equalTo(UNCATEGORISED))
       assertThat(it.version, equalTo(null))
@@ -150,18 +167,18 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val result = authenticatedClient.updateDocumentCategory(
       recall.recallId,
-      document.documentId,
+      documentId,
       UpdateDocumentRequest(updatedCategory)
     )
 
-    assertThat(result, equalTo(UpdateDocumentResponse(document.documentId, recall.recallId, updatedCategory, fileName)))
+    assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName)))
 
-    val response = authenticatedClient.getRecallDocument(recall.recallId, document.documentId)
+    val response = authenticatedClient.getRecallDocument(recall.recallId, documentId)
 
     assertThat(
       response,
       equalTo(
-        GetDocumentResponse(document.documentId, updatedCategory, base64EncodedDocumentContents, fileName)
+        GetDocumentResponse(documentId, updatedCategory, base64EncodedDocumentContents, fileName, 1, document.createdDateTime)
       )
     )
   }
@@ -172,13 +189,14 @@ class DocumentComponentTest : ComponentTestBase() {
     val updatedCategory = UNCATEGORISED
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val document = authenticatedClient.uploadDocument(
+    val documentId = authenticatedClient.uploadDocument(
       recall.recallId,
       AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
-    )
+    ).documentId
 
-    documentRepository.getByRecallIdAndDocumentId(recall.recallId, document.documentId).let {
-      assertThat(it.id(), equalTo(document.documentId))
+    val document = documentRepository.getByRecallIdAndDocumentId(recall.recallId, documentId)
+    document.let {
+      assertThat(it.id(), equalTo(documentId))
       assertThat(it.recallId(), equalTo(recall.recallId))
       assertThat(it.category, equalTo(PART_A_RECALL_REPORT))
       assertThat(it.version, equalTo(1))
@@ -187,18 +205,18 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val result = authenticatedClient.updateDocumentCategory(
       recall.recallId,
-      document.documentId,
+      documentId,
       UpdateDocumentRequest(updatedCategory)
     )
 
-    assertThat(result, equalTo(UpdateDocumentResponse(document.documentId, recall.recallId, updatedCategory, fileName)))
+    assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName)))
 
-    val response = authenticatedClient.getRecallDocument(recall.recallId, document.documentId)
+    val response = authenticatedClient.getRecallDocument(recall.recallId, documentId)
 
     assertThat(
       response,
       equalTo(
-        GetDocumentResponse(document.documentId, updatedCategory, base64EncodedDocumentContents, fileName)
+        GetDocumentResponse(documentId, updatedCategory, base64EncodedDocumentContents, fileName, null, document.createdDateTime)
       )
     )
   }
@@ -232,5 +250,32 @@ class DocumentComponentTest : ComponentTestBase() {
       .responseBody!!
 
     assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document: Wrong status [BEING_BOOKED_ON] and/or document category [RECALL_NOTIFICATION]")))
+  }
+
+  @Test
+  fun `after deleting a document with a 'versioned' category the previous version is returned`() {
+    expectNoVirusesWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    val firstDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
+    val secondDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
+    val secondDocument = authenticatedClient.getRecallDocument(recall.recallId, secondDocumentId)
+
+    assertThat(firstDocumentId, !equalTo(secondDocumentId))
+    assertThat(
+      secondDocument,
+      equalTo(GetDocumentResponse(secondDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, fileName, 2, secondDocument.createdDateTime))
+    )
+
+    authenticatedClient.deleteDocument(recall.recallId, secondDocumentId)
+    val documents = authenticatedClient.getRecall(recall.recallId).documents
+
+    assertThat(firstDocumentId, !equalTo(secondDocumentId))
+    assertThat(documents.size, equalTo(1))
+    assertThat(
+      documents[0],
+      equalTo(ApiRecallDocument(firstDocumentId, versionedDocumentCategory, fileName, 1, documents[0].createdDateTime))
+    )
   }
 }

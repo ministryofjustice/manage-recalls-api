@@ -11,7 +11,7 @@ import java.time.OffsetDateTime
 class DocumentTest {
 
   @Test
-  fun `versioned document throws exception with unversioned category`() {
+  fun `document throws exception with unversioned category and version`() {
     assertThrows<WrongDocumentTypeException> {
       Document(
         ::DocumentId.random(),
@@ -19,6 +19,20 @@ class DocumentTest {
         RecallDocumentCategory.OTHER,
         "file.txt",
         1,
+        OffsetDateTime.now()
+      )
+    }
+  }
+
+  @Test
+  fun `document throws exception with versioned category and null version`() {
+    assertThrows<WrongDocumentTypeException> {
+      Document(
+        ::DocumentId.random(),
+        ::RecallId.random(),
+        RecallDocumentCategory.LICENCE,
+        "file.txt",
+        null,
         OffsetDateTime.now()
       )
     }

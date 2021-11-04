@@ -32,5 +32,5 @@ class RevocationOrderService(
       }
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> =
-    Mono.just(documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER))
+    Mono.just(documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER))
 }

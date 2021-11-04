@@ -37,7 +37,7 @@ class ReasonsForRecallServiceTest {
     val expectedPdfBytes = "some bytes".toByteArray()
     val recallId = ::RecallId.random()
 
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns null
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns null
     every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
     every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now())
     every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
@@ -56,7 +56,7 @@ class ReasonsForRecallServiceTest {
     val recallId = ::RecallId.random()
     val expectedBytes = "Some expected content".toByteArray()
 
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns expectedBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns expectedBytes
     every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now())
 
     val generatedPdf = underTest.getDocument(dossierContext).block()!!

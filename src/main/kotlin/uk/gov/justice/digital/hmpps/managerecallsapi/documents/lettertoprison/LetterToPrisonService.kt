@@ -26,7 +26,7 @@ class LetterToPrisonService(
 ) {
 
   fun getPdf(recallId: RecallId): Mono<ByteArray> {
-    val letterToPrison = documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
+    val letterToPrison = documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
 
     return if (letterToPrison == null) {
       createPdf(recallId).map { letterToPrisonBytes ->

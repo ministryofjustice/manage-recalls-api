@@ -64,16 +64,16 @@ class DocumentService(
     documentBytes: ByteArray,
     fileName: String
   ): DocumentId {
-    val documentId = if (category.versioned) {
-      documentRepository.findByRecallIdAndCategory(recallId.value, category)?.id()
-        ?: ::DocumentId.random()
+    val version = if (category.versioned) {
+      (documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, category)?.version ?: 0) + 1
     } else {
-      ::DocumentId.random()
+      null
     }
+    val documentId = ::DocumentId.random()
 
+    documentRepository.save(Document(documentId, recallId, category, fileName, version, OffsetDateTime.now(clock)))
+    // TODO: [KF] delete the document from repository if saving fails?
     s3Service.uploadFile(documentId, documentBytes)
-    // TODO: [KF] delete the document from S3 if saving fails?
-    documentRepository.save(Document(documentId, recallId, category, fileName, if (category.versioned) 1 else null, OffsetDateTime.now(clock)))
     return documentId
   }
 
@@ -92,16 +92,16 @@ class DocumentService(
     documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
     )
 
-  fun getVersionedDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
-    getVersionedDocumentContentWithCategoryIfExists(recallId, documentCategory)
+  fun getLatestVersionedDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
+    getLatestVersionedDocumentContentWithCategoryIfExists(recallId, documentCategory)
       ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
 
-  fun getVersionedDocumentContentWithCategoryIfExists(
+  fun getLatestVersionedDocumentContentWithCategoryIfExists(
     recallId: RecallId,
     documentCategory: RecallDocumentCategory
   ): ByteArray? =
     forExistingRecall(recallId) {
-      documentRepository.findByRecallIdAndCategory(recallId.value, documentCategory)?.let {
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, documentCategory)?.let {
         s3Service.downloadFile(it.id())
       }
     }

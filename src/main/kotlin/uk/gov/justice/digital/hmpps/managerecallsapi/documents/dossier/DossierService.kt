@@ -28,7 +28,7 @@ class DossierService(
 ) {
 
   fun getDossier(recallId: RecallId): Mono<ByteArray> =
-    documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER)
+    documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER)
       ?.let { Mono.just(it) }
       ?: createDossier(recallId)
 
@@ -57,9 +57,9 @@ class DossierService(
     recallId: RecallId,
     reasonsForRecall: ByteArray
   ): MutableMap<String, ByteArrayDocumentData> {
-    val license = documentService.getVersionedDocumentContentWithCategory(recallId, LICENCE)
-    val partARecallReport = documentService.getVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
-    val revocationOrder = documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER)
+    val license = documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE)
+    val partARecallReport = documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
+    val revocationOrder = documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER)
     return mutableMapOf(
       "Recall Information Leaflet [Core Dossier]" to documentData(RecallInformationLeaflet),
       "Licence [Core Dossier]" to documentData(license),

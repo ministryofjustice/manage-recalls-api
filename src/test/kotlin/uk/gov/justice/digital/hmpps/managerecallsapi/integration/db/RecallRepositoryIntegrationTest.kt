@@ -147,7 +147,7 @@ class RecallRepositoryIntegrationTest(
     )
     repository.save(recallToUpdate)
 
-    val persistedDocument = documentRepository.findByRecallIdAndDocumentId(recallId, documentId)
+    val persistedDocument = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
     assertThat(document, equalTo(persistedDocument))
 
     val createdRecall = repository.getByRecallId(recallId)
