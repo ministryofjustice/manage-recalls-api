@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
@@ -15,6 +16,7 @@ import java.time.Clock
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.util.UUID
 import javax.transaction.Transactional
 
 @Service
@@ -76,6 +78,7 @@ class RecallService(
       reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
       agreeWithRecall = updateRecallRequest.agreeWithRecall ?: agreeWithRecall,
+      assignee = clearAssigneeIfRecallStopped(updateRecallRequest.agreeWithRecall, assignee),
       agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail ?: agreeWithRecallDetail,
       currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
       additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
@@ -101,6 +104,16 @@ class RecallService(
         dossierTargetDate = dossierTargetDate.plusDays(1)
       }
       dossierTargetDate
+    }
+  }
+
+  fun clearAssigneeIfRecallStopped(agreeWithRecall: AgreeWithRecall?, assignee: UUID?): UUID? {
+    return assignee?.let {
+      if (AgreeWithRecall.NO_STOP == agreeWithRecall) {
+        null
+      } else {
+        it
+      }
     }
   }
 }

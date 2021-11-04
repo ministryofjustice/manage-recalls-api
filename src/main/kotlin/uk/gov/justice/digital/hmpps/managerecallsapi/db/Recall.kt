@@ -197,7 +197,9 @@ data class Recall(
         Status.RECALL_NOTIFICATION_ISSUED
       }
     } else if (bookedByUserId != null) {
-      if (assignee != null) {
+      if (agreeWithRecall == AgreeWithRecall.NO_STOP) {
+        Status.STOPPED
+      } else if (assignee != null) {
         Status.IN_ASSESSMENT
       } else {
         Status.BOOKED_ON

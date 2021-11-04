@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall.NO_STOP
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
@@ -32,8 +33,8 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.util.UUID
 import java.util.stream.Stream
-import kotlin.jvm.Throws
 
 @TestInstance(PER_CLASS)
 class RecallServiceTest {
@@ -126,6 +127,19 @@ class RecallServiceTest {
 
     val emptyUpdateRecallRequest = UpdateRecallRequest()
     val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
+
+    assertThat(response, equalTo(updatedRecall))
+  }
+
+  @Test
+  fun `assignee cleared when recall is stopped`() {
+    val recall = existingRecall.copy(assignee = UUID.randomUUID())
+    val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP, lastUpdatedDateTime = OffsetDateTime.now(fixedClock), recallType = FIXED)
+    every { recallRepository.getByRecallId(recallId) } returns recall
+    every { recallRepository.save(updatedRecall) } returns updatedRecall
+
+    val updateRequest = UpdateRecallRequest(agreeWithRecall = NO_STOP)
+    val response = underTest.updateRecall(recallId, updateRequest)
 
     assertThat(response, equalTo(updatedRecall))
   }

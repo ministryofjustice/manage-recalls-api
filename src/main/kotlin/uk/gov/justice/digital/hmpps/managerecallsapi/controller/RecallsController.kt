@@ -266,7 +266,8 @@ enum class Status {
   IN_ASSESSMENT,
   RECALL_NOTIFICATION_ISSUED,
   DOSSIER_IN_PROGRESS,
-  DOSSIER_ISSUED
+  DOSSIER_ISSUED,
+  STOPPED
 }
 
 data class UpdateRecallRequest(
