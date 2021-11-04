@@ -61,13 +61,14 @@ class DocumentControllerTest {
   fun `gets a document`() {
     val recallId1 = ::RecallId.random()
     val documentId = ::DocumentId.random()
+    val now = OffsetDateTime.now()
     val aRecallDocument = Document(
       documentId,
       recallId1,
       PART_A_RECALL_REPORT,
       fileName,
       1,
-      OffsetDateTime.now()
+      now
     )
     val bytes = "Hello".toByteArray()
 
@@ -80,7 +81,9 @@ class DocumentControllerTest {
       documentId,
       aRecallDocument.category,
       content = bytes.encodeToBase64String(),
-      fileName
+      fileName,
+      1,
+      now
     )
     assertThat(response.body, equalTo(expected))
   }

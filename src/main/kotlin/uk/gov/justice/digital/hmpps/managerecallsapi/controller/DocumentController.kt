@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 import java.net.URI
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping(produces = [APPLICATION_JSON_VALUE])
@@ -41,7 +42,7 @@ class DocumentController(
   ): ResponseEntity<GetDocumentResponse> {
     val (document, bytes) = documentService.getDocument(recallId, documentId)
     return ResponseEntity.ok(
-      GetDocumentResponse(documentId, document.category, bytes.encodeToBase64String(), document.fileName)
+      GetDocumentResponse(documentId, document.category, bytes.encodeToBase64String(), document.fileName, document.version, document.createdDateTime)
     )
   }
 
@@ -112,5 +113,7 @@ data class GetDocumentResponse(
   val documentId: DocumentId,
   val category: RecallDocumentCategory,
   val content: String,
-  val fileName: String
+  val fileName: String,
+  val version: Int?,
+  val createdDateTime: OffsetDateTime
 )

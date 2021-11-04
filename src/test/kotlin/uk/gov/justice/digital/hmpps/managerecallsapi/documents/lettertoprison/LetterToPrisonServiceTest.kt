@@ -43,7 +43,7 @@ internal class LetterToPrisonServiceTest {
 
   @Test
   fun `returns a letter to prison for a recall if one exists already`() {
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns expectedBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns expectedBytes
 
     val result = underTest.getPdf(recallId)
 

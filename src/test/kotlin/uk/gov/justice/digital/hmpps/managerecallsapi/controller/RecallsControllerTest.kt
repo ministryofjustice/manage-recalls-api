@@ -10,13 +10,15 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -95,7 +97,7 @@ class RecallsControllerTest {
     val document = Document(
       id = UUID.randomUUID(),
       recallId = UUID.randomUUID(),
-      category = RecallDocumentCategory.PART_A_RECALL_REPORT,
+      category = PART_A_RECALL_REPORT,
       fileName = fileName,
       1,
       createdDateTime = now
@@ -119,7 +121,7 @@ class RecallsControllerTest {
       now,
       now,
       Status.BEING_BOOKED_ON,
-      documents = listOf(ApiRecallDocument(document.id(), document.category, fileName)),
+      documents = listOf(ApiRecallDocument(document.id(), document.category, fileName, document.version, document.createdDateTime)),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
@@ -299,5 +301,32 @@ class RecallsControllerTest {
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
     assertThat(response, equalTo(ResponseEntity.badRequest().build()))
+  }
+
+  @Test
+  fun `latestDocuments contains the latest of each versioned category and all unversioned docs`() {
+    val partADoc1 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, OffsetDateTime.now())
+    val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, now)
+    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now)
+    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now)
+    val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, otherDoc1, otherDoc2))
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithDocuments
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON,
+          documents = listOf(
+            ApiRecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now),
+            ApiRecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, now),
+            ApiRecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, now),
+          )
+        )
+      )
+    )
   }
 }

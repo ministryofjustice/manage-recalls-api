@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -126,7 +127,7 @@ class RecallsController(
     createdDateTime = this.createdDateTime,
     lastUpdatedDateTime = this.lastUpdatedDateTime,
     status = this.status(),
-    documents = documents.map { doc -> ApiRecallDocument(doc.id(), doc.category, doc.fileName) },
+    documents = latestDocuments(documents),
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
@@ -179,6 +180,12 @@ class RecallsController(
     assignee = this.assignee(),
     assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.personName() }
   )
+
+  private fun latestDocuments(documents: Set<Document>): List<ApiRecallDocument> {
+    val partitionedDocs = documents.partition { it.category.versioned }
+    val latestDocuments = partitionedDocs.first.filter { it.category.versioned }.groupBy { it.category }.values.map { it.sortedBy { d -> d.version }.last() } + partitionedDocs.second
+    return latestDocuments.map { ApiRecallDocument(it.id(), it.category, it.fileName, it.version, it.createdDateTime) }
+  }
 }
 
 fun BookRecallRequest.toRecall(): Recall {
@@ -250,7 +257,9 @@ class Api {
 data class ApiRecallDocument(
   val documentId: DocumentId,
   val category: RecallDocumentCategory,
-  val fileName: String?
+  val fileName: String,
+  val version: Int?,
+  val createdDateTime: OffsetDateTime
 )
 
 data class Pdf(val content: String) {

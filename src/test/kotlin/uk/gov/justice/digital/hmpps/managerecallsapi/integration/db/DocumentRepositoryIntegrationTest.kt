@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -66,7 +67,7 @@ class DocumentRepositoryIntegrationTest(
 
   @Test
   @Transactional
-  fun `can save and flush two distinct copies of an versioned document with different versions for an existing recall`() {
+  fun `can save and flush two distinct copies of a versioned document with different versions for an existing recall`() {
     recallRepository.save(recall)
 
     val idOne = ::DocumentId.random()
@@ -81,6 +82,49 @@ class DocumentRepositoryIntegrationTest(
 
     assertThat(retrievedOne, equalTo(docOne))
     assertThat(retrievedTwo, equalTo(docTwo))
+  }
+
+  @Test
+  @Transactional
+  fun `when storing two distinct copies of a versioned document with different versions for an existing recall, getLatest returns the latest`() {
+    recallRepository.save(recall)
+
+    val idOne = ::DocumentId.random()
+    val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
+    documentRepository.saveAndFlush(docOne)
+    val idTwo = ::DocumentId.random()
+    val docTwo = versionedDocument(idTwo, recallId, versionedCategory, 2)
+    documentRepository.saveAndFlush(docTwo)
+
+    val latest = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
+
+    assertThat(latest, equalTo(docTwo))
+  }
+
+  @Test
+  @Transactional
+  fun `when storing two distinct copies of a versioned document with different versions for an existing recall, then deleting the latest, getLatest returns the first`() {
+    recallRepository.save(recall)
+
+    val idOne = ::DocumentId.random()
+    val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
+    documentRepository.saveAndFlush(docOne)
+    val idTwo = ::DocumentId.random()
+    val docTwo = versionedDocument(idTwo, recallId, versionedCategory, 2)
+    documentRepository.saveAndFlush(docTwo)
+    documentRepository.deleteByDocumentId(idTwo)
+
+    val latest = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
+
+    assertThat(latest, equalTo(docOne))
+  }
+
+  @Test
+  @Transactional
+  fun `findLatestVersionedDocumentByRecallIdAndCategory throws exception when trying to find an unversioned category`() {
+    assertThrows<WrongDocumentTypeException> {
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, unVersionedCategory)
+    }
   }
 
   @Test
@@ -158,7 +202,7 @@ class DocumentRepositoryIntegrationTest(
     recallRepository.save(recall)
     documentRepository.save(versionedRecallDocument)
 
-    val retrieved = documentRepository.findByRecallIdAndCategory(recallId.value, versionedCategory)
+    val retrieved = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
 
     assertThat(retrieved, equalTo(versionedRecallDocument))
   }
@@ -168,7 +212,7 @@ class DocumentRepositoryIntegrationTest(
   fun `findByRecallIdAndCategory returns null if no document exists`() {
     recallRepository.save(recall)
 
-    val retrieved = documentRepository.findByRecallIdAndCategory(recallId.value, versionedCategory)
+    val retrieved = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
 
     assertThat(retrieved, absent())
   }

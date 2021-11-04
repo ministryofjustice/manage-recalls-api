@@ -54,7 +54,7 @@ internal class RecallNotificationServiceTest {
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
     val recallNotificationContext = mockk<RecallNotificationContext>()
 
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
     every { recallNotificationContextFactory.createContext(recallId, userId) } returns recallNotificationContext
     every { letterToProbationService.createPdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { recallSummaryService.createPdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
@@ -84,7 +84,7 @@ internal class RecallNotificationServiceTest {
     val recallNotificationBytes = randomString().toByteArray()
     val userId = UserId(UUID.randomUUID())
 
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns recallNotificationBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns recallNotificationBytes
 
     val result = underTest.getDocument(recallId, userId)
 

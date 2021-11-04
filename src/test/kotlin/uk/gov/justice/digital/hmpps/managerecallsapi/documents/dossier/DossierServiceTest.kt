@@ -57,11 +57,11 @@ internal class DossierServiceTest {
     val numberedMergedBytes = randomString().toByteArray()
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns null
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns null
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
-    every { documentService.getVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
-    every { documentService.getVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
-    every { documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
     every { reasonsForRecallService.getDocument(dossierContext) } returns Mono.just(reasonsForRecallContentBytes)
     every { tableOfContentsService.createPdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
@@ -91,7 +91,7 @@ internal class DossierServiceTest {
     val recallId = ::RecallId.random()
     val documentBytes = randomString().toByteArray()
 
-    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns documentBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns documentBytes
 
     val dossier = underTest.getDossier(recallId).block()!!
 

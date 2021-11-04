@@ -22,7 +22,7 @@ class RecallNotificationService(
 ) {
 
   fun getDocument(recallId: RecallId, userId: UserId): Mono<ByteArray> =
-    documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
+    documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
       ?.let { Mono.just(it) }
       ?: createDocument(recallId, userId)
 
