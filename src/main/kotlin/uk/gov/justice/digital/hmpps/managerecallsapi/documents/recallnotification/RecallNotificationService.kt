@@ -24,9 +24,9 @@ class RecallNotificationService(
   fun getDocument(recallId: RecallId, userId: UserId): Mono<ByteArray> =
     documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
       ?.let { Mono.just(it) }
-      ?: createRecallNotification(recallId, userId)
+      ?: createDocument(recallId, userId)
 
-  private fun createRecallNotification(recallId: RecallId, userId: UserId): Mono<ByteArray> {
+  private fun createDocument(recallId: RecallId, userId: UserId): Mono<ByteArray> {
     val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, userId)
 
     val documentGenerators = Flux.just(

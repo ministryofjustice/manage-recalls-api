@@ -16,6 +16,8 @@ enum class RecallDocumentCategory(val uploaded: Boolean, val versioned: Boolean)
   RECALL_NOTIFICATION(false, true),
   REVOCATION_ORDER(false, true),
   LETTER_TO_PRISON(false, true),
+  DOSSIER(false, true),
+  REASONS_FOR_RECALL(false, true),
   OTHER(true, false),
   UNCATEGORISED(true, false)
 }
