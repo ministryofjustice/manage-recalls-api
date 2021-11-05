@@ -72,8 +72,13 @@ class DocumentService(
     val documentId = ::DocumentId.random()
 
     documentRepository.save(Document(documentId, recallId, category, fileName, version, OffsetDateTime.now(clock)))
-    // TODO: [KF] delete the document from repository if saving fails?
-    s3Service.uploadFile(documentId, documentBytes)
+    try {
+      s3Service.uploadFile(documentId, documentBytes)
+    } catch (ex: Exception) {
+      documentRepository.deleteByDocumentId(documentId)
+      throw ex
+    }
+
     return documentId
   }
 
