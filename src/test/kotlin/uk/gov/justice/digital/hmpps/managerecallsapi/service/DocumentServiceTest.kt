@@ -14,6 +14,7 @@ import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import software.amazon.awssdk.services.s3.model.S3Exception
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -429,5 +430,25 @@ internal class DocumentServiceTest {
     }
 
     verify(exactly = 0) { documentRepository.deleteByDocumentId(documentId) }
+  }
+
+  @Test
+  fun `deletes document from repository if error thrown when uploading to s3`() {
+    val uploadedToS3DocumentIdSlot = slot<DocumentId>()
+    val documentId = ::DocumentId.random()
+    val now = OffsetDateTime.now()
+    val document = Document(documentId, recallId, documentCategory, fileName, 1, now)
+
+    every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
+    every { documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, documentCategory) } returns null
+    every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } throws S3Exception.builder().build()
+    every { documentRepository.save(any()) } returns document
+    every { documentRepository.deleteByDocumentId(any()) } just Runs
+
+    assertThrows<S3Exception> {
+      underTest.storeDocument(recallId, documentBytes, documentCategory, fileName)
+    }
+
+    verify { documentRepository.deleteByDocumentId(uploadedToS3DocumentIdSlot.captured) }
   }
 }
