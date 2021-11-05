@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
 import com.natpryce.hamkrest.assertion.assertThat
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
@@ -15,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.onlyContainsInOrder
@@ -42,7 +46,7 @@ internal class DossierServiceTest {
   )
 
   @Test
-  fun `get dossier returns table of contents, recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall`() {
+  fun `get dossier returns table of contents, recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall and dossier doesnt already exist`() {
     val recallId = ::RecallId.random()
     val licenseContentBytes = randomString().toByteArray()
     val partARecallReportContentBytes = randomString().toByteArray()
@@ -53,14 +57,16 @@ internal class DossierServiceTest {
     val numberedMergedBytes = randomString().toByteArray()
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
+    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns null
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
     every { documentService.getVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
     every { documentService.getVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
     every { documentService.getVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
-    every { reasonsForRecallService.createPdf(dossierContext) } returns Mono.just(reasonsForRecallContentBytes)
+    every { reasonsForRecallService.getDocument(dossierContext) } returns Mono.just(reasonsForRecallContentBytes)
     every { tableOfContentsService.createPdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
+    every { documentService.storeDocument(recallId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
 
     val dossier = underTest.getDossier(recallId).block()!!
 
@@ -78,6 +84,25 @@ internal class DossierServiceTest {
         )
       )
     )
+  }
+
+  @Test
+  fun `get dossier returns dossier if it already exists`() {
+    val recallId = ::RecallId.random()
+    val documentBytes = randomString().toByteArray()
+
+    every { documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns documentBytes
+
+    val dossier = underTest.getDossier(recallId).block()!!
+
+    assertArrayEquals(documentBytes, dossier)
+
+    verify { dossierContextFactory wasNot Called }
+    verify { reasonsForRecallService wasNot Called }
+    verify { tableOfContentsService wasNot Called }
+    verify { pdfDocumentGenerationService wasNot Called }
+    verify { pdfDecorator wasNot Called }
+    verify(exactly = 0) { documentService.storeDocument(any(), any(), any(), any()) }
   }
 
   // TODO: PUD-575 test/handling when any input doc is not available

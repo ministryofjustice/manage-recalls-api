@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
@@ -26,10 +27,15 @@ class DossierService(
   @Autowired private val dossierContextFactory: DossierContextFactory
 ) {
 
-  fun getDossier(recallId: RecallId): Mono<ByteArray> {
+  fun getDossier(recallId: RecallId): Mono<ByteArray> =
+    documentService.getVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER)
+      ?.let { Mono.just(it) }
+      ?: createDossier(recallId)
+
+  private fun createDossier(recallId: RecallId): Mono<ByteArray> {
     val dossierContext = dossierContextFactory.createContext(recallId)
 
-    return reasonsForRecallService.createPdf(dossierContext).map { reasonsForRecallPdfBytes ->
+    return reasonsForRecallService.getDocument(dossierContext).map { reasonsForRecallPdfBytes ->
       createTableOfContentsDocumentMap(recallId, reasonsForRecallPdfBytes)
     }.flatMap { tableOfContentsDocumentMap ->
       tableOfContentsService.createPdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
@@ -41,6 +47,9 @@ class DossierService(
       pdfDocumentGenerationService.mergePdfs(dossierDocuments)
     }.map { mergedPdfContentBytes ->
       pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
+    }.map { mergedBytes ->
+      documentService.storeDocument(recallId, mergedBytes, DOSSIER, "$DOSSIER.pdf")
+      mergedBytes
     }
   }
 
