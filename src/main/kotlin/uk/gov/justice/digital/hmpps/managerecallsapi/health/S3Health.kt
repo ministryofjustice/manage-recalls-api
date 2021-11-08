@@ -27,10 +27,10 @@ class S3Health(
       s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build()).sdkHttpResponse()
         .let { response ->
           if (response.isSuccessful) {
-            meterRegistry?.gauge("upstream_health", Tags.of("service", componentName), 1)
+            meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), 1)
             Health.up().withDetail("status", response.statusCode()).build()
           } else {
-            meterRegistry?.gauge("upstream_health", Tags.of("service", componentName), 0)
+            meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), 0)
             Health.down().withDetail("status", response.statusCode()).build()
           }
         }

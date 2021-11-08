@@ -45,7 +45,7 @@ abstract class PingHealthCheck(
       gaugeVal = 1
     }
 
-    meterRegistry?.gauge("upstream_health", Tags.of("service", componentName), gaugeVal)
+    meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), gaugeVal)
   }
 
   private fun downWithException(it: Exception) = Mono.just(Health.down(it).build())

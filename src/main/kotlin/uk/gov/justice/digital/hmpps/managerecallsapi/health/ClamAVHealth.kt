@@ -25,10 +25,10 @@ class ClamAVHealth(
       if (clamavEnabled) {
         clamAVConfig.clamavClient().ping()
       }
-      meterRegistry?.gauge("upstream_health", Tags.of("service", componentName), 1)
+      meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), 1)
       Health.up().withDetail("active", clamavEnabled).build()
     } catch (e: Exception) {
-      meterRegistry?.gauge("upstream_health", Tags.of("service", componentName), 0)
+      meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), 0)
       Health.down(e).build()
     }
   }
