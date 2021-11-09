@@ -87,7 +87,7 @@ management:
 prisonerSearch:
   endpoint:
     url: http://localhost:9092
-  timeout: 2
+  timeout: 5
 
 prisonRegister:
   endpoint:
