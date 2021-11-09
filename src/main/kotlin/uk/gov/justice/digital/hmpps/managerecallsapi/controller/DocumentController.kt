@@ -2,6 +2,10 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.onFailure
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
+import io.swagger.annotations.Example
+import io.swagger.annotations.ExampleProperty
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus.NO_CONTENT
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
@@ -46,6 +51,12 @@ class DocumentController(
     )
   }
 
+  @ApiResponses(
+    ApiResponse(
+      code = 400, message = "Bad request, e.g. virus scan returns error", response = ErrorResponse::class,
+      examples = Example(ExampleProperty(mediaType = "application/json", value = "{\n\"status\": 400,\n\"message\":\"VirusFoundException\"\n}"))
+    )
+  )
   // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
   @PostMapping("/recalls/{recallId}/documents")
   fun addDocument(
