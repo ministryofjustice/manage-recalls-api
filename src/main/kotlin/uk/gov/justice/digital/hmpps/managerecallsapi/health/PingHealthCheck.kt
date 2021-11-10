@@ -24,14 +24,18 @@ abstract class PingHealthCheck(
   private val meterRegistry: MeterRegistry? = null
 
   override fun health(): Health? {
-    val result = webClient.get()
-      .uri(healthUrl)
-      .retrieve()
-      .toEntity(String::class.java)
-      .flatMap { upWithStatus(it) }
-      .onErrorResume(WebClientResponseException::class.java) { downWithResponseBody(it) }
-      .onErrorResume(Exception::class.java) { downWithException(it) }
-      .block(timeout)
+    val result = try {
+      webClient.get()
+        .uri(healthUrl)
+        .retrieve()
+        .toEntity(String::class.java)
+        .flatMap { upWithStatus(it) }
+        .onErrorResume(WebClientResponseException::class.java) { downWithResponseBody(it) }
+        .onErrorResume(Exception::class.java) { downWithException(it) }
+        .block(timeout)
+    } catch (ex: Exception) {
+      Health.unknown().withBody(ex.toString()).build()
+    }
 
     recordHealthMetric(result)
 

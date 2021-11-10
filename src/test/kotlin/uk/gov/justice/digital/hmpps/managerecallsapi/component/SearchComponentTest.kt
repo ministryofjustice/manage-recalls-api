@@ -84,7 +84,7 @@ class SearchComponentTest : ComponentTestBase() {
   @Test
   fun `prisoner offender timeout is handled gracefully`() {
     val nomsNumber = randomNoms()
-    prisonerOffenderSearch.delayResponse(PrisonerSearchRequest(nomsNumber), 3000)
+    prisonerOffenderSearch.delaySearch(PrisonerSearchRequest(nomsNumber), 3000)
 
     val result = authenticatedClient.search(SearchRequest(nomsNumber), GATEWAY_TIMEOUT)
       .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
