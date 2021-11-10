@@ -39,6 +39,11 @@ generic-service:
       S3_SECRET_KEY: "secret_access_key"
       S3_BUCKET_NAME: "bucket_name"
 
+  custommetrics:
+    enabled: true
+    scrapeInterval: 15s
+    metricsPath: /prometheus
+
 generic-prometheus-alerts:
   targetApplication: manage-recalls-api
   alertSeverity: ppud-replacement-alerts
