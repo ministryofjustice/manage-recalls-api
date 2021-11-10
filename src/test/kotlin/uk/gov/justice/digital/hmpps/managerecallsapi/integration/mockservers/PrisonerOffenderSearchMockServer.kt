@@ -57,7 +57,7 @@ class PrisonerOffenderSearchMockServer(
     )
   }
 
-  fun delayResponse(request: PrisonerSearchRequest, timeoutMillis: Int) {
+  fun delaySearch(request: PrisonerSearchRequest, timeoutMillis: Int) {
     stubFor(
       post(urlEqualTo("/prisoner-search/match-prisoners"))
         .withRequestBody(equalToJson(objectMapper.writeValueAsString(request)))

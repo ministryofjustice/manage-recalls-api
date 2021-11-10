@@ -5,6 +5,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.OK
@@ -19,6 +20,7 @@ import java.util.stream.Stream
 
 @ActiveProfiles("db-test-no-clam")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AutoConfigureWebTestClient(timeout = "15000")
 class HealthCheckComponentTest : ComponentTestBase() {
 
   @Test
@@ -32,7 +34,9 @@ class HealthCheckComponentTest : ComponentTestBase() {
     healthCheckIsUpWith(
       "/health",
       "status" to "UP",
+      "components.prisonerOffenderSearch.status" to "UP",
       "components.prisonerOffenderSearch.details.status" to OK.name,
+      "components.gotenberg.status" to "UP",
       "components.gotenberg.details.status" to OK.name,
       "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
       "components.db.status" to "UP",
@@ -42,6 +46,36 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.clamAV.status" to "UP",
       "components.hmppsAuth.status" to "UP",
       "components.bankHoliday.status" to "UP"
+    )
+  }
+
+  @Test
+  fun `timeout is handled gracefully as down`() {
+    prisonerOffenderSearch.isSlow(INTERNAL_SERVER_ERROR, 3000)
+    gotenbergMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
+    prisonRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
+    courtRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
+    hmppsAuthMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
+
+    healthCheckIsUpWith(
+      "/health",
+      "status" to "UP",
+      "components.db.status" to "UP",
+      "components.s3.status" to "UP",
+      "components.clamAV.status" to "UP",
+      "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
+      "components.prisonerOffenderSearch.status" to "UNKNOWN",
+      "components.prisonerOffenderSearch.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.gotenberg.status" to "UNKNOWN",
+      "components.gotenberg.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.prisonRegister.status" to "UNKNOWN",
+      "components.prisonRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.courtRegister.status" to "UNKNOWN",
+      "components.courtRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.hmppsAuth.status" to "UNKNOWN",
+      "components.hmppsAuth.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.bankHoliday.status" to "UNKNOWN",
+      "components.bankHoliday.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS"
     )
   }
 

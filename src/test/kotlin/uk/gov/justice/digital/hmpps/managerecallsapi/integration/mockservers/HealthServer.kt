@@ -13,20 +13,19 @@ open class HealthServer(config: WireMockConfiguration, private val healthCheckPa
   constructor(port: Int, healthCheckPath: String) :
     this(WireMockConfiguration().apply { port(port) }, healthCheckPath)
 
-  fun isHealthy() {
-    healthCheck(HttpStatus.OK)
-  }
+  fun isHealthy() = healthCheck(HttpStatus.OK)
 
-  fun isUnhealthy() {
-    healthCheck(HttpStatus.INTERNAL_SERVER_ERROR)
-  }
+  fun isUnhealthy() = healthCheck(HttpStatus.INTERNAL_SERVER_ERROR)
 
-  private fun healthCheck(status: HttpStatus) =
+  fun isSlow(status: HttpStatus, delay: Int) = healthCheck(status, delay)
+
+  private fun healthCheck(status: HttpStatus, delay: Int = 0) =
     this.stubFor(
       WireMock.get(healthCheckPath).willReturn(
         WireMock.aResponse()
           .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
           .withStatus(status.value())
+          .withFixedDelay(delay)
       )
     )
 }
