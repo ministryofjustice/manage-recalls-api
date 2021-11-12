@@ -1,9 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -19,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -41,8 +38,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.util.Base64
-import java.util.UUID
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -56,26 +51,17 @@ class RecallsController(
   @Autowired private val recallService: RecallService,
   @Autowired private val prisonValidationService: PrisonValidationService,
   @Autowired private val courtValidationService: CourtValidationService,
-  @Autowired private val decoder: Base64.Decoder
+  @Autowired private val tokenExtractor: TokenExtractor
 ) {
-
-  @Serializable
-  data class Token(@SerialName("user_uuid") val userUuid: String)
 
   @PostMapping("/recalls")
   fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest, @RequestHeader("Authorization") bearerToken: String): ResponseEntity<RecallResponse> {
-    val token = getTokenFromHeader(bearerToken)
+    val token = tokenExtractor.getTokenFromHeader(bearerToken)
 
     return ResponseEntity(
-      recallRepository.save(bookRecallRequest.toRecall(token.userUuid)).toResponse(),
+      recallRepository.save(bookRecallRequest.toRecall(token.userUuid())).toResponse(),
       HttpStatus.CREATED
     )
-  }
-
-  private fun getTokenFromHeader(bearerToken: String): Token {
-    val chunks: List<String> = bearerToken.replace("Bearer ", "").split(".")
-    val payload = String(decoder.decode(chunks[1]))
-    return Json { ignoreUnknownKeys = true }.decodeFromString(payload)
   }
 
   @GetMapping("/recalls")
@@ -208,9 +194,9 @@ class RecallsController(
   }
 }
 
-fun BookRecallRequest.toRecall(userUuid: String): Recall {
+fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
   val now = OffsetDateTime.now()
-  return Recall(::RecallId.random(), this.nomsNumber, UserId(UUID.fromString(userUuid)), now, now)
+  return Recall(::RecallId.random(), this.nomsNumber, userUuid, now, now)
 }
 
 data class BookRecallRequest(val nomsNumber: NomsNumber)

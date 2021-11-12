@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus.CREATED
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ApprovalTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -32,6 +33,7 @@ import java.time.ZoneId
 class UserControllerTest(@Autowired private val userController: UserController) : ApprovalTestCase() {
 
   @MockkBean private lateinit var userDetailsService: UserDetailsService
+  @MockkBean private lateinit var tokenExtractor: TokenExtractor
   @MockkBean private lateinit var fixedClock: Clock
 
   @Test
@@ -47,10 +49,11 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val phoneNumber = PhoneNumber("01234567890")
     val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now(fixedClock))
 
+    every { tokenExtractor.getTokenFromHeader(any()) } returns TokenExtractor.Token(userId.toString())
     every { userDetailsService.save(userDetails) } returns userDetails
 
     approver(CREATED) {
-      userController.addUserDetails(AddUserDetailsRequest(userId, firstName, lastName, signature, email, phoneNumber))
+      userController.addUserDetails(AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber), "Bearer Token")
     }
   }
 

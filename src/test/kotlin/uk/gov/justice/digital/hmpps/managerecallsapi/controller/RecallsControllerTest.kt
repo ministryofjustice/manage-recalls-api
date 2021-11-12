@@ -4,12 +4,12 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
 import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor.Token
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
@@ -37,7 +37,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.util.Base64
 import java.util.UUID
 
 class RecallsControllerTest {
@@ -49,7 +48,7 @@ class RecallsControllerTest {
   private val recallService = mockk<RecallService>()
   private val prisonValidationService = mockk<PrisonValidationService>()
   private val courtValidationService = mockk<CourtValidationService>()
-  private val decoder = mockk<Base64.Decoder>()
+  private val tokenExtractor = mockk<TokenExtractor>()
 
   private val underTest =
     RecallsController(
@@ -61,7 +60,7 @@ class RecallsControllerTest {
       recallService,
       prisonValidationService,
       courtValidationService,
-      decoder
+      tokenExtractor
     )
 
   private val recallId = ::RecallId.random()
@@ -80,11 +79,11 @@ class RecallsControllerTest {
   fun `book recall returns request with id`() {
     val bearerToken = "Bearer header.payload"
     val userUuid = ::UserId.random()
-    val recall = recallRequest.toRecall(userUuid.toString())
+    val recall = recallRequest.toRecall(userUuid)
       .copy(createdDateTime = now, lastUpdatedDateTime = now)
 
     every { recallRepository.save(any()) } returns recall
-    every { decoder.decode("payload") } returns Json.encodeToJsonElement(RecallsController.Token(userUuid.toString())).toString().toByteArray()
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
@@ -142,7 +141,7 @@ class RecallsControllerTest {
   @Suppress("ReactiveStreamsUnusedPublisher")
   @Test
   fun `get recall notification returns Recall Notification PDF`() {
-    val recall = recallRequest.toRecall(::UserId.random().toString())
+    val recall = recallRequest.toRecall(::UserId.random())
     val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = expectedPdf.encodeToBase64String()
     val userId = UserId(UUID.randomUUID())
@@ -162,7 +161,7 @@ class RecallsControllerTest {
   @Suppress("ReactiveStreamsUnusedPublisher")
   @Test
   fun `get dossier returns expected PDF`() {
-    val recall = recallRequest.toRecall(::UserId.random().toString())
+    val recall = recallRequest.toRecall(::UserId.random())
     val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = expectedPdf.encodeToBase64String()
 
@@ -180,7 +179,7 @@ class RecallsControllerTest {
 
   @Test
   fun `get letter to prison returns expected PDF`() {
-    val recall = recallRequest.toRecall(::UserId.random().toString())
+    val recall = recallRequest.toRecall(::UserId.random())
     val expectedPdf = randomString().toByteArray()
     val expectedBase64Pdf = expectedPdf.encodeToBase64String()
 
