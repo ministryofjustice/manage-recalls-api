@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.test.web.reactive.server.WebTestClient
@@ -40,8 +39,9 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
+  // Are these for testing the absence of the ROLE or the absence of any user object at all, i.e. to carry roles etc?
   @Suppress("unused")
-  private fun requestBodySpecs(): Stream<WebTestClient.RequestHeadersSpec<*>>? {
+  private fun roleManageRecallsRequiredRequestBodySpecs(): Stream<WebTestClient.RequestHeadersSpec<*>>? {
     return Stream.of(
       webTestClient.post().uri("/recalls").bodyValue(bookRecallRequest),
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}"),
@@ -64,16 +64,27 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   }
 
   @ParameterizedTest
-  @MethodSource("requestBodySpecs")
-  fun `unauthorized when ROLE_MANAGE_RECALLS role is missing`(requestBodySpec: RequestBodySpec) {
+  @MethodSource("roleManageRecallsRequiredRequestBodySpecs")
+  fun `unauthorized when ROLE_MANAGE_RECALLS role is missing on request which requires it`(requestBodySpec: RequestBodySpec) {
     requestBodySpec
       .exchange()
       .expectStatus().isUnauthorized
   }
 
-  @Test
-  fun `unauthenticated endpoint can be hit without credentials`() {
-    webTestClient.get().uri("/reference-data/local-delivery-units")
+  @Suppress("unused")
+  private fun noRoleRequiredRequestBodySpecs(): Stream<WebTestClient.RequestHeadersSpec<*>>? {
+    return Stream.of(
+      webTestClient.get().uri("/reference-data/local-delivery-units"),
+      webTestClient.get().uri("/reference-data/courts"),
+      webTestClient.get().uri("/reference-data/prisons"),
+      webTestClient.get().uri("/reference-data/index-offences"),
+    )
+  }
+
+  @ParameterizedTest
+  @MethodSource("noRoleRequiredRequestBodySpecs")
+  fun `unauthenticated endpoint returns OK for request without credentials`(requestBodySpec: RequestBodySpec) {
+    requestBodySpec
       .exchange()
       .expectStatus().isOk
   }
