@@ -27,15 +27,18 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
 class AuthenticatedClient(
   private val webTestClient: WebTestClient,
   private val jwtAuthenticationHelper: JwtAuthenticationHelper
 ) {
 
+  var userId: UserId = ::UserId.random()
+
   private val addHeaders: (headers: HttpHeaders) -> Unit = {
     it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)
-    it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS"))
+    it.withBearerAuthToken(testJwt("ROLE_MANAGE_RECALLS", userId))
   }
 
   fun post(path: String, json: String): WebTestClient.ResponseSpec =
@@ -218,7 +221,7 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun testJwt(role: String) = jwtAuthenticationHelper.createTestJwt(role = role)
+  fun testJwt(role: String, userId: UserId) = jwtAuthenticationHelper.createTestJwt(userId, role = role)
 
   private fun HttpHeaders.withBearerAuthToken(jwt: String) = this.add(AUTHORIZATION, "Bearer $jwt")
 }

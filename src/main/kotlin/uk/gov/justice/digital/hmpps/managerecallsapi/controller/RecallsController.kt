@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
@@ -48,15 +50,19 @@ class RecallsController(
   @Autowired private val userDetailsService: UserDetailsService,
   @Autowired private val recallService: RecallService,
   @Autowired private val prisonValidationService: PrisonValidationService,
-  @Autowired private val courtValidationService: CourtValidationService
+  @Autowired private val courtValidationService: CourtValidationService,
+  @Autowired private val tokenExtractor: TokenExtractor
 ) {
 
   @PostMapping("/recalls")
-  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest): ResponseEntity<RecallResponse> =
-    ResponseEntity(
-      recallRepository.save(bookRecallRequest.toRecall()).toResponse(),
+  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest, @RequestHeader("Authorization") bearerToken: String): ResponseEntity<RecallResponse> {
+    val token = tokenExtractor.getTokenFromHeader(bearerToken)
+
+    return ResponseEntity(
+      recallRepository.save(bookRecallRequest.toRecall(token.userUuid())).toResponse(),
       HttpStatus.CREATED
     )
+  }
 
   @GetMapping("/recalls")
   fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
@@ -188,12 +194,12 @@ class RecallsController(
   }
 }
 
-fun BookRecallRequest.toRecall(): Recall {
+fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
   val now = OffsetDateTime.now()
-  return Recall(::RecallId.random(), this.nomsNumber, this.createdByUserId, now, now)
+  return Recall(::RecallId.random(), this.nomsNumber, userUuid, now, now)
 }
 
-data class BookRecallRequest(val nomsNumber: NomsNumber, val createdByUserId: UserId)
+data class BookRecallRequest(val nomsNumber: NomsNumber)
 
 data class RecallResponse(
   val recallId: RecallId,

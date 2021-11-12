@@ -126,7 +126,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
       }
   }
 
-  protected fun testJwt(role: String) = authenticatedClient.testJwt(role)
+  protected fun testJwt(userId: UserId, role: String) = authenticatedClient.testJwt(role, userId)
 
   protected fun unauthenticatedGet(path: String, expectedStatus: HttpStatus = OK): WebTestClient.BodyContentSpec =
     unauthenticatedGetResponse(path, expectedStatus)

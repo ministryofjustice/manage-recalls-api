@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
+import java.util.Base64
 
 @Configuration
 class RestConfiguration {
@@ -36,6 +37,9 @@ class RestConfiguration {
   fun restTemplate(builder: RestTemplateBuilder): RestTemplate {
     return builder.build()
   }
+
+  @Bean
+  fun decoder(): Base64.Decoder = Base64.getDecoder()
 
   @Bean
   fun objectMapper(): ObjectMapper = ManageRecallsApiJackson.mapper
