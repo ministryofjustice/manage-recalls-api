@@ -124,6 +124,21 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `no state required`() {
   }
 
+  @State("a user can retrieve their details")
+  fun `a user can retrieve their details`() {
+    userDetailsRepository.save(
+      UserDetails(
+        userId,
+        FirstName("Bertie"),
+        LastName("Badger"),
+        "",
+        Email("b@b.com"),
+        PhoneNumber("0987654321"),
+        OffsetDateTime.now()
+      )
+    )
+  }
+
   @State(
     "a recall exists",
     "a fully populated recall exists",

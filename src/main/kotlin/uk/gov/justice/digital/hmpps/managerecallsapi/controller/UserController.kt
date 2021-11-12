@@ -53,7 +53,6 @@ class UserController(
 
   @GetMapping("/users/current")
   fun getCurrentUserDetails(
-    @PathVariable("userId") userId: UserId,
     @RequestHeader("Authorization") bearerToken: String
   ) = userDetailsService.get(tokenExtractor.getTokenFromHeader(bearerToken).userUuid()).toResponse()
 
