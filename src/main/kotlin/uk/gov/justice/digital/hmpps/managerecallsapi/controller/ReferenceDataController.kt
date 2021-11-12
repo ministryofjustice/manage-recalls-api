@@ -17,13 +17,18 @@ class ReferenceDataController(
 ) {
 
   @GetMapping("/local-delivery-units")
-  fun localDeliveryUnits(): List<LocalDeliveryUnitResponse> = LocalDeliveryUnit.values().map { ldu -> LocalDeliveryUnitResponse(ldu.name, ldu.label) }.toList()
+  fun localDeliveryUnits(): List<LocalDeliveryUnitResponse> = LocalDeliveryUnit.values()
+    .map { ldu -> LocalDeliveryUnitResponse(ldu.name, ldu.label) }.toList()
 
   @GetMapping("/courts")
   fun courts(): List<CourtRegisterClient.Court> = courtRegisterClient.getAllCourts().block()!!
 
   @GetMapping("/prisons")
   fun prisons(): List<Prison> = prisonRegisterClient.getAllPrisons().block()!!
+
+  @GetMapping("/index-offences")
+  fun indexOffences(): List<IndexOffenceResponse> = IndexOffence.values()
+    .map { offence -> IndexOffenceResponse(offence.name, offence.group.name, offence.label) }.toList()
 }
 
 data class LocalDeliveryUnitResponse(val name: String, val label: String)
@@ -207,6 +212,8 @@ enum class IndexOffenceGroup(val label: String) {
   VIOLENCE_AGAINST_THE_PERSON_GROUP("Violence Against The Person"),
   VIOLENCE_AGAINST_THE_PERSON_SERIOUS_GROUP("Violence Against The Person - Serious"),
 }
+
+data class IndexOffenceResponse(val name: String, val group: String, val label: String)
 
 @Suppress("unused")
 enum class IndexOffence(val label: String, val group: IndexOffenceGroup) {
