@@ -66,11 +66,13 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @MockkBean
   private lateinit var documentService: DocumentService
 
+  private val userId = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+
   @TestTemplate
   @ExtendWith(PactVerificationSpringProvider::class)
   fun pactVerificationTest(pactContext: PactVerificationContext, request: HttpRequest) {
     request.removeHeaders(AUTHORIZATION)
-    request.addHeader(AUTHORIZATION, "Bearer ${testJwt("ROLE_MANAGE_RECALLS")}")
+    request.addHeader(AUTHORIZATION, "Bearer ${testJwt(userId, "ROLE_MANAGE_RECALLS")}")
     pactContext.verifyInteraction()
   }
 
@@ -128,11 +130,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user can be unassigned"
   )
   fun `a fully populated recall exists without documents`() {
-    val assigneeUuid = UUID.fromString("11111111-1111-1111-1111-111111111111")
-    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = assigneeUuid)
+    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = userId.value)
     userDetailsRepository.save(
       UserDetails(
-        UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
+        userId, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
         OffsetDateTime.now()
       )
     )
@@ -146,7 +147,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = null)
     userDetailsRepository.save(
       UserDetails(
-        UserId(UUID.fromString("11111111-1111-1111-1111-111111111111")),
+        userId,
         FirstName("Bertie"),
         LastName("Badger"),
         "",

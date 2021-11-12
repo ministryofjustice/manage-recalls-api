@@ -2,6 +2,7 @@ plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.12"
   kotlin("plugin.spring") version "1.5.10"
   kotlin("plugin.jpa") version "1.5.20"
+  kotlin("plugin.serialization") version "1.4.31"
 }
 
 repositories {
@@ -43,6 +44,7 @@ dependencies {
   implementation("net.sf.jmimemagic:jmimemagic:0.1.5") {
     exclude("log4j", "log4j")
   }
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 

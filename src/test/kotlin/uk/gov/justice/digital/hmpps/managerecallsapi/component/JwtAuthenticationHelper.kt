@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPublicKey
@@ -32,18 +34,23 @@ class JwtAuthenticationHelper(
   }
 
   @Bean("apiClientJwt")
-  fun apiClientJwt(): String = createTestJwt(subject = apiClientId)
+  fun apiClientJwt(): String = createTestJwt(
+    ::UserId.random(),
+    subject = apiClientId
+  )
 
   fun createTestJwt(
+    userId: UserId,
+    role: String? = null,
     subject: String = "Bertie",
     expiryTime: Duration = Duration.ofHours(1),
-    jwtId: String = UUID.randomUUID().toString(),
-    role: String? = null
+    jwtId: String = UUID.randomUUID().toString()
   ): String {
     val claims = mutableMapOf(
       "client_id" to "test_client_id",
       "username" to subject,
-      "authorities" to role?.let { listOf(role) }.orEmpty()
+      "authorities" to role?.let { listOf(role) }.orEmpty(),
+      "user_uuid" to userId.toString()
     )
     return Jwts.builder()
       .setId(jwtId)

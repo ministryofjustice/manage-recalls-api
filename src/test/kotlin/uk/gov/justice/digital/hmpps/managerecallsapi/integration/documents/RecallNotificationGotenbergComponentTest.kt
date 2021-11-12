@@ -24,7 +24,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(userIdGeneratingTheRecallNotification)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, createdByUserId))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     updateRecallWithRequiredInformationForTheDossier(recall.recallId)
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId, userIdGeneratingTheRecallNotification)
@@ -39,7 +39,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(userIdGeneratingTheRecallNotification)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, createdByUserId))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       contraband = true,

@@ -20,7 +20,7 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(recallNotificationUserId)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, ::UserId.random()))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     updateRecallWithRequiredInformationForTheDossier(recall.recallId)
     authenticatedClient.getRecallNotification(recall.recallId, recallNotificationUserId)
     expectNoVirusesWillBeFound()

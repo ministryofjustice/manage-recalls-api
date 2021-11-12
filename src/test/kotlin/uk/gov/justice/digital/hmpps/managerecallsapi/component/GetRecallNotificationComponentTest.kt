@@ -31,7 +31,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   @Test
   fun `get recall notification returns merged recall summary and revocation order`() {
     val userId = ::UserId.random()
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, ::UserId.random()))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
 
     setupUserDetailsFor(userId)

@@ -22,7 +22,7 @@ import java.util.stream.Stream
 class EndpointSecurityComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
-  private val bookRecallRequest = BookRecallRequest(nomsNumber, ::UserId.random())
+  private val bookRecallRequest = BookRecallRequest(nomsNumber)
   private val fileBytes = "content".toByteArray()
   private val category = RecallDocumentCategory.PART_A_RECALL_REPORT
   private val addDocumentRequest = AddDocumentRequest(category, fileBytes.encodeToBase64String(), "part_a.pdf")
