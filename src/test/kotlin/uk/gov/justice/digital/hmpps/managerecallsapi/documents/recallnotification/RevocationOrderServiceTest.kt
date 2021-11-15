@@ -44,7 +44,7 @@ internal class RevocationOrderServiceTest {
     val revocationOrderContext =
       RevocationOrderContext(
         recallId,
-        PersonName("Bertie", "Basset"),
+        PersonName("Bertie", lastName = "Basset"),
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",

@@ -17,7 +17,7 @@ class ReasonsForRecallHtmlGenerationTest(
   fun `generate HTML`(approver: ContentApprover) {
     val html = underTest.generateHtml(
       ReasonsForRecallContext(
-        PersonName("Bertie", "Badger"),
+        PersonName("Bertie", lastName = "Badger"),
         "B1234",
         NomsNumber("G4995VC"),
         "(i) breach one\n(ii) breach two"

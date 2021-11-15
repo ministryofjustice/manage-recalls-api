@@ -42,7 +42,7 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        PersonName("Bertie", "Badger"),
+        PersonName("Bertie", lastName = "Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
         PersonName("Maria", lastName = "Badger"),
@@ -124,7 +124,7 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        PersonName("Bertie", "Badger"),
+        PersonName("Bertie", lastName = "Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
         PersonName("Maria", lastName = "Badger"),

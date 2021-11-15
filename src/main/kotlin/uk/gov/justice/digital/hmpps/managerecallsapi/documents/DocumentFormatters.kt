@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -27,12 +28,23 @@ fun String.encodeToBase64String(): String = this.toByteArray().encodeToBase64Str
 val standardDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", ENGLISH)
 val standardTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-data class PersonName(val firstName: FirstName, val lastName: LastName) {
-  constructor(firstName: String, lastName: String) : this(
+data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = null, val lastName: LastName) {
+  constructor(firstName: String, middleNames: String? = null, lastName: String) : this(
     FirstName(firstName),
-    LastName(lastName)
+    middleNames = middleNames?.let { MiddleNames(it) },
+    lastName = LastName(lastName)
   )
-  override fun toString(): String = "$firstName $lastName"
+  override fun toString(): String = firstAndLastName()
+
+  fun firstAndLastName(): String = "$firstName $lastName"
+
+  fun firstMiddleLast(): String = "${firstAndMiddleNames()} $lastName"
+
+  private fun firstAndMiddleNames(): String =
+    when (middleNames) {
+      null -> "$firstName"
+      else -> "$firstName $middleNames"
+    }
 }
 
 data class RecallLengthDescription(val recallLength: RecallLength) {
@@ -67,9 +79,9 @@ fun MappaLevel.shouldShowOnDocuments(): Boolean {
   }
 }
 
-fun UserDetails.personName(): String = PersonName(this.firstName, this.lastName).toString()
+fun UserDetails.personName(): String = PersonName(this.firstName, lastName = this.lastName).firstAndLastName()
 fun Prisoner.personName(): PersonName =
-  PersonName(this.firstName!!, this.lastName!!)
+  PersonName(this.firstName!!, this.middleNames, this.lastName!!)
 
 class YesOrNo(val value: Boolean) {
   override fun toString(): String = if (value) "YES" else "NO"

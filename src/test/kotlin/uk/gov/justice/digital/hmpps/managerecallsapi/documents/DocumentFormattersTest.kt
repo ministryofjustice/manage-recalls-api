@@ -8,7 +8,18 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 
 class DocumentFormattersTest {
   @Test
-  fun `should format PersonName`() {
-    assertThat(PersonName(FirstName("Bernard"), LastName("Smythe")).toString(), equalTo("Bernard Smythe"))
+  fun `should format PersonName with middleNames`() {
+    val personName = PersonName("Bernard", "McTavish", "Smythe")
+    assertThat(personName.firstMiddleLast(), equalTo("Bernard McTavish Smythe"))
+    assertThat(personName.firstAndLastName(), equalTo("Bernard Smythe"))
+    assertThat(personName.toString(), equalTo("Bernard Smythe"))
+  }
+
+  @Test
+  fun `should format PersonName without middleNames`() {
+    val personName = PersonName(FirstName("Bernard"), null, LastName("Smythe"))
+    assertThat(personName.toString(), equalTo("Bernard Smythe"))
+    assertThat(personName.firstAndLastName(), equalTo("Bernard Smythe"))
+    assertThat(personName.firstMiddleLast(), equalTo("Bernard Smythe"))
   }
 }

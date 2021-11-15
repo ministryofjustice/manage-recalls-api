@@ -97,6 +97,7 @@ class RecallServiceTest {
     recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime,
     dossierEmailSentDate = fullyPopulatedUpdateRecallRequest.dossierEmailSentDate,
     hasOtherPreviousConvictionMainName = fullyPopulatedUpdateRecallRequest.hasOtherPreviousConvictionMainName,
+    previousConvictionMainNameCategory = fullyPopulatedUpdateRecallRequest.previousConvictionMainNameCategory,
     hasDossierBeenChecked = fullyPopulatedUpdateRecallRequest.hasDossierBeenChecked,
     previousConvictionMainName = fullyPopulatedUpdateRecallRequest.previousConvictionMainName,
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,

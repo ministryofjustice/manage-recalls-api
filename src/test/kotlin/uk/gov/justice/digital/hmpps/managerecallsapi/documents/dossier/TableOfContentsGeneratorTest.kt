@@ -49,7 +49,7 @@ class TableOfContentsGeneratorTest {
 
     val result = underTest.generateHtml(
       TableOfContentsContext(
-        PersonName("Bertie", "Badger"),
+        PersonName("Bertie", lastName = "Badger"),
         RecallLengthDescription(recallLength),
         currentPrisonName,
         bookingNumber

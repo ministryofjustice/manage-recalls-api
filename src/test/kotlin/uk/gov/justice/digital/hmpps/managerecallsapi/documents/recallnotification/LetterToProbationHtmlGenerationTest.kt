@@ -22,7 +22,7 @@ class LetterToProbationHtmlGenerationTest(
       LocalDate.of(2021, 9, 29),
       RecallLengthDescription(FOURTEEN_DAYS),
       "Mr probation",
-      PersonName("Bertie", "Offender"),
+      PersonName("Bertie", middleNames = "Bassett", lastName = "Offender"),
       "bookingNumber",
       PrisonName("Current prison name"),
       PersonName("Bobby", lastName = "Caseworker")

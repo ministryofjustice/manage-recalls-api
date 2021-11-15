@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
@@ -84,6 +85,8 @@ data class Recall(
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
   val hasOtherPreviousConvictionMainName: Boolean? = null,
+  @Enumerated(STRING)
+  val previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
   // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
@@ -127,6 +130,7 @@ data class Recall(
     recallNotificationEmailSentDateTime: OffsetDateTime? = null,
     dossierEmailSentDate: LocalDate? = null,
     hasOtherPreviousConvictionMainName: Boolean? = null,
+    previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
     hasDossierBeenChecked: Boolean? = null,
     previousConvictionMainName: String? = null,
     assessedByUserId: UserId? = null,
@@ -169,6 +173,7 @@ data class Recall(
       recallNotificationEmailSentDateTime,
       dossierEmailSentDate,
       hasOtherPreviousConvictionMainName,
+      previousConvictionMainNameCategory,
       hasDossierBeenChecked,
       previousConvictionMainName,
       assessedByUserId?.value,

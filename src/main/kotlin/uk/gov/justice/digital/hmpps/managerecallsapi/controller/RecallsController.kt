@@ -176,6 +176,7 @@ class RecallsController(
     differentNomsNumberDetail = this.differentNomsNumberDetail,
     recallNotificationEmailSentDateTime = this.recallNotificationEmailSentDateTime,
     dossierEmailSentDate = this.dossierEmailSentDate,
+    previousConvictionMainNameCategory = this.previousConvictionMainNameCategory,
     hasOtherPreviousConvictionMainName = this.hasOtherPreviousConvictionMainName,
     hasDossierBeenChecked = this.hasDossierBeenChecked,
     previousConvictionMainName = this.previousConvictionMainName,
@@ -245,6 +246,7 @@ data class RecallResponse(
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
   val hasOtherPreviousConvictionMainName: Boolean? = null,
+  val previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
   val assessedByUserId: UserId? = null,
@@ -321,6 +323,7 @@ data class UpdateRecallRequest(
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
   val hasOtherPreviousConvictionMainName: Boolean? = null,
+  val previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
   val assessedByUserId: UserId? = null,
@@ -370,4 +373,10 @@ enum class ReasonForRecall {
 enum class AgreeWithRecall {
   YES,
   NO_STOP
+}
+
+enum class PreviousConvictionMainNameCategory {
+  FIRST_LAST,
+  FIRST_MIDDLE_LAST,
+  OTHER
 }
