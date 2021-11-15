@@ -31,7 +31,7 @@ class RevocationOrderGeneratorTest {
     val result = underTest.generateHtml(
       RevocationOrderContext(
         ::RecallId.random(),
-        PersonName("Bertie", "Badger"),
+        PersonName("Bertie", lastName = "Badger"),
         LocalDate.of(1995, 10, 3),
         "bookNumber",
         "croNumber",

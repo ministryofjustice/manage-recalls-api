@@ -20,7 +20,7 @@ class TableOfContentsHtmlGeneratorTest(
   fun `generate revocation order HTML`(approver: ContentApprover) {
     val generatedHtml = underTest.generateHtml(
       TableOfContentsContext(
-        PersonName("PrisonerFirstName", "PrisonerLastName"),
+        PersonName("PrisonerFirstName", lastName = "PrisonerLastName"),
         RecallLengthDescription(TWENTY_EIGHT_DAYS),
         PrisonName("Current Prison (ABC)"),
         "ABC1234F"

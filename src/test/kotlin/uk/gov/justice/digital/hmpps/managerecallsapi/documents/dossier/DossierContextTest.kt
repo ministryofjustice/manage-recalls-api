@@ -39,7 +39,7 @@ class DossierContextTest {
       result,
       equalTo(
         ReasonsForRecallContext(
-          PersonName(firstName, lastName),
+          PersonName(firstName, lastName = lastName),
           bookingNumber,
           nomsNumber,
           licenceConditionsBreached

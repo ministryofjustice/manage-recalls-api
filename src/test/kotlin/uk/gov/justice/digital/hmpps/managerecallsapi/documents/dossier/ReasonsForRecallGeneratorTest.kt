@@ -27,7 +27,7 @@ class ReasonsForRecallGeneratorTest {
 
     val result = underTest.generateHtml(
       ReasonsForRecallContext(
-        PersonName("Bertie", "Badger"),
+        PersonName("Bertie", lastName = "Badger"),
         "B1234",
         NomsNumber("A1234AA"),
         "(i) breach one\n(ii) breach two"

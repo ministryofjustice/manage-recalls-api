@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -78,7 +79,7 @@ data class RecallNotificationContext(
       prisonerName,
       prisoner.dateOfBirth!!,
       prisoner.croNumber,
-      PersonName(assessedByUserDetails.firstName, assessedByUserDetails.lastName),
+      assessedByUserDetails.toPersonName(),
       assessedByUserDetails.email,
       assessedByUserDetails.phoneNumber,
       recall.mappaLevel!!,
@@ -90,7 +91,7 @@ data class RecallNotificationContext(
       recall.probationInfo!!.probationOfficerName,
       recall.probationInfo.probationOfficerPhoneNumber,
       recall.probationInfo.localDeliveryUnit,
-      if (recall.hasOtherPreviousConvictionMainName == true) recall.previousConvictionMainName!! else prisonerName.toString(),
+      previousConvictionMainName(recall, prisonerName),
       recall.bookingNumber!!,
       recall.nomsNumber,
       recall.lastReleaseDate!!,
@@ -105,6 +106,15 @@ data class RecallNotificationContext(
     )
   }
 
+  private fun previousConvictionMainName(recall: Recall, prisonerName: PersonName): String {
+    return when (recall.previousConvictionMainNameCategory) {
+      PreviousConvictionMainNameCategory.FIRST_LAST -> prisonerName.firstAndLastName()
+      PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST -> prisonerName.firstMiddleLast()
+      PreviousConvictionMainNameCategory.OTHER -> recall.previousConvictionMainName!!
+      else -> if (recall.hasOtherPreviousConvictionMainName == true) recall.previousConvictionMainName!! else prisonerName.firstAndLastName()
+    }
+  }
+
   fun getLetterToProbationContext(): LetterToProbationContext =
     LetterToProbationContext(
       LocalDate.now(clock),
@@ -113,8 +123,10 @@ data class RecallNotificationContext(
       prisoner.personName(),
       recall.bookingNumber!!,
       currentPrisonName,
-      PersonName(assessedByUserDetails.firstName, assessedByUserDetails.lastName)
+      assessedByUserDetails.toPersonName()
     )
+
+  private fun UserDetails.toPersonName() = PersonName(this.firstName, lastName = this.lastName)
 }
 
 data class LetterToProbationContext(
