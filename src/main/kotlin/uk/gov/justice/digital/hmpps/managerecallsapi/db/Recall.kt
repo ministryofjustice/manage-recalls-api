@@ -84,7 +84,6 @@ data class Recall(
   val differentNomsNumberDetail: String? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
-  val hasOtherPreviousConvictionMainName: Boolean? = null,
   @Enumerated(STRING)
   val previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
@@ -129,7 +128,6 @@ data class Recall(
     differentNomsNumberDetail: String? = null,
     recallNotificationEmailSentDateTime: OffsetDateTime? = null,
     dossierEmailSentDate: LocalDate? = null,
-    hasOtherPreviousConvictionMainName: Boolean? = null,
     previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
     hasDossierBeenChecked: Boolean? = null,
     previousConvictionMainName: String? = null,
@@ -172,7 +170,6 @@ data class Recall(
       differentNomsNumberDetail,
       recallNotificationEmailSentDateTime,
       dossierEmailSentDate,
-      hasOtherPreviousConvictionMainName,
       previousConvictionMainNameCategory,
       hasDossierBeenChecked,
       previousConvictionMainName,

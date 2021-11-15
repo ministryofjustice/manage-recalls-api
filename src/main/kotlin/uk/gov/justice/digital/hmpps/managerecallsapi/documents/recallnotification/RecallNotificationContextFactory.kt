@@ -111,7 +111,7 @@ data class RecallNotificationContext(
       PreviousConvictionMainNameCategory.FIRST_LAST -> prisonerName.firstAndLastName()
       PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST -> prisonerName.firstMiddleLast()
       PreviousConvictionMainNameCategory.OTHER -> recall.previousConvictionMainName!!
-      else -> if (recall.hasOtherPreviousConvictionMainName == true) recall.previousConvictionMainName!! else prisonerName.firstAndLastName()
+      else -> throw IllegalStateException("Unexpected previousConvictionMainNameCategory ${recall.previousConvictionMainNameCategory}")
     }
   }
 

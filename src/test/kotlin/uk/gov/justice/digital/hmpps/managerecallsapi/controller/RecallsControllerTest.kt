@@ -97,7 +97,21 @@ class RecallsControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(results, equalTo(listOf(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON))))
+    assertThat(
+      results,
+      equalTo(
+        listOf(
+          RecallResponse(
+            recallId,
+            nomsNumber,
+            createdByUserId,
+            now,
+            now,
+            Status.BEING_BOOKED_ON
+          )
+        )
+      )
+    )
   }
 
   @Test
@@ -273,7 +287,21 @@ class RecallsControllerTest {
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
-    assertThat(response, equalTo(ResponseEntity.ok(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON))))
+    assertThat(
+      response,
+      equalTo(
+        ResponseEntity.ok(
+          RecallResponse(
+            recallId,
+            nomsNumber,
+            createdByUserId,
+            now,
+            now,
+            Status.BEING_BOOKED_ON
+          )
+        )
+      )
+    )
   }
 
   @Test
