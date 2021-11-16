@@ -87,7 +87,6 @@ class RecallService(
       differentNomsNumberDetail = updateRecallRequest.differentNomsNumberDetail ?: differentNomsNumberDetail,
       recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
       dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate ?: dossierEmailSentDate,
-      hasOtherPreviousConvictionMainName = updateRecallRequest.hasOtherPreviousConvictionMainName ?: hasOtherPreviousConvictionMainName,
       previousConvictionMainNameCategory = updateRecallRequest.previousConvictionMainNameCategory ?: previousConvictionMainNameCategory,
       hasDossierBeenChecked = updateRecallRequest.hasDossierBeenChecked ?: hasDossierBeenChecked,
       previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,

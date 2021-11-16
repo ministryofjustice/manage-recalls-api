@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.PS_TOWER_HAMLETS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
@@ -74,6 +75,7 @@ class RecallNotificationContextTest {
       "Ms Authoriser"
     ),
     reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
+    previousConvictionMainNameCategory = PreviousConvictionMainNameCategory.OTHER,
     previousConvictionMainName = "Bryan Badger",
     assessedByUserId = assessedByUserId
   )

@@ -62,7 +62,7 @@ class RandomUtilitiesTest {
         has(Recall::differentNomsNumberDetail, present()),
         has(Recall::recallNotificationEmailSentDateTime, present()),
         has(Recall::dossierEmailSentDate, present()),
-        has(Recall::hasOtherPreviousConvictionMainName, present()),
+        has(Recall::previousConvictionMainNameCategory, present()),
         has(Recall::hasDossierBeenChecked, present()),
         has(Recall::previousConvictionMainName, present()),
         has("assessedByUserId", { it.assessedByUserId }, present()),
@@ -113,7 +113,7 @@ class RandomUtilitiesTest {
         has(UpdateRecallRequest::differentNomsNumberDetail, present()),
         has(UpdateRecallRequest::recallNotificationEmailSentDateTime, present()),
         has(UpdateRecallRequest::dossierEmailSentDate, present()),
-        has(UpdateRecallRequest::hasOtherPreviousConvictionMainName, present()),
+        has(UpdateRecallRequest::previousConvictionMainNameCategory, present()),
         has(UpdateRecallRequest::hasDossierBeenChecked, present()),
         has(UpdateRecallRequest::previousConvictionMainName, present()),
       )

@@ -93,7 +93,17 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val response = authenticatedClient.unassignRecall(recallId, assignee)
 
     assertThat(
-      response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, OffsetDateTime.now(fixedClock), Status.BEING_BOOKED_ON))
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          createdByUserId,
+          now,
+          OffsetDateTime.now(fixedClock),
+          Status.BEING_BOOKED_ON
+        )
+      )
     )
   }
 

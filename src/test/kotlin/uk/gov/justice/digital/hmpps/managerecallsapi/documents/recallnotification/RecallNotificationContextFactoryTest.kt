@@ -96,23 +96,18 @@ class RecallNotificationContextFactoryTest {
 
   private fun prevConsMainNameOptions(): Stream<Arguments> {
     return Stream.of(
-      Arguments.of(true, "Bobby Badger", null, "Bobby Badger"),
-      Arguments.of(true, "Bobby Badger", PreviousConvictionMainNameCategory.FIRST_LAST, "Andy Badger"),
-      Arguments.of(true, "Bobby Badger", PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
-      Arguments.of(true, "Bobby Badger", PreviousConvictionMainNameCategory.OTHER, "Bobby Badger"),
-      Arguments.of(false, "", null, "Andy Badger"),
-      Arguments.of(false, "", PreviousConvictionMainNameCategory.FIRST_LAST, "Andy Badger"),
-      Arguments.of(false, "", PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
-      Arguments.of(false, "Other Name", PreviousConvictionMainNameCategory.OTHER, "Other Name"),
-      Arguments.of(null, "", PreviousConvictionMainNameCategory.FIRST_LAST, "Andy Badger"),
-      Arguments.of(null, "", PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
-      Arguments.of(null, "", PreviousConvictionMainNameCategory.OTHER, ""),
+      Arguments.of("Bobby Badger", PreviousConvictionMainNameCategory.FIRST_LAST, "Andy Badger"),
+      Arguments.of("Bobby Badger", PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
+      Arguments.of("Other Name", PreviousConvictionMainNameCategory.OTHER, "Other Name"),
+      Arguments.of("", PreviousConvictionMainNameCategory.FIRST_LAST, "Andy Badger"),
+      Arguments.of("", PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
+      Arguments.of("", PreviousConvictionMainNameCategory.OTHER, "")
     )
   }
 
-  @ParameterizedTest(name = "create RecallSummaryContext when hasPreviousConvictionMainName is {0} & category is {2}")
+  @ParameterizedTest(name = "create RecallSummaryContext when category is {1}")
   @MethodSource("prevConsMainNameOptions")
-  fun `create RecallSummaryContext with required details`(hasPrevConsMainName: Boolean?, prevConsMainName: String?, prevConsMainNameCategory: PreviousConvictionMainNameCategory?, expectedName: String) {
+  fun `create RecallSummaryContext with required details`(prevConsMainName: String?, prevConsMainNameCategory: PreviousConvictionMainNameCategory?, expectedName: String) {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("nomsNumber")
     val userIdGeneratingRecallNotification = ::UserId.random()
@@ -142,7 +137,6 @@ class RecallNotificationContextFactoryTest {
       bookingNumber = "1243A",
       probationInfo = probationInfo,
       currentPrison = currentPrisonId,
-      hasOtherPreviousConvictionMainName = hasPrevConsMainName,
       previousConvictionMainNameCategory = prevConsMainNameCategory,
       previousConvictionMainName = prevConsMainName,
     )

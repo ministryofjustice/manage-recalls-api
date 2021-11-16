@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
@@ -57,6 +58,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       recallId,
       UpdateRecallRequest(
         mappaLevel = MappaLevel.LEVEL_3,
+        previousConvictionMainNameCategory = PreviousConvictionMainNameCategory.OTHER,
         previousConvictionMainName = "Bryan Badger",
         bookingNumber = "B1234",
         lastReleasePrison = PrisonId("AKI"),
@@ -80,7 +82,6 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         vulnerabilityDiversity = true,
         vulnerabilityDiversityDetail = "Some stuff",
         assessedByUserId = userId,
-
       )
     )
   }
