@@ -126,12 +126,13 @@ jobs:
             - run:
                 command: |
                   PACT_PROVIDER_VERSION="$CIRCLE_SHA1" \
-                    PACT_PROVIDER_TAG="$CIRCLE_BRANCH" \
-                    PACTBROKER_CONSUMERVERSIONSELECTORS_TAGS="<< parameters.consumer_tags >>" \
-                    PACT_PUBLISH_RESULTS="true" \
-                    PACTBROKER_AUTH_USERNAME="$PACT_BROKER_USERNAME" \
-                    PACTBROKER_AUTH_PASSWORD="$PACT_BROKER_PASSWORD" \
-                    ./gradlew verifyPactAndPublish
+                  PACT_PROVIDER_TAG="$CIRCLE_BRANCH" \
+                  PACTBROKER_CONSUMERVERSIONSELECTORS_TAGS="<< parameters.consumer_tags >>" \
+                  PACT_PUBLISH_RESULTS="true" \
+                  PACTBROKER_AUTH_USERNAME="$PACT_BROKER_USERNAME" \
+                  PACTBROKER_AUTH_PASSWORD="$PACT_BROKER_PASSWORD" \
+                  PACT_INCLUDEWIPPACTSSINCE="2021-11-17" \
+                  ./gradlew verifyPactAndPublish
       - store_test_results:
           path: build/test-results
       - store_artifacts:
