@@ -16,7 +16,7 @@ parameters:
     default: false
   pact_consumer_tags:
     type: string
-    default: main, deployed:preprod, deployed:prod
+    default: not_set
 
 _db_localstack_docker_config: &db_localstack_docker_config
   - image: cimg/openjdk:16.0
@@ -132,6 +132,7 @@ jobs:
                     PACTBROKER_AUTH_USERNAME="$PACT_BROKER_USERNAME" \
                     PACTBROKER_AUTH_PASSWORD="$PACT_BROKER_PASSWORD" \
                     ./gradlew verifyPactAndPublish
+      #                  PACT_INCLUDEWIPPACTSSINCE="2021-11-17" \
       - store_test_results:
           path: build/test-results
       - store_artifacts:
@@ -416,8 +417,50 @@ workflows:
             - veracode-credentials
             - hmpps-common-vars
 
-  pact:
+  pact_webhook:
+    when: << pipeline.parameters.only_run_pact_workflow >>
     jobs:
       - verify_pact_and_publish:
+          name: verify_pact_and_publish_ui_webhook
           context: hmpps-common-vars
           consumer_tags: << pipeline.parameters.pact_consumer_tags >>
+
+  pact_pr:
+    unless: << pipeline.parameters.only_run_pact_workflow >>
+    jobs:
+      - verify_pact_and_publish:
+          name: verify_pact_and_publish_main
+          context: hmpps-common-vars
+          consumer_tags: main
+          filters:
+            branches:
+              ignore:
+                - main
+
+  pact_main:
+    unless: << pipeline.parameters.only_run_pact_workflow >>
+    jobs:
+      - verify_pact_and_publish:
+          name: verify_pact_and_publish_main
+          context: hmpps-common-vars
+          consumer_tags: main
+          filters:
+            branches:
+              only:
+                - main
+      - verify_pact_and_publish:
+          name: verify_pact_and_publish_preprod
+          context: hmpps-common-vars
+          consumer_tags: deployed:preprod
+          filters:
+            branches:
+              only:
+                - main
+      - verify_pact_and_publish:
+          name: verify_pact_and_publish_prod
+          context: hmpps-common-vars
+          consumer_tags: deployed:prod
+          filters:
+            branches:
+              only:
+                - main
