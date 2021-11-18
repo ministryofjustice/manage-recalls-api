@@ -1,0 +1,2 @@
+# Ignore until new version is available. Currently we dont expose the thymeleaf in any way that can cause an issue
+CVE-2021-43466
