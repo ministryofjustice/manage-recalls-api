@@ -3,6 +3,7 @@ plugins {
   kotlin("plugin.spring") version "1.5.10"
   kotlin("plugin.jpa") version "1.5.20"
   kotlin("plugin.serialization") version "1.4.31"
+  id("org.owasp.dependencycheck") version "6.5.0.1"
 }
 
 repositories {
@@ -15,6 +16,14 @@ configurations {
     exclude(group = "junit")
     exclude(group = "com.vaadin.external.google", module = "android-json")
   }
+}
+
+dependencyCheck {
+  // Fail the build when there is a finding with "medium" severity.
+  // failBuildOnCVSS = 4
+  // Only check the compile classpath and ignore findings in other configurations.
+  // scanConfigurations = ['debugCompileClasspath', 'acceptanceCompileClasspath', 'productionCompileClasspath']
+  suppressionFiles.add("$rootDir/owasp.suppression.xml")
 }
 
 dependencies {
