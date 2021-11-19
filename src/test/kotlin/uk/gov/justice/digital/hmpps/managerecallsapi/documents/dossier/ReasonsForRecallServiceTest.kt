@@ -7,9 +7,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.DOSSIER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId

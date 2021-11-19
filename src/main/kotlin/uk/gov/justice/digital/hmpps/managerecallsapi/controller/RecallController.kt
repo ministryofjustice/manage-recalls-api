@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -43,7 +44,7 @@ import java.time.OffsetDateTime
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
-class RecallsController(
+class RecallController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val recallNotificationService: RecallNotificationService,
   @Autowired private val dossierService: DossierService,
@@ -56,7 +57,10 @@ class RecallsController(
 ) {
 
   @PostMapping("/recalls")
-  fun bookRecall(@RequestBody bookRecallRequest: BookRecallRequest, @RequestHeader("Authorization") bearerToken: String): ResponseEntity<RecallResponse> {
+  fun bookRecall(
+    @RequestBody bookRecallRequest: BookRecallRequest,
+    @RequestHeader("Authorization") bearerToken: String
+  ): ResponseEntity<RecallResponse> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
 
     return ResponseEntity(
@@ -135,6 +139,7 @@ class RecallsController(
     lastUpdatedDateTime = this.lastUpdatedDateTime,
     status = this.status(),
     documents = latestDocuments(documents),
+    missingDocumentsRecords = latestMissingDocumentsRecord(),
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
@@ -189,10 +194,16 @@ class RecallsController(
     assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.personName() }
   )
 
-  private fun latestDocuments(documents: Set<Document>): List<ApiRecallDocument> {
+  private fun Recall.latestMissingDocumentsRecord() =
+    listOfNotNull(
+      missingDocumentsRecords.maxByOrNull { it.version }?.toResponse()
+    )
+
+  private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
     val partitionedDocs = documents.partition { it.category.versioned }
-    val latestDocuments = partitionedDocs.first.filter { it.category.versioned }.groupBy { it.category }.values.map { it.sortedBy { d -> d.version }.last() } + partitionedDocs.second
-    return latestDocuments.map { ApiRecallDocument(it.id(), it.category, it.fileName, it.version, it.createdDateTime) }
+    val latestDocuments = partitionedDocs.first.filter { it.category.versioned }
+      .groupBy { it.category }.values.map { it.sortedBy { d -> d.version }.last() } + partitionedDocs.second
+    return latestDocuments.map { Api.RecallDocument(it.id(), it.category, it.fileName, it.version, it.createdDateTime) }
   }
 }
 
@@ -210,7 +221,8 @@ data class RecallResponse(
   val createdDateTime: OffsetDateTime,
   val lastUpdatedDateTime: OffsetDateTime,
   val status: Status,
-  val documents: List<ApiRecallDocument> = emptyList(),
+  val documents: List<Api.RecallDocument> = emptyList(),
+  val missingDocumentsRecords: List<Api.MissingDocumentsRecord> = emptyList(),
   val recallLength: RecallLength? = null,
   val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
@@ -261,15 +273,25 @@ data class RecallResponse(
 
 class Api {
   data class SentenceLength(val years: Int, val months: Int, val days: Int)
-}
 
-data class ApiRecallDocument(
-  val documentId: DocumentId,
-  val category: RecallDocumentCategory,
-  val fileName: String,
-  val version: Int?,
-  val createdDateTime: OffsetDateTime
-)
+  data class RecallDocument(
+    val documentId: DocumentId,
+    val category: DocumentCategory,
+    val fileName: String,
+    val version: Int?,
+    val createdDateTime: OffsetDateTime
+  )
+
+  data class MissingDocumentsRecord(
+    val missingDocumentsRecordId: MissingDocumentsRecordId,
+    val categories: List<DocumentCategory>,
+    val emailId: DocumentId,
+    val detail: String,
+    val version: Int,
+    val createdByUserId: UserId,
+    val createdDateTime: OffsetDateTime
+  )
+}
 
 data class Pdf(val content: String) {
   companion object {

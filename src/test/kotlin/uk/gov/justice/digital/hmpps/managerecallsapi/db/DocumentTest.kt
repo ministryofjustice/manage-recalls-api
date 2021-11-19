@@ -16,7 +16,7 @@ class DocumentTest {
       Document(
         ::DocumentId.random(),
         ::RecallId.random(),
-        RecallDocumentCategory.OTHER,
+        DocumentCategory.OTHER,
         "file.txt",
         1,
         OffsetDateTime.now()
@@ -30,7 +30,7 @@ class DocumentTest {
       Document(
         ::DocumentId.random(),
         ::RecallId.random(),
-        RecallDocumentCategory.LICENCE,
+        DocumentCategory.LICENCE,
         "file.txt",
         null,
         OffsetDateTime.now()
@@ -43,7 +43,7 @@ class DocumentTest {
     Document(
       ::DocumentId.random(),
       ::RecallId.random(),
-      RecallDocumentCategory.LICENCE,
+      DocumentCategory.LICENCE,
       "file.txt",
       1,
       OffsetDateTime.now()

@@ -23,7 +23,7 @@ data class Document(
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  val category: RecallDocumentCategory,
+  val category: DocumentCategory,
 
   @Column(nullable = false)
   val fileName: String,
@@ -37,7 +37,7 @@ data class Document(
   constructor(
     id: DocumentId,
     recallId: RecallId,
-    category: RecallDocumentCategory,
+    category: DocumentCategory,
     fileName: String,
     version: Int?,
     createdDateTime: OffsetDateTime

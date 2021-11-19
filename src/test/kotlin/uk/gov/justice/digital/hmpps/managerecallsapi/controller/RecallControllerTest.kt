@@ -11,9 +11,9 @@ import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor.Token
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
@@ -39,7 +39,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
 
-class RecallsControllerTest {
+class RecallControllerTest {
   private val recallRepository = mockk<RecallRepository>()
   private val recallNotificationService = mockk<RecallNotificationService>()
   private val dossierService = mockk<DossierService>()
@@ -51,7 +51,7 @@ class RecallsControllerTest {
   private val tokenExtractor = mockk<TokenExtractor>()
 
   private val underTest =
-    RecallsController(
+    RecallController(
       recallRepository,
       recallNotificationService,
       dossierService,
@@ -143,7 +143,7 @@ class RecallsControllerTest {
       now,
       now,
       Status.BEING_BOOKED_ON,
-      documents = listOf(ApiRecallDocument(document.id(), document.category, fileName, document.version, document.createdDateTime)),
+      documents = listOf(Api.RecallDocument(document.id(), document.category, fileName, document.version, document.createdDateTime)),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
@@ -357,9 +357,9 @@ class RecallsControllerTest {
         RecallResponse(
           recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON,
           documents = listOf(
-            ApiRecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now),
-            ApiRecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, now),
-            ApiRecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, now),
+            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now),
+            Api.RecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, now),
+            Api.RecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, now),
           )
         )
       )

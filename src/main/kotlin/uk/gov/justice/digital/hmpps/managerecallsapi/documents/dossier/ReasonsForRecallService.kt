@@ -3,8 +3,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REASONS_FOR_RECALL
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -18,7 +18,7 @@ class ReasonsForRecallService(
 ) {
 
   fun getDocument(dossierContext: DossierContext): Mono<ByteArray> =
-    documentService.getLatestVersionedDocumentContentWithCategoryIfExists(dossierContext.recall.recallId(), RecallDocumentCategory.DOSSIER)
+    documentService.getLatestVersionedDocumentContentWithCategoryIfExists(dossierContext.recall.recallId(), DocumentCategory.DOSSIER)
       ?.let { Mono.just(it) }
       ?: createDocument(dossierContext)
 

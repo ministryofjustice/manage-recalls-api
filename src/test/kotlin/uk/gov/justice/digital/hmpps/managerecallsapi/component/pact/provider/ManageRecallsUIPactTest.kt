@@ -24,8 +24,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LETTER_TO_PRISON
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.LICENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
@@ -146,7 +146,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   )
   fun `a fully populated recall exists without documents`() {
     val assigneeUuid = UUID.fromString("11111111-1111-1111-1111-111111111111")
-    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = assigneeUuid)
+    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), missingDocumentsRecords = emptySet(), assignee = assigneeUuid)
     userDetailsRepository.save(
       UserDetails(
         UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
@@ -160,7 +160,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user can be assigned"
   )
   fun `an unassigned fully populated recall exists without documents`() {
-    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), assignee = null)
+    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(documents = emptySet(), missingDocumentsRecords = emptySet(), assignee = null)
     userDetailsRepository.save(
       UserDetails(
         UserId(UUID.fromString("11111111-1111-1111-1111-111111111111")),
@@ -185,16 +185,19 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         fullyPopulatedRecall(::RecallId.random()).copy(
           nomsNumber = nomsNumber,
           documents = emptySet(),
+          missingDocumentsRecords = emptySet(),
           assignee = null
         ),
         fullyPopulatedRecall(::RecallId.random()).copy(
           nomsNumber = randomNoms(),
           documents = emptySet(),
+          missingDocumentsRecords = emptySet(),
           assignee = null
         ),
         fullyPopulatedRecall(::RecallId.random()).copy(
           nomsNumber = randomNoms(),
           documents = emptySet(),
+          missingDocumentsRecords = emptySet(),
           assignee = null
         )
       )

@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
-enum class RecallDocumentCategory(val uploaded: Boolean, val versioned: Boolean) {
+enum class DocumentCategory(val uploaded: Boolean, val versioned: Boolean) {
   PART_A_RECALL_REPORT(true, true),
   LICENCE(true, true),
   OASYS_RISK_ASSESSMENT(true, true),
@@ -18,6 +18,7 @@ enum class RecallDocumentCategory(val uploaded: Boolean, val versioned: Boolean)
   LETTER_TO_PRISON(false, true),
   DOSSIER(false, true),
   REASONS_FOR_RECALL(false, true),
+  MISSING_DOCUMENTS_EMAIL(true, true),
   OTHER(true, false),
   UNCATEGORISED(true, false)
 }

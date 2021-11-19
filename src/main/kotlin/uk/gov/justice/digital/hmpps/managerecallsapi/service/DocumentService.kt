@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -35,7 +35,7 @@ class DocumentService(
   fun scanAndStoreDocument(
     recallId: RecallId,
     documentBytes: ByteArray,
-    documentCategory: RecallDocumentCategory,
+    documentCategory: DocumentCategory,
     fileName: String
   ): Result<DocumentId, VirusScanResult> =
     forExistingRecall(recallId) {
@@ -51,7 +51,7 @@ class DocumentService(
   fun storeDocument(
     recallId: RecallId,
     documentBytes: ByteArray,
-    documentCategory: RecallDocumentCategory,
+    documentCategory: DocumentCategory,
     fileName: String
   ): DocumentId =
     forExistingRecall(recallId) {
@@ -60,7 +60,7 @@ class DocumentService(
 
   private fun uploadToS3AndSaveDocument(
     recallId: RecallId,
-    category: RecallDocumentCategory,
+    category: DocumentCategory,
     documentBytes: ByteArray,
     fileName: String
   ): DocumentId {
@@ -97,13 +97,13 @@ class DocumentService(
     documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
     )
 
-  fun getLatestVersionedDocumentContentWithCategory(recallId: RecallId, documentCategory: RecallDocumentCategory): ByteArray =
+  fun getLatestVersionedDocumentContentWithCategory(recallId: RecallId, documentCategory: DocumentCategory): ByteArray =
     getLatestVersionedDocumentContentWithCategoryIfExists(recallId, documentCategory)
       ?: throw RecallDocumentWithCategoryNotFoundException(recallId, documentCategory)
 
   fun getLatestVersionedDocumentContentWithCategoryIfExists(
     recallId: RecallId,
-    documentCategory: RecallDocumentCategory
+    documentCategory: DocumentCategory
   ): ByteArray? =
     forExistingRecall(recallId) {
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, documentCategory)?.let {
@@ -120,7 +120,7 @@ class DocumentService(
   fun updateDocumentCategory(
     recallId: RecallId,
     documentId: DocumentId,
-    newCategory: RecallDocumentCategory
+    newCategory: DocumentCategory
   ): Document {
     return forExistingRecall(recallId) {
       documentRepository.save(
@@ -150,7 +150,7 @@ data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
 data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
 data class RecallDocumentWithCategoryNotFoundException(
   val recallId: RecallId,
-  val documentCategory: RecallDocumentCategory
+  val documentCategory: DocumentCategory
 ) : NotFoundException()
 
 open class NotFoundException : ManageRecallsException()
@@ -159,6 +159,6 @@ class DocumentDeleteException(override val message: String?) : ManageRecallsExce
 
 data class VirusFoundEvent(
   val recallId: RecallId,
-  val documentCategory: RecallDocumentCategory,
+  val documentCategory: DocumentCategory,
   val foundViruses: Map<String, Collection<String>>
 )

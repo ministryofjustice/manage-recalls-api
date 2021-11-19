@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -109,6 +110,13 @@ class AuthenticatedClient(
 
   fun unassignRecall(recallId: RecallId, assignee: UserId, expectedStatus: HttpStatus) =
     deleteRequest("/recalls/$recallId/assignee/$assignee", expectedStatus)
+
+  fun <T> missingDocumentsRecord(
+    request: MissingDocumentsRecordRequest,
+    expectedStatus: HttpStatus = CREATED,
+    responseClass: Class<T>
+  ) =
+    postRequest("/missing-documents-records", request, responseClass, expectedStatus)
 
   fun search(searchRequest: SearchRequest, expectedStatus: HttpStatus) =
     sendPostRequest("/search", searchRequest, expectedStatus)

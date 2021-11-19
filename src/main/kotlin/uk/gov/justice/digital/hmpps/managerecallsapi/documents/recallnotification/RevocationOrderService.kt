@@ -3,7 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotificati
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.REVOCATION_ORDER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.signature
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
