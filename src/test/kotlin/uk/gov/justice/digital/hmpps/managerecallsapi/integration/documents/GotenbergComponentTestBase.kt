@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -53,6 +54,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
         authorisingAssistantChiefOfficer = "ACO",
         localPoliceForce = "London",
+        localPoliceForceId = PoliceForceId("metropolitan"),
         currentPrison = PrisonId("MWI"),
         contraband = contraband,
         contrabandDetail = contrabandDetail,
@@ -94,6 +96,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
         authorisingAssistantChiefOfficer = "ACO",
         localPoliceForce = "London",
+        localPoliceForceId = PoliceForceId("metropolitan"),
         currentPrison = PrisonId("MWI"),
         contraband = contraband,
         contrabandDetail = contrabandDetail,

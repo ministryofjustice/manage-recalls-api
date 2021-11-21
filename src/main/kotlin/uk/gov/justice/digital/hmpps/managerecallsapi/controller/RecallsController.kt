@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotificatio
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -140,6 +141,7 @@ class RecallsController(
     recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
     recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
     localPoliceForce = this.localPoliceForce,
+    localPoliceForceId = this.localPoliceForceId,
     contraband = this.contraband,
     contrabandDetail = this.contrabandDetail,
     vulnerabilityDiversity = this.vulnerabilityDiversity,
@@ -214,6 +216,7 @@ data class RecallResponse(
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceForce: String? = null,
+  val localPoliceForceId: PoliceForceId? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversity: Boolean? = null,
@@ -290,6 +293,7 @@ data class UpdateRecallRequest(
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceForce: String? = null,
+  val localPoliceForceId: PoliceForceId? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversity: Boolean? = null,

@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -57,6 +58,8 @@ data class Recall(
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val localPoliceForce: String? = null,
+  @Convert(converter = PoliceForceIdJpaConverter::class)
+  val localPoliceForceId: PoliceForceId? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversity: Boolean? = null,
@@ -108,6 +111,7 @@ data class Recall(
     lastReleaseDate: LocalDate? = null,
     recallEmailReceivedDateTime: OffsetDateTime? = null,
     localPoliceForce: String? = null,
+    localPoliceForceId: PoliceForceId? = null,
     contraband: Boolean? = null,
     contrabandDetail: String? = null,
     vulnerabilityDiversity: Boolean? = null,
@@ -150,6 +154,7 @@ data class Recall(
       lastReleaseDate,
       recallEmailReceivedDateTime,
       localPoliceForce,
+      localPoliceForceId,
       contraband,
       contrabandDetail,
       vulnerabilityDiversity,

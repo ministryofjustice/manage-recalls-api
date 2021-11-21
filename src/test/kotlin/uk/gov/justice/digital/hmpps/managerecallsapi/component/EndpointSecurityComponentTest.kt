@@ -77,6 +77,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.get().uri("/reference-data/local-delivery-units"),
       webTestClient.get().uri("/reference-data/courts"),
       webTestClient.get().uri("/reference-data/prisons"),
+      webTestClient.get().uri("/reference-data/police-forces"),
       webTestClient.get().uri("/reference-data/index-offences"),
     )
   }
