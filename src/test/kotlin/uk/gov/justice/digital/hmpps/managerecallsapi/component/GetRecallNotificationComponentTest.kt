@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -76,6 +77,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         localDeliveryUnit = LocalDeliveryUnit.PS_BARNET,
         authorisingAssistantChiefOfficer = "Ms Authoriser",
         localPoliceForce = "London",
+        localPoliceForceId = PoliceForceId("greater-manchester"),
         currentPrison = PrisonId("BMI"),
         contraband = true,
         contrabandDetail = "Some contraband detail",

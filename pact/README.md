@@ -28,6 +28,7 @@ the Consumer contract specification to verify, i.e. annotations like one of:
 etc. 
 
 As per local running, executing the PACTs here also requires e.g. postgres and localstack:
+
 ```docker compose up -d postgres localstack```
 
 Then API PACT verification alone can be executed with: 
