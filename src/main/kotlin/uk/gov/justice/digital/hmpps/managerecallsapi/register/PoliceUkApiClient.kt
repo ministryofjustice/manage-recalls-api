@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 
 @Component
 class PoliceUkApiClient {
@@ -19,20 +19,20 @@ class PoliceUkApiClient {
   @Autowired
   internal lateinit var policeUkApiWebClient: WebClient
 
-  fun getAllPoliceForces(): Mono<List<PoliceForce>> {
+  fun getAllPoliceForces(): Mono<List<Api.PoliceForce>> {
     return policeUkApiWebClient
       .get()
       .uri("/forces")
       .retrieve()
-      .bodyToMono(object : ParameterizedTypeReference<List<PoliceForce>>() {})
+      .bodyToMono(object : ParameterizedTypeReference<List<Api.PoliceForce>>() {})
   }
 
-  fun findById(policeForceId: PoliceForceId): Mono<PoliceForce> {
+  fun findById(policeForceId: PoliceForceId): Mono<Api.PoliceForce> {
     return policeUkApiWebClient
       .get()
       .uri("/forces/$policeForceId")
       .retrieve()
-      .bodyToMono(PoliceForce::class.java)
+      .bodyToMono(Api.PoliceForce::class.java)
       .onErrorResume(WebClientResponseException::class.java) { exception ->
         when (exception.rawStatusCode) {
           404 -> Mono.empty()
@@ -40,9 +40,4 @@ class PoliceUkApiClient {
         }
       }
   }
-
-  data class PoliceForce(
-    val id: PoliceForceId,
-    val name: PoliceForceName
-  )
 }

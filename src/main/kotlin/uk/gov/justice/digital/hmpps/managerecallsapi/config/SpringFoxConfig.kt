@@ -25,6 +25,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -47,14 +49,16 @@ class SpringFoxConfig {
       .directModelSubstitute(LastName::class.java, String::class.java)
       .directModelSubstitute(Email::class.java, String::class.java)
       .directModelSubstitute(PhoneNumber::class.java, String::class.java)
-      .directModelSubstitute(PrisonName::class.java, String::class.java)
       .directModelSubstitute(RecallId::class.java, UUID::class.java)
       .directModelSubstitute(DocumentId::class.java, UUID::class.java)
       .directModelSubstitute(MissingDocumentsRecordId::class.java, UUID::class.java)
       .directModelSubstitute(UserId::class.java, UUID::class.java)
       .directModelSubstitute(PrisonId::class.java, String::class.java)
+      .directModelSubstitute(PrisonName::class.java, String::class.java)
       .directModelSubstitute(CourtId::class.java, String::class.java)
       .directModelSubstitute(CourtName::class.java, String::class.java)
+      .directModelSubstitute(PoliceForceId::class.java, String::class.java)
+      .directModelSubstitute(PoliceForceName::class.java, String::class.java)
   }
 
   @Bean
