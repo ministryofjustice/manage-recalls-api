@@ -9,6 +9,7 @@ import java.time.LocalDate
 
 @Component
 class BankHolidayRegisterClient {
+  // Note: no mock implementation: real is used also for all tests; likely responses will be cached in future anyway
 
   @Autowired
   internal lateinit var bankHolidayRegisterWebClient: WebClient

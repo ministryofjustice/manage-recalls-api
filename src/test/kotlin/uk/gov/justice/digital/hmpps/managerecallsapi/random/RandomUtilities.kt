@@ -5,6 +5,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
@@ -72,6 +73,7 @@ private fun KClass<*>.createStandardInstance(type: KType): Any? =
       NomsNumber::class -> randomNoms()
       PrisonId::class -> randomPrisonId()
       CourtId::class -> randomCourtId()
+      PoliceForceId::class -> randomPoliceForceId()
       Boolean::class -> Random.nextBoolean()
       LocalDate::class -> LocalDate.now()
       OffsetDateTime::class -> OffsetDateTime.now()
@@ -90,6 +92,7 @@ fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
 fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))
+fun randomPoliceForceId() = PoliceForceId(RandomStringUtils.randomAlphanumeric(6))
 fun randomVersionedDocumentCategory() = RecallDocumentCategory.values().filter { it.versioned }.random()
 fun randomUnVersionedDocumentCategory() = RecallDocumentCategory.values().filter { !it.versioned }.random()
 fun randomAdultDateOfBirth(): LocalDate? {

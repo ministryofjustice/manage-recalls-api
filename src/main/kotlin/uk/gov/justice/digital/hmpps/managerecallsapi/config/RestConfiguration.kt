@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -68,6 +70,8 @@ private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply 
   text(::PrisonId)
   text(::CourtId)
   text(::CourtName)
+  text(::PoliceForceId)
+  text(::PoliceForceName)
   text(StringBiDiMappings.uuid().map(::RecallId, RecallId::value))
   text(StringBiDiMappings.uuid().map(::DocumentId, DocumentId::value))
   text(StringBiDiMappings.uuid().map(::UserId, UserId::value))

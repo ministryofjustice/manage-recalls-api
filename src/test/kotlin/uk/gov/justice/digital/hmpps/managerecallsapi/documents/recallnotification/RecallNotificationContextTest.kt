@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -53,6 +54,7 @@ class RecallNotificationContextTest {
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
     localPoliceForce = "London",
+    localPoliceForceId = PoliceForceId("metropolitan"),
     contraband = true,
     contrabandDetail = "I believe that they will bring contraband to prison",
     vulnerabilityDiversity = true,

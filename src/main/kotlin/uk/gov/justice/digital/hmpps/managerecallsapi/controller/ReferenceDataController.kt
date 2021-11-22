@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.PoliceUkApiClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
 
@@ -14,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClie
 class ReferenceDataController(
   @Autowired private val courtRegisterClient: CourtRegisterClient,
   @Autowired private val prisonRegisterClient: PrisonRegisterClient,
+  @Autowired private val policeUkApiClient: PoliceUkApiClient,
 ) {
 
   @GetMapping("/local-delivery-units")
@@ -25,6 +27,9 @@ class ReferenceDataController(
 
   @GetMapping("/prisons")
   fun prisons(): List<Prison> = prisonRegisterClient.getAllPrisons().block()!!
+
+  @GetMapping("/police-forces")
+  fun policeForces(): List<PoliceUkApiClient.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!
 
   @GetMapping("/index-offences")
   fun indexOffences(): List<IndexOffence> = IndexOffenceEnum.values()

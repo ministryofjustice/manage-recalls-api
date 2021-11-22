@@ -10,9 +10,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnitResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.PoliceUkApiClient.PoliceForce
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 
 class ReferenceDataComponentTest : ComponentTestBase() {
@@ -65,6 +68,36 @@ class ReferenceDataComponentTest : ComponentTestBase() {
   }
 
   @Test
+  fun `can get police forces`() {
+    val response = unauthenticatedGetResponse("/reference-data/police-forces")
+      .expectBody(object : ParameterizedTypeReference<List<PoliceForce>>() {})
+      .returnResult()
+      .responseBody!!
+
+    assertThat(response.size, equalTo(44))
+
+    assertThat(
+      response[0],
+      equalTo(
+        PoliceForce(
+          PoliceForceId("avon-and-somerset"),
+          PoliceForceName("Avon and Somerset Constabulary")
+        )
+      )
+    )
+
+    assertThat(
+      response[43],
+      equalTo(
+        PoliceForce(
+          PoliceForceId("wiltshire"),
+          PoliceForceName("Wiltshire Police")
+        )
+      )
+    )
+  }
+
+  @Test
   fun `can get index offences`() {
     val response = unauthenticatedGetResponse("/reference-data/index-offences")
       .expectBody(object : ParameterizedTypeReference<List<IndexOffence>>() {})
@@ -74,22 +107,26 @@ class ReferenceDataComponentTest : ComponentTestBase() {
     val expectedResponse = IndexOffenceEnum.values().map { IndexOffence(it.name, it.label) }
 
     assertThat(response, equalTo(expectedResponse))
-    assertThat(317, equalTo(expectedResponse.size))
+    assertThat(response.size, equalTo(317))
 
     assertThat(
-      IndexOffence(
-        "ABDUCTION",
-        "Abduction"
-      ),
-      equalTo(expectedResponse[0])
+      response[0],
+      equalTo(
+        IndexOffence(
+          "ABDUCTION",
+          "Abduction"
+        )
+      )
     )
 
     assertThat(
-      IndexOffence(
-        "WOUNDING_WITH_INTENT_TO_CAUSE_GRIEVOUS_BODILY_HARM",
-        "Wounding with intent to cause grievous bodily harm"
-      ),
-      equalTo(expectedResponse[316])
+      response[316],
+      equalTo(
+        IndexOffence(
+          "WOUNDING_WITH_INTENT_TO_CAUSE_GRIEVOUS_BODILY_HARM",
+          "Wounding with intent to cause grievous bodily harm"
+        )
+      )
     )
   }
 }

@@ -70,6 +70,7 @@ class RecallServiceTest {
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
     localPoliceForce = fullyPopulatedUpdateRecallRequest.localPoliceForce,
+    localPoliceForceId = fullyPopulatedUpdateRecallRequest.localPoliceForceId,
     contraband = fullyPopulatedUpdateRecallRequest.contraband,
     contrabandDetail = fullyPopulatedUpdateRecallRequest.contrabandDetail,
     vulnerabilityDiversity = fullyPopulatedUpdateRecallRequest.vulnerabilityDiversity,

@@ -64,6 +64,7 @@ class RecallService(
       lastReleasePrison = updateRecallRequest.lastReleasePrison ?: lastReleasePrison,
       lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,
       localPoliceForce = updateRecallRequest.localPoliceForce ?: localPoliceForce,
+      localPoliceForceId = updateRecallRequest.localPoliceForceId ?: localPoliceForceId,
       contraband = updateRecallRequest.contraband ?: contraband,
       contrabandDetail = updateRecallRequest.contrabandDetail ?: contrabandDetail,
       vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity

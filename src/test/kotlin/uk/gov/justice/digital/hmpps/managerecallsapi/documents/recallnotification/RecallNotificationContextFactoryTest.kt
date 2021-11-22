@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -130,6 +131,7 @@ class RecallNotificationContextFactoryTest {
       lastReleasePrison = lastReleasePrisonId,
       lastReleaseDate = LocalDate.now(),
       localPoliceForce = "A Force",
+      localPoliceForceId = PoliceForceId("greater-manchester"),
       contraband = true,
       vulnerabilityDiversity = true,
       mappaLevel = MappaLevel.LEVEL_2,

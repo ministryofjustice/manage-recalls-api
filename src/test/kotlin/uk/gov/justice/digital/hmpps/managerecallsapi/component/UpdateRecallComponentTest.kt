@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -185,8 +186,16 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `update a recall with local police force`() {
-    val policeForce = "London"
-    val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(localPoliceForce = policeForce))
+    val policeForce = "Greater Manchester Police"
+    val policeForceId = PoliceForceId("greater-manchester")
+
+    val response = authenticatedClient.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        localPoliceForce = policeForce,
+        localPoliceForceId = policeForceId
+      )
+    )
 
     assertThat(
       response,
@@ -198,7 +207,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           now,
           fixedClockTime,
           Status.BEING_BOOKED_ON,
-          localPoliceForce = policeForce
+          localPoliceForce = policeForce,
+          localPoliceForceId = policeForceId
         )
       )
     )

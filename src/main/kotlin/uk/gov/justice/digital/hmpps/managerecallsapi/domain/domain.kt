@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.domain
 
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ValidationRules.alphanumeric
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ValidationRules.kebabAlphanumeric
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ValidationRules.maxLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ValidationRules.minLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ValidationRules.notBlank
@@ -25,12 +26,15 @@ class PrisonName(value: String) : Validated<String>(value, notBlank)
 class PrisonId(value: String) : Validated<String>(value, notBlank, alphanumeric, 2.minLength, 6.maxLength)
 class CourtId(value: String) : Validated<String>(value, notBlank, alphanumeric, 2.minLength, 6.maxLength)
 class CourtName(value: String) : Validated<String>(value, notBlank)
+class PoliceForceId(value: String) : Validated<String>(value, notBlank, kebabAlphanumeric, 2.minLength, 64.maxLength)
+class PoliceForceName(value: String) : Validated<String>(value, notBlank)
 
 fun <T : Validated<UUID>> ((UUID) -> T).random() = this(UUID.randomUUID())
 
 object ValidationRules {
   val notBlank: Rule<String> get() = { it.isNotBlank() }
   val alphanumeric: Rule<String> get() = { it.all(Char::isLetterOrDigit) }
+  val kebabAlphanumeric: Rule<String> get() = { str -> str.all { ch -> ch.isLetterOrDigit() || ch == '-' } }
   private val IntRange.constrainLength: Rule<String> get() = { contains(it.length) }
   val Int.minLength: Rule<String> get() = (this..Integer.MAX_VALUE).constrainLength
   val Int.maxLength: Rule<String> get() = (0..this).constrainLength
