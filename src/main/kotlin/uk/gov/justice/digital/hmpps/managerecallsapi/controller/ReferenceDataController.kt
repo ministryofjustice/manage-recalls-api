@@ -32,11 +32,9 @@ class ReferenceDataController(
   fun policeForces(): List<Api.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!
 
   @GetMapping("/index-offences")
-  fun indexOffences(): List<IndexOffence> = IndexOffenceEnum.values()
-    .map { offence -> IndexOffence(offence.name, offence.label) }.toList()
+  fun indexOffences(): List<Api.IndexOffence> = IndexOffenceEnum.values()
+    .map { offence -> Api.IndexOffence(offence.name, offence.label) }.toList()
 }
-
-data class IndexOffence(val id: String, val name: String)
 
 // TODO: migrate name, label to id, name to be closer to e.g. courts and prisons responses
 data class LocalDeliveryUnitResponse(val name: String, val label: String)
