@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.PoliceForce
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.IndexOffence
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.IndexOffenceEnum
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
@@ -15,7 +16,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.PoliceUkApiClient.PoliceForce
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 
 class ReferenceDataComponentTest : ComponentTestBase() {

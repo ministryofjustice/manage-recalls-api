@@ -29,7 +29,7 @@ class ReferenceDataController(
   fun prisons(): List<Prison> = prisonRegisterClient.getAllPrisons().block()!!
 
   @GetMapping("/police-forces")
-  fun policeForces(): List<PoliceUkApiClient.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!
+  fun policeForces(): List<Api.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!
 
   @GetMapping("/index-offences")
   fun indexOffences(): List<IndexOffence> = IndexOffenceEnum.values()

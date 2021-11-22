@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -290,6 +291,11 @@ class Api {
     val version: Int,
     val createdByUserId: UserId,
     val createdDateTime: OffsetDateTime
+  )
+
+  data class PoliceForce(
+    val id: PoliceForceId,
+    val name: PoliceForceName
   )
 }
 
