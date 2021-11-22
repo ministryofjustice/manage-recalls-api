@@ -8,15 +8,15 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ApiRecallDocument
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.OTHER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.PART_A_RECALL_REPORT
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.RECALL_NOTIFICATION
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory.UNCATEGORISED
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -274,7 +274,7 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(documents.size, equalTo(1))
     assertThat(
       documents[0],
-      equalTo(ApiRecallDocument(firstDocumentId, versionedDocumentCategory, fileName, 1, documents[0].createdDateTime))
+      equalTo(RecallDocument(firstDocumentId, versionedDocumentCategory, fileName, 1, documents[0].createdDateTime))
     )
   }
 }

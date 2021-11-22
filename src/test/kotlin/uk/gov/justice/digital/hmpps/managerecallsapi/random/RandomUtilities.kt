@@ -1,8 +1,8 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.random
 
 import org.apache.commons.lang3.RandomStringUtils
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -31,8 +31,14 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random()): Rec
         document ->
         document.copy(
           recallId = recallId.value,
-          // ensure document version is valid verus category
+          // ensure document version is valid versus category
           version = if (document.category.versioned) Random.nextInt() else null
+        )
+      }.toSet(),
+      missingDocumentsRecords = recall.missingDocumentsRecords.map { mdr ->
+        mdr.copy(
+          recallId = recallId.value,
+          emailId = recall.documents.random().id
         )
       }.toSet()
     )
@@ -93,8 +99,8 @@ fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
 fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))
 fun randomPoliceForceId() = PoliceForceId(RandomStringUtils.randomAlphanumeric(6))
-fun randomVersionedDocumentCategory() = RecallDocumentCategory.values().filter { it.versioned }.random()
-fun randomUnVersionedDocumentCategory() = RecallDocumentCategory.values().filter { !it.versioned }.random()
+fun randomVersionedDocumentCategory() = DocumentCategory.values().filter { it.versioned }.random()
+fun randomUnVersionedDocumentCategory() = DocumentCategory.values().filter { !it.versioned }.random()
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)
   val endEpochDay = age18.toEpochDay()

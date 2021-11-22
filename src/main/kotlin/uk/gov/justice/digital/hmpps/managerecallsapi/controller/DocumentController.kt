@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -102,18 +102,18 @@ class DocumentController(
 }
 
 data class UpdateDocumentRequest(
-  val category: RecallDocumentCategory
+  val category: DocumentCategory
 )
 
 data class UpdateDocumentResponse(
   val documentId: DocumentId,
   val recallId: RecallId,
-  val category: RecallDocumentCategory,
+  val category: DocumentCategory,
   val fileName: String
 )
 
 data class AddDocumentRequest(
-  val category: RecallDocumentCategory,
+  val category: DocumentCategory,
   val fileContent: String,
   val fileName: String
 )
@@ -122,7 +122,7 @@ data class AddDocumentResponse(val documentId: DocumentId)
 
 data class GetDocumentResponse(
   val documentId: DocumentId,
-  val category: RecallDocumentCategory,
+  val category: DocumentCategory,
   val content: String,
   val fileName: String,
   val version: Int?,

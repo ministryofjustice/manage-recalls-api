@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvicti
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -114,14 +114,14 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
   protected fun uploadPartAFor(recall: RecallResponse) {
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(RecallDocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "PART_A.pdf")
+      AddDocumentRequest(DocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "PART_A.pdf")
     )
   }
 
   protected fun uploadLicenceFor(recall: RecallResponse) {
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(RecallDocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), "PART_A.pdf")
+      AddDocumentRequest(DocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), "PART_A.pdf")
     )
   }
 

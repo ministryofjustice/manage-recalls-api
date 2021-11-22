@@ -49,6 +49,9 @@ data class Recall(
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val documents: Set<Document> = emptySet(),
+  @OneToMany(cascade = [ALL])
+  @JoinColumn(name = "recall_id")
+  val missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
   @Enumerated(STRING)
   val recallType: RecallType? = null,
   @Enumerated(STRING)
@@ -105,6 +108,7 @@ data class Recall(
     createdDateTime: OffsetDateTime,
     lastUpdatedDateTime: OffsetDateTime = createdDateTime,
     documents: Set<Document> = emptySet(),
+    missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
     recallType: RecallType? = null,
     recallLength: RecallLength? = null,
     lastReleasePrison: PrisonId? = null,
@@ -139,7 +143,7 @@ data class Recall(
     bookedByUserId: UserId? = null,
     dossierCreatedByUserId: UserId? = null,
     dossierTargetDate: LocalDate? = null,
-    assignee: UserId? = null,
+    assignee: UserId? = null
   ) :
     this(
       recallId.value,
@@ -148,6 +152,7 @@ data class Recall(
       createdDateTime,
       lastUpdatedDateTime,
       documents,
+      missingDocumentsRecords,
       recallType,
       recallLength,
       lastReleasePrison,

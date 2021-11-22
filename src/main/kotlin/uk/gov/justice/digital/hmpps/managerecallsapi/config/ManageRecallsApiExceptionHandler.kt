@@ -13,7 +13,7 @@ import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 
 @RestControllerAdvice
@@ -90,4 +90,4 @@ open class ManageRecallsException(override val message: String? = null) : Except
 
 class ClientTimeoutException(clientName: String, errorType: String) : ManageRecallsException("$clientName: [$errorType]")
 
-class WrongDocumentTypeException(val category: RecallDocumentCategory) : ManageRecallsException(category.name)
+class WrongDocumentTypeException(val category: DocumentCategory) : ManageRecallsException(category.name)

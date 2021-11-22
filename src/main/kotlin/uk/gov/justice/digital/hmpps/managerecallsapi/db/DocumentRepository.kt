@@ -18,7 +18,7 @@ interface JpaDocumentRepository : JpaRepository<Document, UUID> {
   // TODO: don't use with unversioned categories! This needs to evolve to e.g. getLatest or to return List<Document> or similar.
   fun findFirstByRecallIdAndCategoryOrderByVersionDesc(
     @Param("recallId") recallId: UUID,
-    @Param("category") category: RecallDocumentCategory
+    @Param("category") category: DocumentCategory
   ): Document?
 
   fun findByIdAndRecallId(
@@ -44,7 +44,7 @@ class DocumentRepository(
 
   override fun deleteByDocumentId(documentId: DocumentId) = deleteById(documentId.value)
 
-  fun findLatestVersionedDocumentByRecallIdAndCategory(recallId: RecallId, category: RecallDocumentCategory): Document? {
+  fun findLatestVersionedDocumentByRecallIdAndCategory(recallId: RecallId, category: DocumentCategory): Document? {
     if (!category.versioned) {
       throw WrongDocumentTypeException(category)
     }

@@ -13,9 +13,9 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -39,11 +39,11 @@ class DocumentRepositoryIntegrationTest(
   private val recallId = ::RecallId.random()
   private val nomsNumber = randomNoms()
   private val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now())
-  private val versioneDocumentId = ::DocumentId.random()
+  private val documentId = ::DocumentId.random()
   // TODO: parameterized tests driven from RecallDocumentCategory
   private val versionedCategory = randomVersionedDocumentCategory()
   private val unVersionedCategory = randomUnVersionedDocumentCategory()
-  private val versionedRecallDocument = versionedDocument(versioneDocumentId, recallId, versionedCategory, 1)
+  private val versionedRecallDocument = versionedDocument(documentId, recallId, versionedCategory, 1)
 
   // Note: when using @Transactional to clean up after the tests we need to 'flush' to trigger the DB constraints, hence use of saveAndFlush()
   @Test
@@ -178,7 +178,7 @@ class DocumentRepositoryIntegrationTest(
     recallRepository.save(recall)
     documentRepository.save(versionedRecallDocument)
 
-    val retrieved = documentRepository.getByRecallIdAndDocumentId(recallId, versioneDocumentId)
+    val retrieved = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
 
     assertThat(retrieved, equalTo(versionedRecallDocument))
   }
@@ -189,11 +189,11 @@ class DocumentRepositoryIntegrationTest(
     val thrown = assertThrows<DocumentNotFoundException> {
       documentRepository.getByRecallIdAndDocumentId(
         recallId,
-        versioneDocumentId
+        documentId
       )
     }
 
-    assertThat(thrown, equalTo(DocumentNotFoundException(recallId, versioneDocumentId)))
+    assertThat(thrown, equalTo(DocumentNotFoundException(recallId, documentId)))
   }
 
   @Test
@@ -217,13 +217,13 @@ class DocumentRepositoryIntegrationTest(
     assertThat(retrieved, absent())
   }
 
-  private fun versionedDocument(id: DocumentId, recallId: RecallId, category: RecallDocumentCategory, version: Int) =
+  private fun versionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int) =
     testDocument(id, recallId, category, version)
 
-  private fun unVersionedDocument(id: DocumentId, recallId: RecallId, category: RecallDocumentCategory) =
+  private fun unVersionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory) =
     testDocument(id, recallId, category, null)
 
-  private fun testDocument(id: DocumentId, recallId: RecallId, category: RecallDocumentCategory, version: Int?): Document {
+  private fun testDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int?): Document {
     return Document(
       id,
       recallId,
