@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.PoliceForce
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.IndexOffenceEnum
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.IndexOffence
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnitResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
@@ -104,7 +104,7 @@ class ReferenceDataComponentTest : ComponentTestBase() {
       .returnResult()
       .responseBody!!
 
-    val expectedResponse = IndexOffenceEnum.values().map { Api.IndexOffence(it.name, it.label) }
+    val expectedResponse = IndexOffence.values().map { Api.IndexOffence(it.name, it.label) }
 
     assertThat(response, equalTo(expectedResponse))
     assertThat(response.size, equalTo(317))
