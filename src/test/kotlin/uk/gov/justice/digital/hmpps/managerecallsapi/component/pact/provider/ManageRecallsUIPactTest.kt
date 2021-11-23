@@ -106,26 +106,13 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "no state required",
-    // TO BE DELETED
-    "a search by blank NOMS number",
-    "a create recall request with blank nomsNumber",
-    "a recall can be created",
-    "a recall does not exist",
-    "a list of local delivery units exists",
-    "a list of prisons exists",
-    "a list of courts exists",
-    "a missing user ID",
-    "a user can store their details",
-    "a document does not exist",
+    "no state required"
   )
   fun `no state required`() {
   }
 
   @State(
-    "a user exists",
-    // TO BE DELETED
-    "a user can retrieve their details"
+    "a user exists"
   )
   fun `a user exists`() {
     userDetailsRepository.save(
@@ -142,12 +129,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a user and a fully populated recall without documents exists",
-    // TO BE DELETED
-    "a recall exists",
-    "a fully populated recall exists",
-    "a user can be unassigned",
-    "a document can be created"
+    "a user and a fully populated recall without documents exists"
   )
   fun `a user and a fully populated recall without documents exists`() {
     val assigneeUuid = UUID.fromString("11111111-1111-1111-1111-111111111111")
@@ -166,9 +148,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a user and an unassigned fully populated recall exists without documents",
-    // TO BE DELETED
-    "a user can be assigned"
+    "a user and an unassigned fully populated recall exists without documents"
   )
   fun `a user and an unassigned fully populated recall exists without documents`() {
     val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(
@@ -191,9 +171,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a list of recalls exists",
-    // TO BE DELETED
-    "a list of recalls exists for NOMS number"
+    "a list of recalls exists"
   )
   fun `a list of recalls exists`() {
     recallRepository.saveAll(
@@ -221,9 +199,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a recall notification and recall exists",
-    // TO BE DELETED
-    "a recall notification can be downloaded"
+    "a recall notification and recall exists"
   )
   fun `a recall notification and recall exists`() {
     `a user and a fully populated recall without documents exists`()
@@ -231,9 +207,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a dossier and recall exists",
-    // TO BE DELETED
-    "a dossier can be downloaded"
+    "a dossier and recall exists"
   )
   fun `a dossier and recall exists`() {
     `a user and a fully populated recall without documents exists`()
@@ -241,9 +215,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a letter to prison and recall exists",
-    // TO BE DELETED:
-    "a letter can be downloaded"
+    "a letter to prison and recall exists"
   )
   fun `a letter to prison and recall exists`() {
     `a user and a fully populated recall without documents exists`()
@@ -251,11 +223,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a recall and document exist",
-    // To DELETE
-    "a recall and document exists to be updated",
-    "a document exists",
-    "a document exists to be updated",
+    "a recall and document exist"
   )
   fun `a recall and document exist`() {
     `a user and a fully populated recall without documents exists`()
@@ -263,9 +231,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a recall in being booked on state with a document exists",
-    // TO BE DELETED
-    "a document can be deleted"
+    "a recall in being booked on state with a document exists"
   )
   fun `a recall in being booked on state with a document exists`() {
     recallRepository.save(Recall(::RecallId.zeroes(), nomsNumber, ::UserId.random(), OffsetDateTime.now(), OffsetDateTime.now()))
