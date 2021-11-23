@@ -38,8 +38,7 @@ class ReasonsForRecallGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("firstName", { it.variable("firstName") }, equalTo("Bertie")),
-        has("lastName", { it.variable("lastName") }, equalTo("Badger")),
+        has("fullName", { it.variable("fullName") }, equalTo("Bertie Badger")),
         has("bookingNumber", { it.variable("bookingNumber") }, equalTo("B1234")),
         has("nomsNumber", { it.variable("nomsNumber") }, equalTo("A1234AA")),
         has(

@@ -14,8 +14,7 @@ class RevocationOrderGenerator(
 
   fun generateHtml(revocationOrderContext: RevocationOrderContext): String =
     Context().apply {
-      setVariable("firstName", revocationOrderContext.personName.firstName)
-      setVariable("lastName", revocationOrderContext.personName.lastName)
+      setVariable("fullName", revocationOrderContext.personName.firstAndLastName())
       setVariable("dateOfBirth", revocationOrderContext.dateOfBirth.asStandardDateFormat())
       setVariable("bookingNumber", revocationOrderContext.bookingNumber)
       setVariable("croNumber", revocationOrderContext.croNumber)
