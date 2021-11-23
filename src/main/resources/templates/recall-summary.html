@@ -982,9 +982,8 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
 <table class="c57">
   <tbody>
   <tr class="c49">
-    <td class="c63" colspan="1" rowspan="1"><p class="c0"><span class="c1">FORENAME: <span th:text="${firstName}"/></span>
-    </p>
-      <p class="c0"><span class="c1">SURNAME: <span th:text="${lastName}"/></span></p>
+    <td class="c63" colspan="1" rowspan="1">
+      <p class="c0"><span class="c1">FULL NAME: <span th:text="${fullName}"/></span></p>
       <p class="c0"><span class="c1">DATE OF BIRTH: <span th:text="${dateOfBirth}"/></span></p>
       <p class="c0"><span class="c1">POLICE FILE NAME: <span th:text="${previousConvictionMainName}"/></span></p>
       <p class="c0"><span class="c1">PRISON NUMBER: <span th:text="${bookingNumber}"/></span></p>
@@ -992,10 +991,8 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
       <p class="c0"><span class="c1">RELEASING PRISON: <span th:text="${lastReleasePrisonName}"/></span></p>
       <p class="c0"><span class="c1">RELEASE DATE: <span th:text="${lastReleaseDate}"/></span></p>
       <p class="c0"><span class="c1">LENGTH OF SENTENCE: <span th:text="${lengthOfSentence}"/></span></p>
-      <p class="c0"><span class="c1">INDEX OFFENCE: <span th:text="${indexOffence}"/></span></p><a
-        id="id.3dy6vkm"></a>
-      <p class="c0"><span class="c1">BREACH: LICENCE CONDITIONS &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" checked="true"/><br></span>
-      </p><a id="id.1t3h5sf"></a>
+      <p class="c0"><span class="c1">INDEX OFFENCE: <span th:text="${indexOffence}"/></span></p>
+      <p class="c0"><span class="c1">BREACH: LICENCE CONDITIONS &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" checked="true"/><br></span></p>
       <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;FURTHER CHARGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" th:checked="${furtherCharge}"/><br></span>
       </p>
       <p class="c0"><span class="c1">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
