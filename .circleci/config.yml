@@ -120,6 +120,16 @@ jobs:
     docker: *db_localstack_docker_config
     steps:
       - checkout
+      - hmpps/install_aws_cli
+      - hmpps/wait_till_ready:
+          port: 4566
+      - run:
+          name: Create S3 bucket
+          command: |
+            export AWS_ACCESS_KEY_ID=dontcare
+            export AWS_SECRET_ACCESS_KEY=dontcare
+            aws s3api create-bucket --bucket test-manage-recalls-api --region eu-west-2 --endpoint-url http://localhost:4566
+      - checkout
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"
           steps:
