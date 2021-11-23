@@ -20,6 +20,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecordRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
@@ -35,6 +36,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Got
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import xyz.capybara.clamav.ClamavClient
 import xyz.capybara.clamav.commands.scan.result.ScanResult
@@ -66,6 +68,9 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   protected lateinit var documentRepository: DocumentRepository
 
   @Autowired
+  protected lateinit var missingDocumentsRecordRepository: MissingDocumentsRecordRepository
+
+  @Autowired
   protected lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
 
   @Autowired
@@ -79,6 +84,9 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
 
   @Autowired
   protected lateinit var s3Service: S3Service
+
+  @Autowired
+  protected lateinit var documentService: DocumentService
 
   @MockkBean
   protected lateinit var clamavClient: ClamavClient
