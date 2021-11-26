@@ -61,7 +61,7 @@ data class RecallNotificationContext(
   fun getRevocationOrderContext(): RevocationOrderContext {
     return RevocationOrderContext(
       recall.recallId(),
-      recall.prisonerFullName(),
+      recall.prisonerNameOnLicense(),
       prisoner.dateOfBirth!!,
       recall.bookingNumber!!,
       prisoner.croNumber,
@@ -74,7 +74,7 @@ data class RecallNotificationContext(
   fun getRecallSummaryContext(): RecallSummaryContext {
     return RecallSummaryContext(
       ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London")),
-      recall.prisonerFullName(),
+      recall.prisonerNameOnLicense(),
       prisoner.dateOfBirth!!,
       prisoner.croNumber,
       assessedByUserDetails.personName(),
@@ -109,7 +109,7 @@ data class RecallNotificationContext(
       LocalDate.now(clock),
       RecallLengthDescription(recall.recallLength!!),
       recall.probationInfo!!.probationOfficerName,
-      recall.prisonerFullName(),
+      recall.prisonerNameOnLicense(),
       recall.bookingNumber!!,
       currentPrisonName,
       assessedByUserDetails.personName()
@@ -120,7 +120,7 @@ data class LetterToProbationContext(
   val licenceRevocationDate: LocalDate,
   val recallLengthDescription: RecallLengthDescription,
   val probationOfficerName: String,
-  val prisonerFullName: FullName,
+  val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
   val currentPrisonName: PrisonName,
   val assessedByUserName: PersonName
@@ -128,7 +128,7 @@ data class LetterToProbationContext(
 
 data class RecallSummaryContext(
   val createdDateTime: ZonedDateTime,
-  val prisonerFullName: FullName,
+  val prisonerNameOnLicense: FullName,
   val dateOfBirth: LocalDate,
   val croNumber: String?, // TODO:  Can this really ever be null?  Breaks in dev because we have test prisoners without a croNumber
   val assessedByUserName: PersonName,
@@ -159,7 +159,7 @@ data class RecallSummaryContext(
 
 data class RevocationOrderContext(
   val recallId: RecallId,
-  val prisonerFullName: FullName,
+  val prisonerNameOnLicense: FullName,
   val dateOfBirth: LocalDate,
   val bookingNumber: String,
   val croNumber: String?,

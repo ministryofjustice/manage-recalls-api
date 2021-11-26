@@ -12,7 +12,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.OffsetDateTime
 
 class DossierContextTest {
@@ -28,7 +27,6 @@ class DossierContextTest {
     bookingNumber = bookingNumber,
     licenceConditionsBreached = licenceConditionsBreached
   )
-  private val prisoner = Prisoner(firstName = firstName.value, lastName = lastName.value)
 
   @Test
   fun `create ReasonsForRecallContext with all values populated`() {

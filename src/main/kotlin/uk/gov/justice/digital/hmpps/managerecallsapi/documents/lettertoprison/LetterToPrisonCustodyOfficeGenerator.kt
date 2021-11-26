@@ -26,7 +26,7 @@ class LetterToPrisonCustodyOfficeGenerator(
       setVariable("teamPhoneNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("todaysDate", LocalDate.now(clock).asStandardDateFormat())
 
-      setVariable("fullName", context.prisonerFullName)
+      setVariable("fullName", context.prisonerNameOnLicense)
 
       with(context.recall) {
         val recallLengthDescription = RecallLengthDescription(this.recallLength!!)

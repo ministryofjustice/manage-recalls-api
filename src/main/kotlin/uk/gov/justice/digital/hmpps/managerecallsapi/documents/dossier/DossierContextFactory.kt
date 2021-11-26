@@ -29,7 +29,7 @@ data class DossierContext(
 ) {
   fun getReasonsForRecallContext(): ReasonsForRecallContext {
     return ReasonsForRecallContext(
-      recall.prisonerFullName(),
+      recall.prisonerNameOnLicense(),
       recall.bookingNumber!!,
       recall.nomsNumber,
       recall.licenceConditionsBreached!!
@@ -38,7 +38,7 @@ data class DossierContext(
 
   fun getTableOfContentsContext(): TableOfContentsContext =
     TableOfContentsContext(
-      recall.prisonerFullName(),
+      recall.prisonerNameOnLicense(),
       RecallLengthDescription(recall.recallLength!!),
       currentPrisonName,
       recall.bookingNumber!!
@@ -47,14 +47,14 @@ data class DossierContext(
 
 data class TableOfContentsItem(val title: String, val pageNumber: Int)
 data class TableOfContentsContext(
-  val prisonerFullName: FullName,
+  val prisonerNameOnLicense: FullName,
   val recallLengthDescription: RecallLengthDescription,
   val currentPrisonName: PrisonName,
   val bookingNumber: String
 )
 
 data class ReasonsForRecallContext(
-  val prisonerFullName: FullName,
+  val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
   val nomsNumber: NomsNumber,
   val licenceConditionsBreached: String

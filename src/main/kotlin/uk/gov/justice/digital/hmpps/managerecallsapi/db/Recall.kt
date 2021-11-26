@@ -226,7 +226,7 @@ data class Recall(
 
   fun recallAssessmentDueDateTime(): OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
 
-  fun prisonerFullName(): FullName =
+  fun prisonerNameOnLicense(): FullName =
     prisonerName().let {
       when (licenceNameCategory) {
         FIRST_LAST -> it.firstAndLastName()

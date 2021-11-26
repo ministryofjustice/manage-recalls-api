@@ -24,13 +24,13 @@ class LetterToPrisonContextFactory(
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
     val assessedByUserDetails = userDetailsService.get(recall.assessedByUserId()!!)
     val recallLengthDescription = RecallLengthDescription(recall.recallLength!!)
-    return LetterToPrisonContext(recall, recall.prisonerFullName(), currentPrisonName, lastReleasePrisonName, recallLengthDescription, assessedByUserDetails)
+    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallLengthDescription, assessedByUserDetails)
   }
 }
 
 data class LetterToPrisonContext(
   val recall: Recall,
-  val prisonerFullName: FullName,
+  val prisonerNameOnLicense: FullName,
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
   val recallLengthDescription: RecallLengthDescription,

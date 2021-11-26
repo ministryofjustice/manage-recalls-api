@@ -27,7 +27,7 @@ class RecallSummaryGenerator(
       setVariable("createdTime", recallSummaryContext.createdDateTime.asStandardTimeFormat())
       setVariable("recallNotificationTotalNumberOfPages", recallNotificationTotalNumberOfPages)
 
-      setVariable("prisonerFullName", recallSummaryContext.prisonerFullName)
+      setVariable("prisonerNameOnLicense", recallSummaryContext.prisonerNameOnLicense)
       setVariable("dateOfBirth", recallSummaryContext.dateOfBirth.asStandardDateFormat())
       setVariable("croNumber", recallSummaryContext.croNumber)
 

@@ -2,12 +2,14 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_LAST
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -23,7 +25,7 @@ class GetRecallsComponentTest : ComponentTestBase() {
     val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), ZoneId.of("UTC"))
     val createdByUserId = ::UserId.random()
     val recall1 = Recall(::RecallId.random(), NomsNumber("123456"), createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
-    val recall2 = Recall(::RecallId.random(), NomsNumber("987654"), createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
+    val recall2 = Recall(::RecallId.random(), NomsNumber("987654"), createdByUserId, now, FirstName("Barrie"), MiddleNames("Barnie"), LastName("Badger"), licenceNameCategory = FIRST_MIDDLE_LAST)
     recallRepository.save(recall1)
     recallRepository.save(recall2)
 
@@ -41,7 +43,7 @@ class GetRecallsComponentTest : ComponentTestBase() {
           FirstName("Barrie"),
           null,
           LastName("Badger"),
-          NameFormatCategory.FIRST_LAST,
+          FIRST_LAST,
           Status.BEING_BOOKED_ON
         ),
         RecallResponse(
@@ -51,9 +53,9 @@ class GetRecallsComponentTest : ComponentTestBase() {
           now,
           now,
           FirstName("Barrie"),
-          null,
+          MiddleNames("Barnie"),
           LastName("Badger"),
-          NameFormatCategory.FIRST_LAST,
+          FIRST_MIDDLE_LAST,
           Status.BEING_BOOKED_ON
         )
       )

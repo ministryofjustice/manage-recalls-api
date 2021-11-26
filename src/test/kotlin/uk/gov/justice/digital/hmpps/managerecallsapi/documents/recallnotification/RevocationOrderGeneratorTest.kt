@@ -46,7 +46,7 @@ class RevocationOrderGeneratorTest {
       contextSlot.captured,
       allOf(
         has("logoFileName", { it.variable("logoFileName") }, equalTo(RevocationOrderLogo.fileName)),
-        has("prisonerFullName", { it.variable("prisonerFullName") }, equalTo("Bertie Badger")),
+        has("prisonerNameOnLicense", { it.variable("prisonerNameOnLicense") }, equalTo("Bertie Badger")),
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("03 Oct 1995")),
         has("bookingNumber", { it.variable("bookingNumber") }, equalTo("bookNumber")),
         has("croNumber", { it.variable("croNumber") }, equalTo("croNumber")),

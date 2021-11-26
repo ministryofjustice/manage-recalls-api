@@ -158,23 +158,23 @@ class RecallTest {
 
   @Test
   fun `Recall with FIRST_LAST licenceNameCategory returns correctly formatted name`() {
-    assertThat(recall.prisonerFullName(), equalTo(FullName("Barrie Badger")))
+    assertThat(recall.prisonerNameOnLicense(), equalTo(FullName("Barrie Badger")))
   }
 
   @Test
   fun `Recall with FIRST_MIDDLE_LAST licenceNameCategory returns correctly formatted name`() {
-    assertThat(recall.copy(licenceNameCategory = FIRST_MIDDLE_LAST).prisonerFullName(), equalTo(FullName("Barrie Barnie Badger")))
+    assertThat(recall.copy(licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicense(), equalTo(FullName("Barrie Barnie Badger")))
   }
 
   @Test
   fun `Recall with FIRST_MIDDLE_LAST licenceNameCategory but no middle name returns correctly formatted name`() {
-    assertThat(recall.copy(middleNames = null, licenceNameCategory = FIRST_MIDDLE_LAST).prisonerFullName(), equalTo(FullName("Barrie Badger")))
+    assertThat(recall.copy(middleNames = null, licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicense(), equalTo(FullName("Barrie Badger")))
   }
 
   @Test
   fun `Recall with OTHER licenceNameCategory throws exception`() {
     assertThrows<IllegalStateException> {
-      recall.copy(licenceNameCategory = OTHER).prisonerFullName()
+      recall.copy(licenceNameCategory = OTHER).prisonerNameOnLicense()
     }
   }
 }

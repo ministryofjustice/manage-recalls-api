@@ -78,9 +78,6 @@ fun MappaLevel.shouldShowOnDocuments(): Boolean {
   }
 }
 
-// fun Prisoner.personName(): PersonName =
-//   PersonName(this.firstName!!, this.middleNames, this.lastName!!)
-
 class YesOrNo(val value: Boolean) {
   override fun toString(): String = if (value) "YES" else "NO"
 }
