@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTes
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -31,7 +32,7 @@ class RecallSummaryHtmlGenerationTest(
       underTest.generateHtml(
         RecallSummaryContext(
           ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(17, 48), ZoneId.of("Europe/London")),
-          PersonName("Bertie", lastName = "Badger"),
+          FullName("Bertie Badger"),
           LocalDate.of(1995, 10, 3),
           "croNumber",
           PersonName("Maria", lastName = "Badger"),

@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -42,7 +43,7 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        PersonName("Bertie", lastName = "Badger"),
+        FullName("Bertie Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
         PersonName("Maria", lastName = "Badger"),
@@ -87,7 +88,7 @@ class RecallSummaryGeneratorTest {
         has("mappaLevel1", { it.variable("mappaLevel1") }, equalTo("false")),
         has("mappaLevel2", { it.variable("mappaLevel2") }, equalTo("false")),
         has("mappaLevel3", { it.variable("mappaLevel3") }, equalTo("true")),
-        has("fullName", { it.variable("fullName") }, equalTo("Bertie Badger")),
+        has("prisonerFullName", { it.variable("prisonerFullName") }, equalTo("Bertie Badger")),
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("03 Oct 1995")),
         has("previousConvictionMainName", { it.variable("previousConvictionMainName") }, equalTo("Bryan Badger")),
         has("bookingNumber", { it.variable("bookingNumber") }, equalTo("B1234")),
@@ -123,7 +124,7 @@ class RecallSummaryGeneratorTest {
     val result = underTest.generateHtml(
       RecallSummaryContext(
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
-        PersonName("Bertie", lastName = "Badger"),
+        FullName("Bertie Badger"),
         LocalDate.of(1995, 10, 3),
         "croNumber",
         PersonName("Maria", lastName = "Badger"),
@@ -168,7 +169,7 @@ class RecallSummaryGeneratorTest {
         has("mappaLevel1", { it.variable("mappaLevel1") }, equalTo("false")),
         has("mappaLevel2", { it.variable("mappaLevel2") }, equalTo("false")),
         has("mappaLevel3", { it.variable("mappaLevel3") }, equalTo("true")),
-        has("fullName", { it.variable("fullName") }, equalTo("Bertie Badger")),
+        has("prisonerFullName", { it.variable("prisonerFullName") }, equalTo("Bertie Badger")),
         has("dateOfBirth", { it.variable("dateOfBirth") }, equalTo("03 Oct 1995")),
         has("previousConvictionMainName", { it.variable("previousConvictionMainName") }, equalTo("Bryan Badger")),
         has("bookingNumber", { it.variable("bookingNumber") }, equalTo("B1234")),

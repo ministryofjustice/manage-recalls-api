@@ -16,9 +16,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.util.stream.Stream
 
@@ -49,7 +49,7 @@ class TableOfContentsGeneratorTest {
 
     val result = underTest.generateHtml(
       TableOfContentsContext(
-        PersonName("Bertie", lastName = "Badger"),
+        FullName("Bertie Badger"),
         RecallLengthDescription(recallLength),
         currentPrisonName,
         bookingNumber

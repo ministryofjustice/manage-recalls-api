@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.NOT_FOUND
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -33,11 +34,37 @@ class GetRecallComponentTest : ComponentTestBase() {
     val createdByUserId = ::UserId.random()
 
     val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), ZoneId.of("UTC"))
-    recallRepository.save(Recall(recallId, nomsNumber, createdByUserId, now, now))
+    recallRepository.save(
+      Recall(
+        recallId,
+        nomsNumber,
+        createdByUserId,
+        now,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger")
+      )
+    )
 
     val response = authenticatedClient.getRecall(recallId)
 
-    assertThat(response, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)))
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          createdByUserId,
+          now,
+          now,
+          FirstName("Barrie"),
+          null,
+          LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
+          Status.BEING_BOOKED_ON
+        )
+      )
+    )
   }
 
   @Test
@@ -63,6 +90,13 @@ class GetRecallComponentTest : ComponentTestBase() {
       .expectBody()
       .jsonPath("$.recallId").isEqualTo(recallId.toString())
       .jsonPath("$.nomsNumber").isEqualTo(fullyPopulatedRecall.nomsNumber.value)
+      .jsonPath("$.createdByUserId").isEqualTo(fullyPopulatedRecall.createdByUserId.toString())
+      .jsonPath("$.createdDateTime").value(endsWith("Z"))
+      .jsonPath("$.lastUpdatedDateTime").value(endsWith("Z"))
+      .jsonPath("$.firstName").isEqualTo(fullyPopulatedRecall.firstName.toString())
+      .jsonPath("$.middleNames").isEqualTo(fullyPopulatedRecall.middleNames.toString())
+      .jsonPath("$.lastName").isEqualTo(fullyPopulatedRecall.lastName.toString())
+      .jsonPath("$.licenceNameCategory").isEqualTo(fullyPopulatedRecall.licenceNameCategory.toString())
       .jsonPath("$.documents.length()").isEqualTo(1)
       .jsonPath("$.missingDocumentsRecords.length()").isEqualTo(1)
       .jsonPath("$.missingDocumentsRecords[0].missingDocumentsRecordId").isEqualTo(missingDocumentsRecord.id.toString())

@@ -23,10 +23,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -138,6 +140,10 @@ class RecallController(
     createdByUserId = this.createdByUserId(),
     createdDateTime = this.createdDateTime,
     lastUpdatedDateTime = this.lastUpdatedDateTime,
+    firstName = this.firstName,
+    middleNames = this.middleNames,
+    lastName = this.lastName,
+    licenceNameCategory = this.licenceNameCategory,
     status = this.status(),
     documents = latestDocuments(documents),
     missingDocumentsRecords = latestMissingDocumentsRecord(),
@@ -145,7 +151,6 @@ class RecallController(
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
     recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
-    recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
     localPoliceForce = this.localPoliceForce,
     localPoliceForceId = this.localPoliceForceId,
     contraband = this.contraband,
@@ -192,7 +197,8 @@ class RecallController(
     dossierCreatedByUserId = this.dossierCreatedByUserId(),
     dossierTargetDate = this.dossierTargetDate,
     assignee = this.assignee(),
-    assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.personName() }
+    assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.fullName() },
+    recallAssessmentDueDateTime = this.recallAssessmentDueDateTime()
   )
 
   private fun Recall.latestMissingDocumentsRecord() =
@@ -210,10 +216,23 @@ class RecallController(
 
 fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
   val now = OffsetDateTime.now()
-  return Recall(::RecallId.random(), this.nomsNumber, userUuid, now, now)
+  return Recall(
+    ::RecallId.random(),
+    this.nomsNumber,
+    userUuid,
+    now,
+    this.firstName,
+    this.middleNames,
+    this.lastName
+  )
 }
 
-data class BookRecallRequest(val nomsNumber: NomsNumber)
+data class BookRecallRequest(
+  val nomsNumber: NomsNumber,
+  val firstName: FirstName,
+  val middleNames: MiddleNames?,
+  val lastName: LastName
+)
 
 data class RecallResponse(
   val recallId: RecallId,
@@ -221,6 +240,10 @@ data class RecallResponse(
   val createdByUserId: UserId,
   val createdDateTime: OffsetDateTime,
   val lastUpdatedDateTime: OffsetDateTime,
+  val firstName: FirstName,
+  val middleNames: MiddleNames?,
+  val lastName: LastName,
+  val licenceNameCategory: NameFormatCategory,
   val status: Status,
   val documents: List<Api.RecallDocument> = emptyList(),
   val missingDocumentsRecords: List<Api.MissingDocumentsRecord> = emptyList(),
@@ -260,7 +283,7 @@ data class RecallResponse(
   val differentNomsNumberDetail: String? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
-  val previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
+  val previousConvictionMainNameCategory: NameFormatCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
   val assessedByUserId: UserId? = null,
@@ -322,6 +345,7 @@ enum class Status {
 }
 
 data class UpdateRecallRequest(
+  val licenseNameCategory: NameFormatCategory? = null,
   val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
@@ -357,7 +381,7 @@ data class UpdateRecallRequest(
   val differentNomsNumberDetail: String? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
-  val previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
+  val previousConvictionMainNameCategory: NameFormatCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
   val assessedByUserId: UserId? = null,
@@ -409,7 +433,7 @@ enum class AgreeWithRecall {
   NO_STOP
 }
 
-enum class PreviousConvictionMainNameCategory {
+enum class NameFormatCategory {
   FIRST_LAST,
   FIRST_MIDDLE_LAST,
   OTHER

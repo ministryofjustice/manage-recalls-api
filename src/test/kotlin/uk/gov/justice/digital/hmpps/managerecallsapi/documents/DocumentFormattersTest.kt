@@ -10,8 +10,8 @@ class DocumentFormattersTest {
   @Test
   fun `should format PersonName with middleNames`() {
     val personName = PersonName("Bernard", "McTavish", "Smythe")
-    assertThat(personName.firstMiddleLast(), equalTo("Bernard McTavish Smythe"))
-    assertThat(personName.firstAndLastName(), equalTo("Bernard Smythe"))
+    assertThat(personName.firstMiddleLast().value, equalTo("Bernard McTavish Smythe"))
+    assertThat(personName.firstAndLastName().value, equalTo("Bernard Smythe"))
     assertThat(personName.toString(), equalTo("Bernard Smythe"))
   }
 
@@ -19,7 +19,7 @@ class DocumentFormattersTest {
   fun `should format PersonName without middleNames`() {
     val personName = PersonName(FirstName("Bernard"), null, LastName("Smythe"))
     assertThat(personName.toString(), equalTo("Bernard Smythe"))
-    assertThat(personName.firstAndLastName(), equalTo("Bernard Smythe"))
-    assertThat(personName.firstMiddleLast(), equalTo("Bernard Smythe"))
+    assertThat(personName.firstAndLastName().value, equalTo("Bernard Smythe"))
+    assertThat(personName.firstMiddleLast().value, equalTo("Bernard Smythe"))
   }
 }

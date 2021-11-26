@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -46,6 +47,7 @@ class SpringFoxConfig {
       .build()
       .directModelSubstitute(NomsNumber::class.java, String::class.java)
       .directModelSubstitute(FirstName::class.java, String::class.java)
+      .directModelSubstitute(MiddleNames::class.java, String::class.java)
       .directModelSubstitute(LastName::class.java, String::class.java)
       .directModelSubstitute(Email::class.java, String::class.java)
       .directModelSubstitute(PhoneNumber::class.java, String::class.java)

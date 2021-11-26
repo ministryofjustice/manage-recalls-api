@@ -15,6 +15,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFile
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
@@ -49,7 +51,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
       // PS - not stubbing the reasonsForRecall since we now decorate this in the flow
     )
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(

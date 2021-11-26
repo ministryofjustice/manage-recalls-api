@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -71,8 +72,7 @@ class RecallNotificationContextFactoryTest {
       recallId,
       nomsNumber,
       ::UserId.random(),
-      OffsetDateTime.now(),
-      OffsetDateTime.now(),
+      OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
       lastReleasePrison = lastReleasePrisonId,
       sentencingInfo = sentencingInfo,
       currentPrison = currentPrisonId
@@ -97,18 +97,18 @@ class RecallNotificationContextFactoryTest {
 
   private fun prevConsMainNameOptions(): Stream<Arguments> {
     return Stream.of(
-      Arguments.of("Bobby Badger", PreviousConvictionMainNameCategory.FIRST_LAST, "Andy Badger"),
-      Arguments.of("Bobby Badger", PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
-      Arguments.of("Other Name", PreviousConvictionMainNameCategory.OTHER, "Other Name"),
-      Arguments.of("", PreviousConvictionMainNameCategory.FIRST_LAST, "Andy Badger"),
-      Arguments.of("", PreviousConvictionMainNameCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
-      Arguments.of("", PreviousConvictionMainNameCategory.OTHER, "")
+      Arguments.of("Bobby Badger", NameFormatCategory.FIRST_LAST, "Andy Badger"),
+      Arguments.of("Bobby Badger", NameFormatCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
+      Arguments.of("Other Name", NameFormatCategory.OTHER, "Other Name"),
+      Arguments.of("", NameFormatCategory.FIRST_LAST, "Andy Badger"),
+      Arguments.of("", NameFormatCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
+      Arguments.of("", NameFormatCategory.OTHER, "")
     )
   }
 
   @ParameterizedTest(name = "create RecallSummaryContext when category is {1}")
   @MethodSource("prevConsMainNameOptions")
-  fun `create RecallSummaryContext with required details`(prevConsMainName: String?, prevConsMainNameCategory: PreviousConvictionMainNameCategory?, expectedName: String) {
+  fun `create RecallSummaryContext with required details`(prevConsMainName: String?, prevConsMainNameCategory: NameFormatCategory?, expectedName: String) {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("nomsNumber")
     val userIdGeneratingRecallNotification = ::UserId.random()
@@ -127,7 +127,7 @@ class RecallNotificationContextFactoryTest {
     val sentencingInfo =
       SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))
     val recall = Recall(
-      recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), OffsetDateTime.now(),
+      recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Andy"), MiddleNames("Bertie"), LastName("Badger"),
       lastReleasePrison = lastReleasePrisonId,
       lastReleaseDate = LocalDate.now(),
       localPoliceForce = "A Force",

@@ -21,7 +21,7 @@ class TableOfContentsGenerator(
         "recallLengthAndSentenceHeading",
         tableOfContentsContext.recallLengthDescription.tableOfContentsFixedTermLengthDescription()
       )
-      setVariable("fullName", tableOfContentsContext.fullName)
+      setVariable("fullName", tableOfContentsContext.prisonerFullName)
       setVariable("currentPrisonName", tableOfContentsContext.currentPrisonName)
       setVariable("bookingNumber", tableOfContentsContext.bookingNumber)
       setVariable("tableOfContentsItems", tableOfContentsItems)

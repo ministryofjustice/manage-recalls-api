@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTes
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -18,7 +19,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.OffsetDateTime
 
 class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
@@ -32,11 +32,11 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(),
+            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
             recallLength = recallLength,
             bookingNumber = "B1234",
           ),
-          Prisoner(firstName = "Billie", lastName = "Badger"),
+          FullName("Billie Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
           RecallLengthDescription(recallLength),

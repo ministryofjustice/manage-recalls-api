@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -47,7 +48,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val assignee = ::UserId.random()
     val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
     recallRepository.save(recall)
     userDetailsRepository.save(
       UserDetails(
@@ -71,7 +72,8 @@ class AssignRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          OffsetDateTime.now(fixedClock),
+          OffsetDateTime.now(fixedClock), FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           assignee = assignee,
           assigneeUserName = "Bertie Badger"
@@ -87,7 +89,16 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val assignee = ::UserId.random()
     val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now, assignee = assignee)
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      createdByUserId,
+      now,
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      assignee = assignee
+    )
     recallRepository.save(recall)
 
     val response = authenticatedClient.unassignRecall(recallId, assignee)
@@ -100,7 +111,8 @@ class AssignRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          OffsetDateTime.now(fixedClock),
+          OffsetDateTime.now(fixedClock), FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON
         )
       )
@@ -115,7 +127,16 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val otherAssignee = ::UserId.random()
     val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), assignee = assignee)
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      createdByUserId,
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      assignee = assignee
+    )
     recallRepository.save(recall)
 
     authenticatedClient.unassignRecall(recallId, otherAssignee, HttpStatus.NOT_FOUND)

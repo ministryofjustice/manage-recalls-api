@@ -22,7 +22,7 @@ class LetterToProbationGenerator(
       setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
       setVariable("recallLengthDescription", context.recallLengthDescription.asFixedTermLengthDescription())
       setVariable("probationOfficerName", context.probationOfficerName)
-      setVariable("offenderName", context.offenderName)
+      setVariable("prisonerFullName", context.prisonerFullName)
       setVariable("bookingNumber", context.bookingNumber)
       setVariable("currentPrisonName", context.currentPrisonName)
       setVariable("assessedByUserName", context.assessedByUserName)

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.PS_TOWER_HAMLETS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -50,7 +51,7 @@ class RecallNotificationContextTest {
   private val probationOfficerName = "Mr Probation Officer"
 
   private val recall = Recall(
-    recallId, NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), OffsetDateTime.now(),
+    recallId, NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
     localPoliceForce = "London",
@@ -77,7 +78,7 @@ class RecallNotificationContextTest {
       "Ms Authoriser"
     ),
     reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
-    previousConvictionMainNameCategory = PreviousConvictionMainNameCategory.OTHER,
+    previousConvictionMainNameCategory = NameFormatCategory.OTHER,
     previousConvictionMainName = "Bryan Badger",
     assessedByUserId = assessedByUserId
   )
@@ -115,11 +116,9 @@ class RecallNotificationContextTest {
 
   @Test
   fun getRevocationOrderContext() {
-    val expectedPersonName =
-      PersonName("Bertie", lastName = "Badger")
     val expectedRevocationOrderContext = RevocationOrderContext(
       recallId,
-      expectedPersonName,
+      FullName("Barrie Badger"),
       dateOfBirth,
       recallBookingNumber,
       prisonerCroNumber,
@@ -144,7 +143,7 @@ class RecallNotificationContextTest {
           LocalDate.of(2021, 10, 4),
           RecallLengthDescription(recallLength),
           probationOfficerName,
-          PersonName("Bertie", lastName = "Badger"),
+          FullName("Barrie Badger"),
           recallBookingNumber,
           currentPrisonName,
           PersonName("Maria", lastName = "Badger")

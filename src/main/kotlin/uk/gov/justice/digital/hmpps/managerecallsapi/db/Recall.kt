@@ -3,12 +3,20 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_LAST
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -46,6 +54,17 @@ data class Recall(
   val createdDateTime: OffsetDateTime,
   @Column(nullable = false)
   val lastUpdatedDateTime: OffsetDateTime,
+  @Column(nullable = false)
+  @Convert(converter = FirstNameJpaConverter::class)
+  val firstName: FirstName,
+  @Convert(converter = MiddleNamesJpaConverter::class)
+  val middleNames: MiddleNames?,
+  @Column(nullable = false)
+  @Convert(converter = LastNameJpaConverter::class)
+  val lastName: LastName,
+  @Column(nullable = false)
+  @Enumerated(STRING)
+  val licenceNameCategory: NameFormatCategory,
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val documents: Set<Document> = emptySet(),
@@ -91,7 +110,7 @@ data class Recall(
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val dossierEmailSentDate: LocalDate? = null,
   @Enumerated(STRING)
-  val previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
+  val previousConvictionMainNameCategory: NameFormatCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
   val previousConvictionMainName: String? = null,
   // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
@@ -106,6 +125,10 @@ data class Recall(
     nomsNumber: NomsNumber,
     createdByUserId: UserId,
     createdDateTime: OffsetDateTime,
+    firstName: FirstName,
+    middleNames: MiddleNames?,
+    lastName: LastName,
+    licenceNameCategory: NameFormatCategory = FIRST_LAST,
     lastUpdatedDateTime: OffsetDateTime = createdDateTime,
     documents: Set<Document> = emptySet(),
     missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
@@ -136,7 +159,7 @@ data class Recall(
     differentNomsNumberDetail: String? = null,
     recallNotificationEmailSentDateTime: OffsetDateTime? = null,
     dossierEmailSentDate: LocalDate? = null,
-    previousConvictionMainNameCategory: PreviousConvictionMainNameCategory? = null,
+    previousConvictionMainNameCategory: NameFormatCategory? = null,
     hasDossierBeenChecked: Boolean? = null,
     previousConvictionMainName: String? = null,
     assessedByUserId: UserId? = null,
@@ -151,6 +174,10 @@ data class Recall(
       createdByUserId.value,
       createdDateTime,
       lastUpdatedDateTime,
+      firstName,
+      middleNames,
+      lastName,
+      licenceNameCategory,
       documents,
       missingDocumentsRecords,
       recallType,
@@ -198,6 +225,26 @@ data class Recall(
   fun assignee() = assignee?.let(::UserId)
 
   fun recallAssessmentDueDateTime(): OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
+
+  fun prisonerFullName(): FullName =
+    prisonerName().let {
+      when (licenceNameCategory) {
+        FIRST_LAST -> it.firstAndLastName()
+        FIRST_MIDDLE_LAST -> it.firstMiddleLast()
+        OTHER -> throw IllegalStateException("OTHER licenceNameCategory not supported")
+      }
+    }
+
+  private fun prisonerName() = PersonName(firstName, middleNames, lastName)
+
+  fun previousConvictionMainName(): String {
+    return when (previousConvictionMainNameCategory) {
+      FIRST_LAST -> prisonerName().firstAndLastName().value
+      FIRST_MIDDLE_LAST -> prisonerName().firstMiddleLast().value
+      OTHER -> previousConvictionMainName!!
+      else -> throw IllegalStateException("Unexpected or unset previousConvictionMainNameCategory $previousConvictionMainNameCategory")
+    }
+  }
 
   fun status(): Status =
     if (dossierCreatedByUserId != null) {

@@ -20,6 +20,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -40,7 +42,7 @@ class RecallRepositoryIntegrationTest(
   private val createdByUserId = ::UserId.random()
   private val recallId = ::RecallId.random()
   private val now = OffsetDateTime.now()
-  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
+  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
 
   private val repository = RecallRepository(jpaRepository)
   private val documentRepository = DocumentRepository(jpaDocumentRepository)

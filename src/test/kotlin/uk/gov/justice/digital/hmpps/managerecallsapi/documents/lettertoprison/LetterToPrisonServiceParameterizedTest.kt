@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescr
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -33,7 +34,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.time.OffsetDateTime
 import java.util.stream.Stream
@@ -76,7 +76,7 @@ internal class LetterToPrisonServiceParameterizedTest {
   @ParameterizedTest
   @MethodSource("letterToPrisonParameters")
   fun `creates a letter to prison for a recall `(recallLength: RecallLength, annexHeaderText: String) {
-    val aRecall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), recallLength = recallLength)
+    val aRecall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), recallLength = recallLength)
     val documentId = ::DocumentId.random()
     val assessor = UserDetails(
       ::UserId.random(),
@@ -89,7 +89,7 @@ internal class LetterToPrisonServiceParameterizedTest {
     )
     val context = LetterToPrisonContext(
       aRecall,
-      Prisoner(),
+      FullName("Billie Badger"),
       PrisonName("A Prison"),
       PrisonName("Prison B"),
       RecallLengthDescription(recallLength),

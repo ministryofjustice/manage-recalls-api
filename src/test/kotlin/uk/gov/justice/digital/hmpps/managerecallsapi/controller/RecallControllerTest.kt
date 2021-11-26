@@ -66,29 +66,41 @@ class RecallControllerTest {
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
   private val createdByUserId = ::UserId.random()
-  private val recallRequest = BookRecallRequest(nomsNumber)
+  private val recallRequest = BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger"))
   private val fileName = "fileName"
   private val now = OffsetDateTime.now()
 
-  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
+  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
 
   private val updateRecallRequest =
     UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
+
+  private val recallResponse =
+    RecallResponse(
+      recallId,
+      nomsNumber,
+      createdByUserId,
+      now,
+      now,
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      NameFormatCategory.FIRST_LAST,
+      Status.BEING_BOOKED_ON
+    )
 
   @Test
   fun `book recall returns request with id`() {
     val bearerToken = "Bearer header.payload"
     val userUuid = ::UserId.random()
-    val recall = recallRequest.toRecall(userUuid)
-      .copy(createdDateTime = now, lastUpdatedDateTime = now)
+    val recall = recallRequest.toRecall(userUuid).copy(createdDateTime = now, lastUpdatedDateTime = now)
 
     every { recallRepository.save(any()) } returns recall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
-    val expected = RecallResponse(recall.recallId(), nomsNumber, userUuid, now, now, Status.BEING_BOOKED_ON)
-    assertThat(results.body, equalTo(expected))
+    assertThat(results.body, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid)))
   }
 
   @Test
@@ -97,21 +109,7 @@ class RecallControllerTest {
 
     val results = underTest.findAll()
 
-    assertThat(
-      results,
-      equalTo(
-        listOf(
-          RecallResponse(
-            recallId,
-            nomsNumber,
-            createdByUserId,
-            now,
-            now,
-            Status.BEING_BOOKED_ON
-          )
-        )
-      )
-    )
+    assertThat(results, equalTo(listOf(recallResponse)))
   }
 
   @Test
@@ -136,14 +134,16 @@ class RecallControllerTest {
 
     val result = underTest.getRecall(recallId)
 
-    val expected = RecallResponse(
-      recallId,
-      nomsNumber,
-      createdByUserId,
-      now,
-      now,
-      Status.BEING_BOOKED_ON,
-      documents = listOf(Api.RecallDocument(document.id(), document.category, fileName, document.version, document.createdDateTime)),
+    val expected = recallResponse.copy(
+      documents = listOf(
+        Api.RecallDocument(
+          document.id(),
+          document.category,
+          fileName,
+          document.version,
+          document.createdDateTime
+        )
+      ),
       lastReleasePrison = PrisonId("BEL"),
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime,
@@ -225,13 +225,7 @@ class RecallControllerTest {
     assertThat(
       result,
       equalTo(
-        RecallResponse(
-          recallId,
-          nomsNumber,
-          createdByUserId,
-          now,
-          now,
-          Status.BEING_BOOKED_ON,
+        recallResponse.copy(
           assignee = assignee,
           assigneeUserName = "Bertie Badger"
         )
@@ -252,13 +246,7 @@ class RecallControllerTest {
     assertThat(
       result,
       equalTo(
-        RecallResponse(
-          recallId,
-          nomsNumber,
-          createdByUserId,
-          now,
-          now,
-          Status.BEING_BOOKED_ON,
+        recallResponse.copy(
           assignee = assignee,
           assigneeUserName = null
         )
@@ -275,7 +263,7 @@ class RecallControllerTest {
 
     val result = underTest.unassignRecall(recallId, assignee)
 
-    assertThat(result, equalTo(RecallResponse(recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON)))
+    assertThat(result, equalTo(recallResponse))
   }
 
   @Test
@@ -287,21 +275,7 @@ class RecallControllerTest {
 
     val response = underTest.updateRecall(recallId, updateRecallRequest)
 
-    assertThat(
-      response,
-      equalTo(
-        ResponseEntity.ok(
-          RecallResponse(
-            recallId,
-            nomsNumber,
-            createdByUserId,
-            now,
-            now,
-            Status.BEING_BOOKED_ON
-          )
-        )
-      )
-    )
+    assertThat(response, equalTo(ResponseEntity.ok(recallResponse)))
   }
 
   @Test
@@ -341,7 +315,8 @@ class RecallControllerTest {
 
   @Test
   fun `latestDocuments contains the latest of each versioned category and all unversioned docs`() {
-    val partADoc1 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, OffsetDateTime.now())
+    val partADoc1 =
+      Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, OffsetDateTime.now())
     val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, now)
     val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now)
     val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now)
@@ -354,8 +329,7 @@ class RecallControllerTest {
     assertThat(
       response,
       equalTo(
-        RecallResponse(
-          recallId, nomsNumber, createdByUserId, now, now, Status.BEING_BOOKED_ON,
+        recallResponse.copy(
           documents = listOf(
             Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now),
             Api.RecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, now),

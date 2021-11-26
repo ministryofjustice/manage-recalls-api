@@ -8,11 +8,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -33,7 +35,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   @Test
   fun `get recall notification returns merged recall summary and revocation order`() {
     val userId = ::UserId.random()
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
 
     setupUserDetailsFor(userId)
@@ -59,7 +61,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       recallId,
       UpdateRecallRequest(
         mappaLevel = MappaLevel.LEVEL_3,
-        previousConvictionMainNameCategory = PreviousConvictionMainNameCategory.OTHER,
+        previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         previousConvictionMainName = "Bryan Badger",
         bookingNumber = "B1234",
         lastReleasePrison = PrisonId("AKI"),

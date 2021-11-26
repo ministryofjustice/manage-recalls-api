@@ -6,8 +6,8 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 
 class TableOfContentsHtmlGeneratorTest(
@@ -20,7 +20,7 @@ class TableOfContentsHtmlGeneratorTest(
   fun `generate revocation order HTML`(approver: ContentApprover) {
     val generatedHtml = underTest.generateHtml(
       TableOfContentsContext(
-        PersonName("PrisonerFirstName", lastName = "PrisonerLastName"),
+        FullName("PrisonerFirstName PrisonerLastName"),
         RecallLengthDescription(TWENTY_EIGHT_DAYS),
         PrisonName("Current Prison (ABC)"),
         "ABC1234F"
