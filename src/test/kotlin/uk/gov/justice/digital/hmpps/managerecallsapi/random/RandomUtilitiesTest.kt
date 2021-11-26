@@ -40,7 +40,7 @@ class RandomUtilitiesTest {
                 has("recallId", { it.recallId }, present()),
                 has(Document::category, present()),
                 has(Document::fileName, present()),
-                has(Document::version, present()),
+                // Dont assert version is present as it can be null depending on category
                 has(Document::createdDateTime, present())
               )
             )
