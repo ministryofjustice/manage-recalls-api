@@ -345,7 +345,7 @@ enum class Status {
 }
 
 data class UpdateRecallRequest(
-  val licenseNameCategory: NameFormatCategory? = null,
+  val licenceNameCategory: NameFormatCategory? = null,
   val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,

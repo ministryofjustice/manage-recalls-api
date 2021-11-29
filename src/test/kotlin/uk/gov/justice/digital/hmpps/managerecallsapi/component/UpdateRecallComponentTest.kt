@@ -77,7 +77,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
     val response = authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
-        licenseNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST,
+        licenceNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST,
         lastReleasePrison = PrisonId("MWI"),
         currentPrison = PrisonId("BMI")
       )
