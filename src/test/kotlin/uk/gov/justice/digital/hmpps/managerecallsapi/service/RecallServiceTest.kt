@@ -21,6 +21,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -44,7 +46,7 @@ class RecallServiceTest {
   private val underTest = RecallService(recallRepository, bankHolidayService, fixedClock)
 
   private val recallId = ::RecallId.random()
-  private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), ::UserId.random(), OffsetDateTime.now())
+  private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
   private val today = LocalDate.now()
 
   private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
@@ -65,6 +67,7 @@ class RecallServiceTest {
 
   private val fullyPopulatedRecallWithoutDocuments = existingRecall.copy(
     recallType = FIXED,
+    licenceNameCategory = fullyPopulatedUpdateRecallRequest.licenseNameCategory!!,
     recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
@@ -211,9 +214,9 @@ class RecallServiceTest {
     val now = OffsetDateTime.now()
     val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
     val assignee = ::UserId.random()
-    val expected = Recall(recallId, nomsNumber, createdByUserId, now, OffsetDateTime.now(fixedClock), assignee = assignee)
+    val expected = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), lastUpdatedDateTime = OffsetDateTime.now(fixedClock), assignee = assignee)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { recallRepository.save(expected) } returns expected
@@ -227,11 +230,11 @@ class RecallServiceTest {
     val nomsNumber = randomNoms()
     val now = OffsetDateTime.now()
     val createdByUserId = ::UserId.random()
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, now)
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
     val assignee = ::UserId.random()
     val expected = recall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
 
-    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, now, now, assignee = assignee)
+    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), assignee = assignee)
     every { recallRepository.save(expected) } returns expected
 
     val assignedRecall = underTest.unassignRecall(recallId, assignee)
@@ -246,7 +249,7 @@ class RecallServiceTest {
     val nomsNumber = randomNoms()
     val createdByUserId = ::UserId.random()
 
-    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), OffsetDateTime.now(), assignee = assignee)
+    every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), assignee = assignee)
 
     assertThrows<NotFoundException> { underTest.unassignRecall(recallId, otherAssignee) }
   }

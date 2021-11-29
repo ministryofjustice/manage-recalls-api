@@ -25,6 +25,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -59,7 +61,7 @@ internal class DocumentServiceTest {
   private val recallId = ::RecallId.random()
   private val documentBytes = randomString().toByteArray()
   private val nomsNumber = NomsNumber("A1235B")
-  private val aRecallWithoutDocuments = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now())
+  private val aRecallWithoutDocuments = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
   private val documentCategory = PART_A_RECALL_REPORT
   private val fileName = randomString()
 

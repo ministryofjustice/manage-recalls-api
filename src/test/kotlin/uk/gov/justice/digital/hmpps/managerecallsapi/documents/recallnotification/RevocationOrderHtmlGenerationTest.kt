@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
@@ -21,7 +21,7 @@ class RevocationOrderHtmlGenerationTest(
     val generatedHtml = underTest.generateHtml(
       RevocationOrderContext(
         ::RecallId.random(),
-        PersonName("PrisonerFirstName", lastName = "PrisonerLastName"),
+        FullName("PrisonerFirstName PrisonerLastName"),
         LocalDate.of(1999, 12, 31),
         "RecallBookingNumber",
         "PrisonerCroNumber",

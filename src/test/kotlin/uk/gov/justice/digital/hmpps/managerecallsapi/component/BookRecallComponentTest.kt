@@ -7,7 +7,10 @@ import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 
 class BookRecallComponentTest : ComponentTestBase() {
@@ -15,7 +18,7 @@ class BookRecallComponentTest : ComponentTestBase() {
   @Test
   fun `book a recall creates a recall and returns recall details`() {
     val nomsNumber = NomsNumber("123456")
-    val response = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber))
+    val response = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Bobby"), null, LastName("Badger")))
 
     assertThat(
       response,
@@ -25,6 +28,7 @@ class BookRecallComponentTest : ComponentTestBase() {
         has(RecallResponse::nomsNumber, equalTo(nomsNumber)),
         has(RecallResponse::createdDateTime, present()),
         has(RecallResponse::lastUpdatedDateTime, present()),
+        has(RecallResponse::licenceNameCategory, equalTo(NameFormatCategory.FIRST_LAST)),
       )
     )
   }

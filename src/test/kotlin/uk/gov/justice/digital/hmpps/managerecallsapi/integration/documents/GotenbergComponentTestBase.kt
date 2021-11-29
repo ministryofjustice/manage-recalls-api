@@ -6,7 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentReque
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PreviousConvictionMainNameCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -36,7 +36,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
       recallId,
       UpdateRecallRequest(
         mappaLevel = MappaLevel.LEVEL_1,
-        previousConvictionMainNameCategory = PreviousConvictionMainNameCategory.OTHER,
+        previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         previousConvictionMainName = "Nat The Naughty",
         bookingNumber = "NAT0001",
         lastReleasePrison = PrisonId("MWI"),
@@ -78,7 +78,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
       recallId,
       UpdateRecallRequest(
         mappaLevel = MappaLevel.LEVEL_1,
-        previousConvictionMainNameCategory = PreviousConvictionMainNameCategory.OTHER,
+        previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         previousConvictionMainName = "Nat The Naughty",
         bookingNumber = "NAT0001",
         lastReleasePrison = PrisonId("MWI"),

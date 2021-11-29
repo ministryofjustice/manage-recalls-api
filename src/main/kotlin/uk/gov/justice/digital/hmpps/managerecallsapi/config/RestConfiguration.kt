@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -64,6 +65,7 @@ object ManageRecallsApiJackson : ConfigurableJackson(
 private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply {
   text(::NomsNumber)
   text(::FirstName)
+  text(::MiddleNames)
   text(::LastName)
   text(::Email)
   text(::PhoneNumber)

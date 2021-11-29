@@ -17,6 +17,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecordRe
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -37,7 +39,7 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
 
   private val recallId = ::RecallId.random()
   private val nomsNumber = randomNoms()
-  private val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now())
+  private val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
   private val documentId = ::DocumentId.random()
   // TODO: parameterized tests driven from RecallDocumentCategory
   private val versionedCategory = randomVersionedDocumentCategory()

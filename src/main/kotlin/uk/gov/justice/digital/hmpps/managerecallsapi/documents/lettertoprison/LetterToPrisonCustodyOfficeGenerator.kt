@@ -9,7 +9,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RECALL_TEAM_NAME
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.asStandardDateFormat
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.personName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.shouldShowOnDocuments
 import java.time.Clock
 import java.time.LocalDate
@@ -27,7 +26,7 @@ class LetterToPrisonCustodyOfficeGenerator(
       setVariable("teamPhoneNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("todaysDate", LocalDate.now(clock).asStandardDateFormat())
 
-      setVariable("fullName", context.prisoner.personName())
+      setVariable("fullName", context.prisonerNameOnLicense)
 
       with(context.recall) {
         val recallLengthDescription = RecallLengthDescription(this.recallLength!!)
@@ -48,7 +47,7 @@ class LetterToPrisonCustodyOfficeGenerator(
       }
 
       setVariable("currentEstablishment", context.currentPrisonName)
-      setVariable("assessorName", context.assessor.personName())
+      setVariable("assessorName", context.assessor.fullName())
     }.let {
       templateEngine.process("letter-to-prison_custody-office", it)
     }

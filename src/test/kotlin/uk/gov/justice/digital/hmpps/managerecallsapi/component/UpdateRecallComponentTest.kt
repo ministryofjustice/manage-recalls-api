@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
@@ -20,6 +21,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -52,7 +55,17 @@ class UpdateRecallComponentTest : ComponentTestBase() {
     recallId = ::RecallId.random()
     recallPath = "/recalls/$recallId"
     createdByUserId = ::UserId.random()
-    recallRepository.save(Recall(recallId, nomsNumber, createdByUserId, now, now))
+    recallRepository.save(
+      Recall(
+        recallId,
+        nomsNumber,
+        createdByUserId,
+        now,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger")
+      )
+    )
     val instant = Instant.parse("2021-10-04T13:15:50.00Z")
     fixedClockTime = OffsetDateTime.ofInstant(instant, zone)
     every { fixedClock.instant() } returns instant
@@ -64,6 +77,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
     val response = authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
+        licenseNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST,
         lastReleasePrison = PrisonId("MWI"),
         currentPrison = PrisonId("BMI")
       )
@@ -77,7 +91,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_MIDDLE_LAST,
           Status.BEING_BOOKED_ON,
           lastReleasePrison = PrisonId("MWI"),
           currentPrison = PrisonId("BMI")
@@ -149,7 +164,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           recallLength = TWENTY_EIGHT_DAYS,
           sentenceDate = sentencingInfo.sentenceDate,
@@ -176,7 +192,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           bookingNumber = bookingNumber
         )
@@ -205,7 +222,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           localPoliceForce = policeForce,
           localPoliceForceId = policeForceId
@@ -233,7 +251,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           licenceConditionsBreached = "Breached",
           reasonsForRecall = listOf(BREACH_EXCLUSION_ZONE),
@@ -261,7 +280,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           agreeWithRecall = AgreeWithRecall.YES,
           agreeWithRecallDetail = "Other reasons"
@@ -286,7 +306,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.RECALL_NOTIFICATION_ISSUED,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = updateRecallRequest.assessedByUserId,
@@ -313,7 +334,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           status = Status.DOSSIER_ISSUED,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
           dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId
@@ -340,7 +362,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          fixedClockTime,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           additionalLicenceConditions = request.additionalLicenceConditions,
           additionalLicenceConditionsDetail = request.additionalLicenceConditionsDetail,

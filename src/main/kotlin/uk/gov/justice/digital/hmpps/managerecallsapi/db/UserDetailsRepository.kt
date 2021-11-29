@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -53,6 +54,10 @@ data class UserDetails(
   )
 
   fun userId() = UserId(id)
+
+  fun personName() = PersonName(this.firstName, lastName = this.lastName)
+
+  fun fullName(): String = personName().toString()
 }
 
 data class UserDetailsNotFoundException(val userId: UserId) : NotFoundException()

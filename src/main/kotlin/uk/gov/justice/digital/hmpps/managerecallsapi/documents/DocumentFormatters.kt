@@ -7,11 +7,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -34,11 +33,11 @@ data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = 
     middleNames = middleNames?.let { MiddleNames(it) },
     lastName = LastName(lastName)
   )
-  override fun toString(): String = firstAndLastName()
+  override fun toString(): String = "$firstName $lastName"
 
-  fun firstAndLastName(): String = "$firstName $lastName"
+  fun firstAndLastName(): FullName = FullName(toString())
 
-  fun firstMiddleLast(): String = "${firstAndMiddleNames()} $lastName"
+  fun firstMiddleLast(): FullName = FullName("${firstAndMiddleNames()} $lastName")
 
   private fun firstAndMiddleNames(): String =
     when (middleNames) {
@@ -78,10 +77,6 @@ fun MappaLevel.shouldShowOnDocuments(): Boolean {
     else -> false
   }
 }
-
-fun UserDetails.personName(): String = PersonName(this.firstName, lastName = this.lastName).firstAndLastName()
-fun Prisoner.personName(): PersonName =
-  PersonName(this.firstName!!, this.middleNames, this.lastName!!)
 
 class YesOrNo(val value: Boolean) {
   override fun toString(): String = if (value) "YES" else "NO"

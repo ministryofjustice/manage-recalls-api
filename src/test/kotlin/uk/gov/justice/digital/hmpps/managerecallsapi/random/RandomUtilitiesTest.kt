@@ -10,6 +10,7 @@ import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 
 class RandomUtilitiesTest {
@@ -22,6 +23,13 @@ class RandomUtilitiesTest {
       allOf(
         has(Recall::id, present()),
         has(Recall::nomsNumber, present()),
+        has("createdByUserId", { it.createdByUserId }, present()),
+        has(Recall::createdDateTime, present()),
+        has(Recall::lastUpdatedDateTime, present()),
+        has(Recall::firstName, present()),
+        has(Recall::middleNames, present()),
+        has(Recall::lastName, present()),
+        has(Recall::licenceNameCategory, present()),
         has(
           Recall::documents,
           allOf(
@@ -31,14 +39,33 @@ class RandomUtilitiesTest {
                 has("id", { it.id }, present()),
                 has("recallId", { it.recallId }, present()),
                 has(Document::category, present()),
-                has(Document::fileName, present())
+                has(Document::fileName, present()),
+                // Dont assert version is present as it can be null depending on category
+                has(Document::createdDateTime, present())
+              )
+            )
+          )
+        ),
+        has(
+          Recall::missingDocumentsRecords,
+          allOf(
+            hasSize(equalTo(1)),
+            allElements(
+              allOf(
+                has("id", { it.id }, present()),
+                has("recallId", { it.recallId }, present()),
+                has("emailId", { it.emailId }, present()),
+                has(MissingDocumentsRecord::detail, present()),
+                has(MissingDocumentsRecord::version, present()),
+                has(MissingDocumentsRecord::createdByUserId, present()),
+                has(MissingDocumentsRecord::createdDateTime, present())
               )
             )
           )
         ),
         has(Recall::recallType, present()),
         has(Recall::recallLength, present()),
-        has("lastReleasePrison", { it.lastReleasePrison }, present()),
+        has(Recall::lastReleasePrison, present()),
         has(Recall::lastReleaseDate, present()),
         has(Recall::recallEmailReceivedDateTime, present()),
         has(Recall::localPoliceForce, present()),
@@ -56,7 +83,7 @@ class RandomUtilitiesTest {
         has(Recall::reasonsForRecallOtherDetail, present()),
         has(Recall::agreeWithRecall, present()),
         has(Recall::agreeWithRecallDetail, present()),
-        has("currentPrison", { it.currentPrison }, present()),
+        has(Recall::currentPrison, present()),
         has(Recall::additionalLicenceConditions, present()),
         has(Recall::additionalLicenceConditionsDetail, present()),
         has(Recall::differentNomsNumber, present()),
@@ -65,10 +92,12 @@ class RandomUtilitiesTest {
         has(Recall::dossierEmailSentDate, present()),
         has(Recall::previousConvictionMainNameCategory, present()),
         has(Recall::hasDossierBeenChecked, present()),
-        has(Recall::previousConvictionMainName, present()),
+        has("previousConvictionMainName", { it.previousConvictionMainName }, present()),
         has("assessedByUserId", { it.assessedByUserId }, present()),
-        has("dossierCreatedByUserId", { it.dossierCreatedByUserId }, present()),
         has("bookedByUserId", { it.bookedByUserId }, present()),
+        has("dossierCreatedByUserId", { it.dossierCreatedByUserId }, present()),
+        has(Recall::dossierTargetDate, present()),
+        has("assignee", { it.assignee }, present()),
       )
     )
   }
@@ -80,6 +109,7 @@ class RandomUtilitiesTest {
     assertThat(
       updateRecallRequest,
       allOf(
+        has(UpdateRecallRequest::licenseNameCategory, present()),
         has(UpdateRecallRequest::lastReleasePrison, present()),
         has(UpdateRecallRequest::lastReleaseDate, present()),
         has(UpdateRecallRequest::recallEmailReceivedDateTime, present()),
@@ -118,6 +148,9 @@ class RandomUtilitiesTest {
         has(UpdateRecallRequest::previousConvictionMainNameCategory, present()),
         has(UpdateRecallRequest::hasDossierBeenChecked, present()),
         has(UpdateRecallRequest::previousConvictionMainName, present()),
+        has(UpdateRecallRequest::assessedByUserId, present()),
+        has(UpdateRecallRequest::bookedByUserId, present()),
+        has(UpdateRecallRequest::dossierCreatedByUserId, present()),
       )
     )
   }

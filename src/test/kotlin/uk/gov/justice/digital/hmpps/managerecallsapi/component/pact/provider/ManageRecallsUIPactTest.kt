@@ -234,7 +234,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a recall in being booked on state with a document exists"
   )
   fun `a recall in being booked on state with a document exists`() {
-    recallRepository.save(Recall(::RecallId.zeroes(), nomsNumber, ::UserId.random(), OffsetDateTime.now(), OffsetDateTime.now()))
+    recallRepository.save(Recall(::RecallId.zeroes(), nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger")))
     `a document exists`(documentId, UNCATEGORISED, null)
   }
 

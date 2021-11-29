@@ -3,8 +3,15 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -14,7 +21,7 @@ import java.time.OffsetDateTime
 class RecallTest {
 
   private val recall = Recall(
-    ::RecallId.random(), NomsNumber("A12345AA"), ::UserId.random(), OffsetDateTime.now(), OffsetDateTime.now()
+    ::RecallId.random(), NomsNumber("A12345AA"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), MiddleNames("Barnie"), LastName("Badger")
   )
 
   @Test
@@ -147,5 +154,27 @@ class RecallTest {
   @Test
   fun `Recall without recallEmailReceivedDateTime set returns recallAssessmentDueDateTime as null`() {
     assertThat(recall.recallAssessmentDueDateTime(), equalTo(null))
+  }
+
+  @Test
+  fun `Recall with FIRST_LAST licenceNameCategory returns correctly formatted name`() {
+    assertThat(recall.prisonerNameOnLicense(), equalTo(FullName("Barrie Badger")))
+  }
+
+  @Test
+  fun `Recall with FIRST_MIDDLE_LAST licenceNameCategory returns correctly formatted name`() {
+    assertThat(recall.copy(licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicense(), equalTo(FullName("Barrie Barnie Badger")))
+  }
+
+  @Test
+  fun `Recall with FIRST_MIDDLE_LAST licenceNameCategory but no middle name returns correctly formatted name`() {
+    assertThat(recall.copy(middleNames = null, licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicense(), equalTo(FullName("Barrie Badger")))
+  }
+
+  @Test
+  fun `Recall with OTHER licenceNameCategory throws exception`() {
+    assertThrows<IllegalStateException> {
+      recall.copy(licenceNameCategory = OTHER).prisonerNameOnLicense()
+    }
   }
 }
