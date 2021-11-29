@@ -57,7 +57,7 @@ class RecallService(
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
       lastUpdatedDateTime = OffsetDateTime.now(clock),
-      licenceNameCategory = updateRecallRequest.licenseNameCategory ?: licenceNameCategory,
+      licenceNameCategory = updateRecallRequest.licenceNameCategory ?: licenceNameCategory,
       recallType = FIXED,
       recallLength = sentencingInfo?.calculateRecallLength() ?: recallLength,
       recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime

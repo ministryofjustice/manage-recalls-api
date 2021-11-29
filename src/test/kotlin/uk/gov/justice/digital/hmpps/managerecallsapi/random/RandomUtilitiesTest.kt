@@ -109,7 +109,7 @@ class RandomUtilitiesTest {
     assertThat(
       updateRecallRequest,
       allOf(
-        has(UpdateRecallRequest::licenseNameCategory, present()),
+        has(UpdateRecallRequest::licenceNameCategory, present()),
         has(UpdateRecallRequest::lastReleasePrison, present()),
         has(UpdateRecallRequest::lastReleaseDate, present()),
         has(UpdateRecallRequest::recallEmailReceivedDateTime, present()),

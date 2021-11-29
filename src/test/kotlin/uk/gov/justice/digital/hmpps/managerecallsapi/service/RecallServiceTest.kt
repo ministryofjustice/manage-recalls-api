@@ -67,7 +67,7 @@ class RecallServiceTest {
 
   private val fullyPopulatedRecallWithoutDocuments = existingRecall.copy(
     recallType = FIXED,
-    licenceNameCategory = fullyPopulatedUpdateRecallRequest.licenseNameCategory!!,
+    licenceNameCategory = fullyPopulatedUpdateRecallRequest.licenceNameCategory!!,
     recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
