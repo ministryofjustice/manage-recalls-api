@@ -13,6 +13,7 @@ import org.springframework.core.io.ClassPathResource
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -85,6 +86,7 @@ internal class LetterToPrisonServiceParameterizedTest {
       "",
       Email("mandy@pandy.com"),
       PhoneNumber("09876543210"),
+      CaseworkerBand.FOUR_PLUS,
       OffsetDateTime.now()
     )
     val context = LetterToPrisonContext(

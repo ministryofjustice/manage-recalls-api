@@ -19,6 +19,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
@@ -123,6 +124,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         "",
         Email("b@b.com"),
         PhoneNumber("0987654321"),
+        CaseworkerBand.FOUR_PLUS,
         OffsetDateTime.now()
       )
     )
@@ -141,6 +143,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     userDetailsRepository.save(
       UserDetails(
         UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
+        CaseworkerBand.FOUR_PLUS,
         OffsetDateTime.now()
       )
     )
@@ -164,6 +167,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         "",
         Email("b@b.com"),
         PhoneNumber("0987654321"),
+        CaseworkerBand.FOUR_PLUS,
         OffsetDateTime.now()
       )
     )
