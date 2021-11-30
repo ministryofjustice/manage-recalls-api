@@ -219,7 +219,6 @@ jobs:
                 --reset-values \
                 --timeout 5m \
                 --history-max 10 \
-                --values "values-${ENV_NAME}.yaml" \
                 --values "values-manage-recalls-${ENV_NAME}.yaml" \
                 --set "generic-service.image.tag=${APP_VERSION}")
 
