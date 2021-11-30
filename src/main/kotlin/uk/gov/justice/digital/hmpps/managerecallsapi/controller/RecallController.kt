@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.FOUR_PLUS
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.THREE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -73,7 +76,12 @@ class RecallController(
   }
 
   @GetMapping("/recalls")
-  fun findAll(): List<RecallResponse> = recallRepository.findAll().map { it.toResponse() }
+  fun findAll(@RequestHeader("Authorization") bearerToken: String): List<RecallResponse> {
+    val token = tokenExtractor.getTokenFromHeader(bearerToken)
+    val band = userDetailsService.get(token.userUuid()).caseworkerBand
+
+    return recallRepository.findAll().filter { it.status().visibilityBands.contains(band) }.map { it.toResponse() }
+  }
 
   @PostMapping("/recalls/search")
   fun recallSearch(@RequestBody searchRequest: RecallSearchRequest): List<RecallResponse> =
@@ -334,14 +342,18 @@ data class Pdf(val content: String) {
 }
 
 data class RecallSearchRequest(val nomsNumber: NomsNumber)
-enum class Status {
-  BEING_BOOKED_ON,
-  BOOKED_ON,
-  IN_ASSESSMENT,
-  RECALL_NOTIFICATION_ISSUED,
-  DOSSIER_IN_PROGRESS,
-  DOSSIER_ISSUED,
-  STOPPED
+
+private val ALL_BANDINGS = setOf(THREE, FOUR_PLUS)
+private val FOUR_PLUS_ONLY = setOf(FOUR_PLUS)
+
+enum class Status(val visibilityBands: Set<CaseworkerBand>) {
+  BEING_BOOKED_ON(ALL_BANDINGS),
+  BOOKED_ON(FOUR_PLUS_ONLY),
+  IN_ASSESSMENT(FOUR_PLUS_ONLY),
+  RECALL_NOTIFICATION_ISSUED(ALL_BANDINGS),
+  DOSSIER_IN_PROGRESS(ALL_BANDINGS),
+  DOSSIER_ISSUED(ALL_BANDINGS),
+  STOPPED(ALL_BANDINGS);
 }
 
 data class UpdateRecallRequest(

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -97,6 +98,7 @@ class RecallNotificationContextTest {
     userSignature,
     Email("maria@thebadgers.set"),
     PhoneNumber("09876543210"),
+    CaseworkerBand.FOUR_PLUS,
     OffsetDateTime.now()
   )
   private val currentPrisonName = PrisonName("Prison B")

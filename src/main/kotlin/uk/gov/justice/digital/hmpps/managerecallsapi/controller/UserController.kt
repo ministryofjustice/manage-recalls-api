@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -57,18 +58,36 @@ class UserController(
   ) = userDetailsService.get(tokenExtractor.getTokenFromHeader(bearerToken).userUuid()).toResponse()
 
   fun AddUserDetailsRequest.toUserDetails(userId: UserId) =
-    UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now(clock))
+    UserDetails(
+      userId,
+      firstName,
+      lastName,
+      signature,
+      email,
+      phoneNumber,
+      caseworkerBand,
+      OffsetDateTime.now(clock)
+    )
 }
 
 fun UserDetails.toResponse() =
-  UserDetailsResponse(this.userId(), this.firstName, this.lastName, this.signature, this.email, this.phoneNumber)
+  UserDetailsResponse(
+    this.userId(),
+    this.firstName,
+    this.lastName,
+    this.signature,
+    this.email,
+    this.phoneNumber,
+    this.caseworkerBand
+  )
 
 data class AddUserDetailsRequest(
   val firstName: FirstName,
   val lastName: LastName,
   val signature: String,
   val email: Email,
-  val phoneNumber: PhoneNumber
+  val phoneNumber: PhoneNumber,
+  val caseworkerBand: CaseworkerBand = CaseworkerBand.FOUR_PLUS // TODO remove defaulting once UI change released
 )
 
 data class UserDetailsResponse(
@@ -77,5 +96,6 @@ data class UserDetailsResponse(
   val lastName: LastName,
   val signature: String,
   val email: Email,
-  val phoneNumber: PhoneNumber
+  val phoneNumber: PhoneNumber,
+  val caseworkerBand: CaseworkerBand
 )

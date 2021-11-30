@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
@@ -41,7 +42,13 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
           PrisonName("Prison B"),
           RecallLengthDescription(recallLength),
           UserDetails(
-            ::UserId.random(), FirstName("Mandy"), LastName("Pandy"), "", Email("mandy@pandy.com"), PhoneNumber("09876543210"),
+            ::UserId.random(),
+            FirstName("Mandy"),
+            LastName("Pandy"),
+            "",
+            Email("mandy@pandy.com"),
+            PhoneNumber("09876543210"),
+            CaseworkerBand.FOUR_PLUS,
             OffsetDateTime.now()
           )
         )

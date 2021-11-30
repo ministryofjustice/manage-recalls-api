@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -23,11 +24,24 @@ class UserDetailsComponentTest : ComponentTestBase() {
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
     val response = authenticatedClient.addUserDetails(
-      AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber),
+      AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber, CaseworkerBand.FOUR_PLUS),
       UserDetailsResponse::class.java
     )
 
-    assertThat(response, equalTo(UserDetailsResponse(authenticatedClient.userId, firstName, lastName, signature, email, phoneNumber)))
+    assertThat(
+      response,
+      equalTo(
+        UserDetailsResponse(
+          authenticatedClient.userId,
+          firstName,
+          lastName,
+          signature,
+          email,
+          phoneNumber,
+          CaseworkerBand.FOUR_PLUS
+        )
+      )
+    )
   }
 
   @Test
@@ -38,11 +52,24 @@ class UserDetailsComponentTest : ComponentTestBase() {
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
     val response = authenticatedClient.addUserDetails(
-      AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber),
+      AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber, CaseworkerBand.FOUR_PLUS),
       UserDetailsResponse::class.java
     )
 
-    assertThat(response, equalTo(UserDetailsResponse(authenticatedClient.userId, firstName, lastName, signature, email, phoneNumber)))
+    assertThat(
+      response,
+      equalTo(
+        UserDetailsResponse(
+          authenticatedClient.userId,
+          firstName,
+          lastName,
+          signature,
+          email,
+          phoneNumber,
+          CaseworkerBand.FOUR_PLUS
+        )
+      )
+    )
   }
 
   @Test
@@ -54,7 +81,7 @@ class UserDetailsComponentTest : ComponentTestBase() {
     val phoneNumber = PhoneNumber("01234567890")
 
     val response = authenticatedClient.addUserDetails(
-      AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber),
+      AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber, CaseworkerBand.FOUR_PLUS),
       ErrorResponse::class.java,
       HttpStatus.BAD_REQUEST
     )
@@ -96,12 +123,26 @@ class UserDetailsComponentTest : ComponentTestBase() {
         lastName,
         signature,
         email,
-        phoneNumber
+        phoneNumber,
+        CaseworkerBand.FOUR_PLUS
       ),
       UserDetailsResponse::class.java
     )
 
     val response = authenticatedClient.getUserDetails(createdDetails.userId)
-    assertThat(response, equalTo(UserDetailsResponse(authenticatedClient.userId, firstName, lastName, signature, email, phoneNumber)))
+    assertThat(
+      response,
+      equalTo(
+        UserDetailsResponse(
+          authenticatedClient.userId,
+          firstName,
+          lastName,
+          signature,
+          email,
+          phoneNumber,
+          CaseworkerBand.FOUR_PLUS
+        )
+      )
+    )
   }
 }
