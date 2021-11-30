@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecordRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -157,6 +158,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
         base64EncodedFileContents("/signature.jpg"),
         Email("bertie@thebadgers.org"),
         PhoneNumber("09876543210"),
+        CaseworkerBand.FOUR_PLUS,
         OffsetDateTime.now()
       )
     )

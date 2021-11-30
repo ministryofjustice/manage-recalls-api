@@ -35,7 +35,7 @@ class AuthenticatedClient(
   private val jwtAuthenticationHelper: JwtAuthenticationHelper
 ) {
 
-  var userId: UserId = ::UserId.random()
+  val userId: UserId = ::UserId.random()
 
   private val addHeaders: (headers: HttpHeaders) -> Unit = {
     it.add(CONTENT_TYPE, APPLICATION_JSON_VALUE)

@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ApprovalTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -47,13 +48,32 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
-    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now(fixedClock))
+    val userDetails = UserDetails(
+      userId,
+      firstName,
+      lastName,
+      signature,
+      email,
+      phoneNumber,
+      CaseworkerBand.THREE,
+      OffsetDateTime.now(fixedClock)
+    )
 
     every { tokenExtractor.getTokenFromHeader(any()) } returns TokenExtractor.Token(userId.toString())
     every { userDetailsService.save(userDetails) } returns userDetails
 
     approver(CREATED) {
-      userController.addUserDetails(AddUserDetailsRequest(firstName, lastName, signature, email, phoneNumber), "Bearer Token")
+      userController.addUserDetails(
+        AddUserDetailsRequest(
+          firstName,
+          lastName,
+          signature,
+          email,
+          phoneNumber,
+          CaseworkerBand.THREE
+        ),
+        "Bearer Token"
+      )
     }
   }
 
@@ -65,12 +85,34 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
     val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
-    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now())
+    val userDetails = UserDetails(
+      userId,
+      firstName,
+      lastName,
+      signature,
+      email,
+      phoneNumber,
+      CaseworkerBand.FOUR_PLUS,
+      OffsetDateTime.now()
+    )
 
     every { userDetailsService.get(userId) } returns userDetails
 
     val result = userController.getUserDetails(userId)
-    assertThat(result, equalTo(UserDetailsResponse(userId, firstName, lastName, signature, email, phoneNumber)))
+    assertThat(
+      result,
+      equalTo(
+        UserDetailsResponse(
+          userId,
+          firstName,
+          lastName,
+          signature,
+          email,
+          phoneNumber,
+          CaseworkerBand.FOUR_PLUS
+        )
+      )
+    )
   }
 
   @Test
@@ -81,12 +123,34 @@ class UserControllerTest(@Autowired private val userController: UserController) 
     val email = Email("bertie@badger.org")
     val phoneNumber = PhoneNumber("01234567890")
     val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
-    val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now())
+    val userDetails = UserDetails(
+      userId,
+      firstName,
+      lastName,
+      signature,
+      email,
+      phoneNumber,
+      CaseworkerBand.FOUR_PLUS,
+      OffsetDateTime.now()
+    )
 
     every { tokenExtractor.getTokenFromHeader(any()) } returns TokenExtractor.Token(userId.toString())
     every { userDetailsService.get(userId) } returns userDetails
 
     val result = userController.getCurrentUserDetails("Bearer Token")
-    assertThat(result, equalTo(UserDetailsResponse(userId, firstName, lastName, signature, email, phoneNumber)))
+    assertThat(
+      result,
+      equalTo(
+        UserDetailsResponse(
+          userId,
+          firstName,
+          lastName,
+          signature,
+          email,
+          phoneNumber,
+          CaseworkerBand.FOUR_PLUS
+        )
+      )
+    )
   }
 }

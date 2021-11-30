@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
@@ -33,7 +34,16 @@ class UserDetailsRepositoryIntegrationTest(@Autowired private val repository: Us
   private val signature = base64EncodedFileContents("/signature.jpg")
   private val email = Email("bertie@badger.org")
   private val phoneNumber = PhoneNumber("01234567890")
-  private val userDetails = UserDetails(userId, firstName, lastName, signature, email, phoneNumber, OffsetDateTime.now())
+  private val userDetails = UserDetails(
+    userId,
+    firstName,
+    lastName,
+    signature,
+    email,
+    phoneNumber,
+    CaseworkerBand.FOUR_PLUS,
+    OffsetDateTime.now()
+  )
 
   @Test
   @Transactional

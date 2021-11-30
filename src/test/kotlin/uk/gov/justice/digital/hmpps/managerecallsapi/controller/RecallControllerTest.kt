@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor.Token
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
@@ -24,12 +25,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
@@ -66,29 +69,24 @@ class RecallControllerTest {
   private val recallId = ::RecallId.random()
   private val nomsNumber = NomsNumber("A1234AA")
   private val createdByUserId = ::UserId.random()
-  private val recallRequest = BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger"))
+  private val firstName = FirstName("Barrie")
+  private val middleNames = MiddleNames("Barnie")
+  private val lastName = LastName("Badger")
+  private val recallRequest = BookRecallRequest(nomsNumber, firstName, null, lastName)
   private val fileName = "fileName"
   private val now = OffsetDateTime.now()
+  private val bookedByUserId = ::UserId.random()
+  private val assignee = ::UserId.random()
+  private val dossierCreatedByUserId = ::UserId.random()
   private val details = "Document details"
 
-  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
+  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, firstName, null, lastName)
 
   private val updateRecallRequest =
     UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
 
   private val recallResponse =
-    RecallResponse(
-      recallId,
-      nomsNumber,
-      createdByUserId,
-      now,
-      now,
-      FirstName("Barrie"),
-      null,
-      LastName("Badger"),
-      NameFormatCategory.FIRST_LAST,
-      Status.BEING_BOOKED_ON
-    )
+    RecallResponse(recallId, nomsNumber, createdByUserId, now, now, firstName, null, lastName, NameFormatCategory.FIRST_LAST, Status.BEING_BOOKED_ON)
 
   @Test
   fun `book recall returns request with id`() {
@@ -104,13 +102,77 @@ class RecallControllerTest {
     assertThat(results.body, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid)))
   }
 
+  private fun newRecall() =
+    Recall(::RecallId.random(), randomNoms(), createdByUserId, now, firstName, middleNames, lastName, licenceNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST)
+
+  private fun recallResponse(recall: Recall, status: Status) =
+    RecallResponse(recall.recallId(), recall.nomsNumber, createdByUserId, now, now, firstName, middleNames, lastName, NameFormatCategory.FIRST_MIDDLE_LAST, status)
+
+  private val beingBookedOnRecall = newRecall()
+  private val bookedOnRecall = newRecall().copy(bookedByUserId = bookedByUserId.value)
+  private val inAssessmentRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, assignee = assignee.value)
+  private val stoppedRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, agreeWithRecall = AgreeWithRecall.NO_STOP)
+  private val recallNotificationIssuedRecall = newRecall().copy(recallNotificationEmailSentDateTime = now)
+  private val dossierInProgressRecall = newRecall().copy(recallNotificationEmailSentDateTime = now, assignee = assignee.value)
+  private val dossierIssuedRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value)
+
   @Test
-  fun `gets all recalls`() {
-    every { recallRepository.findAll() } returns listOf(recall)
+  fun `gets all recalls for a band FOUR_PLUS returns all recalls`() {
+    val bearerToken = "Bearer header.payload"
+    every { recallRepository.findAll() } returns listOf(beingBookedOnRecall, bookedOnRecall, inAssessmentRecall, stoppedRecall, recallNotificationIssuedRecall, dossierInProgressRecall, dossierIssuedRecall)
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(::UserId.random().toString())
+    val userDetails = mockk<UserDetails>()
+    every { userDetailsService.get(any()) } returns userDetails
+    every { userDetailsService.find(any()) } returns userDetails
+    every { userDetails.caseworkerBand } returns CaseworkerBand.FOUR_PLUS
+    every { userDetails.fullName() } returns "Mickey Mouse"
 
-    val results = underTest.findAll()
+    val results = underTest.findAll(bearerToken)
 
-    assertThat(results, equalTo(listOf(recallResponse)))
+    assertThat(results.size, equalTo(7))
+
+    assertThat(
+      results,
+      List<RecallResponse>::containsAll,
+      listOf(
+        recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
+        recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId),
+        recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = "Mickey Mouse"),
+        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
+        recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
+        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = "Mickey Mouse"),
+        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
+      )
+    )
+  }
+
+  @Test
+  fun `gets all recalls for a band THREE returns only recalls in BEING_BOOKED_ON, STOPPED, RECALL_NOTIFICATION_ISSUED, DOSSIER_IN_PROGRESS, DOSSIER_ISSUED statuses`() {
+    val bearerToken = "Bearer header.payload"
+    every { recallRepository.findAll() } returns listOf(beingBookedOnRecall, bookedOnRecall, inAssessmentRecall, stoppedRecall, recallNotificationIssuedRecall, dossierInProgressRecall, dossierIssuedRecall)
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(::UserId.random().toString())
+    val userDetails = mockk<UserDetails>()
+    every { userDetailsService.get(any()) } returns userDetails
+    every { userDetailsService.find(any()) } returns userDetails
+    every { userDetails.caseworkerBand } returns CaseworkerBand.THREE
+    every { userDetails.fullName() } returns "Mickey Mouse"
+
+    val results = underTest.findAll(bearerToken)
+
+    assertThat(results.size, equalTo(5))
+
+    assertThat(
+      results,
+      List<RecallResponse>::containsAll,
+      listOf(
+        recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
+        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
+        recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
+        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = "Mickey Mouse"),
+        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
+      )
+
+    )
   }
 
   @Test
@@ -219,7 +281,8 @@ class RecallControllerTest {
 
     every { recallService.assignRecall(recallId, assignee) } returns assignedRecall
     every { userDetailsService.find(assignee) } returns UserDetails(
-      assignee, FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
+      assignee, FirstName("Bertie"), lastName, "", Email("b@b.com"), PhoneNumber("0987654321"),
+      CaseworkerBand.FOUR_PLUS,
       OffsetDateTime.now()
     )
 

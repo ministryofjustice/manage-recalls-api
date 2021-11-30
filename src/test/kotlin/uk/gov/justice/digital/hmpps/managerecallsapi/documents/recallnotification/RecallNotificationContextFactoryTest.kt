@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -145,6 +146,7 @@ class RecallNotificationContextFactoryTest {
     val userDetails =
       UserDetails(
         ::UserId.random(), FirstName("Sue"), LastName("Smith"), "", Email("s@smith.com"), PhoneNumber("0123"),
+        CaseworkerBand.FOUR_PLUS,
         OffsetDateTime.now()
       )
 

@@ -18,6 +18,8 @@ import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
+import javax.persistence.EnumType.STRING
+import javax.persistence.Enumerated
 import javax.persistence.Id
 import javax.persistence.Table
 
@@ -41,15 +43,28 @@ data class UserDetails(
   @Convert(converter = PhoneNumberJpaConverter::class)
   val phoneNumber: PhoneNumber,
   @Column(nullable = false)
+  @Enumerated(STRING)
+  val caseworkerBand: CaseworkerBand,
+  @Column(nullable = false)
   val createdDateTime: OffsetDateTime
 ) {
-  constructor(userId: UserId, firstName: FirstName, lastName: LastName, signature: String, email: Email, phoneNumber: PhoneNumber, createdDateTime: OffsetDateTime) : this(
+  constructor(
+    userId: UserId,
+    firstName: FirstName,
+    lastName: LastName,
+    signature: String,
+    email: Email,
+    phoneNumber: PhoneNumber,
+    band: CaseworkerBand,
+    createdDateTime: OffsetDateTime
+  ) : this(
     userId.value,
     firstName,
     lastName,
     signature,
     email,
     phoneNumber,
+    band,
     createdDateTime
   )
 
@@ -58,6 +73,11 @@ data class UserDetails(
   fun personName() = PersonName(this.firstName, lastName = this.lastName)
 
   fun fullName(): String = personName().toString()
+}
+
+enum class CaseworkerBand {
+  THREE,
+  FOUR_PLUS
 }
 
 data class UserDetailsNotFoundException(val userId: UserId) : NotFoundException()

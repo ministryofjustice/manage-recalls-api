@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -37,7 +38,14 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val updateRecallRequest = UpdateRecallRequest()
   private val recallSearchRequest = RecallSearchRequest(nomsNumber)
   private val apiSearchRequest = SearchRequest(nomsNumber)
-  private val userDetailsRequest = AddUserDetailsRequest(FirstName("John"), LastName("Badger"), "", Email("blah@badgers.com"), PhoneNumber("09876543210"))
+  private val userDetailsRequest = AddUserDetailsRequest(
+    FirstName("John"),
+    LastName("Badger"),
+    "",
+    Email("blah@badgers.com"),
+    PhoneNumber("09876543210"),
+    CaseworkerBand.FOUR_PLUS
+  )
   private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.REVOCATION_ORDER)
   private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.PART_A_RECALL_REPORT), "some detail", "content", "email.msg")
 

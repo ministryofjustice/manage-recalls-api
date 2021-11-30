@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   hmpps: ministryofjustice/hmpps@3.11
   gradle: circleci/gradle@2.2.0
+  mem: circleci/rememborb@0.0.1
 
 parameters:
   alerts-slack-channel:
@@ -181,6 +182,48 @@ jobs:
               --pacticipant="manage-recalls-api" --version="$CIRCLE_SHA1" --tag="<< parameters.tag >>" --auto-create-version \
               --broker-base-url="$PACT_BROKER_BASE_URL" --broker-username="$PACT_BROKER_USERNAME" --broker-password="$PACT_BROKER_PASSWORD"
 
+  deploy_to_manage_recalls:
+    executor: hmpps/default_small
+    parameters:
+      env:
+        type: string
+    environment:
+      KUBE_NAMESPACE_OVERRIDE: manage-recalls-<< parameters.env >>
+    steps:
+      - checkout
+      - hmpps/k8s_setup:
+          kube-namespace: KUBE_NAMESPACE_OVERRIDE
+      - hmpps/install_helm
+      - hmpps/install_aws_cli
+      - mem/recall:
+          env_var: APP_VERSION
+      - deploy:
+          name: Deploy to << parameters.env >>
+          working_directory: helm_deploy
+          environment:
+            RELEASE_NAME: manage-recalls-api
+            CHART_NAME: manage-recalls-api
+            ENV_NAME: << parameters.env >>
+          command: |
+              # Show the context in use - just to check the namespace is correct
+              kubectl config get-contexts
+
+              # this is a hack to allow seeing the actual app version in the helm release metadata
+              sed -i "s/appVersion:.*/appVersion: \"${APP_VERSION}\"/g" "${CHART_NAME}/Chart.yaml"
+
+              # Install/update any chart dependencies.
+              helm dependency update "${CHART_NAME}"
+
+              HELM_ARGS=(--wait \
+                --install \
+                --reset-values \
+                --timeout 5m \
+                --history-max 10 \
+                --values "values-manage-recalls-${ENV_NAME}.yaml" \
+                --set "generic-service.image.tag=${APP_VERSION}")
+
+              helm upgrade "${RELEASE_NAME}" "${CHART_NAME}" "${HELM_ARGS[@]}"
+
 workflows:
   version: 2
 
@@ -264,6 +307,19 @@ workflows:
           name: deploy_dev
           env: dev
           context: hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - publish_docker
+
+      - deploy_to_manage_recalls:
+          name: deploy_to_manage_recalls_dev
+          env: dev
+          context:
+            - hmpps-common-vars
+            - manage-recalls-api-stage
           filters:
             branches:
               only:
