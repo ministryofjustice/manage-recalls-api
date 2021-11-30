@@ -220,19 +220,20 @@ class DocumentRepositoryIntegrationTest(
   }
 
   private fun versionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int) =
-    testDocument(id, recallId, category, version)
+    testDocument(id, recallId, category, version, null)
 
   private fun unVersionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory) =
-    testDocument(id, recallId, category, null)
+    testDocument(id, recallId, category, null, null)
 
-  private fun testDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int?): Document {
+  private fun testDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int?, details: String?): Document {
     return Document(
       id,
       recallId,
       category,
       "file_name",
       version,
-      OffsetDateTime.now()
+      OffsetDateTime.now(),
+      details
     )
   }
 }

@@ -47,7 +47,7 @@ class DocumentController(
   ): ResponseEntity<GetDocumentResponse> {
     val (document, bytes) = documentService.getDocument(recallId, documentId)
     return ResponseEntity.ok(
-      GetDocumentResponse(documentId, document.category, bytes.encodeToBase64String(), document.fileName, document.version, document.createdDateTime)
+      GetDocumentResponse(documentId, document.category, bytes.encodeToBase64String(), document.fileName, document.version, document.createdDateTime, document.details)
     )
   }
 
@@ -78,7 +78,8 @@ class DocumentController(
     recallId,
     addDocumentRequest.fileContent.toBase64DecodedByteArray(),
     addDocumentRequest.category,
-    addDocumentRequest.fileName
+    addDocumentRequest.fileName,
+    addDocumentRequest.details
   )
 
   @PatchMapping("/recalls/{recallId}/documents/{documentId}")
@@ -88,7 +89,7 @@ class DocumentController(
     @RequestBody updateDocumentRequest: UpdateDocumentRequest
   ): ResponseEntity<UpdateDocumentResponse> {
     val document = documentService.updateDocumentCategory(recallId, documentId, updateDocumentRequest.category)
-    return ResponseEntity.ok(UpdateDocumentResponse(document.id(), document.recallId(), document.category, document.fileName))
+    return ResponseEntity.ok(UpdateDocumentResponse(document.id(), document.recallId(), document.category, document.fileName, document.details))
   }
 
   @DeleteMapping("/recalls/{recallId}/documents/{documentId}")
@@ -109,13 +110,15 @@ data class UpdateDocumentResponse(
   val documentId: DocumentId,
   val recallId: RecallId,
   val category: DocumentCategory,
-  val fileName: String
+  val fileName: String,
+  val details: String? = null,
 )
 
 data class AddDocumentRequest(
   val category: DocumentCategory,
   val fileContent: String,
-  val fileName: String
+  val fileName: String,
+  val details: String? = null
 )
 
 data class AddDocumentResponse(val documentId: DocumentId)
@@ -126,5 +129,6 @@ data class GetDocumentResponse(
   val content: String,
   val fileName: String,
   val version: Int?,
-  val createdDateTime: OffsetDateTime
+  val createdDateTime: OffsetDateTime,
+  val details: String?,
 )

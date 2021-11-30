@@ -19,7 +19,8 @@ class DocumentTest {
         DocumentCategory.OTHER,
         "file.txt",
         1,
-        OffsetDateTime.now()
+        OffsetDateTime.now(),
+        null
       )
     }
   }
@@ -33,7 +34,8 @@ class DocumentTest {
         DocumentCategory.LICENCE,
         "file.txt",
         null,
-        OffsetDateTime.now()
+        OffsetDateTime.now(),
+        null
       )
     }
   }
@@ -46,7 +48,8 @@ class DocumentTest {
       DocumentCategory.LICENCE,
       "file.txt",
       1,
-      OffsetDateTime.now()
+      OffsetDateTime.now(),
+      null
     )
   }
 }

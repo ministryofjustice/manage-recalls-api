@@ -210,7 +210,7 @@ class RecallController(
     val partitionedDocs = documents.partition { it.category.versioned }
     val latestDocuments = partitionedDocs.first.filter { it.category.versioned }
       .groupBy { it.category }.values.map { it.sortedBy { d -> d.version }.last() } + partitionedDocs.second
-    return latestDocuments.map { Api.RecallDocument(it.id(), it.category, it.fileName, it.version, it.createdDateTime) }
+    return latestDocuments.map { Api.RecallDocument(it.id(), it.category, it.fileName, it.version, it.createdDateTime, it.details) }
   }
 }
 
@@ -303,7 +303,8 @@ class Api {
     val category: DocumentCategory,
     val fileName: String,
     val version: Int?,
-    val createdDateTime: OffsetDateTime
+    val createdDateTime: OffsetDateTime,
+    val details: String?
   )
 
   data class MissingDocumentsRecord(

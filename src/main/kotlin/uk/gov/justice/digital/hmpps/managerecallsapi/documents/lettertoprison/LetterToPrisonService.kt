@@ -30,7 +30,7 @@ class LetterToPrisonService(
 
     return if (letterToPrison == null) {
       createPdf(recallId).map { letterToPrisonBytes ->
-        documentService.storeDocument(recallId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
+        documentService.storeDocument(recallId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf", null)
         letterToPrisonBytes
       }
     } else {

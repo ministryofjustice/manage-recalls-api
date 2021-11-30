@@ -29,6 +29,7 @@ class DocumentControllerTest {
 
   private val recallId = ::RecallId.random()
   private val fileName = "fileName"
+  private val details = "Document details provided by user"
 
   @Test
   fun `adds a recall document successfully`() {
@@ -42,11 +43,12 @@ class DocumentControllerTest {
         recallId,
         documentBytes,
         category,
-        fileName
+        fileName,
+        details
       )
     } returns Success(documentId)
 
-    val request = AddDocumentRequest(category, documentBytes.encodeToBase64String(), fileName)
+    val request = AddDocumentRequest(category, documentBytes.encodeToBase64String(), fileName, details)
     val response = underTest.addDocument(recallId, request)
 
     assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
@@ -68,7 +70,8 @@ class DocumentControllerTest {
       PART_A_RECALL_REPORT,
       fileName,
       1,
-      now
+      now,
+      details
     )
     val bytes = "Hello".toByteArray()
 
@@ -83,7 +86,8 @@ class DocumentControllerTest {
       content = bytes.encodeToBase64String(),
       fileName,
       1,
-      now
+      now,
+      details
     )
     assertThat(response.body, equalTo(expected))
   }

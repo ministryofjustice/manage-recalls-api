@@ -36,11 +36,12 @@ class DocumentService(
     recallId: RecallId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
-    fileName: String
+    fileName: String,
+    details: String? = null
   ): Result<DocumentId, VirusScanResult> =
     forExistingRecall(recallId) {
       when (val virusScanResult = virusScanner.scan(documentBytes)) {
-        NoVirusFound -> Success(storeDocument(recallId, documentBytes, documentCategory, fileName))
+        NoVirusFound -> Success(storeDocument(recallId, documentBytes, documentCategory, fileName, details))
         is VirusFound -> {
           log.info(VirusFoundEvent(recallId, documentCategory, virusScanResult.foundViruses).toString())
           Failure(virusScanResult)
@@ -52,17 +53,19 @@ class DocumentService(
     recallId: RecallId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
-    fileName: String
+    fileName: String,
+    details: String? = null
   ): DocumentId =
     forExistingRecall(recallId) {
-      uploadToS3AndSaveDocument(recallId, documentCategory, documentBytes, fileName)
+      uploadToS3AndSaveDocument(recallId, documentCategory, documentBytes, fileName, details)
     }
 
   private fun uploadToS3AndSaveDocument(
     recallId: RecallId,
     category: DocumentCategory,
     documentBytes: ByteArray,
-    fileName: String
+    fileName: String,
+    details: String? = null
   ): DocumentId {
     val version = if (category.versioned) {
       (documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, category)?.version ?: 0) + 1
@@ -71,7 +74,7 @@ class DocumentService(
     }
     val documentId = ::DocumentId.random()
 
-    documentRepository.save(Document(documentId, recallId, category, fileName, version, OffsetDateTime.now(clock)))
+    documentRepository.save(Document(documentId, recallId, category, fileName, version, OffsetDateTime.now(clock), details))
     try {
       s3Service.uploadFile(documentId, documentBytes)
     } catch (ex: Exception) {

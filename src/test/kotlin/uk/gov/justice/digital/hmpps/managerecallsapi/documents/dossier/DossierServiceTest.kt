@@ -66,7 +66,7 @@ internal class DossierServiceTest {
     every { tableOfContentsService.createPdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
-    every { documentService.storeDocument(recallId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
+    every { documentService.storeDocument(recallId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf", null) } returns ::DocumentId.random()
 
     val dossier = underTest.getDossier(recallId).block()!!
 
@@ -102,7 +102,7 @@ internal class DossierServiceTest {
     verify { tableOfContentsService wasNot Called }
     verify { pdfDocumentGenerationService wasNot Called }
     verify { pdfDecorator wasNot Called }
-    verify(exactly = 0) { documentService.storeDocument(any(), any(), any(), any()) }
+    verify(exactly = 0) { documentService.storeDocument(any(), any(), any(), any(), any()) }
   }
 
   // TODO: PUD-575 test/handling when any input doc is not available

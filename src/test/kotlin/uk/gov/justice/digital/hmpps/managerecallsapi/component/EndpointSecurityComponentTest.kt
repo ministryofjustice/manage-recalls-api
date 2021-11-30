@@ -29,10 +29,11 @@ import java.util.stream.Stream
 class EndpointSecurityComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
+  private val details = "Some details"
   private val bookRecallRequest = BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger"))
   private val fileBytes = "content".toByteArray()
   private val category = DocumentCategory.PART_A_RECALL_REPORT
-  private val addDocumentRequest = AddDocumentRequest(category, fileBytes.encodeToBase64String(), "part_a.pdf")
+  private val addDocumentRequest = AddDocumentRequest(category, fileBytes.encodeToBase64String(), "part_a.pdf", details)
   private val updateRecallRequest = UpdateRecallRequest()
   private val recallSearchRequest = RecallSearchRequest(nomsNumber)
   private val apiSearchRequest = SearchRequest(nomsNumber)
