@@ -413,7 +413,7 @@ class RecallControllerTest {
     val partADoc1 =
       Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, OffsetDateTime.now(), null)
     val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, now, details2)
-    val partADoc3 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, now, details3)
+    val partADoc3 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 3, now, details3)
     val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, partADoc3))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDocuments
@@ -425,8 +425,7 @@ class RecallControllerTest {
       equalTo(
         recallResponse.copy(
           documents = listOf(
-            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now, details3),
-            Api.RecallDocument(partADoc3.id(), partADoc2.category, partADoc2.fileName, 2, now, details3),
+            Api.RecallDocument(partADoc3.id(), partADoc3.category, partADoc3.fileName, 3, now, details3),
           )
         )
       )
