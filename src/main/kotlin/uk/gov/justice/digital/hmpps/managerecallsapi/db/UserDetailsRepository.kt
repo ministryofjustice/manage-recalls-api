@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -72,7 +73,7 @@ data class UserDetails(
 
   fun personName() = PersonName(this.firstName, lastName = this.lastName)
 
-  fun fullName(): String = personName().toString()
+  fun fullName(): FullName = personName().firstAndLastName()
 }
 
 enum class CaseworkerBand {

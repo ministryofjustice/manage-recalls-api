@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
@@ -19,9 +21,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -37,6 +43,7 @@ import javax.transaction.Transactional
 class RecallRepositoryIntegrationTest(
   @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository,
   @Qualifier("jpaDocumentRepository") @Autowired private val jpaDocumentRepository: JpaDocumentRepository,
+  @Autowired private val userDetailsRepository: UserDetailsRepository
 ) {
   private val nomsNumber = randomNoms()
   private val createdByUserId = ::UserId.random()
@@ -46,6 +53,11 @@ class RecallRepositoryIntegrationTest(
 
   private val repository = RecallRepository(jpaRepository)
   private val documentRepository = DocumentRepository(jpaDocumentRepository)
+
+  @BeforeEach
+  fun `setup createdBy user`() {
+    userDetailsRepository.save(UserDetails(createdByUserId, FirstName("Test"), LastName("User"), "", Email("test@user.com"), PhoneNumber("09876543210"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()))
+  }
 
   @Test
   @Transactional
@@ -140,7 +152,8 @@ class RecallRepositoryIntegrationTest(
       PART_A_RECALL_REPORT,
       "PART_A.pdf",
       1,
-      now
+      createdByUserId,
+      now,
     )
     val recallToUpdate = recall.copy(
       documents = setOf(

@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.onlyContainsInOrder
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
@@ -48,6 +49,7 @@ internal class DossierServiceTest {
   @Test
   fun `get dossier returns table of contents, recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall and dossier doesnt already exist`() {
     val recallId = ::RecallId.random()
+    val createdByUserId = ::UserId.random()
     val licenseContentBytes = randomString().toByteArray()
     val partARecallReportContentBytes = randomString().toByteArray()
     val revocationOrderContentBytes = randomString().toByteArray()
@@ -62,13 +64,13 @@ internal class DossierServiceTest {
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
-    every { reasonsForRecallService.getDocument(dossierContext) } returns Mono.just(reasonsForRecallContentBytes)
+    every { reasonsForRecallService.getPdf(dossierContext, createdByUserId) } returns Mono.just(reasonsForRecallContentBytes)
     every { tableOfContentsService.createPdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
-    every { documentService.storeDocument(recallId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
+    every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
 
-    val dossier = underTest.getDossier(recallId).block()!!
+    val dossier = underTest.getPdf(recallId, createdByUserId).block()!!
 
     assertArrayEquals(numberedMergedBytes, dossier)
     assertThat(
@@ -89,11 +91,12 @@ internal class DossierServiceTest {
   @Test
   fun `get dossier returns dossier if it already exists`() {
     val recallId = ::RecallId.random()
+    val createdByUserId = ::UserId.random()
     val documentBytes = randomString().toByteArray()
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns documentBytes
 
-    val dossier = underTest.getDossier(recallId).block()!!
+    val dossier = underTest.getPdf(recallId, createdByUserId).block()!!
 
     assertArrayEquals(documentBytes, dossier)
 
@@ -102,7 +105,7 @@ internal class DossierServiceTest {
     verify { tableOfContentsService wasNot Called }
     verify { pdfDocumentGenerationService wasNot Called }
     verify { pdfDecorator wasNot Called }
-    verify(exactly = 0) { documentService.storeDocument(any(), any(), any(), any()) }
+    verify(exactly = 0) { documentService.storeDocument(any(), createdByUserId, any(), any(), any()) }
   }
 
   // TODO: PUD-575 test/handling when any input doc is not available

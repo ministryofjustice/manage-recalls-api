@@ -8,16 +8,11 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import java.time.Instant
@@ -32,7 +27,7 @@ class GetRecallComponentTest : ComponentTestBase() {
   @Test
   fun `get a recall that has just been booked`() {
     val recallId = ::RecallId.random()
-    val createdByUserId = ::UserId.random()
+    val createdByUserId = authenticatedClient.userId
 
     val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), ZoneId.of("UTC"))
     recallRepository.save(
@@ -71,19 +66,8 @@ class GetRecallComponentTest : ComponentTestBase() {
   @Test
   fun `get a fully populated recall`() {
     val recallId = ::RecallId.random()
-    val fullyPopulatedRecall = fullyPopulatedRecall(recallId)
-    userDetailsRepository.save(
-      UserDetails(
-        fullyPopulatedRecall.assignee!!,
-        FirstName("Bertie"),
-        LastName("Badger"),
-        "",
-        Email("b@b.com"),
-        PhoneNumber("0987654321"),
-        CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
-      )
-    )
+    val createdByUserId = authenticatedClient.userId
+    val fullyPopulatedRecall = fullyPopulatedRecall(recallId, createdByUserId)
     recallRepository.save(fullyPopulatedRecall)
 
     val missingDocumentsRecord = fullyPopulatedRecall.missingDocumentsRecords.first()

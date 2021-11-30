@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -44,8 +45,9 @@ internal class LetterToPrisonServiceTest {
   @Test
   fun `returns a letter to prison for a recall if one exists already`() {
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns expectedBytes
+    val createdByUserId = ::UserId.random()
 
-    val result = underTest.getPdf(recallId)
+    val result = underTest.getPdf(recallId, createdByUserId)
 
     verify(exactly = 0) { recallRepository.getByRecallId(any()) }
     verify(exactly = 0) { letterToPrisonContextFactory.createContext(any()) }
