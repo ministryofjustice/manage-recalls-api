@@ -29,7 +29,7 @@ class ReasonsForRecallService(
     ).map { reasonsForRecallBytes ->
       pdfDecorator.centralHeader(reasonsForRecallBytes, "OFFICIAL")
     }.map { documentBytes ->
-      documentService.storeDocument(dossierContext.recall.recallId(), documentBytes, REASONS_FOR_RECALL, "$REASONS_FOR_RECALL.pdf", null)
+      documentService.storeDocument(dossierContext.recall.recallId(), documentBytes, REASONS_FOR_RECALL, "$REASONS_FOR_RECALL.pdf")
       documentBytes
     }
 }
