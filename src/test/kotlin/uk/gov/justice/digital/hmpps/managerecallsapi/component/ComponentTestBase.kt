@@ -103,6 +103,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     prisonRegisterMockServer.start()
     courtRegisterMockServer.start()
     if (!useRealGotenbergServer) gotenbergMockServer.start()
+    setupUserDetailsFor(authenticatedClient.userId)
   }
 
   @AfterAll

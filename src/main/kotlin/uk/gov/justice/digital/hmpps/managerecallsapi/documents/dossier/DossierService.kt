@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.io.InputStream
 
@@ -27,15 +28,15 @@ class DossierService(
   @Autowired private val dossierContextFactory: DossierContextFactory
 ) {
 
-  fun getDossier(recallId: RecallId): Mono<ByteArray> =
+  fun getPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER)
       ?.let { Mono.just(it) }
-      ?: createDossier(recallId)
+      ?: createDossier(recallId, createdByUserId)
 
-  private fun createDossier(recallId: RecallId): Mono<ByteArray> {
+  private fun createDossier(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
     val dossierContext = dossierContextFactory.createContext(recallId)
 
-    return reasonsForRecallService.getDocument(dossierContext).map { reasonsForRecallPdfBytes ->
+    return reasonsForRecallService.getPdf(dossierContext, createdByUserId).map { reasonsForRecallPdfBytes ->
       createTableOfContentsDocumentMap(recallId, reasonsForRecallPdfBytes)
     }.flatMap { tableOfContentsDocumentMap ->
       tableOfContentsService.createPdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
@@ -48,7 +49,7 @@ class DossierService(
     }.map { mergedPdfContentBytes ->
       pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
     }.map { mergedBytes ->
-      documentService.storeDocument(recallId, mergedBytes, DOSSIER, "$DOSSIER.pdf")
+      documentService.storeDocument(recallId, createdByUserId, mergedBytes, DOSSIER, "$DOSSIER.pdf")
       mergedBytes
     }
   }

@@ -20,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
@@ -34,11 +33,10 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
 
   @Test
   fun `get recall notification returns merged recall summary and revocation order`() {
-    val userId = ::UserId.random()
+    val userId = authenticatedClient.userId
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
 
-    setupUserDetailsFor(userId)
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
     gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)

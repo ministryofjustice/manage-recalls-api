@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 
 @Service
@@ -25,12 +26,12 @@ class LetterToPrisonService(
   @Autowired private val pdfDecorator: PdfDecorator,
 ) {
 
-  fun getPdf(recallId: RecallId): Mono<ByteArray> {
+  fun getPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
     val letterToPrison = documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
 
     return if (letterToPrison == null) {
-      createPdf(recallId).map { letterToPrisonBytes ->
-        documentService.storeDocument(recallId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
+      createPdf(recallId, createdByUserId).map { letterToPrisonBytes ->
+        documentService.storeDocument(recallId, createdByUserId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
         letterToPrisonBytes
       }
     } else {
@@ -38,8 +39,8 @@ class LetterToPrisonService(
     }
   }
 
-  private fun createPdf(recallId: RecallId): Mono<ByteArray> {
-    val context = letterToPrisonContextFactory.createContext(recallId)
+  private fun createPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
+    val context = letterToPrisonContextFactory.createContext(recallId, createdByUserId)
     var letterToPrisonCustodyOfficePageCount = 0
 
     val documentGenerators = Flux.just(

@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
@@ -21,24 +22,31 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
-internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random()): Recall =
+internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), createdByUserId: UserId? = null): Recall =
   fullyPopulatedInstance<Recall>().let { recall ->
     // ensure recall length is valid for the random sentencing info as it is calculated on the fly
     recall.copy(
       id = recallId.value,
       recallLength = recall.sentencingInfo?.calculateRecallLength(),
+      assignee = (createdByUserId ?: ::UserId.random()).value,
+      assessedByUserId = (createdByUserId ?: ::UserId.random()).value,
+      bookedByUserId = (createdByUserId ?: ::UserId.random()).value,
+      createdByUserId = (createdByUserId ?: ::UserId.random()).value,
+      dossierCreatedByUserId = (createdByUserId ?: ::UserId.random()).value,
       documents = recall.documents.map {
         document ->
         document.copy(
           recallId = recallId.value,
           // ensure document version is valid versus category
-          version = if (document.category.versioned) Random.nextInt() else null
+          version = if (document.category.versioned) Random.nextInt() else null,
+          createdByUserId = (createdByUserId ?: ::UserId.random()).value
         )
       }.toSet(),
       missingDocumentsRecords = recall.missingDocumentsRecords.map { mdr ->
         mdr.copy(
           recallId = recallId.value,
-          emailId = recall.documents.random().id
+          emailId = recall.documents.random().id,
+          createdByUserId = (createdByUserId ?: ::UserId.random()).value
         )
       }.toSet()
     )

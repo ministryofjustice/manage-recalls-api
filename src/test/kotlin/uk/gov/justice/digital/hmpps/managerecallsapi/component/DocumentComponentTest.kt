@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEG
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -72,7 +73,19 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(firstDocumentId, !equalTo(secondDocumentId))
     assertThat(
       secondDocument,
-      equalTo(GetDocumentResponse(secondDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, fileName, 2, secondDocument.createdDateTime, details))
+      equalTo(
+        GetDocumentResponse(
+          secondDocumentId,
+          versionedDocumentCategory,
+          base64EncodedDocumentContents,
+          fileName,
+          2,
+          authenticatedClient.userId,
+          FullName("Bertie Badger"),
+          secondDocument.createdDateTime,
+          details
+        )
+      )
     )
 
     val thirdDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
@@ -82,7 +95,19 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(firstDocumentId, !equalTo(thirdDocumentId))
     assertThat(
       recallDocument,
-      equalTo(GetDocumentResponse(thirdDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, fileName, 3, recallDocument.createdDateTime, details))
+      equalTo(
+        GetDocumentResponse(
+          thirdDocumentId,
+          versionedDocumentCategory,
+          base64EncodedDocumentContents,
+          fileName,
+          3,
+          authenticatedClient.userId,
+          FullName("Bertie Badger"),
+          recallDocument.createdDateTime,
+          details
+        )
+      )
     )
 
     val recallResponse = authenticatedClient.getRecall(recall.recallId)
@@ -132,6 +157,8 @@ class DocumentComponentTest : ComponentTestBase() {
           base64EncodedDocumentContents,
           fileName,
           1,
+          authenticatedClient.userId,
+          FullName("Bertie Badger"),
           response.createdDateTime,
           details
         )
@@ -181,7 +208,17 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(
       response,
       equalTo(
-        GetDocumentResponse(documentId, updatedCategory, base64EncodedDocumentContents, fileName, 1, document.createdDateTime, details)
+        GetDocumentResponse(
+          documentId,
+          updatedCategory,
+          base64EncodedDocumentContents,
+          fileName,
+          1,
+          authenticatedClient.userId,
+          FullName("Bertie Badger"),
+          document.createdDateTime,
+          details
+        )
       )
     )
   }
@@ -219,7 +256,17 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(
       response,
       equalTo(
-        GetDocumentResponse(documentId, updatedCategory, base64EncodedDocumentContents, fileName, null, document.createdDateTime, details)
+        GetDocumentResponse(
+          documentId,
+          updatedCategory,
+          base64EncodedDocumentContents,
+          fileName,
+          null,
+          authenticatedClient.userId,
+          FullName("Bertie Badger"),
+          document.createdDateTime,
+          details
+        )
       )
     )
   }
@@ -268,7 +315,19 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(firstDocumentId, !equalTo(secondDocumentId))
     assertThat(
       secondDocument,
-      equalTo(GetDocumentResponse(secondDocumentId, versionedDocumentCategory, base64EncodedDocumentContents, fileName, 2, secondDocument.createdDateTime, details))
+      equalTo(
+        GetDocumentResponse(
+          secondDocumentId,
+          versionedDocumentCategory,
+          base64EncodedDocumentContents,
+          fileName,
+          2,
+          authenticatedClient.userId,
+          FullName("Bertie Badger"),
+          secondDocument.createdDateTime,
+          details
+        )
+      )
     )
 
     authenticatedClient.deleteDocument(recall.recallId, secondDocumentId)

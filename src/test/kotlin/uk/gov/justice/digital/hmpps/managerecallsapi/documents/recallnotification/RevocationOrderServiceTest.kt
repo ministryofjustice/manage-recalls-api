@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.Revoc
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -40,6 +41,7 @@ internal class RevocationOrderServiceTest {
 
   @Test
   fun `creates a revocation order for a recall `() {
+    val createdByUserId = ::UserId.random()
     val userSignature = "base64EncodedUserSignature"
     val revocationOrderContext =
       RevocationOrderContext(
@@ -65,16 +67,24 @@ internal class RevocationOrderServiceTest {
       )
     } returns Mono.just(expectedBytes)
     every {
-      documentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
+      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
     } returns ::DocumentId.random()
 
-    val result = underTest.createPdf(recallNotificationContext)
+    val result = underTest.createPdf(recallNotificationContext, createdByUserId)
 
     StepVerifier
       .create(result)
       .assertNext {
         assertThat(it, equalTo(expectedBytes))
-        verify { documentService.storeDocument(recallId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf") }
+        verify {
+          documentService.storeDocument(
+            recallId,
+            createdByUserId,
+            expectedBytes,
+            REVOCATION_ORDER,
+            "$REVOCATION_ORDER.pdf"
+          )
+        }
       }.verifyComplete()
   }
 

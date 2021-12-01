@@ -102,9 +102,10 @@ internal class LetterToPrisonServiceParameterizedTest {
     val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
     val mergedBytes = randomString().toByteArray()
     val mergedNumberedBytes = randomString().toByteArray()
+    val createdByUserId = ::UserId.random()
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
-    every { letterToPrisonContextFactory.createContext(recallId) } returns context
+    every { letterToPrisonContextFactory.createContext(recallId, createdByUserId) } returns context
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns custodyOfficeHtml
     every { letterToPrisonGovernorGenerator.generateHtml(context) } returns generatedHtml
@@ -126,10 +127,10 @@ internal class LetterToPrisonServiceParameterizedTest {
       )
     } returns mergedNumberedBytes
     every {
-      documentService.storeDocument(recallId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
+      documentService.storeDocument(recallId, createdByUserId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
     } returns documentId
 
-    val result = underTest.getPdf(recallId)
+    val result = underTest.getPdf(recallId, createdByUserId)
 
     StepVerifier
       .create(result)
@@ -138,6 +139,7 @@ internal class LetterToPrisonServiceParameterizedTest {
         verify {
           documentService.storeDocument(
             recallId,
+            createdByUserId,
             mergedNumberedBytes,
             LETTER_TO_PRISON,
             "$LETTER_TO_PRISON.pdf"

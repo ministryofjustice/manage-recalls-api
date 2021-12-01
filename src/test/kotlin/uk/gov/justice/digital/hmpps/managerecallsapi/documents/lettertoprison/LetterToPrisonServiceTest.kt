@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -12,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -44,17 +46,18 @@ internal class LetterToPrisonServiceTest {
   @Test
   fun `returns a letter to prison for a recall if one exists already`() {
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns expectedBytes
+    val createdByUserId = ::UserId.random()
 
-    val result = underTest.getPdf(recallId)
+    val result = underTest.getPdf(recallId, createdByUserId)
 
-    verify(exactly = 0) { recallRepository.getByRecallId(any()) }
-    verify(exactly = 0) { letterToPrisonContextFactory.createContext(any()) }
-    verify(exactly = 0) { letterToPrisonCustodyOfficeGenerator.generateHtml(any()) }
-    verify(exactly = 0) { letterToPrisonGovernorGenerator.generateHtml(any()) }
-    verify(exactly = 0) { letterToPrisonConfirmationGenerator.generateHtml(any()) }
-    verify(exactly = 0) { pdfDocumentGenerationService.generatePdf(any()) }
-    verify(exactly = 0) { pdfDocumentGenerationService.mergePdfs(any()) }
-    verify(exactly = 0) { pdfDecorator.numberPagesOnRightWithHeaderAndFooter(any(), any(), any(), any(), any(), any(), any()) }
+    verify { recallRepository wasNot Called }
+    verify { letterToPrisonContextFactory wasNot Called }
+    verify { letterToPrisonCustodyOfficeGenerator wasNot Called }
+    verify { letterToPrisonGovernorGenerator wasNot Called }
+    verify { letterToPrisonConfirmationGenerator wasNot Called }
+    verify { pdfDocumentGenerationService wasNot Called }
+    verify { pdfDocumentGenerationService wasNot Called }
+    verify { pdfDecorator wasNot Called }
 
     StepVerifier
       .create(result)

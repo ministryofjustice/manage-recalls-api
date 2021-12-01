@@ -52,8 +52,10 @@ class MissingDocumentsRecordController(
     @RequestHeader("Authorization") bearerToken: String
   ) =
     recallRepository.getByRecallId(missingDocumentsRecordRequest.recallId).let {
+      val createdByUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       documentService.scanAndStoreDocument(
         missingDocumentsRecordRequest.recallId,
+        createdByUserId,
         missingDocumentsRecordRequest.emailFileContent.toBase64DecodedByteArray(),
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
         missingDocumentsRecordRequest.emailFileName
@@ -67,7 +69,7 @@ class MissingDocumentsRecordController(
             documentId,
             missingDocumentsRecordRequest.detail,
             currentVersion + 1,
-            tokenExtractor.getTokenFromHeader(bearerToken).userUuid(),
+            createdByUserId,
             OffsetDateTime.now()
           )
         )

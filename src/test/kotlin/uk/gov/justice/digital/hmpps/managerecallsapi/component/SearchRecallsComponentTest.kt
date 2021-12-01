@@ -10,7 +10,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import java.time.Instant
@@ -23,7 +22,7 @@ class SearchRecallsComponentTest : ComponentTestBase() {
   fun `search recalls by nomsNumber`() {
     val nomsNumberToSearch = randomNoms()
     val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), ZoneId.of("UTC"))
-    val createdByUserId = ::UserId.random()
+    val createdByUserId = authenticatedClient.userId
     val recall1 = Recall(::RecallId.random(), randomNoms(), createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
     val recall2 = Recall(::RecallId.random(), nomsNumberToSearch, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
     val recall3 = Recall(::RecallId.random(), nomsNumberToSearch, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))

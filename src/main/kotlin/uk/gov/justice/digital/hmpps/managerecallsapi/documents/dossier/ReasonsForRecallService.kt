@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 
 @Service
@@ -17,19 +18,25 @@ class ReasonsForRecallService(
   @Autowired private val documentService: DocumentService,
 ) {
 
-  fun getDocument(dossierContext: DossierContext): Mono<ByteArray> =
+  fun getPdf(dossierContext: DossierContext, createdByUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(dossierContext.recall.recallId(), DocumentCategory.DOSSIER)
       ?.let { Mono.just(it) }
-      ?: createDocument(dossierContext)
+      ?: createDocument(dossierContext, createdByUserId)
 
-  private fun createDocument(dossierContext: DossierContext): Mono<ByteArray> =
+  private fun createDocument(dossierContext: DossierContext, createdByUserId: UserId): Mono<ByteArray> =
     pdfDocumentGenerationService.generatePdf(
       reasonsForRecallGenerator.generateHtml(dossierContext.getReasonsForRecallContext()),
       1.0, 1.0
     ).map { reasonsForRecallBytes ->
       pdfDecorator.centralHeader(reasonsForRecallBytes, "OFFICIAL")
     }.map { documentBytes ->
-      documentService.storeDocument(dossierContext.recall.recallId(), documentBytes, REASONS_FOR_RECALL, "$REASONS_FOR_RECALL.pdf")
+      documentService.storeDocument(
+        dossierContext.recall.recallId(),
+        createdByUserId,
+        documentBytes,
+        REASONS_FOR_RECALL,
+        "$REASONS_FOR_RECALL.pdf"
+      )
       documentBytes
     }
 }

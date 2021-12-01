@@ -58,6 +58,7 @@ class MissingDocumentsRecordControllerTest {
     every {
       documentService.scanAndStoreDocument(
         recallId,
+        userId,
         documentBytes,
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
         fileName
@@ -127,6 +128,7 @@ class MissingDocumentsRecordControllerTest {
     every {
       documentService.scanAndStoreDocument(
         recallId,
+        userId,
         documentBytes,
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
         fileName

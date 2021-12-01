@@ -38,6 +38,7 @@ class ReasonsForRecallServiceTest {
     val expectedPdfWithHeaderBytes = "some other bytes".toByteArray()
     val expectedPdfBytes = "some bytes".toByteArray()
     val recallId = ::RecallId.random()
+    val createdByUserId = ::UserId.random()
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns null
     every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
@@ -45,9 +46,17 @@ class ReasonsForRecallServiceTest {
     every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
     every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0) } returns Mono.just(expectedPdfBytes)
     every { pdfDecorator.centralHeader(expectedPdfBytes, "OFFICIAL") } returns expectedPdfWithHeaderBytes
-    every { documentService.storeDocument(recallId, expectedPdfWithHeaderBytes, REASONS_FOR_RECALL, "REASONS_FOR_RECALL.pdf") } returns ::DocumentId.random()
+    every {
+      documentService.storeDocument(
+        recallId,
+        createdByUserId,
+        expectedPdfWithHeaderBytes,
+        REASONS_FOR_RECALL,
+        "REASONS_FOR_RECALL.pdf"
+      )
+    } returns ::DocumentId.random()
 
-    val generatedPdf = underTest.getDocument(dossierContext).block()!!
+    val generatedPdf = underTest.getPdf(dossierContext, createdByUserId).block()!!
 
     assertArrayEquals(expectedPdfWithHeaderBytes, generatedPdf)
   }
@@ -57,11 +66,12 @@ class ReasonsForRecallServiceTest {
     val dossierContext = mockk<DossierContext>()
     val recallId = ::RecallId.random()
     val expectedBytes = "Some expected content".toByteArray()
+    val createdByUserId = ::UserId.random()
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns expectedBytes
     every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
 
-    val generatedPdf = underTest.getDocument(dossierContext).block()!!
+    val generatedPdf = underTest.getPdf(dossierContext, createdByUserId).block()!!
 
     assertArrayEquals(expectedBytes, generatedPdf)
     verify(exactly = 0) { documentService.storeDocument(any(), any(), any(), any(), any()) }

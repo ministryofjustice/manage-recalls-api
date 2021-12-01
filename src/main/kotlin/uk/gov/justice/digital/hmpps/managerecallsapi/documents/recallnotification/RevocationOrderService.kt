@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Compani
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 
 @Service
@@ -18,7 +19,7 @@ class RevocationOrderService(
   @Autowired private val revocationOrderGenerator: RevocationOrderGenerator,
 ) {
 
-  fun createPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> =
+  fun createPdf(recallNotificationContext: RecallNotificationContext, createdByUserId: UserId): Mono<ByteArray> =
     recallNotificationContext.getRevocationOrderContext()
       .let { revocationOrderContext ->
         pdfDocumentGenerationService.generatePdf(
@@ -26,7 +27,7 @@ class RevocationOrderService(
           recallImage(RevocationOrderLogo),
           signature(revocationOrderContext.assessedByUserSignature)
         ).map { bytes ->
-          documentService.storeDocument(revocationOrderContext.recallId, bytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
+          documentService.storeDocument(revocationOrderContext.recallId, createdByUserId, bytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
           bytes
         }
       }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.assertThrows
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.OffsetDateTime
 
@@ -19,6 +20,7 @@ class DocumentTest {
         DocumentCategory.OTHER,
         "file.txt",
         1,
+        ::UserId.random(),
         OffsetDateTime.now(),
         null
       )
@@ -34,6 +36,7 @@ class DocumentTest {
         DocumentCategory.LICENCE,
         "file.txt",
         null,
+        ::UserId.random(),
         OffsetDateTime.now(),
         null
       )
@@ -48,6 +51,7 @@ class DocumentTest {
       DocumentCategory.LICENCE,
       "file.txt",
       1,
+      ::UserId.random(),
       OffsetDateTime.now(),
       null
     )

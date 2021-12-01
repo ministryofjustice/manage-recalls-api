@@ -54,7 +54,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   fun setupExistingRecall() {
     recallId = ::RecallId.random()
     recallPath = "/recalls/$recallId"
-    createdByUserId = ::UserId.random()
+    createdByUserId = authenticatedClient.userId
     recallRepository.save(
       Recall(
         recallId,
@@ -292,9 +292,11 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `complete assessment of a recall updates recallNotificationEmailSentDateTime and assessedByUserId and calculates dossierTargetDate as after weekend and bank holidays`() {
+    val assessedByUserId = ::UserId.random()
+    setupUserDetailsFor(assessedByUserId)
     val updateRecallRequest = UpdateRecallRequest(
       recallNotificationEmailSentDateTime = OffsetDateTime.of(2021, 12, 24, 12, 0, 0, 0, ZoneOffset.UTC),
-      assessedByUserId = ::UserId.random()
+      assessedByUserId = assessedByUserId
     )
     val response = authenticatedClient.updateRecall(recallId, updateRecallRequest)
 
@@ -310,7 +312,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           NameFormatCategory.FIRST_LAST,
           Status.RECALL_NOTIFICATION_ISSUED,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
-          assessedByUserId = updateRecallRequest.assessedByUserId,
+          assessedByUserId = assessedByUserId,
           dossierTargetDate = LocalDate.parse("2021-12-29")
         )
       )
@@ -319,9 +321,11 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `create dossier updates dossierEmailSentDate and dossierCreatedByUserId`() {
+    val dossierCreatedByUserId = ::UserId.random()
+    setupUserDetailsFor(dossierCreatedByUserId)
     val updateRecallRequest = UpdateRecallRequest(
       dossierEmailSentDate = LocalDate.now(),
-      dossierCreatedByUserId = ::UserId.random()
+      dossierCreatedByUserId = dossierCreatedByUserId
     )
 
     val response = authenticatedClient.updateRecall(recallId, updateRecallRequest)
@@ -338,7 +342,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           NameFormatCategory.FIRST_LAST,
           status = Status.DOSSIER_ISSUED,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
-          dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId
+          dossierCreatedByUserId = dossierCreatedByUserId
         )
       )
     )
