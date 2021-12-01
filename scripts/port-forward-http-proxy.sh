@@ -8,6 +8,7 @@ function usage {
 Options:
     -h --> show usage
     -e --> environment (REQUIRED) - allowed values: 'dev' or 'preprod'
+    -n --> namespace prefix - Default: 'ppud-replacement'
   "
 }
 
@@ -23,9 +24,11 @@ check_dep "aws" "brew install awscli"
 check_dep "kubectl" "asdf install kubectl 1.19.15"
 
 # get cli options
-while getopts :e:h opt; do
+NAMESPACE_PREFIX=ppud-replacement
+while getopts :e:n:h opt; do
   case ${opt} in
   e) ENV=${OPTARG} ;;
+  n) NAMESPACE_PREFIX=${OPTARG} ;;
   h)
     usage
     exit
@@ -35,8 +38,13 @@ while getopts :e:h opt; do
     exit 1
     ;;
   :)
-    echo "Missing option argument for -${OPTARG}" >&2
-    exit 1
+    if [[ $OPTARG == "n" ]]; then
+      # -n required arg missing - we already have a default, so just ignore
+      :
+    else
+      echo "Missing option argument for -${OPTARG}" >&2
+      exit 1
+    fi
     ;;
   *)
     echo "Unimplemented option: -${OPTARG}" >&2
@@ -53,7 +61,7 @@ if [[ ! "${ENV}" =~ ^(dev|preprod)$ ]]; then
 fi
 set -u
 
-K8S_NAMESPACE="ppud-replacement-${ENV}"
+K8S_NAMESPACE="${NAMESPACE_PREFIX}-${ENV}"
 PROXY_NAME="manage-recalls-api-http-proxy-$(whoami | tr ._ -)"
 PROXY_PORT=3128
 
