@@ -49,7 +49,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       expectedPdf.decodeToString(),
     )
 
-    val response = authenticatedClient.getRecallNotification(recall.recallId, userId)
+    val response = authenticatedClient.getRecallNotification(recall.recallId)
 
     assertThat(response.content, equalTo(expectedBase64Pdf))
   }
