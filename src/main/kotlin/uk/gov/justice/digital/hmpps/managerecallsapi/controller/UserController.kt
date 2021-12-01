@@ -87,7 +87,7 @@ data class AddUserDetailsRequest(
   val signature: String,
   val email: Email,
   val phoneNumber: PhoneNumber,
-  val caseworkerBand: CaseworkerBand = CaseworkerBand.FOUR_PLUS // TODO remove defaulting once UI change released
+  val caseworkerBand: CaseworkerBand
 )
 
 data class UserDetailsResponse(
