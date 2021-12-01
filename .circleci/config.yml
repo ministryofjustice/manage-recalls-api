@@ -314,19 +314,6 @@ workflows:
           requires:
             - publish_docker
 
-      - deploy_to_manage_recalls:
-          name: deploy_to_manage_recalls_dev
-          env: dev
-          context:
-            - hmpps-common-vars
-            - manage-recalls-api-stage
-          filters:
-            branches:
-              only:
-                - main
-          requires:
-            - publish_docker
-
       - tag_pact_version:
           name: tag_pact_version_dev
           tag: deployed:dev
@@ -376,6 +363,19 @@ workflows:
           context:
             - hmpps-common-vars
             - manage-recalls-api-preprod
+          requires:
+            - can_i_deploy_to_preprod
+
+      - deploy_to_manage_recalls:
+          name: deploy_to_manage_recalls_preprod
+          env: preprod
+          context:
+            - hmpps-common-vars
+            - manage-recalls-api-stage
+          filters:
+            branches:
+              only:
+                - main
           requires:
             - can_i_deploy_to_preprod
 
