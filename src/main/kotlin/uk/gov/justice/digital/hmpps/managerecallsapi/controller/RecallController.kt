@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.FOUR_PLUS
@@ -23,13 +22,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
@@ -52,9 +49,6 @@ import java.time.OffsetDateTime
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
 class RecallController(
   @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val recallNotificationService: RecallNotificationService,
-  @Autowired private val dossierService: DossierService,
-  @Autowired private val letterToPrison: LetterToPrisonService,
   @Autowired private val userDetailsService: UserDetailsService,
   @Autowired private val recallService: RecallService,
   @Autowired private val prisonValidationService: PrisonValidationService,
@@ -105,27 +99,6 @@ class RecallController(
       )
     } else {
       ResponseEntity.badRequest().build()
-    }
-
-  @GetMapping("/recalls/{recallId}/recallNotification/{userId}")
-  fun getRecallNotification(
-    @PathVariable("recallId") recallId: RecallId,
-    @PathVariable("userId") userId: UserId
-  ): Mono<ResponseEntity<Pdf>> =
-    recallNotificationService.getDocument(recallId, userId).map {
-      ResponseEntity.ok(Pdf.encode(it))
-    }
-
-  @GetMapping("/recalls/{recallId}/dossier")
-  fun getDossier(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
-    dossierService.getDossier(recallId).map {
-      ResponseEntity.ok(Pdf.encode(it))
-    }
-
-  @GetMapping("/recalls/{recallId}/letter-to-prison")
-  fun getLetterToPrison(@PathVariable("recallId") recallId: RecallId): Mono<ResponseEntity<Pdf>> =
-    letterToPrison.getPdf(recallId).map {
-      ResponseEntity.ok(Pdf.encode(it))
     }
 
   @PostMapping("/recalls/{recallId}/assignee/{assignee}")
@@ -299,7 +272,7 @@ data class RecallResponse(
   val dossierCreatedByUserId: UserId? = null,
   val dossierTargetDate: LocalDate? = null,
   val assignee: UserId? = null,
-  val assigneeUserName: String? = null,
+  val assigneeUserName: FullName? = null,
   val recallAssessmentDueDateTime: OffsetDateTime? = null
 )
 

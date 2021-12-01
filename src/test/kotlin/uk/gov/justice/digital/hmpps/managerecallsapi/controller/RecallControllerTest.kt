@@ -6,8 +6,6 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
-import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor.Token
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
@@ -17,13 +15,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -33,7 +28,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
@@ -44,9 +38,6 @@ import java.util.UUID
 
 class RecallControllerTest {
   private val recallRepository = mockk<RecallRepository>()
-  private val recallNotificationService = mockk<RecallNotificationService>()
-  private val dossierService = mockk<DossierService>()
-  private val letterToPrisonService = mockk<LetterToPrisonService>()
   private val userDetailsService = mockk<UserDetailsService>()
   private val recallService = mockk<RecallService>()
   private val prisonValidationService = mockk<PrisonValidationService>()
@@ -56,9 +47,6 @@ class RecallControllerTest {
   private val underTest =
     RecallController(
       recallRepository,
-      recallNotificationService,
-      dossierService,
-      letterToPrisonService,
       userDetailsService,
       recallService,
       prisonValidationService,
@@ -124,7 +112,7 @@ class RecallControllerTest {
     every { userDetailsService.get(any()) } returns userDetails
     every { userDetailsService.find(any()) } returns userDetails
     every { userDetails.caseworkerBand } returns CaseworkerBand.FOUR_PLUS
-    every { userDetails.fullName() } returns "Mickey Mouse"
+    every { userDetails.fullName() } returns FullName("Mickey Mouse")
 
     val results = underTest.findAll(bearerToken)
 
@@ -136,10 +124,10 @@ class RecallControllerTest {
       listOf(
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
         recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId),
-        recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = "Mickey Mouse"),
+        recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
         recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
         recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
-        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = "Mickey Mouse"),
+        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
         recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
       )
     )
@@ -154,7 +142,7 @@ class RecallControllerTest {
     every { userDetailsService.get(any()) } returns userDetails
     every { userDetailsService.find(any()) } returns userDetails
     every { userDetails.caseworkerBand } returns CaseworkerBand.THREE
-    every { userDetails.fullName() } returns "Mickey Mouse"
+    every { userDetails.fullName() } returns FullName("Mickey Mouse")
 
     val results = underTest.findAll(bearerToken)
 
@@ -167,7 +155,7 @@ class RecallControllerTest {
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
         recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
         recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
-        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = "Mickey Mouse"),
+        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
         recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
       )
 
@@ -177,12 +165,13 @@ class RecallControllerTest {
   @Test
   fun `gets a recall`() {
     val document = Document(
-      id = UUID.randomUUID(),
-      recallId = UUID.randomUUID(),
-      category = PART_A_RECALL_REPORT,
-      fileName = fileName,
+      UUID.randomUUID(),
+      UUID.randomUUID(),
+      PART_A_RECALL_REPORT,
+      fileName,
       1,
-      createdDateTime = now
+      createdByUserId.value,
+      now
     )
     val recallEmailReceivedDateTime = now
     val lastReleaseDate = LocalDate.now()
@@ -214,63 +203,6 @@ class RecallControllerTest {
     assertThat(result, equalTo(expected))
   }
 
-  @Suppress("ReactiveStreamsUnusedPublisher")
-  @Test
-  fun `get recall notification returns Recall Notification PDF`() {
-    val recall = recallRequest.toRecall(::UserId.random())
-    val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
-    val userId = UserId(UUID.randomUUID())
-
-    every { recallNotificationService.getDocument(recall.recallId(), userId) } returns Mono.just(expectedPdf)
-
-    val result = underTest.getRecallNotification(recall.recallId(), userId)
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
-      }
-      .verifyComplete()
-  }
-
-  @Suppress("ReactiveStreamsUnusedPublisher")
-  @Test
-  fun `get dossier returns expected PDF`() {
-    val recall = recallRequest.toRecall(::UserId.random())
-    val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
-
-    every { dossierService.getDossier(recall.recallId()) } returns Mono.just(expectedPdf)
-
-    val result = underTest.getDossier(recall.recallId())
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
-      }
-      .verifyComplete()
-  }
-
-  @Test
-  fun `get letter to prison returns expected PDF`() {
-    val recall = recallRequest.toRecall(::UserId.random())
-    val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
-
-    every { letterToPrisonService.getPdf(recall.recallId()) } returns Mono.just(expectedPdf)
-
-    val result = underTest.getLetterToPrison(recall.recallId())
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
-      }
-      .verifyComplete()
-  }
-
   @Test
   fun `set assignee for recall`() {
     val assignee = ::UserId.random()
@@ -290,7 +222,7 @@ class RecallControllerTest {
       equalTo(
         recallResponse.copy(
           assignee = assignee,
-          assigneeUserName = "Bertie Badger"
+          assigneeUserName = FullName("Bertie Badger")
         )
       )
     )
@@ -379,10 +311,10 @@ class RecallControllerTest {
   @Test
   fun `latestDocuments contains the latest of each versioned category and all unversioned docs`() {
     val partADoc1 =
-      Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, OffsetDateTime.now())
-    val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, now)
-    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now)
-    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now)
+      Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, createdByUserId, OffsetDateTime.now())
+    val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, createdByUserId, now)
+    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, createdByUserId, now)
+    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, createdByUserId, now)
     val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, otherDoc1, otherDoc2))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDocuments

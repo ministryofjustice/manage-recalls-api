@@ -13,12 +13,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 
 class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
 
-  private val nomsNumber = NomsNumber("123456")
-  private val prisonerFirstName = "Natalia"
-  private val recallNotificationUserId = ::UserId.random()
-
   @Test
   fun `can generate a dossier using gotenberg`() {
+    val nomsNumber = NomsNumber("123456")
+    val prisonerFirstName = "Natalia"
+    val recallNotificationUserId = ::UserId.random()
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(recallNotificationUserId)
 

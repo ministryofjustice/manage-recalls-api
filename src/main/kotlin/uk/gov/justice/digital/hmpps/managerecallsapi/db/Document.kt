@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.time.OffsetDateTime
 import java.util.UUID
 import javax.persistence.Column
@@ -32,6 +33,9 @@ data class Document(
   val version: Int?,
 
   @Column(nullable = false)
+  val createdByUserId: UUID,
+
+  @Column(nullable = false)
   val createdDateTime: OffsetDateTime
 ) {
   constructor(
@@ -40,14 +44,16 @@ data class Document(
     category: DocumentCategory,
     fileName: String,
     version: Int?,
+    createdByUserId: UserId,
     createdDateTime: OffsetDateTime
   ) :
     this(
-      id.value, recallId.value, category, fileName, version, createdDateTime
+      id.value, recallId.value, category, fileName, version, createdByUserId.value, createdDateTime,
     ) {
       if ((category.versioned && version == null) || (!category.versioned && version != null)) throw WrongDocumentTypeException(category)
     }
 
   fun id() = DocumentId(id)
   fun recallId() = RecallId(recallId)
+  fun createdByUserId() = UserId(createdByUserId)
 }

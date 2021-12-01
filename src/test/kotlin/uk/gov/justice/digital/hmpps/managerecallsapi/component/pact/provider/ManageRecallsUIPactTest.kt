@@ -19,7 +19,6 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
@@ -27,14 +26,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -55,7 +51,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val nomsNumber = NomsNumber("A1234AA")
   private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private val documentId = DocumentId(UUID.fromString("11111111-0000-0000-0000-000000000000"))
-  private val userId = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+  private val userIdOnes = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
 
   @MockkBean
   private lateinit var virusScanner: VirusScanner
@@ -64,7 +60,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @ExtendWith(PactVerificationSpringProvider::class)
   fun pactVerificationTest(pactContext: PactVerificationContext, request: HttpRequest) {
     request.removeHeaders(AUTHORIZATION)
-    request.addHeader(AUTHORIZATION, "Bearer ${testJwt(userId, "ROLE_MANAGE_RECALLS")}")
+    request.addHeader(AUTHORIZATION, "Bearer ${testJwt(userIdOnes, "ROLE_MANAGE_RECALLS")}")
     pactContext.verifyInteraction()
   }
 
@@ -116,37 +112,22 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user exists"
   )
   fun `a user exists`() {
-    userDetailsRepository.save(
-      UserDetails(
-        userId,
-        FirstName("Bertie"),
-        LastName("Badger"),
-        "",
-        Email("b@b.com"),
-        PhoneNumber("0987654321"),
-        CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
-      )
-    )
+    setupUserDetailsFor(userIdOnes)
   }
 
   @State(
     "a user and a fully populated recall without documents exists"
   )
   fun `a user and a fully populated recall without documents exists`() {
-    val assigneeUuid = UUID.fromString("11111111-1111-1111-1111-111111111111")
-    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(
+    val recall = fullyPopulatedRecall(::RecallId.zeroes(), userIdOnes).copy(
       documents = emptySet(),
       missingDocumentsRecords = emptySet(),
-      assignee = assigneeUuid
+      assignee = userIdOnes.value
     )
-    userDetailsRepository.save(
-      UserDetails(
-        UserId(assigneeUuid), FirstName("Bertie"), LastName("Badger"), "", Email("b@b.com"), PhoneNumber("0987654321"),
-        CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
-      )
-    )
+    setupUserDetailsFor(userIdOnes)
+    setupUserDetailsFor(::UserId.zeroes())
+    setupUserDetailsFor(UserId(UUID.fromString("00000000-1111-0000-0000-000000000000")))
+    setupUserDetailsFor(UserId(UUID.fromString("00000000-2222-0000-0000-000000000000")))
     recallRepository.save(recall)
   }
 
@@ -154,23 +135,12 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user and an unassigned fully populated recall exists without documents"
   )
   fun `a user and an unassigned fully populated recall exists without documents`() {
-    val recall = fullyPopulatedRecall(::RecallId.zeroes()).copy(
+    val recall = fullyPopulatedRecall(::RecallId.zeroes(), userIdOnes).copy(
       documents = emptySet(),
       missingDocumentsRecords = emptySet(),
       assignee = null
     )
-    userDetailsRepository.save(
-      UserDetails(
-        UserId(UUID.fromString("11111111-1111-1111-1111-111111111111")),
-        FirstName("Bertie"),
-        LastName("Badger"),
-        "",
-        Email("b@b.com"),
-        PhoneNumber("0987654321"),
-        CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
-      )
-    )
+    setupUserDetailsFor(userIdOnes)
     recallRepository.save(recall)
   }
 
@@ -180,19 +150,19 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a list of recalls exists`() {
     recallRepository.saveAll(
       listOf(
-        fullyPopulatedRecall(::RecallId.random()).copy(
+        fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
           nomsNumber = nomsNumber,
           documents = emptySet(),
           missingDocumentsRecords = emptySet(),
           assignee = null
         ),
-        fullyPopulatedRecall(::RecallId.random()).copy(
+        fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
           nomsNumber = randomNoms(),
           documents = emptySet(),
           missingDocumentsRecords = emptySet(),
           assignee = null
         ),
-        fullyPopulatedRecall(::RecallId.random()).copy(
+        fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
           nomsNumber = randomNoms(),
           documents = emptySet(),
           missingDocumentsRecords = emptySet(),
@@ -238,7 +208,19 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a recall in being booked on state with a document exists"
   )
   fun `a recall in being booked on state with a document exists`() {
-    recallRepository.save(Recall(::RecallId.zeroes(), nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger")))
+    val createdByUserId = ::UserId.random()
+    setupUserDetailsFor(createdByUserId)
+    recallRepository.save(
+      Recall(
+        ::RecallId.zeroes(),
+        nomsNumber,
+        createdByUserId,
+        OffsetDateTime.now(),
+        FirstName("Barrie"),
+        null,
+        LastName("Badger")
+      )
+    )
     `a document exists`(documentId, UNCATEGORISED, null)
   }
 
@@ -253,7 +235,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         documentCategory,
         "filename.pdf",
         version,
-        OffsetDateTime.now()
+        userIdOnes,
+        OffsetDateTime.now(),
       )
     )
 

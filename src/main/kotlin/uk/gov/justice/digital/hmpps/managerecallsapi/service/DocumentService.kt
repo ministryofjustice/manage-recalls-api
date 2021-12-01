@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.VirusFound
@@ -34,13 +35,14 @@ class DocumentService(
 
   fun scanAndStoreDocument(
     recallId: RecallId,
+    createdByUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
     fileName: String
   ): Result<DocumentId, VirusScanResult> =
     forExistingRecall(recallId) {
       when (val virusScanResult = virusScanner.scan(documentBytes)) {
-        NoVirusFound -> Success(storeDocument(recallId, documentBytes, documentCategory, fileName))
+        NoVirusFound -> Success(storeDocument(recallId, createdByUserId, documentBytes, documentCategory, fileName))
         is VirusFound -> {
           log.info(VirusFoundEvent(recallId, documentCategory, virusScanResult.foundViruses).toString())
           Failure(virusScanResult)
@@ -50,16 +52,18 @@ class DocumentService(
 
   fun storeDocument(
     recallId: RecallId,
+    createdByUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
     fileName: String
   ): DocumentId =
     forExistingRecall(recallId) {
-      uploadToS3AndSaveDocument(recallId, documentCategory, documentBytes, fileName)
+      uploadToS3AndSaveDocument(recallId, createdByUserId, documentCategory, documentBytes, fileName)
     }
 
   private fun uploadToS3AndSaveDocument(
     recallId: RecallId,
+    createdByUserId: UserId,
     category: DocumentCategory,
     documentBytes: ByteArray,
     fileName: String
@@ -71,7 +75,7 @@ class DocumentService(
     }
     val documentId = ::DocumentId.random()
 
-    documentRepository.save(Document(documentId, recallId, category, fileName, version, OffsetDateTime.now(clock)))
+    documentRepository.save(Document(documentId, recallId, category, fileName, version, createdByUserId, OffsetDateTime.now(clock)))
     try {
       s3Service.uploadFile(documentId, documentBytes)
     } catch (ex: Exception) {

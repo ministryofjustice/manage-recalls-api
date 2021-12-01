@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -48,8 +49,11 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
     val createdByUserId = ::UserId.random()
+    setupUserDetailsFor(assignee)
+    setupUserDetailsFor(createdByUserId)
 
     val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
+
     recallRepository.save(recall)
     userDetailsRepository.save(
       UserDetails(
@@ -78,7 +82,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           assignee = assignee,
-          assigneeUserName = "Bertie Badger"
+          assigneeUserName = FullName("Bertie Badger")
         )
       )
     )
@@ -90,6 +94,8 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
     val createdByUserId = ::UserId.random()
+    setupUserDetailsFor(assignee)
+    setupUserDetailsFor(createdByUserId)
 
     val recall = Recall(
       recallId,
@@ -128,6 +134,9 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
     val createdByUserId = ::UserId.random()
+    setupUserDetailsFor(assignee)
+    setupUserDetailsFor(otherAssignee)
+    setupUserDetailsFor(createdByUserId)
 
     val recall = Recall(
       recallId,
