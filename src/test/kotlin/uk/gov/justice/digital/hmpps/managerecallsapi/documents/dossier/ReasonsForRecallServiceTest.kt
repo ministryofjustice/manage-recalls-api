@@ -74,7 +74,7 @@ class ReasonsForRecallServiceTest {
     val generatedPdf = underTest.getPdf(dossierContext, createdByUserId).block()!!
 
     assertArrayEquals(expectedBytes, generatedPdf)
-    verify(exactly = 0) { documentService.storeDocument(any(), createdByUserId, any(), any(), any()) }
+    verify(exactly = 0) { documentService.storeDocument(any(), any(), any(), any(), any()) }
     verify { reasonsForRecallGenerator wasNot Called }
     verify { pdfDocumentGenerationService wasNot Called }
     verify { pdfDecorator wasNot Called }

@@ -105,7 +105,7 @@ internal class LetterToPrisonServiceParameterizedTest {
     val createdByUserId = ::UserId.random()
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
-    every { letterToPrisonContextFactory.createContext(recallId) } returns context
+    every { letterToPrisonContextFactory.createContext(recallId, createdByUserId) } returns context
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns custodyOfficeHtml
     every { letterToPrisonGovernorGenerator.generateHtml(context) } returns generatedHtml
