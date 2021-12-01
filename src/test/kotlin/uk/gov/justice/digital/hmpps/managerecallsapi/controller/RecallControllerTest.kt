@@ -312,10 +312,10 @@ class RecallControllerTest {
   }
 
   @Test
-  fun `latestDocuments contains the latest of each versioned category and all unversioned docs`() {
+  fun `latestDocuments contains the latest of each versioned category, last details and all unversioned docs`() {
     val partADoc1 =
       Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, createdByUserId, OffsetDateTime.now(), null)
-    val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, createdByUserId, now, null)
+    val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, createdByUserId, now, details)
     val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, createdByUserId, now, null)
     val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, createdByUserId, now, null)
     val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, otherDoc1, otherDoc2))
@@ -329,9 +329,9 @@ class RecallControllerTest {
       equalTo(
         recallResponse.copy(
           documents = listOf(
-            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now),
-            Api.RecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, now),
-            Api.RecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, now),
+            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now, details),
+            Api.RecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, now, null),
+            Api.RecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, now, null),
           )
         )
       )

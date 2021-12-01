@@ -82,7 +82,7 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
   @Transactional
   fun `cannot save and flush 2 MDR for the same recall and version`() {
     recallRepository.save(recall)
-    documentRepository.saveAndFlush(Document(documentId, recallId, versionedCategory, "blah", 1, OffsetDateTime.now(), null))
+    documentRepository.saveAndFlush(Document(documentId, recallId, versionedCategory, "blah", 1, createdByUserId, OffsetDateTime.now(), null))
 
     val idOne = ::MissingDocumentsRecordId.random()
     val mdrOne = MissingDocumentsRecord(idOne, recallId, setOf(versionedCategory), documentId, "Blah", 1, createdByUserId, OffsetDateTime.now())

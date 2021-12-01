@@ -60,7 +60,7 @@ class DocumentService(
     details: String? = null
   ): DocumentId =
     forExistingRecall(recallId) {
-      uploadToS3AndSaveDocument(recallId, documentCategory, documentBytes, fileName, details)
+      uploadToS3AndSaveDocument(recallId, createdByUserId, documentCategory, documentBytes, fileName, details)
     }
 
   private fun uploadToS3AndSaveDocument(

@@ -222,7 +222,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         LastName("Badger")
       )
     )
-    `a document exists`(documentId, UNCATEGORISED, null)
+    `a document exists`(documentId, UNCATEGORISED, null, null)
   }
 
   fun `a document exists`(documentId: DocumentId, documentCategory: DocumentCategory, version: Int?, details: String?) {
