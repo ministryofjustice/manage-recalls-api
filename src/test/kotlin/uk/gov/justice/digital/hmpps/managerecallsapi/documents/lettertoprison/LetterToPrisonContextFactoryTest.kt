@@ -34,17 +34,16 @@ class LetterToPrisonContextFactoryTest {
   fun `create LetterToPrisonContext with all required data`() {
 
     val recallId = ::RecallId.random()
-    val assessedByUserId = ::UserId.random()
+    val createdByUserId = ::UserId.random()
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
     val recall = Recall(
       recallId, NomsNumber("AA1234A"), ::UserId.random(),
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
       lastReleasePrison = PrisonId("BOB"),
       currentPrison = PrisonId("WIM"),
-      assessedByUserId = assessedByUserId,
       recallLength = recallLength
     )
-    val assessedByUserDetails = mockk<UserDetails>()
+    val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
     val lastReleasePrisonName = PrisonName("Bobbins Prison")
     val recallLengthDescription = RecallLengthDescription(recallLength)
@@ -52,9 +51,9 @@ class LetterToPrisonContextFactoryTest {
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(recall.lastReleasePrison!!) } returns lastReleasePrisonName
-    every { userDetailsService.get(recall.assessedByUserId()!!) } returns assessedByUserDetails
+    every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
 
-    val result = underTest.createContext(recallId)
+    val result = underTest.createContext(recallId, createdByUserId)
 
     assertThat(
       result,
@@ -65,7 +64,7 @@ class LetterToPrisonContextFactoryTest {
           currentPrisonName,
           lastReleasePrisonName,
           recallLengthDescription,
-          assessedByUserDetails
+          createdByUserDetails
         )
       )
     )

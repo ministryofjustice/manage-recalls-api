@@ -77,7 +77,7 @@ class DocumentController(
 
   @GetMapping(
     "/recalls/{recallId}/recallNotification",
-    "/recalls/{recallId}/recallNotification/{userId}"
+    "/recalls/{recallId}/recallNotification/{userId}" // TODO can be removed once PUD-1120 is done
   )
   fun getRecallNotification(
     @PathVariable("recallId") recallId: RecallId,

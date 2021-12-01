@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescr
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 
@@ -18,13 +19,13 @@ class LetterToPrisonContextFactory(
   @Autowired private val prisonLookupService: PrisonLookupService,
   @Autowired private val userDetailsService: UserDetailsService,
 ) {
-  fun createContext(recallId: RecallId): LetterToPrisonContext {
+  fun createContext(recallId: RecallId, createdByUserId: UserId): LetterToPrisonContext {
     val recall = recallRepository.getByRecallId(recallId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
-    val assessedByUserDetails = userDetailsService.get(recall.assessedByUserId()!!)
+    val createdByUserDetails = userDetailsService.get(createdByUserId)
     val recallLengthDescription = RecallLengthDescription(recall.recallLength!!)
-    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallLengthDescription, assessedByUserDetails)
+    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallLengthDescription, createdByUserDetails)
   }
 }
 
@@ -34,5 +35,5 @@ data class LetterToPrisonContext(
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
   val recallLengthDescription: RecallLengthDescription,
-  val assessor: UserDetails
+  val createdByUser: UserDetails
 )
