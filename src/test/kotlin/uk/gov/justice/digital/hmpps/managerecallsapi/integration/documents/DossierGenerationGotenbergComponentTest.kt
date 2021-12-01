@@ -7,8 +7,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 
 class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
@@ -17,13 +15,11 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
   fun `can generate a dossier using gotenberg`() {
     val nomsNumber = NomsNumber("123456")
     val prisonerFirstName = "Natalia"
-    val recallNotificationUserId = ::UserId.random()
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
-    setupUserDetailsFor(recallNotificationUserId)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
     updateRecallWithRequiredInformationForTheDossier(recall.recallId)
-    authenticatedClient.getRecallNotification(recall.recallId, recallNotificationUserId)
+    authenticatedClient.getRecallNotification(recall.recallId)
     expectNoVirusesWillBeFound()
     uploadLicenceFor(recall)
     uploadPartAFor(recall)
