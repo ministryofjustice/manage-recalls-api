@@ -45,7 +45,7 @@ class ReasonsForRecallServiceTest {
     every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
     every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0) } returns Mono.just(expectedPdfBytes)
     every { pdfDecorator.centralHeader(expectedPdfBytes, "OFFICIAL") } returns expectedPdfWithHeaderBytes
-    every { documentService.storeDocument(recallId, expectedPdfWithHeaderBytes, REASONS_FOR_RECALL, "REASONS_FOR_RECALL.pdf", null) } returns ::DocumentId.random()
+    every { documentService.storeDocument(recallId, expectedPdfWithHeaderBytes, REASONS_FOR_RECALL, "REASONS_FOR_RECALL.pdf") } returns ::DocumentId.random()
 
     val generatedPdf = underTest.getDocument(dossierContext).block()!!
 

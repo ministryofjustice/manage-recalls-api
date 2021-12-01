@@ -48,7 +48,7 @@ class DossierService(
     }.map { mergedPdfContentBytes ->
       pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
     }.map { mergedBytes ->
-      documentService.storeDocument(recallId, mergedBytes, DOSSIER, "$DOSSIER.pdf", null)
+      documentService.storeDocument(recallId, mergedBytes, DOSSIER, "$DOSSIER.pdf")
       mergedBytes
     }
   }

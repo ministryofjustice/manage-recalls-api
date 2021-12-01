@@ -40,7 +40,7 @@ class RecallNotificationService(
       .collectList()
       .flatMap { pdfDocumentGenerationService.mergePdfs(it) }
       .map { mergedBytes ->
-        documentService.storeDocument(recallId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf", null)
+        documentService.storeDocument(recallId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf")
         mergedBytes
       }
   }

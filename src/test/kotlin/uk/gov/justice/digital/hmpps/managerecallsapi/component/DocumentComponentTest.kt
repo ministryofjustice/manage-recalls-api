@@ -231,7 +231,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName, null)
+      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
     )
 
     authenticatedClient.deleteDocument(recall.recallId, document.documentId)
@@ -244,7 +244,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(RECALL_NOTIFICATION, base64EncodedDocumentContents, fileName, null) // This wouldn't be uploaded, but works for now.
+      AddDocumentRequest(RECALL_NOTIFICATION, base64EncodedDocumentContents, fileName) // This wouldn't be uploaded, but works for now.
     )
 
     val response = authenticatedClient.deleteDocument(recall.recallId, document.documentId, BAD_REQUEST)
