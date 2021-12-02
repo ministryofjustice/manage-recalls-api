@@ -366,19 +366,6 @@ workflows:
           requires:
             - can_i_deploy_to_preprod
 
-      - deploy_to_manage_recalls:
-          name: deploy_to_manage_recalls_preprod
-          env: preprod
-          context:
-            - hmpps-common-vars
-            - manage-recalls-api-stage
-          filters:
-            branches:
-              only:
-                - main
-          requires:
-            - can_i_deploy_to_preprod
-
       - tag_pact_version:
           name: tag_pact_version_preprod
           tag: deployed:preprod
@@ -431,6 +418,19 @@ workflows:
             - can_i_deploy_to_prod
           slack_notification: true
           slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+
+      - deploy_to_manage_recalls:
+          name: deploy_to_manage_recalls_prod
+          env: prod
+          context:
+            - hmpps-common-vars
+            - manage-recalls-api-stage
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - can_i_deploy_to_prod
 
       - tag_pact_version:
           name: "tag_pact_version_prod"

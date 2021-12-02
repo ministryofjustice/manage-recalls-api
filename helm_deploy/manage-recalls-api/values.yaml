@@ -12,7 +12,7 @@ generic-service:
   ingress:
     enabled: true
     host: app-hostname.local    # override per environment
-    tlsSecretName: manage-recalls-api-cert
+    tlsSecretName: manage-recalls-cert
     # which cluster are we on: live-1 is blue, live is green
     contextColour: blue
 
