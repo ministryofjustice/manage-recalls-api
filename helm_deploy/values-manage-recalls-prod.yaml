@@ -6,7 +6,6 @@ generic-service:
 
   ingress:
     host: manage-recalls-api-new.hmpps.service.justice.gov.uk
-    tlsSecretName: manage-recalls-cert
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
