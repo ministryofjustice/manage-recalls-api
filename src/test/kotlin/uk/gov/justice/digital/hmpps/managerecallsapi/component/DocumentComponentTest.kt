@@ -120,7 +120,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val otherDocumentRequest = AddDocumentRequest(OTHER, base64EncodedDocumentContents, fileName, null)
+    val otherDocumentRequest = AddDocumentRequest(OTHER, base64EncodedDocumentContents, fileName)
 
     val firstDocumentId = authenticatedClient.uploadDocument(recall.recallId, otherDocumentRequest).documentId
     val secondDocumentId = authenticatedClient.uploadDocument(recall.recallId, otherDocumentRequest).documentId
