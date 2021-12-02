@@ -7,10 +7,8 @@ function usage {
 
 Options:
     -h --> show usage
-    -f --> FROM environment (REQUIRED)
-    -g --> FROM namespace prefix (REQUIRED)
-    -t --> TO environment (REQUIRED)
-    -u --> TO namespace prefix (REQUIRED)
+    -f --> FROM environment (REQUIRED) - allowed values are 'preprod' or 'prod'
+    -t --> TO environment (REQUIRED) - allowed values are 'dev' or 'preprod'
   "
 }
 
@@ -29,12 +27,10 @@ check_dep "pg_restore" "brew install postgresql"
 check_dep "pg_isready" "brew install postgresql"
 
 # get cli options
-while getopts :f:g:t:u:h opt; do
+while getopts :f:t:h opt; do
   case ${opt} in
   f) FROM_ENV=${OPTARG} ;;
-  g) FROM_NAMESPACE_PREFIX=${OPTARG} ;;
   t) TO_ENV=${OPTARG} ;;
-  u) TO_NAMESPACE_PREFIX=${OPTARG} ;;
   h)
     usage
     exit
@@ -54,8 +50,20 @@ while getopts :f:g:t:u:h opt; do
   esac
 done
 
-FROM_NAMESPACE="${FROM_NAMESPACE_PREFIX}-${FROM_ENV}"
-TO_NAMESPACE="${TO_NAMESPACE_PREFIX}-${TO_ENV}"
+# check for the ENV variables
+set +u
+if [[ ! "${FROM_ENV}" =~ ^(preprod|prod)$ ]]; then
+  usage
+  exit 1
+fi
+if [[ ! "${TO_ENV}" =~ ^(dev|preprod)$ ]]; then
+  usage
+  exit 1
+fi
+set -u
+
+FROM_NAMESPACE="manage-recalls-${FROM_ENV}"
+TO_NAMESPACE="manage-recalls-${TO_ENV}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 PGDUMP_FILE=manage_recalls_dump.sqlc
 
@@ -81,16 +89,12 @@ kill_proxies
 
 # kick off db port forward
 # shellcheck disable=SC1091,SC2086
-${SCRIPT_DIR}/port-forward-db.sh -e "${FROM_ENV}" -n "${FROM_NAMESPACE_PREFIX}" &
+${SCRIPT_DIR}/port-forward-db.sh -e "${FROM_ENV}" &
 sleep 5
 wait_for_db
 
 # db connection details
-FROM_DB_SECRET=manage-recalls-database
-if [ "${FROM_NAMESPACE_PREFIX}" == "manage-recalls" ]; then
-  FROM_DB_SECRET=manage-recalls-api-database
-fi
-
+FROM_DB_SECRET=manage-recalls-api-database
 DB_NAME=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_DB_SECRET}" -o json | jq -r '.data.name | @base64d')
 DB_USER=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_DB_SECRET}" -o json | jq -r '.data.username | @base64d')
 DB_PASS=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_DB_SECRET}" -o json | jq -r '.data.password | @base64d')
@@ -119,16 +123,12 @@ kill_proxies
 
 # kick off db port forward
 # shellcheck disable=SC1091,SC2086
-${SCRIPT_DIR}/port-forward-db.sh -e "${TO_ENV}" -n "${TO_NAMESPACE_PREFIX}" &
+${SCRIPT_DIR}/port-forward-db.sh -e "${TO_ENV}" &
 sleep 5
 wait_for_db
 
 # db connection details
-TO_DB_SECRET=manage-recalls-database
-if [ "${TO_NAMESPACE_PREFIX}" == "manage-recalls" ]; then
-  TO_DB_SECRET=manage-recalls-api-database
-fi
-
+TO_DB_SECRET=manage-recalls-api-database
 DB_NAME=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.name | @base64d')
 DB_USER=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.username | @base64d')
 DB_PASS=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.password | @base64d')

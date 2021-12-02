@@ -56,12 +56,12 @@ if [[ ! "${ENV}" =~ ^(dev|preprod)$ ]]; then
 fi
 set -u
 
-K8S_NAMESPACE="ppud-replacement-${ENV}"
+K8S_NAMESPACE="manage-recalls-${ENV}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # kick off db port forward
-# shellcheck disable=SC1091
-${SCRIPT_DIR}/port-forward-db.sh -e ${ENV} &
+# shellcheck disable=SC1091,SC2086
+${SCRIPT_DIR}/port-forward-db.sh -e "${ENV}" &
 sleep 2
 
 until pg_isready -q -h "127.0.0.1" -p 5432; do
@@ -74,7 +74,7 @@ done
 ##
 
 # db connection details
-DB_SECRET=manage-recalls-database
+DB_SECRET=manage-recalls-api-database
 DB_NAME=$(kubectl -n "${K8S_NAMESPACE}" get secret "${DB_SECRET}" -o json | jq -r '.data.name | @base64d')
 DB_USER=$(kubectl -n "${K8S_NAMESPACE}" get secret "${DB_SECRET}" -o json | jq -r '.data.username | @base64d')
 DB_PASS=$(kubectl -n "${K8S_NAMESPACE}" get secret "${DB_SECRET}" -o json | jq -r '.data.password | @base64d')
@@ -100,8 +100,8 @@ echo "done."
 ##
 
 # kick off http proxy port forward
-# shellcheck disable=SC1091
-${SCRIPT_DIR}/port-forward-http-proxy.sh -e ${ENV} &
+# shellcheck disable=SC1091,SC2086
+${SCRIPT_DIR}/port-forward-http-proxy.sh -e "${ENV}" &
 sleep 2
 
 until netcat -z 127.0.0.1 3128; do
@@ -110,7 +110,7 @@ until netcat -z 127.0.0.1 3128; do
 done
 
 # connection details
-S3_SECRET=manage-recalls-s3-bucket
+S3_SECRET=manage-recalls-api-s3-bucket
 AWS_ACCESS_KEY_ID=$(kubectl -n "${K8S_NAMESPACE}" get secret "${S3_SECRET}" -o json | jq -r '.data.access_key_id | @base64d')
 AWS_SECRET_ACCESS_KEY=$(kubectl -n "${K8S_NAMESPACE}" get secret "${S3_SECRET}" -o json | jq -r '.data.secret_access_key | @base64d')
 AWS_BUCKET=$(kubectl -n "${K8S_NAMESPACE}" get secret "${S3_SECRET}" -o json | jq -r '.data.bucket_name | @base64d')
