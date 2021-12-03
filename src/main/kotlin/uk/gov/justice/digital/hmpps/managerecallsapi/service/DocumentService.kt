@@ -78,7 +78,18 @@ class DocumentService(
     }
     val documentId = ::DocumentId.random()
 
-    documentRepository.save(Document(documentId, recallId, category, fileName, version, OffsetDateTime.now(clock), details, createdByUserId))
+    documentRepository.save(
+      Document(
+        documentId,
+        recallId,
+        category,
+        fileName,
+        version,
+        details,
+        OffsetDateTime.now(clock),
+        createdByUserId
+      )
+    )
     try {
       s3Service.uploadFile(documentId, documentBytes)
     } catch (ex: Exception) {
