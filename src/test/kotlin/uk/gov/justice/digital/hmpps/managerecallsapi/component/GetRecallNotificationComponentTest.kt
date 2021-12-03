@@ -76,7 +76,6 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         probationOfficerEmail = "officer@myprobation.com",
         localDeliveryUnit = LocalDeliveryUnit.PS_BARNET,
         authorisingAssistantChiefOfficer = "Ms Authoriser",
-        localPoliceForce = "London",
         localPoliceForceId = PoliceForceId("greater-manchester"),
         currentPrison = PrisonId("BMI"),
         contraband = true,

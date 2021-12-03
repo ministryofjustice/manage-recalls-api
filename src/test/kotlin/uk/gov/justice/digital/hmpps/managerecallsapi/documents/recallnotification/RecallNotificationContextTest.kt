@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -55,7 +56,6 @@ class RecallNotificationContextTest {
     recallId, NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
-    localPoliceForce = "London",
     localPoliceForceId = PoliceForceId("metropolitan"),
     contraband = true,
     contrabandDetail = "I believe that they will bring contraband to prison",
@@ -105,6 +105,7 @@ class RecallNotificationContextTest {
 
   private val lastReleasePrisonName = PrisonName("Prison A")
   private val sentencingCourtName = CourtName("Court 1")
+  private val localPoliceForceName = PoliceForceName("Police Service of Northern Ireland")
 
   private val underTest = RecallNotificationContext(
     recall,
@@ -113,6 +114,7 @@ class RecallNotificationContextTest {
     currentPrisonName,
     lastReleasePrisonName,
     sentencingCourtName,
+    localPoliceForceName,
     fixedClock
   )
 
@@ -164,6 +166,7 @@ class RecallNotificationContextTest {
       currentPrisonName,
       lastReleasePrisonName,
       sentencingCourtName,
+      localPoliceForceName,
       fixedClock
     )
 
@@ -180,6 +183,7 @@ class RecallNotificationContextTest {
       currentPrisonName,
       lastReleasePrisonName,
       sentencingCourtName,
+      localPoliceForceName,
       fixedClock
     )
 
