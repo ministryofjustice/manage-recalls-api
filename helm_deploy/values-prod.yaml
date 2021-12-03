@@ -6,7 +6,6 @@ generic-service:
 
   ingress:
     host: manage-recalls-api.hmpps.service.justice.gov.uk
-    tlsSecretName: ppud-replacement-prod-cert
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth
@@ -19,12 +18,12 @@ generic-service:
     SENTRY_ENVIRONMENT: PROD
 
   namespace_secrets:
-    manage-recalls-database:
+    manage-recalls-api-database:
       POSTGRES_HOST: "host"
       POSTGRES_DBNAME: "name"
       POSTGRES_USERNAME: "username"
       POSTGRES_PASSWORD: "password"
-    manage-recalls-s3-bucket:
+    manage-recalls-api-s3-bucket:
       S3_ACCESS_KEY: "access_key_id"
       S3_SECRET_KEY: "secret_access_key"
       S3_BUCKET_NAME: "bucket_name"
@@ -32,6 +31,5 @@ generic-service:
 generic-prometheus-alerts:
   alertSeverity: ppud-replacement-prod
   extraDashboardTags:
-    - ppud-replacement
     - manage-recalls
     - prod

@@ -8,7 +8,6 @@ function usage {
 Options:
     -h --> show usage
     -e --> environment (REQUIRED) - allowed values: 'dev' or 'preprod'
-    -n --> namespace prefix - Default: 'ppud-replacement'
   "
 }
 
@@ -25,11 +24,9 @@ check_dep "jq" "brew install jq"
 check_dep "kubectl" "asdf install kubectl 1.19.15"
 
 # get cli options
-NAMESPACE_PREFIX=ppud-replacement
-while getopts :e:n:h opt; do
+while getopts :e:h opt; do
   case ${opt} in
   e) ENV=${OPTARG} ;;
-  n) NAMESPACE_PREFIX=${OPTARG} ;;
   h)
     usage
     exit
@@ -39,13 +36,8 @@ while getopts :e:n:h opt; do
     exit 1
     ;;
   :)
-    if [[ $OPTARG == "n" ]]; then
-      # -n required arg missing - we already have a default, so just ignore
-      :
-    else
-      echo "Missing option argument for -${OPTARG}" >&2
-      exit 1
-    fi
+    echo "Missing option argument for -${OPTARG}" >&2
+    exit 1
     ;;
   *)
     echo "Unimplemented option: -${OPTARG}" >&2
@@ -62,12 +54,9 @@ if [[ ! "${ENV}" =~ ^(dev|preprod)$ ]]; then
 fi
 set -u
 
-K8S_NAMESPACE="${NAMESPACE_PREFIX}-${ENV}"
+K8S_NAMESPACE="manage-recalls-${ENV}"
 PFP_NAME="manage-recalls-api-db-proxy-$(whoami | tr ._ -)"
-SECRET=manage-recalls-database
-if [ "${NAMESPACE_PREFIX}" == "manage-recalls" ]; then
-  SECRET=manage-recalls-api-database
-fi
+SECRET=manage-recalls-api-database
 
 DB_HOST=$(kubectl -n "${K8S_NAMESPACE}" get secret "${SECRET}" -o json | jq -r '.data.host | @base64d')
 DB_USER=$(kubectl -n "${K8S_NAMESPACE}" get secret "${SECRET}" -o json | jq -r '.data.username | @base64d')

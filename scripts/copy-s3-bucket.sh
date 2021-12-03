@@ -7,10 +7,8 @@ function usage {
 
 Options:
     -h --> show usage
-    -f --> FROM environment (REQUIRED)
-    -g --> FROM namespace prefix (REQUIRED)
-    -t --> TO environment (REQUIRED)
-    -u --> TO namespace prefix (REQUIRED)
+    -f --> FROM environment (REQUIRED) - allowed values are 'preprod' or 'prod'
+    -t --> TO environment (REQUIRED) - allowed values are 'dev' or 'preprod'
   "
 }
 
@@ -27,12 +25,10 @@ check_dep "kubectl" "asdf install kubectl 1.19.15"
 check_dep "aws" "brew install awscli"
 
 # get cli options
-while getopts :f:g:t:u:h opt; do
+while getopts :f:t:h opt; do
   case ${opt} in
   f) FROM_ENV=${OPTARG} ;;
-  g) FROM_NAMESPACE_PREFIX=${OPTARG} ;;
   t) TO_ENV=${OPTARG} ;;
-  u) TO_NAMESPACE_PREFIX=${OPTARG} ;;
   h)
     usage
     exit
@@ -52,8 +48,20 @@ while getopts :f:g:t:u:h opt; do
   esac
 done
 
-FROM_NAMESPACE="${FROM_NAMESPACE_PREFIX}-${FROM_ENV}"
-TO_NAMESPACE="${TO_NAMESPACE_PREFIX}-${TO_ENV}"
+# check for the ENV variables
+set +u
+if [[ ! "${FROM_ENV}" =~ ^(preprod|prod)$ ]]; then
+  usage
+  exit 1
+fi
+if [[ ! "${TO_ENV}" =~ ^(dev|preprod)$ ]]; then
+  usage
+  exit 1
+fi
+set -u
+
+FROM_NAMESPACE="manage-recalls-${FROM_ENV}"
+TO_NAMESPACE="manage-recalls-${TO_ENV}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 TMP_DIR=s3_content
 
@@ -78,15 +86,11 @@ kill_proxies
 ##
 
 # shellcheck disable=SC1091,SC2086
-${SCRIPT_DIR}/port-forward-http-proxy.sh -e "${FROM_ENV}" -n "${FROM_NAMESPACE_PREFIX}" &
+${SCRIPT_DIR}/port-forward-http-proxy.sh -e "${FROM_ENV}" &
 sleep 2
 wait_for_proxy
 
-FROM_S3_SECRET=manage-recalls-s3-bucket
-if [ "${FROM_NAMESPACE_PREFIX}" == "manage-recalls" ]; then
-  FROM_S3_SECRET=manage-recalls-api-s3-bucket
-fi
-
+FROM_S3_SECRET=manage-recalls-api-s3-bucket
 AWS_ACCESS_KEY_ID=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_S3_SECRET}" -o json | jq -r '.data.access_key_id | @base64d')
 AWS_SECRET_ACCESS_KEY=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_S3_SECRET}" -o json | jq -r '.data.secret_access_key | @base64d')
 AWS_BUCKET=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_S3_SECRET}" -o json | jq -r '.data.bucket_name | @base64d')
@@ -110,15 +114,11 @@ unset HTTPS_PROXY
 ##
 
 # shellcheck disable=SC1091,SC2086
-${SCRIPT_DIR}/port-forward-http-proxy.sh -e "${TO_ENV}" -n "${TO_NAMESPACE_PREFIX}" &
+${SCRIPT_DIR}/port-forward-http-proxy.sh -e "${TO_ENV}" &
 sleep 2
 wait_for_proxy
 
-TO_S3_SECRET=manage-recalls-s3-bucket
-if [ "${TO_NAMESPACE_PREFIX}" == "manage-recalls" ]; then
-  TO_S3_SECRET=manage-recalls-api-s3-bucket
-fi
-
+TO_S3_SECRET=manage-recalls-api-s3-bucket
 AWS_ACCESS_KEY_ID=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_S3_SECRET}" -o json | jq -r '.data.access_key_id | @base64d')
 AWS_SECRET_ACCESS_KEY=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_S3_SECRET}" -o json | jq -r '.data.secret_access_key | @base64d')
 AWS_BUCKET=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_S3_SECRET}" -o json | jq -r '.data.bucket_name | @base64d')

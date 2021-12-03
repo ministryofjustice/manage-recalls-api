@@ -37,7 +37,7 @@ _TBC_
 
 ### Infrastructure design
 
-The application runs on the [HMPPS Cloud Platform](https://user-guide.cloud-platform.service.justice.gov.uk/) within the `ppud-replacement-<tier>` namespaces (where `tier` is `dev`, `preprod` or `prod`).
+The application runs on the [HMPPS Cloud Platform](https://user-guide.cloud-platform.service.justice.gov.uk/) within the `manage-recalls-<tier>` namespaces (where `tier` is `dev`, `preprod` or `prod`).
 
 The main application runs as a deployment named `manage-recalls-api`, with the following support deployments (all deployed as part of the same helm/kubernetes configuration):
 
@@ -53,7 +53,7 @@ See the `values-<tier>.yaml` files in the [helm_deploy](helm_deploy) directory f
 If there is an issue with the service where it is causing load on downstream services and it needs to be shutdown quickly the following command will reduce the number of pod replicas to zero:
 
 ```
-kubectl -n ppud-development-<tier> scale deployment manage-recalls-api --replicas=0
+kubectl -n manage-recalls-<tier> scale deployment manage-recalls-api --replicas=0
 ```
 
 We do not currently have a strategy in place to throttle requests.
@@ -72,7 +72,7 @@ Infrastructure wise, all three tiers are identical, but `prod` has the following
 
 ## Security and access control
 
-In order to gain access to the `ppud-replacement-<tier>` namespaces in kubernetes you will need to be a member of the [ministryofjustice](https://github.com/orgs/ministryofjustice) github organisation and a member of the [ppud-replacement-devs](https://github.com/orgs/ministryofjustice/teams/ppud-replacement-devs) team. Once joined, you should have access to the cluster within 24 hours.
+In order to gain access to the `manage-recalls-<tier>` namespaces in kubernetes you will need to be a member of the [ministryofjustice](https://github.com/orgs/ministryofjustice) github organisation and a member of the [ppud-replacement-devs](https://github.com/orgs/ministryofjustice/teams/ppud-replacement-devs) team. Once joined, you should have access to the cluster within 24 hours.
 
 You will need to follow the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/kubectl-config.html#how-to-use-kubectl-to-connect-to-the-cluster) to setup your access from there.
 
@@ -85,7 +85,7 @@ You will need to follow the [Cloud Platform User Guide](https://user-guide.cloud
 
 ### Secrets management
 
-Secrets are stored within the `ppud-replacement-<tier>` namespaces in kubernetes.
+Secrets are stored within the `manage-recalls-<tier>` namespaces in kubernetes.
 
 Secrets with information from [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments) will be managed via the terraform code in there.
 
