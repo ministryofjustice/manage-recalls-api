@@ -276,8 +276,8 @@ class DocumentRepositoryIntegrationTest(
       category,
       "file_name",
       version,
-      OffsetDateTime.now(),
       details,
+      OffsetDateTime.now(),
       createdByUserId
     )
   }

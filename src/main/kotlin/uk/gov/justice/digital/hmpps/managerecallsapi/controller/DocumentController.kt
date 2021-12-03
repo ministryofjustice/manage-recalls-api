@@ -68,10 +68,10 @@ class DocumentController(
         bytes.encodeToBase64String(),
         document.fileName,
         document.version,
+        document.details,
         document.createdByUserId(),
         userDetailsService.find(document.createdByUserId())?.fullName(),
-        document.createdDateTime,
-        document.details
+        document.createdDateTime
       )
     )
   }
@@ -200,8 +200,8 @@ data class GetDocumentResponse(
   val content: String,
   val fileName: String,
   val version: Int?,
+  val details: String?,
   val createdByUserId: UserId,
   val createdByUserName: FullName?,
   val createdDateTime: OffsetDateTime,
-  val details: String?,
 )

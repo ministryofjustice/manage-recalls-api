@@ -171,8 +171,8 @@ class RecallControllerTest {
       PART_A_RECALL_REPORT,
       fileName,
       1,
-      now,
       details,
+      now,
       createdByUserId.value
     )
     val recallEmailReceivedDateTime = now
@@ -314,10 +314,28 @@ class RecallControllerTest {
   @Test
   fun `latestDocuments contains the latest of each versioned category and all unversioned docs`() {
     val partADoc1 =
-      Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 1, OffsetDateTime.now(), null, createdByUserId)
-    val partADoc2 = Document(::DocumentId.random(), recallId, PART_A_RECALL_REPORT, "part_a.pdf", 2, now, null, createdByUserId)
-    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now, null, createdByUserId)
-    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, now, null, createdByUserId)
+      Document(
+        ::DocumentId.random(),
+        recallId,
+        PART_A_RECALL_REPORT,
+        "part_a.pdf",
+        1,
+        null,
+        OffsetDateTime.now(),
+        createdByUserId
+      )
+    val partADoc2 = Document(
+      ::DocumentId.random(),
+      recallId,
+      PART_A_RECALL_REPORT,
+      "part_a.pdf",
+      2,
+      null,
+      now,
+      createdByUserId
+    )
+    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, null, now, createdByUserId)
+    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, null, now, createdByUserId)
     val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, otherDoc1, otherDoc2))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDocuments

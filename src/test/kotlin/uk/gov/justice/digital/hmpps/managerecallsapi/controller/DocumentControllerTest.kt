@@ -92,8 +92,8 @@ class DocumentControllerTest {
       PART_A_RECALL_REPORT,
       fileName,
       1,
-      now,
       details,
+      now,
       createdByUserId
     )
     val bytes = "Hello".toByteArray()
@@ -113,10 +113,10 @@ class DocumentControllerTest {
       content = bytes.encodeToBase64String(),
       fileName,
       1,
+      details,
       createdByUserId,
       fullName,
-      now,
-      details
+      now
     )
     assertThat(response.body, equalTo(expected))
   }

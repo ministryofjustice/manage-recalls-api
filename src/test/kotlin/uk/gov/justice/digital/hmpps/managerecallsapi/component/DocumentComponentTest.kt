@@ -80,10 +80,10 @@ class DocumentComponentTest : ComponentTestBase() {
           base64EncodedDocumentContents,
           fileName,
           2,
+          details,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          secondDocument.createdDateTime,
-          details
+          secondDocument.createdDateTime
         )
       )
     )
@@ -102,10 +102,10 @@ class DocumentComponentTest : ComponentTestBase() {
           base64EncodedDocumentContents,
           fileName,
           3,
+          details,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          recallDocument.createdDateTime,
-          details
+          recallDocument.createdDateTime
         )
       )
     )
@@ -157,10 +157,10 @@ class DocumentComponentTest : ComponentTestBase() {
           base64EncodedDocumentContents,
           fileName,
           1,
+          details,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          response.createdDateTime,
-          details
+          response.createdDateTime
         )
       )
     )
@@ -214,10 +214,10 @@ class DocumentComponentTest : ComponentTestBase() {
           base64EncodedDocumentContents,
           fileName,
           1,
+          details,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          document.createdDateTime,
-          details
+          document.createdDateTime
         )
       )
     )
@@ -262,10 +262,10 @@ class DocumentComponentTest : ComponentTestBase() {
           base64EncodedDocumentContents,
           fileName,
           null,
+          details,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          document.createdDateTime,
-          details
+          document.createdDateTime
         )
       )
     )
@@ -322,10 +322,10 @@ class DocumentComponentTest : ComponentTestBase() {
           base64EncodedDocumentContents,
           fileName,
           2,
+          details,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          secondDocument.createdDateTime,
-          details
+          secondDocument.createdDateTime
         )
       )
     )
