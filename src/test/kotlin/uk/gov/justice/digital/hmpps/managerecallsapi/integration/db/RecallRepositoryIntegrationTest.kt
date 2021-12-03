@@ -50,6 +50,7 @@ class RecallRepositoryIntegrationTest(
   private val recallId = ::RecallId.random()
   private val now = OffsetDateTime.now()
   private val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
+  private val details = "Some string"
 
   private val repository = RecallRepository(jpaRepository)
   private val documentRepository = DocumentRepository(jpaDocumentRepository)
@@ -152,8 +153,9 @@ class RecallRepositoryIntegrationTest(
       PART_A_RECALL_REPORT,
       "PART_A.pdf",
       1,
-      createdByUserId,
       now,
+      details,
+      createdByUserId
     )
     val recallToUpdate = recall.copy(
       documents = setOf(

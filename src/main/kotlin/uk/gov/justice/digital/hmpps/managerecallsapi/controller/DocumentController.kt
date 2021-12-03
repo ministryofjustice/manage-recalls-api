@@ -70,7 +70,8 @@ class DocumentController(
         document.version,
         document.createdByUserId(),
         userDetailsService.find(document.createdByUserId())?.fullName(),
-        document.createdDateTime
+        document.createdDateTime,
+        document.details
       )
     )
   }
@@ -140,7 +141,8 @@ class DocumentController(
     createdByUserId,
     addDocumentRequest.fileContent.toBase64DecodedByteArray(),
     addDocumentRequest.category,
-    addDocumentRequest.fileName
+    addDocumentRequest.fileName,
+    addDocumentRequest.details
   )
 
   @PatchMapping("/recalls/{recallId}/documents/{documentId}")
@@ -155,7 +157,8 @@ class DocumentController(
         document.id(),
         document.recallId(),
         document.category,
-        document.fileName
+        document.fileName,
+        document.details
       )
     )
   }
@@ -178,13 +181,15 @@ data class UpdateDocumentResponse(
   val documentId: DocumentId,
   val recallId: RecallId,
   val category: DocumentCategory,
-  val fileName: String
+  val fileName: String,
+  val details: String? = null,
 )
 
 data class AddDocumentRequest(
   val category: DocumentCategory,
   val fileContent: String,
-  val fileName: String
+  val fileName: String,
+  val details: String? = null
 )
 
 data class AddDocumentResponse(val documentId: DocumentId)
@@ -197,5 +202,6 @@ data class GetDocumentResponse(
   val version: Int?,
   val createdByUserId: UserId,
   val createdByUserName: FullName?,
-  val createdDateTime: OffsetDateTime
+  val createdDateTime: OffsetDateTime,
+  val details: String?,
 )

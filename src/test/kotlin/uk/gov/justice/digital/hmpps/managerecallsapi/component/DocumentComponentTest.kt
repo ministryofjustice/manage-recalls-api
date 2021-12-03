@@ -33,7 +33,8 @@ class DocumentComponentTest : ComponentTestBase() {
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = "fileName"
-  private val addVersionedDocumentRequest = AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName)
+  private val details = "Document details"
+  private val addVersionedDocumentRequest = AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
 
   @Test
   fun `add a document uploads the file to S3 and returns the documentId`() {
@@ -81,7 +82,8 @@ class DocumentComponentTest : ComponentTestBase() {
           2,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          secondDocument.createdDateTime
+          secondDocument.createdDateTime,
+          details
         )
       )
     )
@@ -102,7 +104,8 @@ class DocumentComponentTest : ComponentTestBase() {
           3,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          recallDocument.createdDateTime
+          recallDocument.createdDateTime,
+          details
         )
       )
     )
@@ -140,7 +143,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName)
+      AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
     )
 
     val response = authenticatedClient.getRecallDocument(recall.recallId, document.documentId)
@@ -156,7 +159,8 @@ class DocumentComponentTest : ComponentTestBase() {
           1,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          response.createdDateTime
+          response.createdDateTime,
+          details
         )
       )
     )
@@ -179,7 +183,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val documentId = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName)
+      AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName, details)
     ).documentId
 
     val document = documentRepository.getByRecallIdAndDocumentId(recall.recallId, documentId)
@@ -197,7 +201,7 @@ class DocumentComponentTest : ComponentTestBase() {
       UpdateDocumentRequest(updatedCategory)
     )
 
-    assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName)))
+    assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName, details)))
 
     val response = authenticatedClient.getRecallDocument(recall.recallId, documentId)
 
@@ -212,7 +216,8 @@ class DocumentComponentTest : ComponentTestBase() {
           1,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          document.createdDateTime
+          document.createdDateTime,
+          details
         )
       )
     )
@@ -226,7 +231,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val documentId = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
+      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName, details)
     ).documentId
 
     val document = documentRepository.getByRecallIdAndDocumentId(recall.recallId, documentId)
@@ -244,7 +249,7 @@ class DocumentComponentTest : ComponentTestBase() {
       UpdateDocumentRequest(updatedCategory)
     )
 
-    assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName)))
+    assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName, details)))
 
     val response = authenticatedClient.getRecallDocument(recall.recallId, documentId)
 
@@ -259,7 +264,8 @@ class DocumentComponentTest : ComponentTestBase() {
           null,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          document.createdDateTime
+          document.createdDateTime,
+          details
         )
       )
     )
@@ -318,7 +324,8 @@ class DocumentComponentTest : ComponentTestBase() {
           2,
           authenticatedClient.userId,
           FullName("Bertie Badger"),
-          secondDocument.createdDateTime
+          secondDocument.createdDateTime,
+          details
         )
       )
     )
@@ -330,7 +337,7 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(documents.size, equalTo(1))
     assertThat(
       documents[0],
-      equalTo(RecallDocument(firstDocumentId, versionedDocumentCategory, fileName, 1, documents[0].createdDateTime))
+      equalTo(RecallDocument(firstDocumentId, versionedDocumentCategory, fileName, 1, documents[0].createdDateTime, details))
     )
   }
 }

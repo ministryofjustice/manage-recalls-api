@@ -38,11 +38,12 @@ class DocumentService(
     createdByUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
-    fileName: String
+    fileName: String,
+    details: String? = null
   ): Result<DocumentId, VirusScanResult> =
     forExistingRecall(recallId) {
       when (val virusScanResult = virusScanner.scan(documentBytes)) {
-        NoVirusFound -> Success(storeDocument(recallId, createdByUserId, documentBytes, documentCategory, fileName))
+        NoVirusFound -> Success(storeDocument(recallId, createdByUserId, documentBytes, documentCategory, fileName, details))
         is VirusFound -> {
           log.info(VirusFoundEvent(recallId, documentCategory, virusScanResult.foundViruses).toString())
           Failure(virusScanResult)
@@ -55,10 +56,11 @@ class DocumentService(
     createdByUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
-    fileName: String
+    fileName: String,
+    details: String? = null
   ): DocumentId =
     forExistingRecall(recallId) {
-      uploadToS3AndSaveDocument(recallId, createdByUserId, documentCategory, documentBytes, fileName)
+      uploadToS3AndSaveDocument(recallId, createdByUserId, documentCategory, documentBytes, fileName, details)
     }
 
   private fun uploadToS3AndSaveDocument(
@@ -66,7 +68,8 @@ class DocumentService(
     createdByUserId: UserId,
     category: DocumentCategory,
     documentBytes: ByteArray,
-    fileName: String
+    fileName: String,
+    details: String? = null
   ): DocumentId {
     val version = if (category.versioned) {
       (documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, category)?.version ?: 0) + 1
@@ -75,7 +78,7 @@ class DocumentService(
     }
     val documentId = ::DocumentId.random()
 
-    documentRepository.save(Document(documentId, recallId, category, fileName, version, createdByUserId, OffsetDateTime.now(clock)))
+    documentRepository.save(Document(documentId, recallId, category, fileName, version, OffsetDateTime.now(clock), details, createdByUserId))
     try {
       s3Service.uploadFile(documentId, documentBytes)
     } catch (ex: Exception) {

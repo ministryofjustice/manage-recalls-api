@@ -105,7 +105,7 @@ internal class DossierServiceTest {
     verify { tableOfContentsService wasNot Called }
     verify { pdfDocumentGenerationService wasNot Called }
     verify { pdfDecorator wasNot Called }
-    verify(exactly = 0) { documentService.storeDocument(any(), createdByUserId, any(), any(), any()) }
+    verify(exactly = 0) { documentService.storeDocument(any(), createdByUserId, any(), any(), any(), any()) }
   }
 
   // TODO: PUD-575 test/handling when any input doc is not available
