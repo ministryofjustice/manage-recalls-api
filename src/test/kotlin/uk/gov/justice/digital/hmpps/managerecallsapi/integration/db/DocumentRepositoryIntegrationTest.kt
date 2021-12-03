@@ -175,6 +175,37 @@ class DocumentRepositoryIntegrationTest(
 
   @Test
   @Transactional
+  fun `can save and flush a versioned document with details for an existing recall`() {
+    recallRepository.save(recall)
+
+    val details = "Random document details"
+    val id = ::DocumentId.random()
+    val documentWithDetails = versionedDocument(id, recallId, versionedCategory, 1).copy(version = 2, details = details)
+
+    documentRepository.saveAndFlush(documentWithDetails)
+
+    val latest = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
+
+    assertThat(latest, equalTo(documentWithDetails))
+  }
+
+  @Test
+  @Transactional
+  fun `can save and flush a versioned document without details for an existing recall`() {
+    recallRepository.save(recall)
+
+    val id = ::DocumentId.random()
+    val documentWithoutDetails = versionedDocument(id, recallId, versionedCategory, 1).copy(version = 2, details = null)
+
+    documentRepository.saveAndFlush(documentWithoutDetails)
+
+    val latest = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
+
+    assertThat(latest, equalTo(documentWithoutDetails))
+  }
+
+  @Test
+  @Transactional
   fun `cannot save and flush an un-versioned document with non-null version for an existing recall throws DataIntegrityViolationException`() {
     recallRepository.save(recall)
 
@@ -232,11 +263,11 @@ class DocumentRepositoryIntegrationTest(
     assertThat(retrieved, absent())
   }
 
-  private fun versionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int) =
-    testDocument(id, recallId, category, version, null)
+  private fun versionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int, details: String? = null) =
+    testDocument(id, recallId, category, version, details)
 
-  private fun unVersionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory) =
-    testDocument(id, recallId, category, null, null)
+  private fun unVersionedDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, details: String? = null) =
+    testDocument(id, recallId, category, null, details)
 
   private fun testDocument(id: DocumentId, recallId: RecallId, category: DocumentCategory, version: Int?, details: String?): Document {
     return Document(
@@ -245,9 +276,9 @@ class DocumentRepositoryIntegrationTest(
       category,
       "file_name",
       version,
-      createdByUserId,
       OffsetDateTime.now(),
-      details
+      details,
+      createdByUserId
     )
   }
 }

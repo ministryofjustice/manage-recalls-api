@@ -153,9 +153,9 @@ class RecallRepositoryIntegrationTest(
       PART_A_RECALL_REPORT,
       "PART_A.pdf",
       1,
-      createdByUserId,
       now,
-      details
+      details,
+      createdByUserId
     )
     val recallToUpdate = recall.copy(
       documents = setOf(

@@ -236,9 +236,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         documentCategory,
         "filename.pdf",
         version,
-        userIdOnes,
         OffsetDateTime.now(),
-        details
+        details,
+        userIdOnes
       )
     )
 

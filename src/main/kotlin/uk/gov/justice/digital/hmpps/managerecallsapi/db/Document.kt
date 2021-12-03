@@ -33,14 +33,13 @@ data class Document(
   val version: Int?,
 
   @Column(nullable = false)
-  val createdByUserId: UUID,
-
-  @Column(nullable = false)
   val createdDateTime: OffsetDateTime,
 
   @Column(nullable = true)
-  val details: String?
+  val details: String?,
 
+  @Column(nullable = false)
+  val createdByUserId: UUID
 ) {
   constructor(
     id: DocumentId,
@@ -48,12 +47,12 @@ data class Document(
     category: DocumentCategory,
     fileName: String,
     version: Int?,
-    createdByUserId: UserId,
     createdDateTime: OffsetDateTime,
-    details: String?
+    details: String?,
+    createdByUserId: UserId
   ) :
     this(
-      id.value, recallId.value, category, fileName, version, createdByUserId.value, createdDateTime, details
+      id.value, recallId.value, category, fileName, version, createdDateTime, details, createdByUserId.value
     ) {
       if ((category.versioned && version == null) || (!category.versioned && version != null)) throw WrongDocumentTypeException(category)
     }

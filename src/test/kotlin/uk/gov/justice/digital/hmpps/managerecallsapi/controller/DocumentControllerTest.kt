@@ -92,9 +92,9 @@ class DocumentControllerTest {
       PART_A_RECALL_REPORT,
       fileName,
       1,
-      createdByUserId,
       now,
-      details
+      details,
+      createdByUserId
     )
     val bytes = "Hello".toByteArray()
 

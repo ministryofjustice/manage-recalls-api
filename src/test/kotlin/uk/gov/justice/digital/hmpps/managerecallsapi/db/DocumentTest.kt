@@ -20,9 +20,9 @@ class DocumentTest {
         DocumentCategory.OTHER,
         "file.txt",
         1,
-        ::UserId.random(),
         OffsetDateTime.now(),
-        null
+        null,
+        ::UserId.random()
       )
     }
   }
@@ -36,9 +36,9 @@ class DocumentTest {
         DocumentCategory.LICENCE,
         "file.txt",
         null,
-        ::UserId.random(),
         OffsetDateTime.now(),
-        null
+        null,
+        ::UserId.random()
       )
     }
   }
@@ -51,9 +51,9 @@ class DocumentTest {
       DocumentCategory.LICENCE,
       "file.txt",
       1,
-      ::UserId.random(),
       OffsetDateTime.now(),
-      null
+      null,
+      ::UserId.random()
     )
   }
 }
