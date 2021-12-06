@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
 import java.time.LocalTime
@@ -52,7 +53,7 @@ class RecallSummaryHtmlGenerationTest(
           NomsNumber("AA1234A"),
           LocalDate.of(2020, 10, 1),
           setOf(ELM_FURTHER_OFFENCE),
-          "London",
+          PoliceForceName("Devon & Cornwall Police"),
           true,
           "I believe that they will bring contraband to prison",
           true,

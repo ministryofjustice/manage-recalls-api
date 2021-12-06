@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
 import java.time.LocalTime
@@ -63,7 +64,7 @@ class RecallSummaryGeneratorTest {
         NomsNumber("AA1234A"),
         LocalDate.of(2020, 10, 1),
         setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
-        "London",
+        PoliceForceName("Devon & Cornwall Police"),
         true,
         "Some contraband detail",
         true,
@@ -102,7 +103,7 @@ class RecallSummaryGeneratorTest {
         has("croNumber", { it.variable("croNumber") }, equalTo("croNumber")),
         has("probationOfficerName", { it.variable("probationOfficerName") }, equalTo("Mr Probation Officer")),
         has("probationOfficerPhoneNumber", { it.variable("probationOfficerPhoneNumber") }, equalTo("01234567890")),
-        has("localPoliceForce", { it.variable("localPoliceForce") }, equalTo("London")),
+        has("localPoliceForce", { it.variable("localPoliceForce") }, equalTo("Devon & Cornwall Police")),
         has("currentPrisonName", { it.variable("currentPrisonName") }, equalTo("Current Prison")),
         has("sentencingCourt", { it.variable("sentencingCourt") }, equalTo("High Court")),
         has("sentencingDate", { it.variable("sentencingDate") }, equalTo("01 Oct 2020")),
@@ -144,7 +145,7 @@ class RecallSummaryGeneratorTest {
         NomsNumber("AA1234A"),
         LocalDate.of(2020, 10, 1),
         setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
-        "London",
+        PoliceForceName("Metropolitan Police Service"),
         false,
         null,
         false,
@@ -183,7 +184,7 @@ class RecallSummaryGeneratorTest {
         has("croNumber", { it.variable("croNumber") }, equalTo("croNumber")),
         has("probationOfficerName", { it.variable("probationOfficerName") }, equalTo("Mr Probation Officer")),
         has("probationOfficerPhoneNumber", { it.variable("probationOfficerPhoneNumber") }, equalTo("01234567890")),
-        has("localPoliceForce", { it.variable("localPoliceForce") }, equalTo("London")),
+        has("localPoliceForce", { it.variable("localPoliceForce") }, equalTo("Metropolitan Police Service")),
         has("currentPrisonName", { it.variable("currentPrisonName") }, equalTo("Current Prison")),
         has("sentencingCourt", { it.variable("sentencingCourt") }, equalTo("High Court")),
         has("sentencingDate", { it.variable("sentencingDate") }, equalTo("01 Oct 2020")),
