@@ -26,7 +26,7 @@ class SearchComponentTest : ComponentTestBase() {
 
   @Test
   fun `returns 500 if prisoner search api returns unauthorized`() {
-    prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
+    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
 
     val result = authenticatedClient.post("/search", "{\"nomsNumber\":\"123456\"}")
       .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
@@ -45,7 +45,7 @@ class SearchComponentTest : ComponentTestBase() {
 
   @Test
   fun `can send search request to prisoner search api and retrieve no matches`() {
-    prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
+    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
 
     val responseBody = authenticatedClient.search(apiSearchRequest)
 
@@ -74,7 +74,7 @@ class SearchComponentTest : ComponentTestBase() {
   fun `can send search request to prisoner search api and retrieve matches`() {
     val prisoner1 = testPrisoner(nomsNumber)
     val prisoner2 = testPrisoner(null)
-    prisonerOffenderSearch.prisonerSearchRespondsWith(prisonerSearchRequest, listOf(prisoner1, prisoner2))
+    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(prisonerSearchRequest, listOf(prisoner1, prisoner2))
 
     val response = authenticatedClient.search(apiSearchRequest)
 
@@ -84,7 +84,7 @@ class SearchComponentTest : ComponentTestBase() {
   @Test
   fun `prisoner offender timeout is handled gracefully`() {
     val nomsNumber = randomNoms()
-    prisonerOffenderSearch.delaySearch(PrisonerSearchRequest(nomsNumber), 3000)
+    prisonerOffenderSearchMockServer.delaySearch(PrisonerSearchRequest(nomsNumber), 3000)
 
     val result = authenticatedClient.search(SearchRequest(nomsNumber), GATEWAY_TIMEOUT)
       .expectBody(ErrorResponse::class.java).returnResult().responseBody!!

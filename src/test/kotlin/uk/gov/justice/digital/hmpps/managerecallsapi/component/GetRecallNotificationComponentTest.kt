@@ -88,7 +88,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   }
 
   private fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, firstName: String) {
-    prisonerOffenderSearch.prisonerSearchRespondsWith(
+    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
       PrisonerSearchRequest(nomsNumber),
       listOf(
         Prisoner(

@@ -124,7 +124,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
   }
 
   protected fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, prisonerFirstName: String) {
-    prisonerOffenderSearch.prisonerSearchRespondsWith(
+    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
       PrisonerSearchRequest(nomsNumber),
       listOf(
         Prisoner(
