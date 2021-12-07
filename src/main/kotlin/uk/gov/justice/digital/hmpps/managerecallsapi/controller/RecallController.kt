@@ -180,7 +180,8 @@ class RecallController(
     assignee = this.assignee(),
     assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.fullName() },
     recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
-    assessByUserName = this.assessedByUserId()?.let { userDetailsService.find(it)?.fullName() }
+    assessByUserName = this.assessedByUserId()?.let { userDetailsService.find(it)?.fullName() },
+    bookedByUserName = this.bookedByUserId()?.let { userDetailsService.find(it)?.fullName() }
   )
 
   private fun Recall.latestMissingDocumentsRecord() =
@@ -275,7 +276,8 @@ data class RecallResponse(
   val assignee: UserId? = null,
   val assigneeUserName: FullName? = null,
   val recallAssessmentDueDateTime: OffsetDateTime? = null,
-  val assessByUserName: FullName? = null
+  val assessByUserName: FullName? = null,
+  val bookedByUserName: FullName? = null
 )
 
 class Api {

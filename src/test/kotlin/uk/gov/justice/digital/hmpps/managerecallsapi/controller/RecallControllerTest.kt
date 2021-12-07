@@ -60,7 +60,6 @@ class RecallControllerTest {
   private val firstName = FirstName("Barrie")
   private val middleNames = MiddleNames("Barnie")
   private val lastName = LastName("Badger")
-  private val fullName = FullName("Barrie Badger")
   private val recallRequest = BookRecallRequest(nomsNumber, firstName, null, lastName)
   private val fileName = "fileName"
   private val now = OffsetDateTime.now()
@@ -254,12 +253,23 @@ class RecallControllerTest {
   }
 
   @Test
-  fun `set assessByUserName for recall response`() {
+  fun `set assessByUserName, bookedByUserName for recall response`() {
+    val firstNameAssessedBy = FirstName("Mickey")
+    val lastNameAssessedBy = LastName("Mouse")
+    val fullNameAssessedBy = FullName("Mickey Mouse")
+    val firstNameBookedBy = FirstName("Natasha")
+    val lastNameBookedBy = LastName("Romanoff")
+    val fullNameBookedBy = FullName("Natasha Romanoff")
     val assessById = ::UserId.random()
-    val recallWithIds = recall.copy(assessedByUserId = assessById.value)
+    val bookedByUserId = ::UserId.random()
+
+    val recallWithIds = recall.copy(assessedByUserId = assessById.value, bookedByUserId = bookedByUserId.value)
 
     every { userDetailsService.find(assessById) } returns UserDetails(
-      assignee, firstName, lastName, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
+      assignee, firstNameAssessedBy, lastNameAssessedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
+    )
+    every { userDetailsService.find(bookedByUserId) } returns UserDetails(
+      assignee, firstNameBookedBy, lastNameBookedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithIds
@@ -270,8 +280,11 @@ class RecallControllerTest {
       result,
       equalTo(
         recallResponse.copy(
+          status = Status.BOOKED_ON,
           assessedByUserId = assessById,
-          assessByUserName = fullName
+          assessByUserName = fullNameAssessedBy,
+          bookedByUserId = bookedByUserId,
+          bookedByUserName = fullNameBookedBy
         )
       )
     )
