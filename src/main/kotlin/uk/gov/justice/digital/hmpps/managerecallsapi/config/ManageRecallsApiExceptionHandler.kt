@@ -70,24 +70,37 @@ class ManageRecallsApiExceptionHandler {
         .body(ErrorResponse(NOT_FOUND, e.toString()))
     }
 
+  @ExceptionHandler(ClientException::class)
+  fun handleException(e: ClientException): ResponseEntity<ErrorResponse> =
+    with(e) {
+      log.info(e.toString())
+      ResponseEntity
+        .status(INTERNAL_SERVER_ERROR)
+        .body(ErrorResponse(INTERNAL_SERVER_ERROR, e.toString()))
+    }
+
   @ExceptionHandler(ManageRecallsException::class)
   fun handleException(e: ManageRecallsException): ResponseEntity<ErrorResponse> {
     log.error("ManageRecallsException", e)
-    val message = if (e.message == null) {
-      e.javaClass.simpleName
-    } else {
-      "${e.javaClass.simpleName}: ${e.message}"
-    }
     return ResponseEntity
       .status(BAD_REQUEST)
-      .body(ErrorResponse(BAD_REQUEST, message))
+      .body(ErrorResponse(BAD_REQUEST, e.toString()))
   }
 }
 
 data class ErrorResponse(val status: HttpStatus, val message: String?)
 
-open class ManageRecallsException(override val message: String? = null) : Exception(message)
+open class ManageRecallsException(override val message: String? = null, override val cause: Throwable? = null) : Exception(message, cause) {
+  override fun toString(): String {
+    return if (this.message == null) {
+      this.javaClass.simpleName
+    } else {
+      "${this.javaClass.simpleName}: ${this.message}"
+    }
+  }
+}
 
 class ClientTimeoutException(clientName: String, errorType: String) : ManageRecallsException("$clientName: [$errorType]")
+class ClientException(clientName: String, exception: Exception) : ManageRecallsException("$clientName: [${exception.message}", exception)
 
 class WrongDocumentTypeException(val category: DocumentCategory) : ManageRecallsException(category.name)

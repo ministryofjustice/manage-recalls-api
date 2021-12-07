@@ -37,7 +37,7 @@ class SearchComponentTest : ComponentTestBase() {
       equalTo(
         ErrorResponse(
           INTERNAL_SERVER_ERROR,
-          "Unexpected error: 401 Unauthorized from POST http://localhost:9092/prisoner-search/match-prisoners"
+          "ClientException: PrisonerOffenderSearchClient: [401 Unauthorized from POST http://localhost:9092/prisoner-search/match-prisoners"
         )
       )
     )
