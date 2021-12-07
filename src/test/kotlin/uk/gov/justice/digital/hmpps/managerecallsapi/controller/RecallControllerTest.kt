@@ -60,6 +60,7 @@ class RecallControllerTest {
   private val firstName = FirstName("Barrie")
   private val middleNames = MiddleNames("Barnie")
   private val lastName = LastName("Badger")
+  private val fullName = FullName("Barrie Badger")
   private val recallRequest = BookRecallRequest(nomsNumber, firstName, null, lastName)
   private val fileName = "fileName"
   private val now = OffsetDateTime.now()
@@ -247,6 +248,30 @@ class RecallControllerTest {
         recallResponse.copy(
           assignee = assignee,
           assigneeUserName = null
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `set assessByUserName for recall response`() {
+    val assessById = ::UserId.random()
+    val recallWithIds = recall.copy(assessedByUserId = assessById.value)
+
+    every { userDetailsService.find(assessById) } returns UserDetails(
+      assignee, firstName, lastName, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
+    )
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithIds
+
+    val result = underTest.getRecall(recallId)
+
+    assertThat(
+      result,
+      equalTo(
+        recallResponse.copy(
+          assessedByUserId = assessById,
+          assessByUserName = fullName
         )
       )
     )
