@@ -180,7 +180,7 @@ class RecallController(
     assignee = this.assignee(),
     assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.fullName() },
     recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
-    assessByUserName = this.assessedByUserId()?.let { userDetailsService.find(it)?.fullName() },
+    assessedByUserName = this.assessedByUserId()?.let { userDetailsService.find(it)?.fullName() },
     bookedByUserName = this.bookedByUserId()?.let { userDetailsService.find(it)?.fullName() },
     dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.find(it)?.fullName() }
   )
@@ -277,7 +277,7 @@ data class RecallResponse(
   val assignee: UserId? = null,
   val assigneeUserName: FullName? = null,
   val recallAssessmentDueDateTime: OffsetDateTime? = null,
-  val assessByUserName: FullName? = null,
+  val assessedByUserName: FullName? = null,
   val bookedByUserName: FullName? = null,
   val dossierCreatedByUserName: FullName? = null
 )

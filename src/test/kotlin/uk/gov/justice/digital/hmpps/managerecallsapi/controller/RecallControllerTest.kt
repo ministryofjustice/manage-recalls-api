@@ -289,11 +289,11 @@ class RecallControllerTest {
         recallResponse.copy(
           status = Status.DOSSIER_ISSUED,
           assessedByUserId = assessedByUserId,
-          assessByUserName = fullNameAssessedBy,
+          assessedByUserName = fullNameAssessedBy,
           bookedByUserId = bookedByUserId,
           bookedByUserName = fullNameBookedBy,
           dossierCreatedByUserId = dossierCreatedByUserId,
-          dossierCreatedByUserName = fullNameBookedBy,
+          dossierCreatedByUserName = fullNameDossierCreatedBy,
         )
       )
     )
