@@ -260,16 +260,23 @@ class RecallControllerTest {
     val firstNameBookedBy = FirstName("Natasha")
     val lastNameBookedBy = LastName("Romanoff")
     val fullNameBookedBy = FullName("Natasha Romanoff")
-    val assessById = ::UserId.random()
+    val firstNameDossierCreatedBy = FirstName("Natasha")
+    val lastNameDossierCreatedBy = LastName("Romanoff")
+    val fullNameDossierCreatedBy = FullName("Natasha Romanoff")
+    val assessedByUserId = ::UserId.random()
     val bookedByUserId = ::UserId.random()
+    val dossierCreatedByUserId = ::UserId.random()
 
-    val recallWithIds = recall.copy(assessedByUserId = assessById.value, bookedByUserId = bookedByUserId.value)
+    val recallWithIds = recall.copy(assessedByUserId = assessedByUserId.value, bookedByUserId = bookedByUserId.value, dossierCreatedByUserId = dossierCreatedByUserId.value)
 
-    every { userDetailsService.find(assessById) } returns UserDetails(
+    every { userDetailsService.find(assessedByUserId) } returns UserDetails(
       assignee, firstNameAssessedBy, lastNameAssessedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
     )
     every { userDetailsService.find(bookedByUserId) } returns UserDetails(
       assignee, firstNameBookedBy, lastNameBookedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
+    )
+    every { userDetailsService.find(dossierCreatedByUserId) } returns UserDetails(
+      assignee, firstNameDossierCreatedBy, lastNameDossierCreatedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithIds
@@ -280,11 +287,13 @@ class RecallControllerTest {
       result,
       equalTo(
         recallResponse.copy(
-          status = Status.BOOKED_ON,
-          assessedByUserId = assessById,
+          status = Status.DOSSIER_ISSUED,
+          assessedByUserId = assessedByUserId,
           assessByUserName = fullNameAssessedBy,
           bookedByUserId = bookedByUserId,
-          bookedByUserName = fullNameBookedBy
+          bookedByUserName = fullNameBookedBy,
+          dossierCreatedByUserId = dossierCreatedByUserId,
+          dossierCreatedByUserName = fullNameBookedBy,
         )
       )
     )
