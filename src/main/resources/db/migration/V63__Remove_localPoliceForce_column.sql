@@ -1,0 +1,1 @@
+ALTER TABLE recall DROP COLUMN local_police_force;

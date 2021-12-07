@@ -203,13 +203,11 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `update a recall with local police force`() {
-    val policeForce = "Greater Manchester Police"
     val policeForceId = PoliceForceId("greater-manchester")
 
     val response = authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
-        localPoliceForce = policeForce,
         localPoliceForceId = policeForceId
       )
     )
@@ -225,7 +223,6 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
-          localPoliceForce = policeForce,
           localPoliceForceId = policeForceId
         )
       )
