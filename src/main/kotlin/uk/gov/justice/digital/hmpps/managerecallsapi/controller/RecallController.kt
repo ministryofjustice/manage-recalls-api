@@ -178,7 +178,10 @@ class RecallController(
     dossierTargetDate = this.dossierTargetDate,
     assignee = this.assignee(),
     assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.fullName() },
-    recallAssessmentDueDateTime = this.recallAssessmentDueDateTime()
+    recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
+    assessedByUserName = this.assessedByUserId()?.let { userDetailsService.find(it)?.fullName() },
+    bookedByUserName = this.bookedByUserId()?.let { userDetailsService.find(it)?.fullName() },
+    dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.find(it)?.fullName() }
   )
 
   private fun Recall.latestMissingDocumentsRecord() =
@@ -271,7 +274,10 @@ data class RecallResponse(
   val dossierTargetDate: LocalDate? = null,
   val assignee: UserId? = null,
   val assigneeUserName: FullName? = null,
-  val recallAssessmentDueDateTime: OffsetDateTime? = null
+  val recallAssessmentDueDateTime: OffsetDateTime? = null,
+  val assessedByUserName: FullName? = null,
+  val bookedByUserName: FullName? = null,
+  val dossierCreatedByUserName: FullName? = null
 )
 
 class Api {

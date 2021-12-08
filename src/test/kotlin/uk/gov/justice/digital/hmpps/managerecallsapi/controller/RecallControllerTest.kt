@@ -124,12 +124,12 @@ class RecallControllerTest {
       List<RecallResponse>::containsAll,
       listOf(
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
-        recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId),
-        recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
+        recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId, bookedByUserName = FullName("Mickey Mouse")),
+        recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = FullName("Mickey Mouse"), bookedByUserName = FullName("Mickey Mouse")),
+        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
         recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
+        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
     )
   }
@@ -154,10 +154,10 @@ class RecallControllerTest {
       List<RecallResponse>::containsAll,
       listOf(
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
-        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
+        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
         recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
+        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
 
     )
@@ -247,6 +247,53 @@ class RecallControllerTest {
         recallResponse.copy(
           assignee = assignee,
           assigneeUserName = null
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `set assessByUserName, bookedByUserName for recall response`() {
+    val firstNameAssessedBy = FirstName("Mickey")
+    val lastNameAssessedBy = LastName("Mouse")
+    val fullNameAssessedBy = FullName("Mickey Mouse")
+    val firstNameBookedBy = FirstName("Natasha")
+    val lastNameBookedBy = LastName("Romanoff")
+    val fullNameBookedBy = FullName("Natasha Romanoff")
+    val firstNameDossierCreatedBy = FirstName("Natasha")
+    val lastNameDossierCreatedBy = LastName("Romanoff")
+    val fullNameDossierCreatedBy = FullName("Natasha Romanoff")
+    val assessedByUserId = ::UserId.random()
+    val bookedByUserId = ::UserId.random()
+    val dossierCreatedByUserId = ::UserId.random()
+
+    val recallWithIds = recall.copy(assessedByUserId = assessedByUserId.value, bookedByUserId = bookedByUserId.value, dossierCreatedByUserId = dossierCreatedByUserId.value)
+
+    every { userDetailsService.find(assessedByUserId) } returns UserDetails(
+      assignee, firstNameAssessedBy, lastNameAssessedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
+    )
+    every { userDetailsService.find(bookedByUserId) } returns UserDetails(
+      assignee, firstNameBookedBy, lastNameBookedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
+    )
+    every { userDetailsService.find(dossierCreatedByUserId) } returns UserDetails(
+      assignee, firstNameDossierCreatedBy, lastNameDossierCreatedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
+    )
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithIds
+
+    val result = underTest.getRecall(recallId)
+
+    assertThat(
+      result,
+      equalTo(
+        recallResponse.copy(
+          status = Status.DOSSIER_ISSUED,
+          assessedByUserId = assessedByUserId,
+          assessedByUserName = fullNameAssessedBy,
+          bookedByUserId = bookedByUserId,
+          bookedByUserName = fullNameBookedBy,
+          dossierCreatedByUserId = dossierCreatedByUserId,
+          dossierCreatedByUserName = fullNameDossierCreatedBy,
         )
       )
     )

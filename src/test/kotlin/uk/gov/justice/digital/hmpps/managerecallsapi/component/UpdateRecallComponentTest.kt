@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -310,6 +311,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           Status.RECALL_NOTIFICATION_ISSUED,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = assessedByUserId,
+          assessedByUserName = FullName("Bertie Badger"),
           dossierTargetDate = LocalDate.parse("2021-12-29")
         )
       )
@@ -339,7 +341,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           NameFormatCategory.FIRST_LAST,
           status = Status.DOSSIER_ISSUED,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
-          dossierCreatedByUserId = dossierCreatedByUserId
+          dossierCreatedByUserId = dossierCreatedByUserId,
+          dossierCreatedByUserName = FullName("Bertie Badger")
         )
       )
     )
