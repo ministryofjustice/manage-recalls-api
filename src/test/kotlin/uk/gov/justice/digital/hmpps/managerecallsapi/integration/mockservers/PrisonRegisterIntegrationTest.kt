@@ -11,21 +11,25 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
+import java.lang.RuntimeException
 
 @ExtendWith(SpringExtension::class)
 @TestInstance(PER_CLASS)
+@ActiveProfiles("test")
 @SpringBootTest(
   properties = ["prisonRegister.endpoint.url=http://localhost:9094"],
   classes = [WebClientConfig::class, PrisonRegisterClient::class]
@@ -66,21 +70,14 @@ class PrisonRegisterIntegrationTest(
     val prison = Prison(prisonId, PrisonName("Medway (STC)"), true)
     prisonRegisterMockServer.stubPrison(prison)
 
-    val result = prisonRegisterClient.findPrisonById(prisonId).block()
+    val result = prisonRegisterClient.findPrisonById(prisonId).block()!!
 
     assertThat(result, present(equalTo(prison)))
   }
 
-  private fun prisonIds(): List<PrisonId> =
-    listOf(
-      PrisonId("AAA"),
-      PrisonId("XXX"),
-      PrisonId("YYY"),
-    )
-
-  @ParameterizedTest(name = "find prison with id {0}")
-  @MethodSource("prisonIds")
-  fun `can retrieve find prison by id using response template`(prisonId: PrisonId) {
+  @Test
+  fun `can retrieve find prison by id using response template`() {
+    val prisonId = PrisonId("AAA")
     prisonRegisterMockServer.stubFindAnyPrisonById()
 
     val result = prisonRegisterClient.findPrisonById(prisonId).block()
@@ -95,5 +92,25 @@ class PrisonRegisterIntegrationTest(
     val result = prisonRegisterClient.findPrisonById(PrisonId("XXX")).block()
 
     assertThat(result, absent())
+  }
+
+  @Test
+  fun `handle timeout from client`() {
+    prisonRegisterMockServer.delaySearch("/prisons", 2500)
+    val exception = assertThrows<RuntimeException> {
+      prisonRegisterClient.getAllPrisons().block()
+    }
+    assertThat(exception.cause!!.javaClass, equalTo(ClientTimeoutException::class.java))
+    assertThat(exception.cause!!.message, equalTo("PrisonRegisterClient: [java.util.concurrent.TimeoutException]"))
+  }
+
+  @Test
+  fun `handle exception from client`() {
+    prisonRegisterMockServer.stubCallWithException("/prisons")
+    val exception = assertThrows<RuntimeException> {
+      prisonRegisterClient.getAllPrisons().block()!!
+    }
+    assertThat(exception.cause!!.javaClass, equalTo(ClientException::class.java))
+    assertThat(exception.cause!!.message, equalTo("PrisonRegisterClient: [200 OK from GET http://localhost:9094/prisons; nested exception is reactor.netty.http.client.PrematureCloseException: Connection prematurely closed DURING response]"))
   }
 }

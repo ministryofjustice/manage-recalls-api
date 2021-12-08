@@ -9,8 +9,11 @@ import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 
@@ -37,6 +40,28 @@ class ManageRecallsApiExceptionHandlerTest {
     assertThat(
       result,
       isResponseEntityMatching(BAD_REQUEST, ErrorResponse(BAD_REQUEST, exception.message))
+    )
+  }
+
+  @Test
+  fun `ClientTimeoutException should be translated to the corresponding status`() {
+    val exception = ClientTimeoutException("Client ABC", "SomeTimeoutException")
+    val result = underTest.handleException(exception)
+
+    assertThat(
+      result,
+      isResponseEntityMatching(GATEWAY_TIMEOUT, ErrorResponse(GATEWAY_TIMEOUT, "Client ABC: [SomeTimeoutException]"))
+    )
+  }
+
+  @Test
+  fun `ClientException should be translated to the corresponding status`() {
+    val exception = ClientException("Client ABC", WebClientResponseException(404, "Blah", null, null, null))
+    val result = underTest.handleException(exception)
+
+    assertThat(
+      result,
+      isResponseEntityMatching(INTERNAL_SERVER_ERROR, ErrorResponse(INTERNAL_SERVER_ERROR, "ClientException: Client ABC: [404 Blah]"))
     )
   }
 
