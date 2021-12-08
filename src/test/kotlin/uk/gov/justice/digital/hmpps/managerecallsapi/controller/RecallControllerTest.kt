@@ -124,12 +124,12 @@ class RecallControllerTest {
       List<RecallResponse>::containsAll,
       listOf(
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
-        recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId),
-        recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
+        recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId, bookedByUserName = FullName("Mickey Mouse")),
+        recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = FullName("Mickey Mouse"), bookedByUserName = FullName("Mickey Mouse")),
+        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
         recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
+        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
     )
   }
@@ -154,10 +154,10 @@ class RecallControllerTest {
       List<RecallResponse>::containsAll,
       listOf(
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
-        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP),
+        recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
         recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId)
+        recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
 
     )
