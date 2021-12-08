@@ -35,7 +35,11 @@ courtRegister:
 
 bankHolidayRegister:
   endpoint:
-    url: http://localhost:9094/health/ping  # using prisonRegister so that we don't depend on a live website in our tests.
+    url: http://localhost:9094/health/ping  # no mock yet: using prisonRegister so that we don't depend on a live website in our tests.
+
+policeUkApi:
+  endpoint:
+    url: http://localhost:9094/health/ping  # no mock yet: using prisonRegister so that we don't depend on a live website in our tests.
 
 clamav:
   virus:

@@ -33,6 +33,9 @@ courtRegister:
   endpoint:
     url: http://localhost:9095
 
+#bankHolidayRegister: uses real for now
+#policeUkApi: uses real for now
+
 oauth:
   endpoint:
     url: http://localhost:9090/auth

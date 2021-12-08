@@ -25,7 +25,7 @@ class HealthCheckComponentTest : ComponentTestBase() {
 
   @Test
   fun `healthy service returns status of each health check and version details`() {
-    prisonerOffenderSearch.isHealthy()
+    prisonerOffenderSearchMockServer.isHealthy()
     gotenbergMockServer.isHealthy()
     prisonRegisterMockServer.isHealthy()
     courtRegisterMockServer.isHealthy()
@@ -45,13 +45,14 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.courtRegister.status" to "UP",
       "components.clamAV.status" to "UP",
       "components.hmppsAuth.status" to "UP",
-      "components.bankHoliday.status" to "UP"
+      "components.bankHoliday.status" to "UP",
+      "components.policeUkApi.status" to "UP"
     )
   }
 
   @Test
   fun `timeout is handled gracefully as down`() {
-    prisonerOffenderSearch.isSlow(INTERNAL_SERVER_ERROR, 3000)
+    prisonerOffenderSearchMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
     gotenbergMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
     prisonRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
     courtRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
@@ -70,6 +71,10 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.gotenberg.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
       "components.prisonRegister.status" to "UNKNOWN",
       "components.prisonRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.bankHoliday.status" to "UNKNOWN",
+      "components.bankHoliday.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.policeUkApi.status" to "UNKNOWN",
+      "components.policeUkApi.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
       "components.courtRegister.status" to "UNKNOWN",
       "components.courtRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
       "components.hmppsAuth.status" to "UNKNOWN",
@@ -95,9 +100,11 @@ class HealthCheckComponentTest : ComponentTestBase() {
 
   private fun parameterArrays(): Stream<Arguments>? {
     return Stream.of(
-      Arguments.of("prisonerOffenderSearch", prisonerOffenderSearch),
+      Arguments.of("prisonerOffenderSearch", prisonerOffenderSearchMockServer),
       Arguments.of("courtRegister", courtRegisterMockServer),
       Arguments.of("prisonRegister", prisonRegisterMockServer),
+      Arguments.of("bankHoliday", prisonRegisterMockServer), // using prisonRegisterMock as mock per profile config
+      Arguments.of("policeUkApi", prisonRegisterMockServer), // using prisonRegisterMock as mock per profile config
       Arguments.of("gotenberg", gotenbergMockServer),
       Arguments.of("hmppsAuth", hmppsAuthMockServer),
     )

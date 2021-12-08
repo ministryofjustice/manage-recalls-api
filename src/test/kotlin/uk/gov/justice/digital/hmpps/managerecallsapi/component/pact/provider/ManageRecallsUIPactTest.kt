@@ -76,7 +76,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a prisoner exists for NOMS number")
   fun `a prisoner exists for NOMS number`() {
-    prisonerOffenderSearch.prisonerSearchRespondsWith(
+    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
       prisonerSearchRequest,
       listOf(
         Prisoner(

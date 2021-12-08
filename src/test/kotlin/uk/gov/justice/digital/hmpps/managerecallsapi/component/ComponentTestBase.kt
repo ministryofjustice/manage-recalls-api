@@ -72,7 +72,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   protected lateinit var missingDocumentsRecordRepository: MissingDocumentsRecordRepository
 
   @Autowired
-  protected lateinit var prisonerOffenderSearch: PrisonerOffenderSearchMockServer
+  protected lateinit var prisonerOffenderSearchMockServer: PrisonerOffenderSearchMockServer
 
   @Autowired
   protected lateinit var prisonRegisterMockServer: PrisonRegisterMockServer
@@ -99,7 +99,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   @BeforeAll
   fun startMocks() {
     hmppsAuthMockServer.start()
-    prisonerOffenderSearch.start()
+    prisonerOffenderSearchMockServer.start()
     prisonRegisterMockServer.start()
     courtRegisterMockServer.start()
     if (!useRealGotenbergServer) gotenbergMockServer.start()
@@ -109,7 +109,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   @AfterAll
   fun stopMocks() {
     hmppsAuthMockServer.stop()
-    prisonerOffenderSearch.stop()
+    prisonerOffenderSearchMockServer.stop()
     prisonRegisterMockServer.stop()
     courtRegisterMockServer.stop()
     if (!useRealGotenbergServer) gotenbergMockServer.stop()
@@ -119,7 +119,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   fun resetMocksAndStubClientToken() {
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
-    prisonerOffenderSearch.resetAll()
+    prisonerOffenderSearchMockServer.resetAll()
     prisonRegisterMockServer.resetAll()
     prisonRegisterMockServer.stubPrisons()
     courtRegisterMockServer.stubCourts()
