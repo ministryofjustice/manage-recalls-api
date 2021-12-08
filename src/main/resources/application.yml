@@ -89,6 +89,9 @@ prisonerSearch:
     url: http://localhost:9092
   timeout: 5
 
+clientApi:
+  timeout: 5
+
 prisonRegister:
   endpoint:
     url: http://localhost:9094
