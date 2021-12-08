@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.register
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -10,9 +11,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 
 @Component
 class CourtRegisterClient(
-  @Autowired
-  internal val courtRegisterWebClient: WebClient
-) : ErrorHandlingClient(courtRegisterWebClient) {
+  @Autowired internal val courtRegisterWebClient: WebClient,
+  @Value("\${clientApi.timeout}") val timeout: Long
+) : ErrorHandlingClient(courtRegisterWebClient, timeout) {
 
   fun getAllCourts(): Mono<List<Court>> =
     getResponse("/courts/all", object : ParameterizedTypeReference<List<Court>>() {})

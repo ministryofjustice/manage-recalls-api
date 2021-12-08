@@ -42,3 +42,6 @@ oauth:
 
 prisonerSearch:
   timeout: 2
+
+clientApi:
+  timeout: 2

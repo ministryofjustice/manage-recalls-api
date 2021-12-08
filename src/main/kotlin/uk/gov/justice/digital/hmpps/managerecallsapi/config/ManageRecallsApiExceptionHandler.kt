@@ -101,6 +101,6 @@ open class ManageRecallsException(override val message: String? = null, override
 }
 
 class ClientTimeoutException(clientName: String, errorType: String) : ManageRecallsException("$clientName: [$errorType]")
-class ClientException(clientName: String, exception: Exception) : ManageRecallsException("$clientName: [${exception.message}", exception)
+class ClientException(clientName: String, exception: Exception) : ManageRecallsException("$clientName: [${exception.message}]", exception)
 
 class WrongDocumentTypeException(val category: DocumentCategory) : ManageRecallsException(category.name)

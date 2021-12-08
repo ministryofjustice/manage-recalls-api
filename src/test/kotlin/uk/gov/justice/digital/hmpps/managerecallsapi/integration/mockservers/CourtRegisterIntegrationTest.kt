@@ -11,21 +11,27 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
+import java.lang.RuntimeException
 
 @ExtendWith(SpringExtension::class)
 @TestInstance(PER_CLASS)
+@ActiveProfiles("test")
 @SpringBootTest(
   properties = ["courtRegister.endpoint.url=http://localhost:9095"],
   classes = [WebClientConfig::class, CourtRegisterClient::class]
@@ -95,5 +101,25 @@ class CourtRegisterIntegrationTest(
     val result = courtRegisterClient.findById(CourtId("XXX")).block()
 
     assertThat(result, absent())
+  }
+
+  @Test
+  fun `handle timeout from client`() {
+    courtRegisterMockServer.delaySearch("/courts/all", 3000)
+    val exception = assertThrows<RuntimeException> {
+      courtRegisterClient.getAllCourts().block()!!
+    }
+    assertThat(exception.cause!!.javaClass, equalTo(ClientTimeoutException::class.java))
+    assertThat(exception.cause!!.message, equalTo("CourtRegisterClient: [java.util.concurrent.TimeoutException]"))
+  }
+
+  @Test
+  fun `handle exception from client`() {
+    courtRegisterMockServer.stubCallWithException("/courts/all")
+    val exception = assertThrows<RuntimeException> {
+      courtRegisterClient.getAllCourts().block()!!
+    }
+    assertThat(exception.cause!!.javaClass, equalTo(ClientException::class.java))
+    assertThat(exception.cause!!.message, equalTo("CourtRegisterClient: [200 OK from GET http://localhost:9095/courts/all; nested exception is reactor.netty.http.client.PrematureCloseException: Connection prematurely closed DURING response]"))
   }
 }

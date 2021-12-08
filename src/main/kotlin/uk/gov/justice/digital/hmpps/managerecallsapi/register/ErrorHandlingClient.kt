@@ -5,8 +5,14 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
+import java.time.Duration
+import java.util.concurrent.TimeoutException
 
-abstract class ErrorHandlingClient(val webClient: WebClient) {
+abstract class ErrorHandlingClient(
+  val webClient: WebClient,
+  private val clientTimeout: Long
+) {
 
   fun <T> getResponse(uri: String, typeReference: ParameterizedTypeReference<T>): Mono<T> {
     return getResponseWithoutErrorHandling(uri, typeReference)
@@ -33,4 +39,6 @@ abstract class ErrorHandlingClient(val webClient: WebClient) {
     .uri(uri)
     .retrieve()
     .bodyToMono(value)
+    .timeout(Duration.ofSeconds(clientTimeout))
+    .onErrorMap(TimeoutException::class.java) { ex -> ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName) }
 }
