@@ -99,7 +99,7 @@ class DocumentControllerTest {
     val bytes = "Hello".toByteArray()
 
     val userDetails = mockk<UserDetails>()
-    every { userDetailsService.find(createdByUserId) } returns userDetails
+    every { userDetailsService.get(createdByUserId) } returns userDetails
     val fullName = FullName("Caseworker One")
     every { userDetails.fullName() } returns fullName
     every { documentService.getDocument(recallId1, documentId) } returns Pair(aRecallDocument, bytes)
@@ -114,7 +114,6 @@ class DocumentControllerTest {
       fileName,
       1,
       details,
-      createdByUserId,
       fullName,
       now
     )

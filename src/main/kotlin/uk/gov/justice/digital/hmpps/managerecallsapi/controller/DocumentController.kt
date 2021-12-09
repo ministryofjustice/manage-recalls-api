@@ -69,8 +69,7 @@ class DocumentController(
         document.fileName,
         document.version,
         document.details,
-        document.createdByUserId(),
-        userDetailsService.find(document.createdByUserId())?.fullName(),
+        userDetailsService.get(document.createdByUserId()).fullName(),
         document.createdDateTime
       )
     )
@@ -201,7 +200,6 @@ data class GetDocumentResponse(
   val fileName: String,
   val version: Int?,
   val details: String?,
-  val createdByUserId: UserId,
-  val createdByUserName: FullName?,
+  val createdByUserName: FullName,
   val createdDateTime: OffsetDateTime,
 )
