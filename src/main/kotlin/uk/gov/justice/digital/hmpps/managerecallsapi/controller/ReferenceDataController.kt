@@ -40,7 +40,7 @@ class ReferenceDataController(
 data class LocalDeliveryUnitResponse(val name: String, val label: String)
 
 @Suppress("unused")
-enum class LocalDeliveryUnit(val label: String) {
+enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) {
   CENTRAL_AUDIT_TEAM("Central Audit Team"),
   CHANNEL_ISLANDS("Channel Islands"),
   ISLE_OF_MAN("Isle of Man"),
@@ -71,7 +71,7 @@ enum class LocalDeliveryUnit(val label: String) {
   PS_CALDERDALE("PS - Calderdale"),
   PS_CAMBRIDGESHIRE_AND_PETERBOROUGH("PS - Cambridgeshire and Peterborough"),
   PS_CAMDEN_ISLINGTON("PS - Camden & Islington"),
-  PS_CARDIFF_AND_VALE("PS - Cardiff and Vale"),
+  PS_CARDIFF_AND_VALE("PS - Cardiff and Vale", isInWales = true),
   PS_CARLISLE("PS - Carlisle"), // Active from 10 Dec 2021
   PS_CHESTER("PS - Chester"),
   PS_CHORLEY("PS - Chorley"),
@@ -80,7 +80,7 @@ enum class LocalDeliveryUnit(val label: String) {
   PS_CREWE("PS - Crewe"),
   PS_CROYDON("PS - Croydon"),
   PS_CUMBRIA("PS - Cumbria"), // No longer active 10 Dec 2021
-  PS_CWM_TAF_MORGANNWG("PS - Cwm Taf Morgannwg"),
+  PS_CWM_TAF_MORGANNWG("PS - Cwm Taf Morgannwg", isInWales = true),
   PS_DERBY_CITY("PS - Derby City"),
   PS_DERBYSHIRE("PS - Derbyshire"),
   PS_DEVON_AND_TORBAY("PS - Devon and Torbay"),
@@ -88,7 +88,7 @@ enum class LocalDeliveryUnit(val label: String) {
   PS_DORSET("PS - Dorset"),
   PS_DUDLEY("PS - Dudley"),
   PS_DURHAM("PS - Durham"),
-  PS_DYFED_POWYS("PS - Dyfed-Powys"),
+  PS_DYFED_POWYS("PS - Dyfed-Powys", isInWales = true),
   PS_EALING("PS - Ealing"),
   PS_EAST_BERKSHIRE("PS - East Berkshire"),
   PS_EAST_CHESHIRE("PS - East Cheshire"), // No longer active 10 Dec 2021
@@ -101,7 +101,7 @@ enum class LocalDeliveryUnit(val label: String) {
   PS_GATESHEAD("PS - Gateshead"),
   PS_GLOUCESTERSHIRE("PS - Gloucestershire"),
   PS_GREENWICH("PS - Greenwich"),
-  PS_GWENT("PS - Gwent"),
+  PS_GWENT("PS - Gwent", isInWales = true),
   PS_HACKNEY("PS - Hackney"),
   PS_HALTON("PS - Halton"),
   PS_HAMMERSMITH_FULHAM("PS - Hammersmith & Fulham"),
@@ -141,7 +141,7 @@ enum class LocalDeliveryUnit(val label: String) {
   PS_NORTH_EAST_LINCOLNSHIRE("PS - North East Lincolnshire"),
   PS_NORTH_LINCOLNSHIRE("PS - North Lincolnshire"),
   PS_NORTH_TYNESIDE("PS - North Tyneside"),
-  PS_NORTH_WALES("PS - North Wales"),
+  PS_NORTH_WALES("PS - North Wales", isInWales = true),
   PS_NORTH_YORKSHIRE("PS - North Yorkshire"),
   PS_NORTHAMPTONSHIRE("PS - Northamptonshire"),
   PS_NORTHUMBERLAND("PS - Northumberland"),
@@ -178,7 +178,7 @@ enum class LocalDeliveryUnit(val label: String) {
   PS_SUFFOLK("PS - Suffolk"),
   PS_SUNDERLAND("PS - Sunderland"),
   PS_SURREY("PS - Surrey"),
-  PS_SWANSEA_NEATH_AND_PORT_TALBOT("PS - Swansea, Neath and Port-Talbot"),
+  PS_SWANSEA_NEATH_AND_PORT_TALBOT("PS - Swansea, Neath and Port-Talbot", isInWales = true),
   PS_SWINDON_AND_WILTSHIRE("PS - Swindon and Wiltshire"),
   PS_TAMESIDE("PS - Tameside"),
   PS_TELFORD("PS - Telford"),

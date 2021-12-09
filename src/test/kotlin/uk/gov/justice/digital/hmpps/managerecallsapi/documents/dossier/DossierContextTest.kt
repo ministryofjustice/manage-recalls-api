@@ -3,8 +3,16 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -12,8 +20,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import java.time.OffsetDateTime
+import java.util.stream.Stream
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DossierContextTest {
 
   private val nomsNumber = NomsNumber("AA1234A")
@@ -21,16 +32,19 @@ class DossierContextTest {
   private val licenceConditionsBreached = "(i) breach one\n(ii) breach two"
   private val firstName = FirstName("Barrie")
   private val lastName = LastName("Badger")
+  private val recallLength = RecallLength.TWENTY_EIGHT_DAYS
+  private val currentPrisonName = PrisonName("Wormwood Rubs")
   private val recall = Recall(
     ::RecallId.random(),
     nomsNumber, ::UserId.random(), OffsetDateTime.now(), firstName, null, lastName,
     bookingNumber = bookingNumber,
-    licenceConditionsBreached = licenceConditionsBreached
+    licenceConditionsBreached = licenceConditionsBreached,
+    recallLength = recallLength
   )
 
   @Test
-  fun `create ReasonsForRecallContext with all values populated`() {
-    val underTest = DossierContext(recall, PrisonName("N/A"))
+  fun `create ReasonsForRecallContext with all values correctly populated`() {
+    val underTest = DossierContext(recall, currentPrisonName)
 
     val result = underTest.getReasonsForRecallContext()
 
@@ -44,6 +58,46 @@ class DossierContextTest {
           licenceConditionsBreached
         )
       )
+    )
+  }
+
+  @Test
+  fun `create TableOfContentsContext with all values correctly populated`() {
+    val underTest = DossierContext(recall, currentPrisonName)
+
+    val result = underTest.getTableOfContentsContext()
+
+    assertThat(
+      result,
+      equalTo(
+        TableOfContentsContext(
+          PersonName(firstName, lastName = lastName).firstAndLastName(),
+          RecallLengthDescription(recallLength),
+          currentPrisonName,
+          bookingNumber
+        )
+      )
+    )
+  }
+
+  @ParameterizedTest(name = "All Welsh LDUs return inWales as true")
+  @MethodSource("sampleOfLDUsWithWelshOrNot")
+  fun `welsh LDUs return includeWelsh as true whilst sample of others all return as false`(
+    ldu: LocalDeliveryUnit,
+    expected: Boolean
+  ) {
+    val probationInfo = fullyPopulatedInstance<ProbationInfo>()
+    val underTest = DossierContext(recall.copy(probationInfo = probationInfo.copy(localDeliveryUnit = ldu)), currentPrisonName)
+
+    assertThat(underTest.includeWelsh(), equalTo(expected))
+  }
+
+  private fun sampleOfLDUsWithWelshOrNot(): Stream<Arguments>? {
+    return Stream.of(
+      Arguments.of(LocalDeliveryUnit.PS_HOUNSLOW, false),
+      Arguments.of(LocalDeliveryUnit.PS_NORTH_WALES, true),
+      Arguments.of(LocalDeliveryUnit.PS_DYFED_POWYS, true),
+      Arguments.of(LocalDeliveryUnit.PS_NORTH_DURHAM, false),
     )
   }
 }

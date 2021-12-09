@@ -18,13 +18,16 @@ will apply ktlint styles to intellij and also add a pre-commit hook to format al
 
 ### Run the service locally on the command line
 Requires postgres and localstack:
-```docker compose up -d postgres localstack```
+```
+docker compose up -d postgres localstack
+```
 
+Start with dev profile:
 ```bash
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 ```
 
-You can now access the service on http://localhost:8080
+You can now access the API at: http://localhost:8080
 
 ### Run in docker-compose
 ```bash

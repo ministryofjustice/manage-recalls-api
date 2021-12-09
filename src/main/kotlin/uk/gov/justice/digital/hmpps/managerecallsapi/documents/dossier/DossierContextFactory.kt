@@ -43,6 +43,10 @@ data class DossierContext(
       currentPrisonName,
       recall.bookingNumber!!
     )
+
+  fun includeWelsh(): Boolean {
+    return recall.probationInfo!!.localDeliveryUnit.isInWales
+  }
 }
 
 data class TableOfContentsItem(val title: String, val pageNumber: Int)
