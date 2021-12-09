@@ -81,7 +81,6 @@ class DocumentComponentTest : ComponentTestBase() {
           fileName,
           2,
           details,
-          authenticatedClient.userId,
           FullName("Bertie Badger"),
           secondDocument.createdDateTime
         )
@@ -103,7 +102,6 @@ class DocumentComponentTest : ComponentTestBase() {
           fileName,
           3,
           details,
-          authenticatedClient.userId,
           FullName("Bertie Badger"),
           recallDocument.createdDateTime
         )
@@ -158,7 +156,6 @@ class DocumentComponentTest : ComponentTestBase() {
           fileName,
           1,
           details,
-          authenticatedClient.userId,
           FullName("Bertie Badger"),
           response.createdDateTime
         )
@@ -215,7 +212,6 @@ class DocumentComponentTest : ComponentTestBase() {
           fileName,
           1,
           details,
-          authenticatedClient.userId,
           FullName("Bertie Badger"),
           document.createdDateTime
         )
@@ -263,7 +259,6 @@ class DocumentComponentTest : ComponentTestBase() {
           fileName,
           null,
           details,
-          authenticatedClient.userId,
           FullName("Bertie Badger"),
           document.createdDateTime
         )
@@ -323,7 +318,6 @@ class DocumentComponentTest : ComponentTestBase() {
           fileName,
           2,
           details,
-          authenticatedClient.userId,
           FullName("Bertie Badger"),
           secondDocument.createdDateTime
         )
