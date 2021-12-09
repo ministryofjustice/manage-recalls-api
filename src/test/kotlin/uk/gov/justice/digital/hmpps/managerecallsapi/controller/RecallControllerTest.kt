@@ -183,7 +183,10 @@ class RecallControllerTest {
       lastReleaseDate = lastReleaseDate,
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
+    val userDetails = mockk<UserDetails>()
     every { recallRepository.getByRecallId(recallId) } returns recall
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+    every { userDetails.fullName() } returns FullName("Boris Badger")
 
     val result = underTest.getRecall(recallId)
 
@@ -194,8 +197,9 @@ class RecallControllerTest {
           document.category,
           fileName,
           document.version,
+          details,
           document.createdDateTime,
-          details
+          FullName("Boris Badger")
         )
       ),
       lastReleasePrison = PrisonId("BEL"),
@@ -212,7 +216,7 @@ class RecallControllerTest {
     val assignedRecall = recall.copy(assignee = assignee.value)
 
     every { recallService.assignRecall(recallId, assignee) } returns assignedRecall
-    every { userDetailsService.find(assignee) } returns UserDetails(
+    every { userDetailsService.get(assignee) } returns UserDetails(
       assignee, FirstName("Bertie"), lastName, "", Email("b@b.com"), PhoneNumber("0987654321"),
       CaseworkerBand.FOUR_PLUS,
       OffsetDateTime.now()
@@ -226,27 +230,6 @@ class RecallControllerTest {
         recallResponse.copy(
           assignee = assignee,
           assigneeUserName = FullName("Bertie Badger")
-        )
-      )
-    )
-  }
-
-  @Test
-  fun `set assignee for recall without user details`() {
-    val assignee = ::UserId.random()
-    val assignedRecall = recall.copy(assignee = assignee.value)
-
-    every { recallService.assignRecall(recallId, assignee) } returns assignedRecall
-    every { userDetailsService.find(assignee) } returns null
-
-    val result = underTest.assignRecall(recallId, assignee)
-
-    assertThat(
-      result,
-      equalTo(
-        recallResponse.copy(
-          assignee = assignee,
-          assigneeUserName = null
         )
       )
     )
@@ -269,13 +252,13 @@ class RecallControllerTest {
 
     val recallWithIds = recall.copy(assessedByUserId = assessedByUserId.value, bookedByUserId = bookedByUserId.value, dossierCreatedByUserId = dossierCreatedByUserId.value)
 
-    every { userDetailsService.find(assessedByUserId) } returns UserDetails(
+    every { userDetailsService.get(assessedByUserId) } returns UserDetails(
       assignee, firstNameAssessedBy, lastNameAssessedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
     )
-    every { userDetailsService.find(bookedByUserId) } returns UserDetails(
+    every { userDetailsService.get(bookedByUserId) } returns UserDetails(
       assignee, firstNameBookedBy, lastNameBookedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
     )
-    every { userDetailsService.find(dossierCreatedByUserId) } returns UserDetails(
+    every { userDetailsService.get(dossierCreatedByUserId) } returns UserDetails(
       assignee, firstNameDossierCreatedBy, lastNameDossierCreatedBy, "", Email("b@b.com"), PhoneNumber("0987654321"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()
     )
 
@@ -384,8 +367,12 @@ class RecallControllerTest {
     val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, null, now, createdByUserId)
     val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, null, now, createdByUserId)
     val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, otherDoc1, otherDoc2))
+    val userDetails = mockk<UserDetails>()
+    val fullName = FullName("Bertie Badger")
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDocuments
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+    every { userDetails.fullName() } returns fullName
 
     val response = underTest.getRecall(recallId)
 
@@ -394,9 +381,9 @@ class RecallControllerTest {
       equalTo(
         recallResponse.copy(
           documents = listOf(
-            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, now, null),
-            Api.RecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, now, null),
-            Api.RecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, now, null),
+            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, null, now, fullName),
+            Api.RecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, null, now, fullName),
+            Api.RecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, null, now, fullName),
           )
         )
       )

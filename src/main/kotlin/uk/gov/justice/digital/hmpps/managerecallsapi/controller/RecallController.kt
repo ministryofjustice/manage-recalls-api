@@ -177,11 +177,11 @@ class RecallController(
     dossierCreatedByUserId = this.dossierCreatedByUserId(),
     dossierTargetDate = this.dossierTargetDate,
     assignee = this.assignee(),
-    assigneeUserName = this.assignee()?.let { userDetailsService.find(it)?.fullName() },
+    assigneeUserName = this.assignee()?.let { userDetailsService.get(it).fullName() },
     recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
-    assessedByUserName = this.assessedByUserId()?.let { userDetailsService.find(it)?.fullName() },
-    bookedByUserName = this.bookedByUserId()?.let { userDetailsService.find(it)?.fullName() },
-    dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.find(it)?.fullName() }
+    assessedByUserName = this.assessedByUserId()?.let { userDetailsService.get(it).fullName() },
+    bookedByUserName = this.bookedByUserId()?.let { userDetailsService.get(it).fullName() },
+    dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.get(it).fullName() }
   )
 
   private fun Recall.latestMissingDocumentsRecord() =
@@ -193,7 +193,17 @@ class RecallController(
     val partitionedDocs = documents.partition { it.category.versioned }
     val latestDocuments = partitionedDocs.first.filter { it.category.versioned }
       .groupBy { it.category }.values.map { it.sortedBy { d -> d.version }.last() } + partitionedDocs.second
-    return latestDocuments.map { Api.RecallDocument(it.id(), it.category, it.fileName, it.version, it.createdDateTime, it.details) }
+    return latestDocuments.map {
+      Api.RecallDocument(
+        it.id(),
+        it.category,
+        it.fileName,
+        it.version,
+        it.details,
+        it.createdDateTime,
+        userDetailsService.get(it.createdByUserId()).fullName()
+      )
+    }
   }
 }
 
@@ -288,8 +298,9 @@ class Api {
     val category: DocumentCategory,
     val fileName: String,
     val version: Int?,
+    val details: String?,
     val createdDateTime: OffsetDateTime,
-    val details: String?
+    val createdByUserName: FullName
   )
 
   data class MissingDocumentsRecord(
