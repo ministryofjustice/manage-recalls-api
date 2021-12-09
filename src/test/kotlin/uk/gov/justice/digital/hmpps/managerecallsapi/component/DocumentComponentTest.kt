@@ -337,7 +337,17 @@ class DocumentComponentTest : ComponentTestBase() {
     assertThat(documents.size, equalTo(1))
     assertThat(
       documents[0],
-      equalTo(RecallDocument(firstDocumentId, versionedDocumentCategory, fileName, 1, documents[0].createdDateTime, details))
+      equalTo(
+        RecallDocument(
+          firstDocumentId,
+          versionedDocumentCategory,
+          fileName,
+          1,
+          details,
+          documents[0].createdDateTime,
+          FullName("Bertie Badger")
+        )
+      )
     )
   }
 }
