@@ -33,7 +33,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val details = "Some details"
   private val bookRecallRequest = BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger"))
   private val fileBytes = "content".toByteArray()
-  private val category = DocumentCategory.PART_A_RECALL_REPORT
+  private val category = DocumentCategory.values().random()
   private val addDocumentRequest = AddDocumentRequest(category, fileBytes.encodeToBase64String(), "part_a.pdf", details)
   private val updateRecallRequest = UpdateRecallRequest()
   private val recallSearchRequest = RecallSearchRequest(nomsNumber)
@@ -46,8 +46,8 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
     PhoneNumber("09876543210"),
     CaseworkerBand.FOUR_PLUS
   )
-  private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.REVOCATION_ORDER)
-  private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.PART_A_RECALL_REPORT), "some detail", "content", "email.msg")
+  private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.values().random())
+  private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", "email.msg")
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
@@ -62,6 +62,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}/dossier"),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents").bodyValue(addDocumentRequest),
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}"),
+      webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents?category=${DocumentCategory.values().random()}"),
       webTestClient.get().uri("/users/${UUID.randomUUID()}"),
       webTestClient.get().uri("/users/current"),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
