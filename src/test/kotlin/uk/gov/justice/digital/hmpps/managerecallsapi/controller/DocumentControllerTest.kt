@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
@@ -194,5 +195,23 @@ class DocumentControllerTest {
         assertThat(it.body?.content, equalTo(expectedBase64Pdf))
       }
       .verifyComplete()
+  }
+
+  @Test
+  fun `get all documents for a given category for a recall`() {
+    val recallId = ::RecallId.random()
+    val category = DocumentCategory.RECALL_NOTIFICATION
+    val now = OffsetDateTime.now()
+    val createdByUserId = ::UserId.random()
+    val document = Document(::DocumentId.random(), recallId, category, "file.pdf", 1, null, now, createdByUserId)
+    val userDetails = mockk<UserDetails>()
+
+    every { documentService.getAllDocumentsByCategory(recallId, category) } returns listOf(document)
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+    every { userDetails.fullName() } returns FullName("Andy Newton")
+
+    val result = underTest.getRecallDocumentsByCategory(recallId, category)
+
+    assertThat(result.body, equalTo(listOf(Api.RecallDocument(document.id(), category, "file.pdf", 1, null, now, FullName("Andy Newton")))))
   }
 }

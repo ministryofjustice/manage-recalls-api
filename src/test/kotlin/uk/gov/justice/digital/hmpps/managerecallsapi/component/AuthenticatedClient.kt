@@ -13,6 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
@@ -25,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRe
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -60,6 +62,19 @@ class AuthenticatedClient(
   fun getRecall(recallId: RecallId): RecallResponse =
     getRequest("/recalls/$recallId", RecallResponse::class.java)
 
+  fun getRecallDocuments(recallId: RecallId, category: DocumentCategory): List<Api.RecallDocument> =
+    webTestClient.get().uri { uriBuilder ->
+      uriBuilder.path("/recalls/$recallId/documents")
+        .queryParam("category", "{category}")
+        .build(category)
+    }
+      .headers(addHeaders)
+      .exchange()
+      .expectStatus().isOk()
+      .expectBody(object : ParameterizedTypeReference<List<Api.RecallDocument>>() {})
+      .returnResult()
+      .responseBody!!
+
   fun getRecall(recallId: RecallId, expectedStatus: HttpStatus) {
     sendGetRequest("/recalls/$recallId", expectedStatus)
   }
@@ -82,11 +97,19 @@ class AuthenticatedClient(
   fun uploadDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
     postRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
 
-  fun uploadDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest, expectedStatus: HttpStatus): WebTestClient.ResponseSpec {
+  fun uploadDocument(
+    recallId: RecallId,
+    addDocumentRequest: AddDocumentRequest,
+    expectedStatus: HttpStatus
+  ): WebTestClient.ResponseSpec {
     return sendPostRequest("/recalls/$recallId/documents", addDocumentRequest, expectedStatus)
   }
 
-  fun updateDocumentCategory(recallId: RecallId, documentId: DocumentId, updateDocumentRequest: UpdateDocumentRequest): UpdateDocumentResponse =
+  fun updateDocumentCategory(
+    recallId: RecallId,
+    documentId: DocumentId,
+    updateDocumentRequest: UpdateDocumentRequest
+  ): UpdateDocumentResponse =
     patchRequest("/recalls/$recallId/documents/$documentId", updateDocumentRequest, UpdateDocumentResponse::class.java)
 
   fun getRecallDocument(recallId: RecallId, documentId: DocumentId): GetDocumentResponse =
@@ -133,7 +156,11 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun <T> addUserDetails(addUserDetailsRequest: AddUserDetailsRequest, responseClass: Class<T>, expectedStatus: HttpStatus = CREATED): T =
+  fun <T> addUserDetails(
+    addUserDetailsRequest: AddUserDetailsRequest,
+    responseClass: Class<T>,
+    expectedStatus: HttpStatus = CREATED
+  ): T =
     postRequest("/users", addUserDetailsRequest, responseClass, expectedStatus)
 
   fun getUserDetails(userId: UserId) =

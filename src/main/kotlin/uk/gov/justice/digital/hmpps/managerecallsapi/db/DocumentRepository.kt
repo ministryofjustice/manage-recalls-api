@@ -25,12 +25,18 @@ interface JpaDocumentRepository : JpaRepository<Document, UUID> {
     @Param("documentId") documentId: UUID,
     @Param("recallId") recallId: UUID
   ): Document?
+
+  fun getAllByRecallIdAndCategory(
+    @Param("recallId") recallId: UUID,
+    @Param("category") category: DocumentCategory
+  ): List<Document>
 }
 
 @NoRepositoryBean
 interface ExtendedDocumentRepository : JpaDocumentRepository {
   fun getByRecallIdAndDocumentId(recallId: RecallId, documentId: DocumentId): Document
   fun deleteByDocumentId(documentId: DocumentId)
+  fun getAllByRecallIdAndCategory(recallId: RecallId, category: DocumentCategory): List<Document>
 }
 
 @Component
@@ -49,5 +55,9 @@ class DocumentRepository(
       throw WrongDocumentTypeException(category)
     }
     return findFirstByRecallIdAndCategoryOrderByVersionDesc(recallId.value, category)
+  }
+
+  override fun getAllByRecallIdAndCategory(recallId: RecallId, category: DocumentCategory): List<Document> {
+    return getAllByRecallIdAndCategory(recallId.value, category)
   }
 }

@@ -488,4 +488,18 @@ internal class DocumentServiceTest {
 
     verify { documentRepository.deleteByDocumentId(uploadedToS3DocumentIdSlot.captured) }
   }
+
+  @Test
+  fun `get all documents of a given category for a recall`() {
+    val recallId = ::RecallId.random()
+    val documentId = ::DocumentId.random()
+    val now = OffsetDateTime.now()
+    val document = Document(documentId, recallId, documentCategory, fileName, 1, null, now, createdByUserId)
+
+    every { documentRepository.getAllByRecallIdAndCategory(recallId, documentCategory) } returns listOf(document)
+
+    val result = underTest.getAllDocumentsByCategory(recallId, documentCategory)
+
+    assertThat(result, equalTo(listOf(document)))
+  }
 }

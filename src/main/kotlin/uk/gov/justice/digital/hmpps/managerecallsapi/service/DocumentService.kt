@@ -162,6 +162,10 @@ class DocumentService(
       throw DocumentDeleteException("Unable to delete document: Wrong status [${recall.status()}] and/or document category [${document.category}]")
     }
   }
+
+  fun getAllDocumentsByCategory(recallId: RecallId, category: DocumentCategory): List<Document> {
+    return documentRepository.getAllByRecallIdAndCategory(recallId, category)
+  }
 }
 
 data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()

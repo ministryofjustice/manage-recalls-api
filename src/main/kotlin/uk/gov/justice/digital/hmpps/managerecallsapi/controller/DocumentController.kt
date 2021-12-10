@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
@@ -75,6 +76,26 @@ class DocumentController(
     )
   }
 
+  @GetMapping("/recalls/{recallId}/documents")
+  fun getRecallDocumentsByCategory(
+    @PathVariable("recallId") recallId: RecallId,
+    @RequestParam("category") category: DocumentCategory
+  ): ResponseEntity<List<Api.RecallDocument>> {
+    return ResponseEntity.ok(
+      documentService.getAllDocumentsByCategory(recallId, category).map { document ->
+        Api.RecallDocument(
+          document.id(),
+          document.category,
+          document.fileName,
+          document.version,
+          document.details,
+          document.createdDateTime,
+          userDetailsService.get(document.createdByUserId()).fullName()
+        )
+      }
+    )
+  }
+
   @GetMapping("/recalls/{recallId}/recallNotification")
   fun getRecallNotification(
     @PathVariable("recallId") recallId: RecallId,
@@ -111,7 +132,12 @@ class DocumentController(
   @ApiResponses(
     ApiResponse(
       code = 400, message = "Bad request, e.g. virus scan returns error", response = ErrorResponse::class,
-      examples = Example(ExampleProperty(mediaType = "application/json", value = "{\n\"status\": 400,\n\"message\":\"VirusFoundException\"\n}"))
+      examples = Example(
+        ExampleProperty(
+          mediaType = "application/json",
+          value = "{\n\"status\": 400,\n\"message\":\"VirusFoundException\"\n}"
+        )
+      )
     )
   )
   // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER

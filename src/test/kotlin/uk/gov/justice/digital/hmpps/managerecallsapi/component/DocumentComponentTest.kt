@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
@@ -343,5 +344,31 @@ class DocumentComponentTest : ComponentTestBase() {
         )
       )
     )
+  }
+
+  @Test
+  fun `get all documents of a given category for a recall`() {
+    expectNoVirusesWillBeFound()
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val category = PART_A_RECALL_REPORT
+    authenticatedClient.uploadDocument(
+      recall.recallId,
+      AddDocumentRequest(category, base64EncodedDocumentContents, fileName)
+    )
+    authenticatedClient.uploadDocument(
+      recall.recallId,
+      AddDocumentRequest(category, base64EncodedDocumentContents, fileName)
+    )
+    authenticatedClient.uploadDocument(
+      recall.recallId,
+      AddDocumentRequest(category, base64EncodedDocumentContents, fileName)
+    )
+    authenticatedClient.uploadDocument(
+      recall.recallId,
+      AddDocumentRequest(LICENCE, base64EncodedDocumentContents, fileName)
+    )
+    val recallDocuments = authenticatedClient.getRecallDocuments(recall.recallId, category)
+
+    assertThat(recallDocuments.size, equalTo(3))
   }
 }
