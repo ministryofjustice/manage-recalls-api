@@ -1,2 +1,4 @@
 # Ignore until new version is available. Currently we dont expose the thymeleaf in any way that can cause an issue
 CVE-2021-43466
+# New on 10/Dec/21 in org.apache.logging.log4j:log4j-api 2.14.1 : ignore pending determining inclusion path
+CVE-2021-44228
