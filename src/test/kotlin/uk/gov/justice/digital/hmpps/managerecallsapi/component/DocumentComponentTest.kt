@@ -174,7 +174,7 @@ class DocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `can update category for an unversioned document to versioned`() {
+  fun `can update category for an UNCATEGORISED document to versioned`() {
     expectNoVirusesWillBeFound()
     val updatedCategory = PART_A_RECALL_REPORT
 
@@ -221,22 +221,22 @@ class DocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `can update category for a versioned document to unversioned`() {
+  fun `can update category for a UNCATEGORISED document to unversioned`() {
     expectNoVirusesWillBeFound()
-    val updatedCategory = UNCATEGORISED
+    val updatedCategory = OTHER
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val documentId = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName, details)
+      AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName, details)
     ).documentId
 
     val document = documentRepository.getByRecallIdAndDocumentId(recall.recallId, documentId)
     document.let {
       assertThat(it.id(), equalTo(documentId))
       assertThat(it.recallId(), equalTo(recall.recallId))
-      assertThat(it.category, equalTo(PART_A_RECALL_REPORT))
-      assertThat(it.version, equalTo(1))
+      assertThat(it.category, equalTo(UNCATEGORISED))
+      assertThat(it.version, equalTo(null))
       assertThat(it.fileName, equalTo(fileName))
     }
 

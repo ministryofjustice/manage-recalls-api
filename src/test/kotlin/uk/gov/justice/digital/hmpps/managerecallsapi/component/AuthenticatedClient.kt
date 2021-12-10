@@ -70,7 +70,7 @@ class AuthenticatedClient(
     }
       .headers(addHeaders)
       .exchange()
-      .expectStatus().isOk()
+      .expectStatus().isOk
       .expectBody(object : ParameterizedTypeReference<List<Api.RecallDocument>>() {})
       .returnResult()
       .responseBody!!
