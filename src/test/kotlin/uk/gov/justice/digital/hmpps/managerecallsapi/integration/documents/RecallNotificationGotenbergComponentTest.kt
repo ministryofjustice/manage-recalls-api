@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -22,7 +23,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
-    updateRecallWithRequiredInformationForTheDossier(recall.recallId)
+    updateRecallWithRequiredInformationForTheDossier(recall.recallId, localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN)
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId)
 
@@ -42,6 +43,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       contrabandDetail = loremIpsum,
       vulnerabilityDiversity = true,
       vulnerabilityDiversityDetail = loremIpsum,
+      LocalDeliveryUnit.ISLE_OF_MAN,
     )
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId)

@@ -12,7 +12,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletEnglish
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletWelsh
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -37,7 +38,7 @@ class DossierService(
     val dossierContext = dossierContextFactory.createContext(recallId)
 
     return reasonsForRecallService.getPdf(dossierContext, createdByUserId).map { reasonsForRecallPdfBytes ->
-      createTableOfContentsDocumentMap(recallId, reasonsForRecallPdfBytes)
+      createTableOfContentsDocumentMap(reasonsForRecallPdfBytes, recallId, dossierContext.includeWelsh())
     }.flatMap { tableOfContentsDocumentMap ->
       tableOfContentsService.createPdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
         mutableListOf(documentData(tableOfContentsBytes)).apply {
@@ -55,24 +56,35 @@ class DossierService(
   }
 
   private fun createTableOfContentsDocumentMap(
+    reasonsForRecall: ByteArray,
     recallId: RecallId,
-    reasonsForRecall: ByteArray
+    includeWelsh: Boolean
   ): MutableMap<String, ByteArrayDocumentData> {
     val license = documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE)
     val partARecallReport = documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
     val revocationOrder = documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER)
-    return mutableMapOf(
-      "Recall Information Leaflet [Core Dossier]" to documentData(RecallInformationLeaflet),
-      "Licence [Core Dossier]" to documentData(license),
-      "Request for Recall Report [Core Dossier]" to documentData(partARecallReport),
-      "Revocation Order [Core Dossier]" to documentData(revocationOrder),
-      "Reasons for Recall [Core Dossier]" to documentData(reasonsForRecall)
+    val documents = mutableMapOf(
+      "Recall Information Leaflet [Core Dossier]" to documentData(FixedTermRecallInformationLeafletEnglish)
     )
+    if (includeWelsh) {
+      documents["Welsh Recall Information Leaflet"] = documentData(FixedTermRecallInformationLeafletWelsh)
+    }
+    documents.putAll(
+      mutableMapOf(
+        "Recall Information Leaflet [Core Dossier]" to documentData(FixedTermRecallInformationLeafletEnglish),
+        "Licence [Core Dossier]" to documentData(license),
+        "Request for Recall Report [Core Dossier]" to documentData(partARecallReport),
+        "Revocation Order [Core Dossier]" to documentData(revocationOrder),
+        "Reasons for Recall [Core Dossier]" to documentData(reasonsForRecall)
+      )
+    )
+    return documents
   }
 }
 
 enum class RecallClassPathResource(private val path: String) {
-  RecallInformationLeaflet("/pdfs/recall-information-leaflet.pdf");
+  FixedTermRecallInformationLeafletEnglish("/pdfs/FTR-recall-information-leaflet-English.pdf"),
+  FixedTermRecallInformationLeafletWelsh("/pdfs/FTR-recall-information-leaflet-Welsh.pdf");
 
   fun inputStream(): InputStream = ClassPathResource(path).inputStream
   fun byteArray(): ByteArray = ClassPathResource(path).inputStream.readAllBytes()

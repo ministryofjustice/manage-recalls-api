@@ -31,6 +31,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     contrabandDetail: String = "Lots of naughty contraband\n with a line break",
     vulnerabilityDiversity: Boolean = true,
     vulnerabilityDiversityDetail: String = "Very diverse\n with a line break",
+    localDeliveryUnit: LocalDeliveryUnit,
   ) {
     authenticatedClient.updateRecall(
       recallId,
@@ -51,7 +52,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         probationOfficerName = "Percy Pig",
         probationOfficerPhoneNumber = "0898909090",
         probationOfficerEmail = "probation.officer@moj.com",
-        localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
+        localDeliveryUnit = localDeliveryUnit,
         authorisingAssistantChiefOfficer = "ACO",
         localPoliceForceId = PoliceForceId("metropolitan"),
         currentPrison = PrisonId("MWI"),

@@ -17,7 +17,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.RecallInformationLeaflet
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletEnglish
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletWelsh
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -47,7 +48,16 @@ internal class DossierServiceTest {
   )
 
   @Test
-  fun `get dossier returns table of contents, recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall and dossier doesnt already exist`() {
+  fun `get dossier returns table of contents, English recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall and dossier doesnt already exist`() {
+    testDossierGetPdf(false)
+  }
+
+  @Test
+  fun `get dossier to include Welsh returns table of contents, both recall information leaflets, license, part A, revocation order and reasons for recall as dossier when all available for recall and dossier doesnt already exist`() {
+    testDossierGetPdf(true)
+  }
+
+  private fun testDossierGetPdf(includeWelshLeaflet: Boolean) {
     val recallId = ::RecallId.random()
     val createdByUserId = ::UserId.random()
     val licenseContentBytes = randomString().toByteArray()
@@ -60,6 +70,7 @@ internal class DossierServiceTest {
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns null
+    every { dossierContext.includeWelsh() } returns includeWelshLeaflet
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
@@ -73,17 +84,29 @@ internal class DossierServiceTest {
     val dossier = underTest.getPdf(recallId, createdByUserId).block()!!
 
     assertArrayEquals(numberedMergedBytes, dossier)
+
+    val expectedDocumentsToMerge = mutableListOf(
+      byteArrayDocumentDataFor(tableOfContentBytes),
+      byteArrayDocumentDataFor(FixedTermRecallInformationLeafletEnglish.byteArray())
+    )
+
+    if (includeWelshLeaflet) {
+      expectedDocumentsToMerge.add(byteArrayDocumentDataFor(FixedTermRecallInformationLeafletWelsh.byteArray()))
+    }
+
+    expectedDocumentsToMerge.addAll(
+      listOf(
+        byteArrayDocumentDataFor(licenseContentBytes),
+        byteArrayDocumentDataFor(partARecallReportContentBytes),
+        byteArrayDocumentDataFor(revocationOrderContentBytes),
+        byteArrayDocumentDataFor(reasonsForRecallContentBytes)
+      )
+    )
+
     assertThat(
       documentsToMergeSlot.captured,
       onlyContainsInOrder(
-        listOf(
-          byteArrayDocumentDataFor(tableOfContentBytes),
-          byteArrayDocumentDataFor(RecallInformationLeaflet.byteArray()),
-          byteArrayDocumentDataFor(licenseContentBytes),
-          byteArrayDocumentDataFor(partARecallReportContentBytes),
-          byteArrayDocumentDataFor(revocationOrderContentBytes),
-          byteArrayDocumentDataFor(reasonsForRecallContentBytes)
-        )
+        expectedDocumentsToMerge
       )
     )
   }
