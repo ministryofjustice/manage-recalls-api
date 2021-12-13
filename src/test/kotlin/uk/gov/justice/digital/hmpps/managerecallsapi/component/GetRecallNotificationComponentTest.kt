@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -52,6 +53,39 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     val response = authenticatedClient.getRecallNotification(recall.recallId)
 
     assertThat(response.content, equalTo(expectedBase64Pdf))
+  }
+
+  @Test
+  fun `get recall notification returns merged recall summary and revocation order and then create recall notification creates new version but reuses existing revocation order`() {
+    val userId = authenticatedClient.userId
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
+    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
+
+    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
+    gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
+
+    gotenbergMockServer.stubMergePdfs(
+      expectedPdf,
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+    )
+
+    val getResponse = authenticatedClient.getRecallNotification(recall.recallId)
+
+    assertThat(getResponse.content, equalTo(expectedBase64Pdf))
+
+    val firstRecallNotification =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
+    assertThat(firstRecallNotification.version, equalTo(1))
+
+    authenticatedClient.createDocument(recall.recallId, RECALL_NOTIFICATION, "Some detail")
+
+    val secondRecallNotification =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
+    assertThat(secondRecallNotification.version, equalTo(2))
   }
 
   private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId) {

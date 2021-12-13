@@ -11,13 +11,16 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
@@ -71,7 +74,7 @@ class DocumentControllerTest {
     } returns Success(documentId)
 
     val request = AddDocumentRequest(category, documentBytes.encodeToBase64String(), fileName, details)
-    val response = underTest.addDocument(recallId, request, "Bearer Token")
+    val response = underTest.uploadDocument(recallId, request, "Bearer Token")
 
     assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
     assertThat(
@@ -142,7 +145,7 @@ class DocumentControllerTest {
     val bearerToken = "BEARER TOKEN"
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { recallNotificationService.getPdf(recallId, userId) } returns Mono.just(expectedPdf)
+    every { recallNotificationService.getOrCreatePdf(recallId, userId) } returns Mono.just(expectedPdf)
 
     val result = underTest.getRecallNotification(recallId, bearerToken)
 
@@ -164,7 +167,7 @@ class DocumentControllerTest {
     val userId = ::UserId.random()
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { dossierService.getPdf(recallId, userId) } returns Mono.just(expectedPdf)
+    every { dossierService.getOrCreatePdf(recallId, userId) } returns Mono.just(expectedPdf)
 
     val result = underTest.getDossier(recallId, bearerToken)
 
@@ -200,7 +203,7 @@ class DocumentControllerTest {
   @Test
   fun `get all documents for a given category for a recall`() {
     val recallId = ::RecallId.random()
-    val category = DocumentCategory.RECALL_NOTIFICATION
+    val category = RECALL_NOTIFICATION
     val now = OffsetDateTime.now()
     val createdByUserId = ::UserId.random()
     val document = Document(::DocumentId.random(), recallId, category, "file.pdf", 1, null, now, createdByUserId)
@@ -213,5 +216,52 @@ class DocumentControllerTest {
     val result = underTest.getRecallDocumentsByCategory(recallId, category)
 
     assertThat(result.body, equalTo(listOf(Api.RecallDocument(document.id(), category, "file.pdf", 1, null, now, FullName("Andy Newton")))))
+  }
+
+  @Test
+  fun `create document throws exception for uploaded document categories`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+
+    DocumentCategory.values().filter { it.uploaded }.forEach {
+      assertThrows<WrongDocumentTypeException> {
+        underTest.createDocument(recallId, CreateDocumentRequest(it, "blah, blah, blah"), bearerToken)
+      }
+    }
+  }
+
+  @Test
+  fun `create document throws exception for non-uploaded document categories that arent mapped`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+
+    DocumentCategory.values().filter { !it.uploaded && it != RECALL_NOTIFICATION }.forEach {
+      assertThrows<WrongDocumentTypeException> {
+        underTest.createDocument(recallId, CreateDocumentRequest(it, "blah, blah, blah"), bearerToken)
+      }
+    }
+  }
+
+  @Test
+  fun `create document creates new recall notification`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+    val documentId = ::DocumentId.random()
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+    every { recallNotificationService.createAndStorePdf(recallId, userId, details) } returns Mono.just(Pair(documentId, "content".toByteArray()))
+
+    val result = underTest.createDocument(recallId, CreateDocumentRequest(RECALL_NOTIFICATION, details), bearerToken)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body, equalTo(AddDocumentResponse(documentId)))
+      }
+      .verifyComplete()
   }
 }

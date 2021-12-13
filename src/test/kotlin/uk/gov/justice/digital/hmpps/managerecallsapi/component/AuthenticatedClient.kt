@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
@@ -112,15 +113,18 @@ class AuthenticatedClient(
   ): UpdateDocumentResponse =
     patchRequest("/recalls/$recallId/documents/$documentId", updateDocumentRequest, UpdateDocumentResponse::class.java)
 
-  fun getRecallDocument(recallId: RecallId, documentId: DocumentId): GetDocumentResponse =
+  fun getDocument(recallId: RecallId, documentId: DocumentId): GetDocumentResponse =
     getRequest("/recalls/$recallId/documents/$documentId", GetDocumentResponse::class.java)
 
-  fun getRecallDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus) {
+  fun getDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus) {
     sendGetRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
   }
 
   fun deleteDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus = NO_CONTENT) =
     deleteRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
+
+  fun createDocument(recallId: RecallId, category: DocumentCategory, detail: String) =
+    postRequest("/recalls/$recallId/documents/create", CreateDocumentRequest(category, detail), AddDocumentResponse::class.java)
 
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
     patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)

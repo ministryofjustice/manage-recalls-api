@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -21,17 +22,17 @@ class RecallNotificationService(
   @Autowired private val documentService: DocumentService,
 ) {
 
-  fun getPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrCreatePdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
       ?.let { Mono.just(it) }
-      ?: createDocument(recallId, createdByUserId)
+      ?: createAndStorePdf(recallId, createdByUserId).map { it.second }
 
-  private fun createDocument(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
+  fun createAndStorePdf(recallId: RecallId, createdByUserId: UserId, details: String? = null): Mono<Pair<DocumentId, ByteArray>> {
     val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, createdByUserId)
 
     val documentGenerators = Flux.just(
       { recallSummaryService.createPdf(recallNotificationContext) },
-      { revocationOrderService.createPdf(recallNotificationContext, createdByUserId) },
+      { revocationOrderService.getOrCreatePdf(recallNotificationContext.getRevocationOrderContext(), createdByUserId) },
       { letterToProbationService.createPdf(recallNotificationContext) }
     )
     return documentGenerators
@@ -40,8 +41,8 @@ class RecallNotificationService(
       .collectList()
       .flatMap { pdfDocumentGenerationService.mergePdfs(it) }
       .map { mergedBytes ->
-        documentService.storeDocument(recallId, createdByUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf")
-        mergedBytes
+        val documentId = documentService.storeDocument(recallId, createdByUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf")
+        Pair(documentId, mergedBytes)
       }
   }
 }

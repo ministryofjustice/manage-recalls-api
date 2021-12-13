@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
@@ -102,7 +103,7 @@ class DocumentController(
     @RequestHeader("Authorization") bearerToken: String
   ): Mono<ResponseEntity<Pdf>> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return recallNotificationService.getPdf(recallId, token.userUuid()).map {
+    return recallNotificationService.getOrCreatePdf(recallId, token.userUuid()).map {
       ResponseEntity.ok(Pdf.encode(it))
     }
   }
@@ -113,7 +114,7 @@ class DocumentController(
     @RequestHeader("Authorization") bearerToken: String
   ): Mono<ResponseEntity<Pdf>> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return dossierService.getPdf(recallId, token.userUuid()).map {
+    return dossierService.getOrCreatePdf(recallId, token.userUuid()).map {
       ResponseEntity.ok(Pdf.encode(it))
     }
   }
@@ -142,7 +143,7 @@ class DocumentController(
   )
   // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
   @PostMapping("/recalls/{recallId}/documents")
-  fun addDocument(
+  fun uploadDocument(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody addDocumentRequest: AddDocumentRequest,
     @RequestHeader("Authorization") bearerToken: String
@@ -154,6 +155,35 @@ class DocumentController(
         .body(AddDocumentResponse(documentId = documentId))
     }.onFailure {
       throw VirusFoundException()
+    }
+  }
+
+  @PostMapping("/recalls/{recallId}/documents/create")
+  fun createDocument(
+    @PathVariable("recallId") recallId: RecallId,
+    @RequestBody createDocumentRequest: CreateDocumentRequest,
+    @RequestHeader("Authorization") bearerToken: String
+  ): Mono<ResponseEntity<AddDocumentResponse>> {
+    val token = tokenExtractor.getTokenFromHeader(bearerToken)
+    return createDocument(recallId, token.userUuid(), createDocumentRequest).map { documentId ->
+      ResponseEntity
+        .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
+        .body(AddDocumentResponse(documentId = documentId))
+    }
+  }
+
+  private fun createDocument(
+    recallId: RecallId,
+    userUuid: UserId,
+    createDocumentRequest: CreateDocumentRequest
+  ): Mono<DocumentId> {
+    if (createDocumentRequest.category.uploaded)
+      throw WrongDocumentTypeException(createDocumentRequest.category)
+
+    return when (createDocumentRequest.category) {
+      DocumentCategory.RECALL_NOTIFICATION -> recallNotificationService.createAndStorePdf(recallId, userUuid, createDocumentRequest.details)
+        .map { it.first }
+      else -> throw WrongDocumentTypeException(createDocumentRequest.category)
     }
   }
 
@@ -215,6 +245,11 @@ data class AddDocumentRequest(
   val fileContent: String,
   val fileName: String,
   val details: String? = null
+)
+
+data class CreateDocumentRequest(
+  val category: DocumentCategory,
+  val details: String
 )
 
 data class AddDocumentResponse(val documentId: DocumentId)

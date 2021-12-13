@@ -7,6 +7,7 @@ import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpe
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
@@ -47,6 +48,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
     CaseworkerBand.FOUR_PLUS
   )
   private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.values().random())
+  private val createDocumentRequest = CreateDocumentRequest(DocumentCategory.RECALL_NOTIFICATION, "some more detail")
   private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", "email.msg")
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
@@ -67,6 +69,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.get().uri("/users/current"),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}").bodyValue(updateDocumentRequest),
+      webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/documents/create").bodyValue(createDocumentRequest),
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
       webTestClient.post().uri("/search").bodyValue(apiSearchRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),

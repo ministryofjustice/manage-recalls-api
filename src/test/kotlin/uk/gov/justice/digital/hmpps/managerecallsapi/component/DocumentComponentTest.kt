@@ -69,7 +69,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val firstDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
 
     val secondDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
-    val secondDocument = authenticatedClient.getRecallDocument(recall.recallId, secondDocumentId)
+    val secondDocument = authenticatedClient.getDocument(recall.recallId, secondDocumentId)
 
     assertThat(firstDocumentId, !equalTo(secondDocumentId))
     assertThat(
@@ -89,7 +89,7 @@ class DocumentComponentTest : ComponentTestBase() {
     )
 
     val thirdDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
-    val recallDocument = authenticatedClient.getRecallDocument(recall.recallId, thirdDocumentId)
+    val recallDocument = authenticatedClient.getDocument(recall.recallId, thirdDocumentId)
 
     assertThat(firstDocumentId, !equalTo(secondDocumentId))
     assertThat(firstDocumentId, !equalTo(thirdDocumentId))
@@ -145,7 +145,7 @@ class DocumentComponentTest : ComponentTestBase() {
       AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
     )
 
-    val response = authenticatedClient.getRecallDocument(recall.recallId, document.documentId)
+    val response = authenticatedClient.getDocument(recall.recallId, document.documentId)
 
     assertThat(
       response,
@@ -170,7 +170,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    authenticatedClient.getRecallDocument(recall.recallId, ::DocumentId.random(), expectedStatus = NOT_FOUND)
+    authenticatedClient.getDocument(recall.recallId, ::DocumentId.random(), expectedStatus = NOT_FOUND)
   }
 
   @Test
@@ -201,7 +201,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName, details)))
 
-    val response = authenticatedClient.getRecallDocument(recall.recallId, documentId)
+    val response = authenticatedClient.getDocument(recall.recallId, documentId)
 
     assertThat(
       response,
@@ -248,7 +248,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     assertThat(result, equalTo(UpdateDocumentResponse(documentId, recall.recallId, updatedCategory, fileName, details)))
 
-    val response = authenticatedClient.getRecallDocument(recall.recallId, documentId)
+    val response = authenticatedClient.getDocument(recall.recallId, documentId)
 
     assertThat(
       response,
@@ -306,7 +306,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val firstDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
     val secondDocumentId = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest).documentId
-    val secondDocument = authenticatedClient.getRecallDocument(recall.recallId, secondDocumentId)
+    val secondDocument = authenticatedClient.getDocument(recall.recallId, secondDocumentId)
 
     assertThat(firstDocumentId, !equalTo(secondDocumentId))
     assertThat(
