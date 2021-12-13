@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -198,11 +199,21 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a recall and document exist"
+    "a recall and uncategorised document exist",
+    "a recall and document exist" // TODO delete once UI updated
   )
-  fun `a recall and document exist`() {
+  fun `a recall and uncategorised document exist`() {
     `a user and a fully populated recall without documents exists`()
     `a document exists`(documentId, UNCATEGORISED, null, null)
+  }
+
+  @State(
+    "a recall and document history exist",
+  )
+  fun `a recall and document history exist`() {
+    `a user and a fully populated recall without documents exists`()
+    `a document exists`(documentId, PART_A_RECALL_REPORT, 1, null)
+    `a document exists`(documentId, PART_A_RECALL_REPORT, 2, "New updated part A")
   }
 
   @State(
