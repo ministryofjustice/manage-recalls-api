@@ -199,8 +199,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a recall and uncategorised document exist",
-    "a recall and document exist" // TODO delete once UI updated
+    "a recall and uncategorised document exist"
   )
   fun `a recall and uncategorised document exist`() {
     `a user and a fully populated recall without documents exists`()
