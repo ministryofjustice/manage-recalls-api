@@ -34,6 +34,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -291,6 +292,8 @@ data class RecallResponse(
 )
 
 class Api {
+  data class Prison(val prisonId: PrisonId, val prisonName: PrisonName, val active: Boolean)
+
   data class SentenceLength(val years: Int, val months: Int, val days: Int)
 
   data class RecallDocument(

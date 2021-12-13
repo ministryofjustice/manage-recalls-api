@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasTotalPageCount
 
@@ -23,7 +24,11 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
-    updateRecallWithRequiredInformationForTheDossier(recall.recallId, localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN)
+    updateRecallWithRequiredInformationForTheDossier(
+      recall.recallId,
+      localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
+      currentPrisonId = PrisonId("MWI")
+    )
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId)
 
@@ -44,6 +49,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       vulnerabilityDiversity = true,
       vulnerabilityDiversityDetail = loremIpsum,
       LocalDeliveryUnit.ISLE_OF_MAN,
+      PrisonId("MWI"),
     )
 
     val recallNotification = authenticatedClient.getRecallNotification(recall.recallId)

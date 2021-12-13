@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.PoliceForce
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.IndexOffence
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnitResponse
@@ -16,7 +17,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 
 class ReferenceDataComponentTest : ComponentTestBase() {
 
@@ -62,6 +62,7 @@ class ReferenceDataComponentTest : ComponentTestBase() {
       Prison(PrisonId("KTI"), PrisonName("KTI (HMP)"), true),
       Prison(PrisonId("BAI"), PrisonName("BAI (HMP)"), true),
       Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true),
+      Prison(PrisonId("CFI"), PrisonName("Cardiff (HMP)"), true),
     )
 
     assertThat(response, equalTo(expectedResponse))

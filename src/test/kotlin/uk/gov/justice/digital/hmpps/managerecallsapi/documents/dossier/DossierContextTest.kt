@@ -44,7 +44,7 @@ class DossierContextTest {
 
   @Test
   fun `create ReasonsForRecallContext with all values correctly populated`() {
-    val underTest = DossierContext(recall, currentPrisonName)
+    val underTest = DossierContext(recall, currentPrisonName, false)
 
     val result = underTest.getReasonsForRecallContext()
 
@@ -63,7 +63,7 @@ class DossierContextTest {
 
   @Test
   fun `create TableOfContentsContext with all values correctly populated`() {
-    val underTest = DossierContext(recall, currentPrisonName)
+    val underTest = DossierContext(recall, currentPrisonName, false)
 
     val result = underTest.getTableOfContentsContext()
 
@@ -80,24 +80,29 @@ class DossierContextTest {
     )
   }
 
-  @ParameterizedTest(name = "All Welsh LDUs return inWales as true")
+  @ParameterizedTest(name = "For Welsh LDU or Welsh current prison then includeWelsh is true")
   @MethodSource("sampleOfLDUsWithWelshOrNot")
-  fun `welsh LDUs return includeWelsh as true whilst sample of others all return as false`(
+  fun `Welsh LDU or Welsh current prison return includeWelsh as true whilst neither returns false`(
     ldu: LocalDeliveryUnit,
+    currentPrisonIsWelsh: Boolean,
     expected: Boolean
   ) {
     val probationInfo = fullyPopulatedInstance<ProbationInfo>()
-    val underTest = DossierContext(recall.copy(probationInfo = probationInfo.copy(localDeliveryUnit = ldu)), currentPrisonName)
+    val underTest = DossierContext(
+      recall.copy(probationInfo = probationInfo.copy(localDeliveryUnit = ldu)),
+      currentPrisonName,
+      currentPrisonIsWelsh
+    )
 
     assertThat(underTest.includeWelsh(), equalTo(expected))
   }
 
   private fun sampleOfLDUsWithWelshOrNot(): Stream<Arguments>? {
     return Stream.of(
-      Arguments.of(LocalDeliveryUnit.PS_HOUNSLOW, false),
-      Arguments.of(LocalDeliveryUnit.PS_NORTH_WALES, true),
-      Arguments.of(LocalDeliveryUnit.PS_DYFED_POWYS, true),
-      Arguments.of(LocalDeliveryUnit.PS_NORTH_DURHAM, false),
+      Arguments.of(LocalDeliveryUnit.PS_HOUNSLOW, false, false, "false for non-Welsh LDU and current prison"),
+      Arguments.of(LocalDeliveryUnit.PS_NORTH_WALES, false, true, "true for Welsh LDU and non-Welsh current prison"),
+      Arguments.of(LocalDeliveryUnit.PS_DYFED_POWYS, true, true, "true for Welsh LDU and current prison"),
+      Arguments.of(LocalDeliveryUnit.PS_NORTH_DURHAM, true, true, "true for non-Welsh LDU and Welsh current prison")
     )
   }
 }

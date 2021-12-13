@@ -21,9 +21,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WebClientConfig
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
 import java.lang.RuntimeException
 
@@ -61,7 +61,7 @@ class PrisonRegisterIntegrationTest(
 
     val result = prisonRegisterClient.getAllPrisons().block()!!
 
-    assertThat(result, hasSize(equalTo(6)))
+    assertThat(result, hasSize(equalTo(7)))
   }
 
   @Test
