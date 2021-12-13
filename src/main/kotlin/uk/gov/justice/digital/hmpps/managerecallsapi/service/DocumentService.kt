@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
@@ -141,8 +142,13 @@ class DocumentService(
     newCategory: DocumentCategory
   ): Document {
     return forExistingRecall(recallId) {
+      val existingDocument = getRecallDocumentById(recallId, documentId)
+      val currentCategory = existingDocument.category
+      if (currentCategory != DocumentCategory.UNCATEGORISED) {
+        throw WrongDocumentTypeException(currentCategory)
+      }
       documentRepository.save(
-        getRecallDocumentById(recallId, documentId)
+        existingDocument
           .copy(category = newCategory, version = if (newCategory.versioned) 1 else null)
       )
     }
