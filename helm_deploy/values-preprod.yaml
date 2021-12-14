@@ -6,6 +6,10 @@ generic-service:
 
   ingress:
     host: manage-recalls-api-preprod.hmpps.service.justice.gov.uk
+    # which cluster are we on: live-1 is blue, live is green
+    contextColour: green
+    annotations:
+      external-dns.alpha.kubernetes.io/aws-weight: "0"
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
