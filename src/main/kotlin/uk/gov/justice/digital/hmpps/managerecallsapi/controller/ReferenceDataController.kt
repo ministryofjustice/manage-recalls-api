@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PoliceUkApiClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
 
 @RestController
@@ -26,7 +25,7 @@ class ReferenceDataController(
   fun courts(): List<CourtRegisterClient.Court> = courtRegisterClient.getAllCourts().block()!!
 
   @GetMapping("/prisons")
-  fun prisons(): List<Prison> = prisonRegisterClient.getAllPrisons().block()!!
+  fun prisons(): List<Api.Prison> = prisonRegisterClient.getAllPrisons().block()!!
 
   @GetMapping("/police-forces")
   fun policeForces(): List<Api.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!

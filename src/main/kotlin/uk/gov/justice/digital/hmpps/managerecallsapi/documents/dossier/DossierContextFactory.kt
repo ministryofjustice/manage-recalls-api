@@ -18,14 +18,17 @@ class DossierContextFactory(
 ) {
   fun createContext(recallId: RecallId): DossierContext {
     val recall = recallRepository.getByRecallId(recallId)
-    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
-    return DossierContext(recall, currentPrisonName)
+    val currentPrisonId = recall.currentPrison!!
+    val currentPrisonName = prisonLookupService.getPrisonName(currentPrisonId)
+    val currentPrisonIsWelsh = prisonLookupService.isWelsh(currentPrisonId)
+    return DossierContext(recall, currentPrisonName, currentPrisonIsWelsh)
   }
 }
 
 data class DossierContext(
   val recall: Recall,
   val currentPrisonName: PrisonName,
+  val currentPrisonIsWelsh: Boolean
 ) {
   fun getReasonsForRecallContext(): ReasonsForRecallContext {
     return ReasonsForRecallContext(
@@ -45,7 +48,7 @@ data class DossierContext(
     )
 
   fun includeWelsh(): Boolean {
-    return recall.probationInfo!!.localDeliveryUnit.isInWales
+    return currentPrisonIsWelsh || recall.probationInfo!!.localDeliveryUnit.isInWales
   }
 }
 

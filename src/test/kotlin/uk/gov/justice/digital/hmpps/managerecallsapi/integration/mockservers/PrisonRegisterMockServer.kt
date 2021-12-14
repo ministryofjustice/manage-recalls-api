@@ -14,9 +14,9 @@ import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.Prison
 
 @Component
 class PrisonRegisterMockServer(
@@ -36,7 +36,8 @@ class PrisonRegisterMockServer(
       Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
       Prison(PrisonId("KTI"), PrisonName("KTI (HMP)"), true),
       Prison(PrisonId("BAI"), PrisonName("BAI (HMP)"), true),
-      Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true)
+      Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true),
+      Prison(PrisonId("CFI"), PrisonName("Cardiff (HMP)"), true)
     )
     stubAllPrisons(prisons)
     prisons.forEach { stubPrison(it) }

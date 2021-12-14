@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import java.time.OffsetDateTime
+import kotlin.random.Random
 
 class DossierContextFactoryTest {
   private val recallRepository = mockk<RecallRepository>()
@@ -32,13 +33,16 @@ class DossierContextFactoryTest {
     val nomsNumber = NomsNumber("nomsNumber")
     val currentPrison = PrisonId("AAA")
     val currentPrisonName = PrisonName("Current Prison Name")
+    val currentPrisonIsWelsh = Random.nextBoolean()
+
     val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), currentPrison = currentPrison)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
+    every { prisonLookupService.isWelsh(currentPrison) } returns currentPrisonIsWelsh
 
     val result = underTest.createContext(recallId)
 
-    assertThat(result, equalTo(DossierContext(recall, currentPrisonName)))
+    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh)))
   }
 }

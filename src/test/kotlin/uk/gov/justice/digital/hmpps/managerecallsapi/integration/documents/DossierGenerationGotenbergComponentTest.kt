@@ -8,21 +8,31 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 
 class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
-  fun `can generate a dossier using gotenberg for an English LDU and Prison`() {
-    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 11)
+  fun `can generate a dossier using gotenberg for an English LDU and English current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 11, PrisonId("MWI"))
   }
 
   @Test
-  fun `can generate a dossier using gotenberg for a Welsh LDU`() {
-    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 15)
+  fun `can generate a dossier using gotenberg for a Welsh LDU and English current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 15, PrisonId("MWI"))
   }
 
-  private fun generateDossierUsingGotenberg(localDeliveryUnit: LocalDeliveryUnit, expectedPageCount: Int) {
+  @Test
+  fun `can generate a dossier using gotenberg for an English LDU and Welsh current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 15, PrisonId("CFI"))
+  }
+
+  private fun generateDossierUsingGotenberg(
+    localDeliveryUnit: LocalDeliveryUnit,
+    expectedPageCount: Int,
+    currentPrisonId: PrisonId
+  ) {
     val nomsNumber = NomsNumber("123456")
     val prisonerFirstName = "Natalia"
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
@@ -31,7 +41,8 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
       authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
-      localDeliveryUnit = localDeliveryUnit
+      localDeliveryUnit = localDeliveryUnit,
+      currentPrisonId = currentPrisonId
     )
     authenticatedClient.getRecallNotification(recall.recallId)
     expectNoVirusesWillBeFound()
@@ -39,7 +50,7 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
     uploadPartAFor(recall)
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
-    writeBase64EncodedStringToFile("dossier-$expectedPageCount-pages.pdf", dossier.content)
+    // writeBase64EncodedStringToFile("dossier-$expectedPageCount-pages.pdf", dossier.content)
     assertThat(dossier, hasNumberOfPages(equalTo(expectedPageCount)))
   }
 }
