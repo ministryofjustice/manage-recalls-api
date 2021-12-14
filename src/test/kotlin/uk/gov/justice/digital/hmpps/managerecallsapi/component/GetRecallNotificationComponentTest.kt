@@ -76,12 +76,12 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
 
     authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, "Some detail")
 
-    val secondRecallNotification =
+    val latestRecallNotification =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
-    assertThat(secondRecallNotification.version, equalTo(2))
-    val secondRevocationOrder =
+    assertThat(latestRecallNotification.version, equalTo(2))
+    val latestRevocationOrder =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
-    assertThat(secondRevocationOrder.version, equalTo(1))
+    assertThat(latestRevocationOrder.version, equalTo(1))
   }
 
   private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId) {

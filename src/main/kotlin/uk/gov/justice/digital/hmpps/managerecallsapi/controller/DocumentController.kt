@@ -28,9 +28,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.ReasonsForRecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
@@ -55,6 +57,7 @@ class DocumentController(
   @Autowired private val dossierService: DossierService,
   @Autowired private val letterToPrisonService: LetterToPrisonService,
   @Autowired private val revocationOrderService: RevocationOrderService,
+  @Autowired private val reasonsForRecallService: ReasonsForRecallService,
   @Autowired private val tokenExtractor: TokenExtractor,
   @Autowired private val userDetailsService: UserDetailsService,
   @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
@@ -188,9 +191,9 @@ class DocumentController(
       throw WrongDocumentTypeException(generateDocumentRequest.category)
 
     return when (generateDocumentRequest.category) {
-      RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
-        .map { it.first }
+      RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details).map { it.first }
       REVOCATION_ORDER -> revocationOrderService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
+      REASONS_FOR_RECALL -> reasonsForRecallService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
       else -> throw WrongDocumentTypeException(generateDocumentRequest.category)
     }
   }
