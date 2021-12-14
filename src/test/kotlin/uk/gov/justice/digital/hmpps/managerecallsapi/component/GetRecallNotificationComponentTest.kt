@@ -56,7 +56,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `get recall notification returns merged recall summary and revocation order and then create recall notification creates new version but reuses existing revocation order`() {
+  fun `get recall notification returns merged recall summary and revocation order and then generate recall notification generates new version but reuses existing revocation order`() {
     val userId = authenticatedClient.userId
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
@@ -81,7 +81,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
     assertThat(firstRecallNotification.version, equalTo(1))
 
-    authenticatedClient.createDocument(recall.recallId, RECALL_NOTIFICATION, "Some detail")
+    authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, "Some detail")
 
     val secondRecallNotification =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!

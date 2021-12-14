@@ -15,7 +15,7 @@ class TableOfContentsService(
   @Autowired private val tableOfContentsGenerator: TableOfContentsGenerator,
 ) {
 
-  fun createPdf(dossierContext: DossierContext, contentDocs: Map<String, ByteArrayDocumentData>): Mono<ByteArray> =
+  fun generatePdf(dossierContext: DossierContext, contentDocs: Map<String, ByteArrayDocumentData>): Mono<ByteArray> =
     pdfDocumentGenerationService.generatePdf(
       tableOfContentsGenerator.generateHtml(
         dossierContext.getTableOfContentsContext(),

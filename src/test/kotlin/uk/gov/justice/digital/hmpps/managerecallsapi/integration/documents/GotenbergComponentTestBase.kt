@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
@@ -10,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCatego
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
@@ -114,14 +114,14 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
   protected fun uploadPartAFor(recall: RecallResponse) {
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(DocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "PART_A.pdf")
+      UploadDocumentRequest(DocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "PART_A.pdf")
     )
   }
 
   protected fun uploadLicenceFor(recall: RecallResponse) {
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(DocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), "PART_A.pdf")
+      UploadDocumentRequest(DocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), "PART_A.pdf")
     )
   }
 

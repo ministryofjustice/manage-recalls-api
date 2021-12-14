@@ -22,18 +22,18 @@ class RecallNotificationService(
   @Autowired private val documentService: DocumentService,
 ) {
 
-  fun getOrCreatePdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrGeneratePdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
       ?.let { Mono.just(it) }
-      ?: createAndStorePdf(recallId, createdByUserId).map { it.second }
+      ?: generateAndStorePdf(recallId, createdByUserId).map { it.second }
 
-  fun createAndStorePdf(recallId: RecallId, createdByUserId: UserId, details: String? = null): Mono<Pair<DocumentId, ByteArray>> {
+  fun generateAndStorePdf(recallId: RecallId, createdByUserId: UserId, details: String? = null): Mono<Pair<DocumentId, ByteArray>> {
     val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, createdByUserId)
 
     val documentGenerators = Flux.just(
-      { recallSummaryService.createPdf(recallNotificationContext) },
-      { revocationOrderService.getOrCreatePdf(recallNotificationContext.getRevocationOrderContext(), createdByUserId) },
-      { letterToProbationService.createPdf(recallNotificationContext) }
+      { recallSummaryService.generatePdf(recallNotificationContext) },
+      { revocationOrderService.getOrGeneratePdf(recallNotificationContext.getRevocationOrderContext(), createdByUserId) },
+      { letterToProbationService.generatePdf(recallNotificationContext) }
     )
     return documentGenerators
       .flatMapSequential { it() }

@@ -69,7 +69,7 @@ internal class RevocationOrderServiceTest {
       documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
     } returns ::DocumentId.random()
 
-    val result = underTest.getOrCreatePdf(revocationOrderContext, createdByUserId)
+    val result = underTest.getOrGeneratePdf(revocationOrderContext, createdByUserId)
 
     StepVerifier
       .create(result)
@@ -105,7 +105,7 @@ internal class RevocationOrderServiceTest {
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REVOCATION_ORDER) } returns expectedBytes
 
-    val result = underTest.getOrCreatePdf(revocationOrderContext, createdByUserId)
+    val result = underTest.getOrGeneratePdf(revocationOrderContext, createdByUserId)
 
     StepVerifier
       .create(result)

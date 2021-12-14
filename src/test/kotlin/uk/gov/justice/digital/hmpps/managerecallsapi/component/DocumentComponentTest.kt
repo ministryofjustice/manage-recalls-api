@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
@@ -35,7 +35,7 @@ class DocumentComponentTest : ComponentTestBase() {
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = "fileName"
   private val details = "Document details"
-  private val addVersionedDocumentRequest = AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
+  private val addVersionedDocumentRequest = UploadDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
 
   @Test
   fun `add a document uploads the file to S3 and returns the documentId`() {
@@ -119,7 +119,7 @@ class DocumentComponentTest : ComponentTestBase() {
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val otherDocumentRequest = AddDocumentRequest(OTHER, base64EncodedDocumentContents, fileName)
+    val otherDocumentRequest = UploadDocumentRequest(OTHER, base64EncodedDocumentContents, fileName)
 
     val firstDocumentId = authenticatedClient.uploadDocument(recall.recallId, otherDocumentRequest).documentId
     val secondDocumentId = authenticatedClient.uploadDocument(recall.recallId, otherDocumentRequest).documentId
@@ -142,7 +142,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
+      UploadDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
     )
 
     val response = authenticatedClient.getDocument(recall.recallId, document.documentId)
@@ -181,7 +181,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val documentId = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName, details)
+      UploadDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName, details)
     ).documentId
 
     val document = documentRepository.getByRecallIdAndDocumentId(recall.recallId, documentId)
@@ -228,7 +228,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val documentId = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName, details)
+      UploadDocumentRequest(UNCATEGORISED, base64EncodedDocumentContents, fileName, details)
     ).documentId
 
     val document = documentRepository.getByRecallIdAndDocumentId(recall.recallId, documentId)
@@ -274,7 +274,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(PART_A_RECALL_REPORT, base64EncodedDocumentContents, fileName)
     )
 
     authenticatedClient.deleteDocument(recall.recallId, document.documentId)
@@ -287,7 +287,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(RECALL_NOTIFICATION, base64EncodedDocumentContents, fileName) // This wouldn't be uploaded, but works for now.
+      UploadDocumentRequest(RECALL_NOTIFICATION, base64EncodedDocumentContents, fileName) // This wouldn't be uploaded, but works for now.
     )
 
     val response = authenticatedClient.deleteDocument(recall.recallId, document.documentId, BAD_REQUEST)
@@ -353,19 +353,19 @@ class DocumentComponentTest : ComponentTestBase() {
     val category = PART_A_RECALL_REPORT
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(category, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName)
     )
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(category, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName)
     )
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(category, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName)
     )
     authenticatedClient.uploadDocument(
       recall.recallId,
-      AddDocumentRequest(LICENCE, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(LICENCE, base64EncodedDocumentContents, fileName)
     )
     val recallDocuments = authenticatedClient.getRecallDocuments(recall.recallId, category)
 

@@ -103,7 +103,7 @@ class DocumentController(
     @RequestHeader("Authorization") bearerToken: String
   ): Mono<ResponseEntity<Pdf>> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return recallNotificationService.getOrCreatePdf(recallId, token.userUuid()).map {
+    return recallNotificationService.getOrGeneratePdf(recallId, token.userUuid()).map {
       ResponseEntity.ok(Pdf.encode(it))
     }
   }
@@ -142,62 +142,65 @@ class DocumentController(
     )
   )
   // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
-  @PostMapping("/recalls/{recallId}/documents")
+  @PostMapping(
+    "/recalls/{recallId}/documents",
+    "/recalls/{recallId}/documents/uploaded"
+  )
   fun uploadDocument(
     @PathVariable("recallId") recallId: RecallId,
-    @RequestBody addDocumentRequest: AddDocumentRequest,
+    @RequestBody uploadDocumentRequest: UploadDocumentRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): ResponseEntity<AddDocumentResponse> {
+  ): ResponseEntity<NewDocumentResponse> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return uploadDocument(recallId, token.userUuid(), addDocumentRequest).map { documentId ->
+    return uploadDocument(recallId, token.userUuid(), uploadDocumentRequest).map { documentId ->
       ResponseEntity
         .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
-        .body(AddDocumentResponse(documentId = documentId))
+        .body(NewDocumentResponse(documentId = documentId))
     }.onFailure {
       throw VirusFoundException()
     }
   }
 
-  @PostMapping("/recalls/{recallId}/documents/create")
-  fun createDocument(
+  @PostMapping("/recalls/{recallId}/documents/generated")
+  fun generateDocument(
     @PathVariable("recallId") recallId: RecallId,
-    @RequestBody createDocumentRequest: CreateDocumentRequest,
+    @RequestBody generateDocumentRequest: GenerateDocumentRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): Mono<ResponseEntity<AddDocumentResponse>> {
+  ): Mono<ResponseEntity<NewDocumentResponse>> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return createDocument(recallId, token.userUuid(), createDocumentRequest).map { documentId ->
+    return createDocument(recallId, token.userUuid(), generateDocumentRequest).map { documentId ->
       ResponseEntity
         .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
-        .body(AddDocumentResponse(documentId = documentId))
+        .body(NewDocumentResponse(documentId = documentId))
     }
   }
 
   private fun createDocument(
     recallId: RecallId,
     userUuid: UserId,
-    createDocumentRequest: CreateDocumentRequest
+    generateDocumentRequest: GenerateDocumentRequest
   ): Mono<DocumentId> {
-    if (createDocumentRequest.category.uploaded)
-      throw WrongDocumentTypeException(createDocumentRequest.category)
+    if (generateDocumentRequest.category.uploaded)
+      throw WrongDocumentTypeException(generateDocumentRequest.category)
 
-    return when (createDocumentRequest.category) {
-      DocumentCategory.RECALL_NOTIFICATION -> recallNotificationService.createAndStorePdf(recallId, userUuid, createDocumentRequest.details)
+    return when (generateDocumentRequest.category) {
+      DocumentCategory.RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, userUuid, generateDocumentRequest.details)
         .map { it.first }
-      else -> throw WrongDocumentTypeException(createDocumentRequest.category)
+      else -> throw WrongDocumentTypeException(generateDocumentRequest.category)
     }
   }
 
   private fun uploadDocument(
     recallId: RecallId,
     createdByUserId: UserId,
-    addDocumentRequest: AddDocumentRequest
+    uploadDocumentRequest: UploadDocumentRequest
   ) = documentService.scanAndStoreDocument(
     recallId,
     createdByUserId,
-    addDocumentRequest.fileContent.toBase64DecodedByteArray(),
-    addDocumentRequest.category,
-    addDocumentRequest.fileName,
-    addDocumentRequest.details
+    uploadDocumentRequest.fileContent.toBase64DecodedByteArray(),
+    uploadDocumentRequest.category,
+    uploadDocumentRequest.fileName,
+    uploadDocumentRequest.details
   )
 
   @PatchMapping("/recalls/{recallId}/documents/{documentId}")
@@ -240,19 +243,19 @@ data class UpdateDocumentResponse(
   val details: String? = null,
 )
 
-data class AddDocumentRequest(
+data class UploadDocumentRequest(
   val category: DocumentCategory,
   val fileContent: String,
   val fileName: String,
   val details: String? = null
 )
 
-data class CreateDocumentRequest(
+data class GenerateDocumentRequest(
   val category: DocumentCategory,
   val details: String
 )
 
-data class AddDocumentResponse(val documentId: DocumentId)
+data class NewDocumentResponse(val documentId: DocumentId)
 
 data class GetDocumentResponse(
   val documentId: DocumentId,

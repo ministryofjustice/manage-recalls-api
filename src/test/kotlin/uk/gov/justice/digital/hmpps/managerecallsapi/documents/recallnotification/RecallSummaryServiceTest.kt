@@ -35,7 +35,7 @@ class RecallSummaryServiceTest {
     every { recallSummaryGenerator.generateHtml(recallSummaryContext, capture(pageCountSlot)) } returns recallSummaryHtmlWithPageCount
     every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithPageCount, 1.0, 1.0, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
 
-    val result = underTest.createPdf(recallNotificationContext).block()!!
+    val result = underTest.generatePdf(recallNotificationContext).block()!!
 
     assertThat(pageCountSlot.captured, equalTo(5))
     assertArrayEquals(pdfWith3Pages, result)

@@ -18,7 +18,7 @@ class RevocationOrderService(
   @Autowired private val revocationOrderGenerator: RevocationOrderGenerator,
 ) {
 
-  private fun createAndStorePdf(revocationOrderContext: RevocationOrderContext, createdByUserId: UserId): Mono<ByteArray> =
+  private fun generateAndStorePdf(revocationOrderContext: RevocationOrderContext, createdByUserId: UserId): Mono<ByteArray> =
     revocationOrderContext.let { context ->
       pdfDocumentGenerationService.generatePdf(
         revocationOrderGenerator.generateHtml(context),
@@ -30,8 +30,8 @@ class RevocationOrderService(
       }
     }
 
-  fun getOrCreatePdf(context: RevocationOrderContext, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrGeneratePdf(context: RevocationOrderContext, createdByUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(context.recallId, REVOCATION_ORDER)
       ?.let { Mono.just(it) }
-      ?: createAndStorePdf(context, createdByUserId)
+      ?: generateAndStorePdf(context, createdByUserId)
 }

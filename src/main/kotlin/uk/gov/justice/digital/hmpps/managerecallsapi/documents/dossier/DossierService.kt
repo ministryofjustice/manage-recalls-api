@@ -37,10 +37,10 @@ class DossierService(
   private fun createDossier(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
     val dossierContext = dossierContextFactory.createContext(recallId)
 
-    return reasonsForRecallService.getOrCreatePdf(dossierContext, createdByUserId).map { reasonsForRecallPdfBytes ->
+    return reasonsForRecallService.getOrGeneratePdf(dossierContext, createdByUserId).map { reasonsForRecallPdfBytes ->
       createTableOfContentsDocumentMap(reasonsForRecallPdfBytes, recallId, dossierContext.includeWelsh())
     }.flatMap { tableOfContentsDocumentMap ->
-      tableOfContentsService.createPdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
+      tableOfContentsService.generatePdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
         mutableListOf(documentData(tableOfContentsBytes)).apply {
           this += tableOfContentsDocumentMap.values
         }

@@ -58,9 +58,9 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContext.getRevocationOrderContext() } returns revocationOrderContext
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns null
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
-    every { letterToProbationService.createPdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
-    every { recallSummaryService.createPdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
-    every { revocationOrderService.getOrCreatePdf(revocationOrderContext, createdByUserId) } returns Mono.just(revocationOrderContent.toByteArray())
+    every { letterToProbationService.generatePdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
+    every { recallSummaryService.generatePdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
+    every { revocationOrderService.getOrGeneratePdf(revocationOrderContext, createdByUserId) } returns Mono.just(revocationOrderContent.toByteArray())
 
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every {
@@ -73,7 +73,7 @@ internal class RecallNotificationServiceTest {
       )
     } returns documentId
 
-    val recallNotification = underTest.getOrCreatePdf(recallId, createdByUserId).block()!!
+    val recallNotification = underTest.getOrGeneratePdf(recallId, createdByUserId).block()!!
 
     assertThat(recallNotification, equalTo(mergedBytes))
     assertThat(
@@ -89,7 +89,7 @@ internal class RecallNotificationServiceTest {
   }
 
   @Test
-  fun `create recall notification uses latest revocation order, or creates if not exists, and creates recall summary and letter to probation`() {
+  fun `create recall notification calls create for recall summary and letter to probation and getOrCreate for revocation order`() {
     val recallId = ::RecallId.random()
     val recallSummaryContent = randomString()
     val revocationOrderContent = randomString()
@@ -103,9 +103,9 @@ internal class RecallNotificationServiceTest {
 
     every { recallNotificationContext.getRevocationOrderContext() } returns revocationOrderContext
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
-    every { letterToProbationService.createPdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
-    every { recallSummaryService.createPdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
-    every { revocationOrderService.getOrCreatePdf(revocationOrderContext, createdByUserId) } returns Mono.just(revocationOrderContent.toByteArray())
+    every { letterToProbationService.generatePdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
+    every { recallSummaryService.generatePdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
+    every { revocationOrderService.getOrGeneratePdf(revocationOrderContext, createdByUserId) } returns Mono.just(revocationOrderContent.toByteArray())
 
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every {
@@ -118,7 +118,7 @@ internal class RecallNotificationServiceTest {
       )
     } returns documentId
 
-    val (createdDocumentId, recallNotification) = underTest.createAndStorePdf(recallId, createdByUserId, "Changed a value so recreating").block()!!
+    val (createdDocumentId, recallNotification) = underTest.generateAndStorePdf(recallId, createdByUserId, "Changed a value so recreating").block()!!
 
     verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) }
 
@@ -144,7 +144,7 @@ internal class RecallNotificationServiceTest {
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) } returns recallNotificationBytes
 
-    val result = underTest.getOrCreatePdf(recallId, userId)
+    val result = underTest.getOrGeneratePdf(recallId, userId)
 
     verify { recallSummaryService wasNot Called }
     verify { revocationOrderService wasNot Called }

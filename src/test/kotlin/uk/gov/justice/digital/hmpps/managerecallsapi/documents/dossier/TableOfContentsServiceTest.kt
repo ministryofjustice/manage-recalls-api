@@ -39,7 +39,7 @@ internal class TableOfContentsServiceTest {
     val tocBytes = "Some bytes".toByteArray()
     every { pdfDocumentGenerationService.generatePdf(someHtml, recallImage(HmppsLogo)) } returns Mono.just(tocBytes)
 
-    val tableOfContents = underTest.createPdf(
+    val tableOfContents = underTest.generatePdf(
       dossierContext,
       mapOf(
         "Document 1" to ByteArrayDocumentData(documentStream1),
