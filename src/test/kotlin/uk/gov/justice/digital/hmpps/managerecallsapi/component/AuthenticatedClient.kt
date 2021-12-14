@@ -10,13 +10,13 @@ import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.test.web.reactive.server.WebTestClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -94,15 +95,15 @@ class AuthenticatedClient(
   fun getLetterToPrison(recallId: RecallId): Pdf =
     getRequest("/recalls/$recallId/letter-to-prison", Pdf::class.java)
 
-  fun uploadDocument(recallId: RecallId, addDocumentRequest: AddDocumentRequest): AddDocumentResponse =
-    postRequest("/recalls/$recallId/documents", addDocumentRequest, AddDocumentResponse::class.java)
+  fun uploadDocument(recallId: RecallId, uploadDocumentRequest: UploadDocumentRequest): NewDocumentResponse =
+    postRequest("/recalls/$recallId/documents", uploadDocumentRequest, NewDocumentResponse::class.java)
 
   fun uploadDocument(
     recallId: RecallId,
-    addDocumentRequest: AddDocumentRequest,
+    uploadDocumentRequest: UploadDocumentRequest,
     expectedStatus: HttpStatus
   ): WebTestClient.ResponseSpec {
-    return sendPostRequest("/recalls/$recallId/documents", addDocumentRequest, expectedStatus)
+    return sendPostRequest("/recalls/$recallId/documents", uploadDocumentRequest, expectedStatus)
   }
 
   fun updateDocumentCategory(
@@ -112,15 +113,18 @@ class AuthenticatedClient(
   ): UpdateDocumentResponse =
     patchRequest("/recalls/$recallId/documents/$documentId", updateDocumentRequest, UpdateDocumentResponse::class.java)
 
-  fun getRecallDocument(recallId: RecallId, documentId: DocumentId): GetDocumentResponse =
+  fun getDocument(recallId: RecallId, documentId: DocumentId): GetDocumentResponse =
     getRequest("/recalls/$recallId/documents/$documentId", GetDocumentResponse::class.java)
 
-  fun getRecallDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus) {
+  fun getDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus) {
     sendGetRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
   }
 
   fun deleteDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus = NO_CONTENT) =
     deleteRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
+
+  fun generateDocument(recallId: RecallId, category: DocumentCategory, detail: String) =
+    postRequest("/recalls/$recallId/documents/generated", GenerateDocumentRequest(category, detail), NewDocumentResponse::class.java)
 
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
     patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)

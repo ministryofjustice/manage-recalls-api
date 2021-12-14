@@ -41,7 +41,7 @@ import java.time.ZoneId
 
 class RecallNotificationContextTest {
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
-  private val assessedByUserId = ::UserId.zeroes()
+  private val userId = ::UserId.zeroes()
   private val recallId = ::RecallId.zeroes()
   private val recallBookingNumber = "B1234"
   private val dateOfBirth = LocalDate.of(1995, 10, 3)
@@ -81,7 +81,7 @@ class RecallNotificationContextTest {
     reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
     previousConvictionMainNameCategory = NameFormatCategory.OTHER,
     previousConvictionMainName = "Bryan Badger",
-    assessedByUserId = assessedByUserId
+    assessedByUserId = userId
   )
 
   private val prisoner = Prisoner(
@@ -91,8 +91,8 @@ class RecallNotificationContextTest {
     dateOfBirth = dateOfBirth,
     bookNumber = "prisonerBookNumber"
   )
-  private val assessedByUserDetails = UserDetails(
-    assessedByUserId,
+  private val currentUserDetails = UserDetails(
+    userId,
     FirstName("Maria"),
     LastName("Badger"),
     userSignature,
@@ -110,7 +110,7 @@ class RecallNotificationContextTest {
   private val underTest = RecallNotificationContext(
     recall,
     prisoner,
-    assessedByUserDetails,
+    currentUserDetails,
     currentPrisonName,
     lastReleasePrisonName,
     sentencingCourtName,
@@ -128,7 +128,8 @@ class RecallNotificationContextTest {
       prisonerCroNumber,
       LocalDate.of(2021, 10, 4),
       lastReleaseDate,
-      userSignature
+      userSignature,
+      currentUserDetails.userId()
     )
 
     val result = underTest.getRevocationOrderContext()
@@ -162,7 +163,7 @@ class RecallNotificationContextTest {
     val underTest = RecallNotificationContext(
       recall,
       prisonerWithoutCroNumber,
-      assessedByUserDetails,
+      currentUserDetails,
       currentPrisonName,
       lastReleasePrisonName,
       sentencingCourtName,
@@ -179,7 +180,7 @@ class RecallNotificationContextTest {
     val underTest = RecallNotificationContext(
       recall,
       prisonerWithoutCroNumber,
-      assessedByUserDetails,
+      currentUserDetails,
       currentPrisonName,
       lastReleasePrisonName,
       sentencingCourtName,

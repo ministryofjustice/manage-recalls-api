@@ -13,6 +13,7 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
 
@@ -37,7 +38,8 @@ class RevocationOrderGeneratorTest {
         "croNumber",
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
-        "assessedByUserDetailsSignature"
+        "userDetailsSignature",
+        ::UserId.random()
       )
     )
 

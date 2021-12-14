@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -21,18 +22,18 @@ class RecallNotificationService(
   @Autowired private val documentService: DocumentService,
 ) {
 
-  fun getPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrGeneratePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
       ?.let { Mono.just(it) }
-      ?: createDocument(recallId, createdByUserId)
+      ?: generateAndStorePdf(recallId, currentUserId).map { it.second }
 
-  private fun createDocument(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
-    val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, createdByUserId)
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String? = null): Mono<Pair<DocumentId, ByteArray>> {
+    val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, currentUserId)
 
     val documentGenerators = Flux.just(
-      { recallSummaryService.createPdf(recallNotificationContext) },
-      { revocationOrderService.createPdf(recallNotificationContext, createdByUserId) },
-      { letterToProbationService.createPdf(recallNotificationContext) }
+      { recallSummaryService.generatePdf(recallNotificationContext) },
+      { revocationOrderService.getOrGeneratePdf(recallNotificationContext.getRevocationOrderContext()) },
+      { letterToProbationService.generatePdf(recallNotificationContext) }
     )
     return documentGenerators
       .flatMapSequential { it() }
@@ -40,8 +41,8 @@ class RecallNotificationService(
       .collectList()
       .flatMap { pdfDocumentGenerationService.mergePdfs(it) }
       .map { mergedBytes ->
-        documentService.storeDocument(recallId, createdByUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf")
-        mergedBytes
+        val documentId = documentService.storeDocument(recallId, currentUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf")
+        Pair(documentId, mergedBytes)
       }
   }
 }

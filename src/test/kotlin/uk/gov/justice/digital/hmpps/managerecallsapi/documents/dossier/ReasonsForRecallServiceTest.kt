@@ -56,7 +56,7 @@ class ReasonsForRecallServiceTest {
       )
     } returns ::DocumentId.random()
 
-    val generatedPdf = underTest.getPdf(dossierContext, createdByUserId).block()!!
+    val generatedPdf = underTest.getOrGeneratePdf(dossierContext, createdByUserId).block()!!
 
     assertArrayEquals(expectedPdfWithHeaderBytes, generatedPdf)
   }
@@ -71,7 +71,7 @@ class ReasonsForRecallServiceTest {
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns expectedBytes
     every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
 
-    val generatedPdf = underTest.getPdf(dossierContext, createdByUserId).block()!!
+    val generatedPdf = underTest.getOrGeneratePdf(dossierContext, createdByUserId).block()!!
 
     assertArrayEquals(expectedBytes, generatedPdf)
     verify(exactly = 0) { documentService.storeDocument(any(), any(), any(), any(), any()) }

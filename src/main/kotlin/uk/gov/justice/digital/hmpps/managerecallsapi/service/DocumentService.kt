@@ -36,7 +36,7 @@ class DocumentService(
 
   fun scanAndStoreDocument(
     recallId: RecallId,
-    createdByUserId: UserId,
+    currentUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
     fileName: String,
@@ -44,7 +44,7 @@ class DocumentService(
   ): Result<DocumentId, VirusScanResult> =
     forExistingRecall(recallId) {
       when (val virusScanResult = virusScanner.scan(documentBytes)) {
-        NoVirusFound -> Success(storeDocument(recallId, createdByUserId, documentBytes, documentCategory, fileName, details))
+        NoVirusFound -> Success(storeDocument(recallId, currentUserId, documentBytes, documentCategory, fileName, details))
         is VirusFound -> {
           log.info(VirusFoundEvent(recallId, documentCategory, virusScanResult.foundViruses).toString())
           Failure(virusScanResult)
@@ -54,19 +54,19 @@ class DocumentService(
 
   fun storeDocument(
     recallId: RecallId,
-    createdByUserId: UserId,
+    currentUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
     fileName: String,
     details: String? = null
   ): DocumentId =
     forExistingRecall(recallId) {
-      uploadToS3AndSaveDocument(recallId, createdByUserId, documentCategory, documentBytes, fileName, details)
+      uploadToS3AndSaveDocument(recallId, currentUserId, documentCategory, documentBytes, fileName, details)
     }
 
   private fun uploadToS3AndSaveDocument(
     recallId: RecallId,
-    createdByUserId: UserId,
+    currentUserId: UserId,
     category: DocumentCategory,
     documentBytes: ByteArray,
     fileName: String,
@@ -88,7 +88,7 @@ class DocumentService(
         version,
         details,
         OffsetDateTime.now(clock),
-        createdByUserId
+        currentUserId
       )
     )
     try {

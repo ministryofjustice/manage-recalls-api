@@ -41,22 +41,22 @@ class RecallNotificationContextFactory(
   @Autowired private val courtLookupService: CourtLookupService,
   @Autowired private val policeForceLookupService: PoliceForceLookupService,
 ) {
-  fun createContext(recallId: RecallId, userId: UserId): RecallNotificationContext {
+  fun createContext(recallId: RecallId, currentUserId: UserId): RecallNotificationContext {
     val recall = recallRepository.getByRecallId(recallId)
     val prisoner = prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber)).block()!!.first()
-    val userDetails = userDetailsService.get(userId)
+    val currentUserDetails = userDetailsService.get(currentUserId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
     val sentencingCourtName = courtLookupService.getCourtName(recall.sentencingInfo!!.sentencingCourt)
     val localPoliceForceName = policeForceLookupService.getPoliceForceName(recall.localPoliceForceId!!)
-    return RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName, sentencingCourtName, localPoliceForceName)
+    return RecallNotificationContext(recall, prisoner, currentUserDetails, currentPrisonName, lastReleasePrisonName, sentencingCourtName, localPoliceForceName)
   }
 }
 
 data class RecallNotificationContext(
   val recall: Recall,
   val prisoner: Prisoner,
-  val assessedByUserDetails: UserDetails,
+  val currentUserDetails: UserDetails,
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
   val sentencingCourtName: CourtName,
@@ -72,7 +72,8 @@ data class RecallNotificationContext(
       prisoner.croNumber,
       LocalDate.now(clock),
       recall.lastReleaseDate!!,
-      assessedByUserDetails.signature
+      currentUserDetails.signature,
+      currentUserDetails.userId()
     )
   }
 
@@ -82,9 +83,9 @@ data class RecallNotificationContext(
       recall.prisonerNameOnLicense(),
       prisoner.dateOfBirth!!,
       prisoner.croNumber,
-      assessedByUserDetails.personName(),
-      assessedByUserDetails.email,
-      assessedByUserDetails.phoneNumber,
+      currentUserDetails.personName(),
+      currentUserDetails.email,
+      currentUserDetails.phoneNumber,
       recall.mappaLevel!!,
       recall.sentencingInfo!!.sentenceLength,
       recall.sentencingInfo.indexOffence,
@@ -117,7 +118,7 @@ data class RecallNotificationContext(
       recall.prisonerNameOnLicense(),
       recall.bookingNumber!!,
       currentPrisonName,
-      assessedByUserDetails.personName()
+      currentUserDetails.personName()
     )
 }
 
@@ -170,5 +171,6 @@ data class RevocationOrderContext(
   val croNumber: String?,
   val licenseRevocationDate: LocalDate,
   val lastReleaseDate: LocalDate,
-  val assessedByUserSignature: String
+  val currentUserSignature: String,
+  val currentUserId: UserId
 )

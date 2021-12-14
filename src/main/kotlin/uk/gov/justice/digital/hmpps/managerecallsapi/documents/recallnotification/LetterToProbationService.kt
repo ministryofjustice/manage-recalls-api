@@ -12,7 +12,7 @@ class LetterToProbationService(
   @Autowired private val letterToProbationGenerator: LetterToProbationGenerator,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
 ) {
-  fun createPdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> =
+  fun generatePdf(recallNotificationContext: RecallNotificationContext): Mono<ByteArray> =
     pdfDocumentGenerationService.generatePdf(
       letterToProbationGenerator.generateHtml(recallNotificationContext.getLetterToProbationContext()),
       recallImage(HmppsLogo)

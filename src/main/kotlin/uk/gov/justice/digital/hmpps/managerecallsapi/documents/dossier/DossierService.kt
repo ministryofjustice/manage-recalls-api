@@ -29,18 +29,18 @@ class DossierService(
   @Autowired private val dossierContextFactory: DossierContextFactory
 ) {
 
-  fun getPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrCreatePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER)
       ?.let { Mono.just(it) }
-      ?: createDossier(recallId, createdByUserId)
+      ?: createDossier(recallId, currentUserId)
 
-  private fun createDossier(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
+  private fun createDossier(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> {
     val dossierContext = dossierContextFactory.createContext(recallId)
 
-    return reasonsForRecallService.getPdf(dossierContext, createdByUserId).map { reasonsForRecallPdfBytes ->
+    return reasonsForRecallService.getOrGeneratePdf(dossierContext, currentUserId).map { reasonsForRecallPdfBytes ->
       createTableOfContentsDocumentMap(reasonsForRecallPdfBytes, recallId, dossierContext.includeWelsh())
     }.flatMap { tableOfContentsDocumentMap ->
-      tableOfContentsService.createPdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
+      tableOfContentsService.generatePdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
         mutableListOf(documentData(tableOfContentsBytes)).apply {
           this += tableOfContentsDocumentMap.values
         }
@@ -50,7 +50,7 @@ class DossierService(
     }.map { mergedPdfContentBytes ->
       pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
     }.map { mergedBytes ->
-      documentService.storeDocument(recallId, createdByUserId, mergedBytes, DOSSIER, "$DOSSIER.pdf")
+      documentService.storeDocument(recallId, currentUserId, mergedBytes, DOSSIER, "$DOSSIER.pdf")
       mergedBytes
     }
   }
