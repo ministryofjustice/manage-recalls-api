@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
@@ -7,7 +9,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
@@ -23,15 +24,16 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.time.OffsetDateTime
 
 class ReasonsForRecallServiceTest {
+  private val dossierContextFactory = mockk<DossierContextFactory>()
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val reasonsForRecallGenerator = mockk<ReasonsForRecallGenerator>()
   private val pdfDecorator = mockk<PdfDecorator>()
   private val documentService = mockk<DocumentService>()
 
-  private val underTest = ReasonsForRecallService(reasonsForRecallGenerator, pdfDocumentGenerationService, pdfDecorator, documentService)
+  private val underTest = ReasonsForRecallService(dossierContextFactory, reasonsForRecallGenerator, pdfDocumentGenerationService, pdfDecorator, documentService)
 
   @Test
-  internal fun `getDocument generates and stores the html and PDf if one does not exist`() {
+  fun `getOrGeneratePdf generates and stores the document when one does not exist`() {
     val dossierContext = mockk<DossierContext>()
     val reasonsForRecallContext = mockk<ReasonsForRecallContext>()
     val generatedHtml = "some html"
@@ -40,7 +42,7 @@ class ReasonsForRecallServiceTest {
     val recallId = ::RecallId.random()
     val createdByUserId = ::UserId.random()
 
-    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns null
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), REASONS_FOR_RECALL) } returns null
     every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
     every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
     every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
@@ -62,13 +64,13 @@ class ReasonsForRecallServiceTest {
   }
 
   @Test
-  internal fun `getDocument returns existing PDf if one already exists`() {
+  fun `getOrGeneratePdf returns existing document when one already exists`() {
     val dossierContext = mockk<DossierContext>()
     val recallId = ::RecallId.random()
     val expectedBytes = "Some expected content".toByteArray()
     val createdByUserId = ::UserId.random()
 
-    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), DOSSIER) } returns expectedBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), REASONS_FOR_RECALL) } returns expectedBytes
     every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
 
     val generatedPdf = underTest.getOrGeneratePdf(dossierContext, createdByUserId).block()!!
@@ -78,5 +80,39 @@ class ReasonsForRecallServiceTest {
     verify { reasonsForRecallGenerator wasNot Called }
     verify { pdfDocumentGenerationService wasNot Called }
     verify { pdfDecorator wasNot Called }
+  }
+
+  @Test
+  fun `generateAndStorePdf generates new document`() {
+    val dossierContext = mockk<DossierContext>()
+    val reasonsForRecallContext = mockk<ReasonsForRecallContext>()
+    val recallId = ::RecallId.random()
+    val generatedHtml = "Some expected content"
+    val expectedPdfBytes = generatedHtml.toByteArray()
+    val expectedPdfWithHeaderBytes = "some other bytes".toByteArray()
+    val createdByUserId = ::UserId.random()
+    val details = "Blah blah blah"
+    val documentId = ::DocumentId.random()
+
+    every { dossierContextFactory.createContext(recallId) } returns dossierContext
+    every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
+    every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
+    every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0) } returns Mono.just(expectedPdfBytes)
+    every { pdfDecorator.centralHeader(expectedPdfBytes, "OFFICIAL") } returns expectedPdfWithHeaderBytes
+    every {
+      documentService.storeDocument(
+        recallId,
+        createdByUserId,
+        expectedPdfWithHeaderBytes,
+        REASONS_FOR_RECALL,
+        "REASONS_FOR_RECALL.pdf",
+        details
+      )
+    } returns documentId
+
+    val result = underTest.generateAndStorePdf(recallId, createdByUserId, details).block()!!
+
+    assertThat(result, equalTo(documentId))
+    verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REASONS_FOR_RECALL) }
   }
 }
