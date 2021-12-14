@@ -89,7 +89,7 @@ internal class RecallNotificationServiceTest {
   }
 
   @Test
-  fun `create recall notification uses latest revocation order if exists and creates recall summary and letter to probation`() {
+  fun `create recall notification uses latest revocation order, or creates if not exists, and creates recall summary and letter to probation`() {
     val recallId = ::RecallId.random()
     val recallSummaryContent = randomString()
     val revocationOrderContent = randomString()
