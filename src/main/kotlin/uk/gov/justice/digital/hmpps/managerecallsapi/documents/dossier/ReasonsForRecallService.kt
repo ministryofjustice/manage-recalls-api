@@ -18,12 +18,12 @@ class ReasonsForRecallService(
   @Autowired private val documentService: DocumentService,
 ) {
 
-  fun getOrGeneratePdf(dossierContext: DossierContext, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrGeneratePdf(dossierContext: DossierContext, currentUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(dossierContext.recall.recallId(), DocumentCategory.DOSSIER)
       ?.let { Mono.just(it) }
-      ?: generatePdf(dossierContext, createdByUserId)
+      ?: generatePdf(dossierContext, currentUserId)
 
-  private fun generatePdf(dossierContext: DossierContext, createdByUserId: UserId): Mono<ByteArray> =
+  private fun generatePdf(dossierContext: DossierContext, currentUserId: UserId): Mono<ByteArray> =
     pdfDocumentGenerationService.generatePdf(
       reasonsForRecallGenerator.generateHtml(dossierContext.getReasonsForRecallContext()),
       1.0, 1.0
@@ -32,7 +32,7 @@ class ReasonsForRecallService(
     }.map { documentBytes ->
       documentService.storeDocument(
         dossierContext.recall.recallId(),
-        createdByUserId,
+        currentUserId,
         documentBytes,
         REASONS_FOR_RECALL,
         "$REASONS_FOR_RECALL.pdf"

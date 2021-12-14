@@ -19,13 +19,13 @@ class LetterToPrisonContextFactory(
   @Autowired private val prisonLookupService: PrisonLookupService,
   @Autowired private val userDetailsService: UserDetailsService,
 ) {
-  fun createContext(recallId: RecallId, createdByUserId: UserId): LetterToPrisonContext {
+  fun createContext(recallId: RecallId, currentUserId: UserId): LetterToPrisonContext {
     val recall = recallRepository.getByRecallId(recallId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
-    val createdByUserDetails = userDetailsService.get(createdByUserId)
+    val currentUserDetails = userDetailsService.get(currentUserId)
     val recallLengthDescription = RecallLengthDescription(recall.recallLength!!)
-    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallLengthDescription, createdByUserDetails)
+    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallLengthDescription, currentUserDetails)
   }
 }
 
@@ -35,5 +35,5 @@ data class LetterToPrisonContext(
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
   val recallLengthDescription: RecallLengthDescription,
-  val createdByUser: UserDetails
+  val currentUser: UserDetails
 )

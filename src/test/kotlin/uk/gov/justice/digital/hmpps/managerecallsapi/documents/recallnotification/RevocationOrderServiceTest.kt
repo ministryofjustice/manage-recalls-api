@@ -26,11 +26,13 @@ import java.time.LocalDate
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class RevocationOrderServiceTest {
 
+  private val recallNotificationContextFactory = mockk<RecallNotificationContextFactory>()
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val documentService = mockk<DocumentService>()
   private val revocationOrderGenerator = mockk<RevocationOrderGenerator>()
 
   private val underTest = RevocationOrderService(
+    recallNotificationContextFactory,
     pdfDocumentGenerationService,
     documentService,
     revocationOrderGenerator
@@ -40,7 +42,7 @@ internal class RevocationOrderServiceTest {
   private val expectedBytes = randomString().toByteArray()
 
   @Test
-  fun `creates a revocation order for a recall if one does not exist`() {
+  fun `getOrGeneratePdf generates a revocation order for a recall if one does not exist`() {
     val createdByUserId = ::UserId.random()
     val userSignature = "base64EncodedUserSignature"
     val revocationOrderContext =
@@ -52,7 +54,8 @@ internal class RevocationOrderServiceTest {
         "croNumber",
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
-        userSignature
+        userSignature,
+        createdByUserId
       )
 
     val generatedHtml = "Some html, honest"
@@ -69,7 +72,7 @@ internal class RevocationOrderServiceTest {
       documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
     } returns ::DocumentId.random()
 
-    val result = underTest.getOrGeneratePdf(revocationOrderContext, createdByUserId)
+    val result = underTest.getOrGeneratePdf(revocationOrderContext)
 
     StepVerifier
       .create(result)
@@ -88,7 +91,7 @@ internal class RevocationOrderServiceTest {
   }
 
   @Test
-  fun `gets existing revocation order if one exists for the recall`() {
+  fun `generateAndStorePdf generates a new revocation order for a recall`() {
     val createdByUserId = ::UserId.random()
     val userSignature = "base64EncodedUserSignature"
     val revocationOrderContext =
@@ -100,12 +103,69 @@ internal class RevocationOrderServiceTest {
         "croNumber",
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
-        userSignature
+        userSignature,
+        createdByUserId
+      )
+
+    val generatedHtml = "Some html, honest"
+    val details = "Blah, Blah, Blah"
+    val recallNotificationContext = mockk<RecallNotificationContext>()
+    every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
+    every { recallNotificationContext.getRevocationOrderContext() } returns revocationOrderContext
+    every { revocationOrderGenerator.generateHtml(revocationOrderContext) } returns generatedHtml
+    every {
+      pdfDocumentGenerationService.generatePdf(
+        generatedHtml,
+        recallImage(RevocationOrderLogo),
+        signature(userSignature)
+      )
+    } returns Mono.just(expectedBytes)
+    val documentId = ::DocumentId.random()
+    every {
+      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf", details)
+    } returns documentId
+
+    val result = underTest.generateAndStorePdf(recallId, createdByUserId, details)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it, equalTo(documentId))
+        verify {
+          documentService.storeDocument(
+            recallId,
+            createdByUserId,
+            expectedBytes,
+            REVOCATION_ORDER,
+            "$REVOCATION_ORDER.pdf",
+            details
+          )
+        }
+      }.verifyComplete()
+
+    verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REVOCATION_ORDER) }
+  }
+
+  @Test
+  fun `getOrGeneratePdf gets existing revocation order if one exists for the recall`() {
+    val createdByUserId = ::UserId.random()
+    val userSignature = "base64EncodedUserSignature"
+    val revocationOrderContext =
+      RevocationOrderContext(
+        recallId,
+        FullName("Bertie Badger"),
+        LocalDate.of(1995, 10, 3),
+        "bookNumber",
+        "croNumber",
+        LocalDate.of(2017, 8, 29),
+        LocalDate.of(2020, 9, 1),
+        userSignature,
+        createdByUserId
       )
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REVOCATION_ORDER) } returns expectedBytes
 
-    val result = underTest.getOrGeneratePdf(revocationOrderContext, createdByUserId)
+    val result = underTest.getOrGeneratePdf(revocationOrderContext)
 
     StepVerifier
       .create(result)

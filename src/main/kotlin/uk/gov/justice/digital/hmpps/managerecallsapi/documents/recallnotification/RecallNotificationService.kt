@@ -22,17 +22,17 @@ class RecallNotificationService(
   @Autowired private val documentService: DocumentService,
 ) {
 
-  fun getOrGeneratePdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrGeneratePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION)
       ?.let { Mono.just(it) }
-      ?: generateAndStorePdf(recallId, createdByUserId).map { it.second }
+      ?: generateAndStorePdf(recallId, currentUserId).map { it.second }
 
-  fun generateAndStorePdf(recallId: RecallId, createdByUserId: UserId, details: String? = null): Mono<Pair<DocumentId, ByteArray>> {
-    val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, createdByUserId)
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String? = null): Mono<Pair<DocumentId, ByteArray>> {
+    val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, currentUserId)
 
     val documentGenerators = Flux.just(
       { recallSummaryService.generatePdf(recallNotificationContext) },
-      { revocationOrderService.getOrGeneratePdf(recallNotificationContext.getRevocationOrderContext(), createdByUserId) },
+      { revocationOrderService.getOrGeneratePdf(recallNotificationContext.getRevocationOrderContext()) },
       { letterToProbationService.generatePdf(recallNotificationContext) }
     )
     return documentGenerators
@@ -41,7 +41,7 @@ class RecallNotificationService(
       .collectList()
       .flatMap { pdfDocumentGenerationService.mergePdfs(it) }
       .map { mergedBytes ->
-        val documentId = documentService.storeDocument(recallId, createdByUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf")
+        val documentId = documentService.storeDocument(recallId, currentUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf")
         Pair(documentId, mergedBytes)
       }
   }

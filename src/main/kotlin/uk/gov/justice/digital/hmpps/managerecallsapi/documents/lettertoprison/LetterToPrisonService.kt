@@ -26,12 +26,12 @@ class LetterToPrisonService(
   @Autowired private val pdfDecorator: PdfDecorator,
 ) {
 
-  fun getPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
+  fun getPdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> {
     val letterToPrison = documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
 
     return if (letterToPrison == null) {
-      generatePdf(recallId, createdByUserId).map { letterToPrisonBytes ->
-        documentService.storeDocument(recallId, createdByUserId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
+      generatePdf(recallId, currentUserId).map { letterToPrisonBytes ->
+        documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
         letterToPrisonBytes
       }
     } else {
@@ -39,8 +39,8 @@ class LetterToPrisonService(
     }
   }
 
-  private fun generatePdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
-    val context = letterToPrisonContextFactory.createContext(recallId, createdByUserId)
+  private fun generatePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> {
+    val context = letterToPrisonContextFactory.createContext(recallId, currentUserId)
     var letterToPrisonCustodyOfficePageCount = 0
 
     val documentGenerators = Flux.just(

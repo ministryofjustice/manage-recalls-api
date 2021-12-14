@@ -60,7 +60,7 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
     every { letterToProbationService.generatePdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { recallSummaryService.generatePdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
-    every { revocationOrderService.getOrGeneratePdf(revocationOrderContext, createdByUserId) } returns Mono.just(revocationOrderContent.toByteArray())
+    every { revocationOrderService.getOrGeneratePdf(revocationOrderContext) } returns Mono.just(revocationOrderContent.toByteArray())
 
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every {
@@ -105,7 +105,7 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
     every { letterToProbationService.generatePdf(recallNotificationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { recallSummaryService.generatePdf(recallNotificationContext) } returns Mono.just(recallSummaryContent.toByteArray())
-    every { revocationOrderService.getOrGeneratePdf(revocationOrderContext, createdByUserId) } returns Mono.just(revocationOrderContent.toByteArray())
+    every { revocationOrderService.getOrGeneratePdf(revocationOrderContext) } returns Mono.just(revocationOrderContent.toByteArray())
 
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every {

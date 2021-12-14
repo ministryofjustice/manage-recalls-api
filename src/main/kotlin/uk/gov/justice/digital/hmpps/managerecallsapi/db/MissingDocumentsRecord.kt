@@ -55,11 +55,11 @@ data class MissingDocumentsRecord(
     emailId: DocumentId,
     detail: String,
     version: Int,
-    createdBy: UserId,
+    createdByUserId: UserId,
     createdDateTime: OffsetDateTime
   ) :
     this(
-      id.value, recallId.value, categories, emailId.value, detail, version, createdBy.value, createdDateTime
+      id.value, recallId.value, categories, emailId.value, detail, version, createdByUserId.value, createdDateTime
     )
 
   fun id() = MissingDocumentsRecordId(id)

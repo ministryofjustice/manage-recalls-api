@@ -47,7 +47,7 @@ class LetterToPrisonCustodyOfficeGenerator(
       }
 
       setVariable("currentEstablishment", context.currentPrisonName)
-      setVariable("signatoryName", context.createdByUser.fullName())
+      setVariable("signatoryName", context.currentUser.fullName())
     }.let {
       templateEngine.process("letter-to-prison_custody-office", it)
     }

@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
 import dev.forkhandles.result4k.Success
+import io.mockk.Called
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -21,11 +22,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RevocationOrderService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -42,11 +45,21 @@ class DocumentControllerTest {
   private val tokenExtractor = mockk<TokenExtractor>()
   private val userDetailsService = mockk<UserDetailsService>()
   private val recallNotificationService = mockk<RecallNotificationService>()
+  private val revocationOrderService = mockk<RevocationOrderService>()
   private val dossierService = mockk<DossierService>()
   private val letterToPrisonService = mockk<LetterToPrisonService>()
   private val advertisedBaseUri = "https://api"
 
-  private val underTest = DocumentController(documentService, recallNotificationService, dossierService, letterToPrisonService, tokenExtractor, userDetailsService, advertisedBaseUri)
+  private val underTest = DocumentController(
+    documentService,
+    recallNotificationService,
+    dossierService,
+    letterToPrisonService,
+    revocationOrderService,
+    tokenExtractor,
+    userDetailsService,
+    advertisedBaseUri
+  )
 
   private val recallId = ::RecallId.random()
   private val fileName = "fileName"
@@ -239,7 +252,7 @@ class DocumentControllerTest {
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
 
-    DocumentCategory.values().filter { !it.uploaded && it != RECALL_NOTIFICATION }.forEach {
+    DocumentCategory.values().filter { !it.uploaded && !setOf(RECALL_NOTIFICATION, REVOCATION_ORDER).contains(it) }.forEach {
       assertThrows<WrongDocumentTypeException> {
         underTest.generateDocument(recallId, GenerateDocumentRequest(it, "blah, blah, blah"), bearerToken)
       }
@@ -263,5 +276,28 @@ class DocumentControllerTest {
         assertThat(it.body, equalTo(NewDocumentResponse(documentId)))
       }
       .verifyComplete()
+
+    verify { revocationOrderService wasNot Called }
+  }
+
+  @Test
+  fun `generate new revocation order`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+    val documentId = ::DocumentId.random()
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+    every { revocationOrderService.generateAndStorePdf(recallId, userId, details) } returns Mono.just(documentId)
+
+    val result = underTest.generateDocument(recallId, GenerateDocumentRequest(REVOCATION_ORDER, details), bearerToken)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body, equalTo(NewDocumentResponse(documentId)))
+      }
+      .verifyComplete()
+
+    verify { recallNotificationService wasNot Called }
   }
 }
