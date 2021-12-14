@@ -42,7 +42,7 @@ internal class RevocationOrderServiceTest {
   private val expectedBytes = randomString().toByteArray()
 
   @Test
-  fun `creates a revocation order for a recall if one does not exist`() {
+  fun `getOrGeneratePdf generates a revocation order for a recall if one does not exist`() {
     val createdByUserId = ::UserId.random()
     val userSignature = "base64EncodedUserSignature"
     val revocationOrderContext =
@@ -91,7 +91,7 @@ internal class RevocationOrderServiceTest {
   }
 
   @Test
-  fun `creates a new revocation order for a recall`() {
+  fun `generateAndStorePdf generates a new revocation order for a recall`() {
     val createdByUserId = ::UserId.random()
     val userSignature = "base64EncodedUserSignature"
     val revocationOrderContext =
@@ -147,7 +147,7 @@ internal class RevocationOrderServiceTest {
   }
 
   @Test
-  fun `gets existing revocation order if one exists for the recall`() {
+  fun `getOrGeneratePdf gets existing revocation order if one exists for the recall`() {
     val createdByUserId = ::UserId.random()
     val userSignature = "base64EncodedUserSignature"
     val revocationOrderContext =
