@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
 
@@ -27,7 +28,8 @@ class RevocationOrderHtmlGenerationTest(
         "PrisonerCroNumber",
         LocalDate.of(2021, 9, 1),
         LocalDate.of(2020, 9, 30),
-        "assessedByUserDetailsSignature"
+        "userDetailsSignature",
+        ::UserId.random()
       )
     )
 

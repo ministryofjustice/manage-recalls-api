@@ -8,30 +8,38 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Compani
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.signature
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 
 @Service
 class RevocationOrderService(
+  @Autowired private val recallNotificationContextFactory: RecallNotificationContextFactory,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val documentService: DocumentService,
   @Autowired private val revocationOrderGenerator: RevocationOrderGenerator,
 ) {
 
-  private fun generateAndStorePdf(revocationOrderContext: RevocationOrderContext, createdByUserId: UserId): Mono<ByteArray> =
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String): Mono<DocumentId> =
+    recallNotificationContextFactory.createContext(recallId, currentUserId).getRevocationOrderContext().let { ctx ->
+      generateAndStorePdf(ctx, details).map { it.first }
+    }
+
+  private fun generateAndStorePdf(revocationOrderContext: RevocationOrderContext, documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> =
     revocationOrderContext.let { context ->
       pdfDocumentGenerationService.generatePdf(
         revocationOrderGenerator.generateHtml(context),
         recallImage(RevocationOrderLogo),
-        signature(context.assessedByUserSignature)
+        signature(context.currentUserSignature)
       ).map { bytes ->
-        documentService.storeDocument(context.recallId, createdByUserId, bytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
-        bytes
+        val documentId = documentService.storeDocument(context.recallId, context.currentUserId, bytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf", documentDetails)
+        Pair(documentId, bytes)
       }
     }
 
-  fun getOrGeneratePdf(context: RevocationOrderContext, createdByUserId: UserId): Mono<ByteArray> =
+  fun getOrGeneratePdf(context: RevocationOrderContext): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(context.recallId, REVOCATION_ORDER)
       ?.let { Mono.just(it) }
-      ?: generateAndStorePdf(context, createdByUserId)
+      ?: generateAndStorePdf(context).map { it.second }
 }

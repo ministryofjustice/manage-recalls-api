@@ -28,10 +28,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.DossierService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RevocationOrderService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -50,7 +53,8 @@ class DocumentController(
   @Autowired private val documentService: DocumentService,
   @Autowired private val recallNotificationService: RecallNotificationService,
   @Autowired private val dossierService: DossierService,
-  @Autowired private val letterToPrison: LetterToPrisonService,
+  @Autowired private val letterToPrisonService: LetterToPrisonService,
+  @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val tokenExtractor: TokenExtractor,
   @Autowired private val userDetailsService: UserDetailsService,
   @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
@@ -125,7 +129,7 @@ class DocumentController(
     @RequestHeader("Authorization") bearerToken: String
   ): Mono<ResponseEntity<Pdf>> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return letterToPrison.getPdf(recallId, token.userUuid()).map {
+    return letterToPrisonService.getPdf(recallId, token.userUuid()).map {
       ResponseEntity.ok(Pdf.encode(it))
     }
   }
@@ -168,35 +172,36 @@ class DocumentController(
     @RequestHeader("Authorization") bearerToken: String
   ): Mono<ResponseEntity<NewDocumentResponse>> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return createDocument(recallId, token.userUuid(), generateDocumentRequest).map { documentId ->
+    return generateDocument(recallId, token.userUuid(), generateDocumentRequest).map { documentId ->
       ResponseEntity
         .created(URI.create("$baseUri/recalls/$recallId/documents/$documentId"))
         .body(NewDocumentResponse(documentId = documentId))
     }
   }
 
-  private fun createDocument(
+  private fun generateDocument(
     recallId: RecallId,
-    userUuid: UserId,
+    currentUserUuid: UserId,
     generateDocumentRequest: GenerateDocumentRequest
   ): Mono<DocumentId> {
     if (generateDocumentRequest.category.uploaded)
       throw WrongDocumentTypeException(generateDocumentRequest.category)
 
     return when (generateDocumentRequest.category) {
-      DocumentCategory.RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, userUuid, generateDocumentRequest.details)
+      RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
         .map { it.first }
+      REVOCATION_ORDER -> revocationOrderService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
       else -> throw WrongDocumentTypeException(generateDocumentRequest.category)
     }
   }
 
   private fun uploadDocument(
     recallId: RecallId,
-    createdByUserId: UserId,
+    currentUserId: UserId,
     uploadDocumentRequest: UploadDocumentRequest
   ) = documentService.scanAndStoreDocument(
     recallId,
-    createdByUserId,
+    currentUserId,
     uploadDocumentRequest.fileContent.toBase64DecodedByteArray(),
     uploadDocumentRequest.category,
     uploadDocumentRequest.fileName,
