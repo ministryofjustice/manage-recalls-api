@@ -75,13 +75,13 @@ internal class DossierServiceTest {
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
-    every { reasonsForRecallService.getPdf(dossierContext, createdByUserId) } returns Mono.just(reasonsForRecallContentBytes)
-    every { tableOfContentsService.createPdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
+    every { reasonsForRecallService.getOrGeneratePdf(dossierContext, createdByUserId) } returns Mono.just(reasonsForRecallContentBytes)
+    every { tableOfContentsService.generatePdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
     every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
 
-    val dossier = underTest.getPdf(recallId, createdByUserId).block()!!
+    val dossier = underTest.getOrCreatePdf(recallId, createdByUserId).block()!!
 
     assertArrayEquals(numberedMergedBytes, dossier)
 
@@ -119,7 +119,7 @@ internal class DossierServiceTest {
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns documentBytes
 
-    val dossier = underTest.getPdf(recallId, createdByUserId).block()!!
+    val dossier = underTest.getOrCreatePdf(recallId, createdByUserId).block()!!
 
     assertArrayEquals(documentBytes, dossier)
 

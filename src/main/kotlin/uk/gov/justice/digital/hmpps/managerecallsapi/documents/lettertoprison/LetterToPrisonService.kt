@@ -30,7 +30,7 @@ class LetterToPrisonService(
     val letterToPrison = documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
 
     return if (letterToPrison == null) {
-      createPdf(recallId, createdByUserId).map { letterToPrisonBytes ->
+      generatePdf(recallId, createdByUserId).map { letterToPrisonBytes ->
         documentService.storeDocument(recallId, createdByUserId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
         letterToPrisonBytes
       }
@@ -39,7 +39,7 @@ class LetterToPrisonService(
     }
   }
 
-  private fun createPdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
+  private fun generatePdf(recallId: RecallId, createdByUserId: UserId): Mono<ByteArray> {
     val context = letterToPrisonContextFactory.createContext(recallId, createdByUserId)
     var letterToPrisonCustodyOfficePageCount = 0
 

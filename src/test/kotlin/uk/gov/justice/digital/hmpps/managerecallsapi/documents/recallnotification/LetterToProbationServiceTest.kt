@@ -29,7 +29,7 @@ class LetterToProbationServiceTest {
     every { letterToProbationGenerator.generateHtml(letterToProbationContext) } returns generatedHtml
     every { pdfDocumentGenerationService.generatePdf(generatedHtml, recallImage(HmppsLogo)) } returns Mono.just(pdfBytes)
 
-    val result = underTest.createPdf(recallNotificationContext).block()!!
+    val result = underTest.generatePdf(recallNotificationContext).block()!!
 
     assertArrayEquals(result, pdfBytes)
   }
