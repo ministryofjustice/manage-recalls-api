@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCatego
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -31,29 +32,6 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   private val firstName = "Natalia"
   private val expectedPdf = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
   private val expectedBase64Pdf = expectedPdf.encodeToBase64String()
-
-  @Test
-  fun `get recall notification returns merged recall summary and revocation order`() {
-    val userId = authenticatedClient.userId
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
-    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
-
-    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
-    gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
-    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)
-    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
-
-    gotenbergMockServer.stubMergePdfs(
-      expectedPdf,
-      expectedPdf.decodeToString(),
-      expectedPdf.decodeToString(),
-      expectedPdf.decodeToString(),
-    )
-
-    val response = authenticatedClient.getRecallNotification(recall.recallId)
-
-    assertThat(response.content, equalTo(expectedBase64Pdf))
-  }
 
   @Test
   fun `get recall notification returns merged recall summary and revocation order and then generate recall notification generates new version but reuses existing revocation order`() {
@@ -80,12 +58,30 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     val firstRecallNotification =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
     assertThat(firstRecallNotification.version, equalTo(1))
+    val firstRevocationOrder =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
+    assertThat(firstRevocationOrder.version, equalTo(1))
+
+    // Reset mocks to ensure that revocation order isnt regenerated
+    gotenbergMockServer.resetAll()
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
+
+    gotenbergMockServer.stubMergePdfs(
+      expectedPdf,
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+    )
 
     authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, "Some detail")
 
     val secondRecallNotification =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
     assertThat(secondRecallNotification.version, equalTo(2))
+    val secondRevocationOrder =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
+    assertThat(secondRevocationOrder.version, equalTo(1))
   }
 
   private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId) {
