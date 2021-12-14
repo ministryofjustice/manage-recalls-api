@@ -28,6 +28,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
@@ -121,7 +122,7 @@ class DocumentController(
     @RequestHeader("Authorization") bearerToken: String
   ): Mono<ResponseEntity<Pdf>> {
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return dossierService.getOrCreatePdf(recallId, token.userUuid()).map {
+    return dossierService.getOrGeneratePdf(recallId, token.userUuid()).map {
       ResponseEntity.ok(Pdf.encode(it))
     }
   }
@@ -191,9 +192,10 @@ class DocumentController(
       throw WrongDocumentTypeException(generateDocumentRequest.category)
 
     return when (generateDocumentRequest.category) {
-      RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details).map { it.first }
+      RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
       REVOCATION_ORDER -> revocationOrderService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
       REASONS_FOR_RECALL -> reasonsForRecallService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
+      DOSSIER -> dossierService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
       else -> throw WrongDocumentTypeException(generateDocumentRequest.category)
     }
   }

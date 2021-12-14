@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeExc
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
@@ -184,7 +185,7 @@ class DocumentControllerTest {
     val userId = ::UserId.random()
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { dossierService.getOrCreatePdf(recallId, userId) } returns Mono.just(expectedPdf)
+    every { dossierService.getOrGeneratePdf(recallId, userId) } returns Mono.just(expectedPdf)
 
     val result = underTest.getDossier(recallId, bearerToken)
 
@@ -256,7 +257,7 @@ class DocumentControllerTest {
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
 
-    DocumentCategory.values().filter { !it.uploaded && !setOf(RECALL_NOTIFICATION, REVOCATION_ORDER, REASONS_FOR_RECALL).contains(it) }.forEach {
+    DocumentCategory.values().filter { !it.uploaded && !setOf(RECALL_NOTIFICATION, REVOCATION_ORDER, REASONS_FOR_RECALL, DOSSIER).contains(it) }.forEach {
       assertThrows<WrongDocumentTypeException> {
         underTest.generateDocument(recallId, GenerateDocumentRequest(it, "blah, blah, blah"), bearerToken)
       }
@@ -270,7 +271,7 @@ class DocumentControllerTest {
     val documentId = ::DocumentId.random()
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { recallNotificationService.generateAndStorePdf(recallId, userId, details) } returns Mono.just(Pair(documentId, "content".toByteArray()))
+    every { recallNotificationService.generateAndStorePdf(recallId, userId, details) } returns Mono.just(documentId)
 
     val result = underTest.generateDocument(recallId, GenerateDocumentRequest(RECALL_NOTIFICATION, details), bearerToken)
 
@@ -283,6 +284,7 @@ class DocumentControllerTest {
 
     verify { revocationOrderService wasNot Called }
     verify { reasonsForRecallService wasNot Called }
+    verify { dossierService wasNot Called }
   }
 
   @Test
@@ -305,6 +307,7 @@ class DocumentControllerTest {
 
     verify { recallNotificationService wasNot Called }
     verify { reasonsForRecallService wasNot Called }
+    verify { dossierService wasNot Called }
   }
 
   @Test
@@ -327,5 +330,29 @@ class DocumentControllerTest {
 
     verify { recallNotificationService wasNot Called }
     verify { revocationOrderService wasNot Called }
+    verify { dossierService wasNot Called }
+  }
+
+  @Test
+  fun `generate new dossier`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+    val documentId = ::DocumentId.random()
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+    every { dossierService.generateAndStorePdf(recallId, userId, details) } returns Mono.just(documentId)
+
+    val result = underTest.generateDocument(recallId, GenerateDocumentRequest(DOSSIER, details), bearerToken)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body, equalTo(NewDocumentResponse(documentId)))
+      }
+      .verifyComplete()
+
+    verify { recallNotificationService wasNot Called }
+    verify { revocationOrderService wasNot Called }
+    verify { reasonsForRecallService wasNot Called }
   }
 }

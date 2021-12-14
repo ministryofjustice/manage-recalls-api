@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
@@ -81,7 +82,7 @@ internal class DossierServiceTest {
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
     every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
 
-    val dossier = underTest.getOrCreatePdf(recallId, createdByUserId).block()!!
+    val dossier = underTest.getOrGeneratePdf(recallId, createdByUserId).block()!!
 
     assertArrayEquals(numberedMergedBytes, dossier)
 
@@ -119,7 +120,7 @@ internal class DossierServiceTest {
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns documentBytes
 
-    val dossier = underTest.getOrCreatePdf(recallId, createdByUserId).block()!!
+    val dossier = underTest.getOrGeneratePdf(recallId, createdByUserId).block()!!
 
     assertArrayEquals(documentBytes, dossier)
 
@@ -132,4 +133,37 @@ internal class DossierServiceTest {
   }
 
   // TODO: PUD-575 test/handling when any input doc is not available
+
+  @Test
+  fun `generate dossier generates dossier using latest existing docs`() {
+    val recallId = ::RecallId.random()
+    val createdByUserId = ::UserId.random()
+    val licenseContentBytes = randomString().toByteArray()
+    val partARecallReportContentBytes = randomString().toByteArray()
+    val revocationOrderContentBytes = randomString().toByteArray()
+    val reasonsForRecallContentBytes = randomString().toByteArray()
+    val mergedBytes = randomString().toByteArray()
+    val tableOfContentBytes = randomString().toByteArray()
+    val numberedMergedBytes = randomString().toByteArray()
+    val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
+    val documentId = ::DocumentId.random()
+    val documentDetails = "Blah blah blah"
+
+    every { dossierContext.includeWelsh() } returns false
+    every { dossierContextFactory.createContext(recallId) } returns dossierContext
+    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
+    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
+    every { reasonsForRecallService.getOrGeneratePdf(dossierContext, createdByUserId) } returns Mono.just(reasonsForRecallContentBytes)
+    every { tableOfContentsService.generatePdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
+    every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
+    every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
+    every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf", documentDetails) } returns documentId
+
+    val result = underTest.generateAndStorePdf(recallId, createdByUserId, documentDetails).block()!!
+
+    assertThat(result, equalTo(documentId))
+
+    verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) }
+  }
 }
