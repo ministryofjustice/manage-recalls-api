@@ -10,7 +10,7 @@ echo "Env set as $ENV"
 
 readonly SECRET_NAME=manage-recalls-api
 readonly NAMESPACE=manage-recalls-$ENV
-readonly HMPPS_AUTH_URL=https://sign-in.hmpps.service.justice.gov.uk
+readonly HMPPS_AUTH_URL=https://sign-in-$ENV.hmpps.service.justice.gov.uk
 
 kubectl config set-context --current --namespace=$NAMESPACE
 
