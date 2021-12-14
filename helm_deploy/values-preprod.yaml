@@ -9,7 +9,7 @@ generic-service:
     # which cluster are we on: live-1 is blue, live is green
     contextColour: green
     annotations:
-      external-dns.alpha.kubernetes.io/aws-weight: "0"
+      external-dns.alpha.kubernetes.io/aws-weight: "100"
 
   env:
     OAUTH_ENDPOINT_URL: https://sign-in-preprod.hmpps.service.justice.gov.uk/auth
