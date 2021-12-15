@@ -89,7 +89,7 @@ internal class RecallNotificationServiceTest {
   }
 
   @Test
-  fun `create recall notification calls create for recall summary and letter to probation and getOrCreate for revocation order`() {
+  fun `generate recall notification calls generate for recall summary and letter to probation and getOrGenerate for revocation order`() {
     val recallId = ::RecallId.random()
     val recallSummaryContent = randomString()
     val revocationOrderContent = randomString()
@@ -100,6 +100,7 @@ internal class RecallNotificationServiceTest {
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
     val recallNotificationContext = mockk<RecallNotificationContext>()
     val revocationOrderContext = mockk<RevocationOrderContext>()
+    val details = "Changed a value so recreating"
 
     every { recallNotificationContext.getRevocationOrderContext() } returns revocationOrderContext
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
@@ -114,15 +115,15 @@ internal class RecallNotificationServiceTest {
         createdByUserId,
         mergedBytes,
         RECALL_NOTIFICATION,
-        "$RECALL_NOTIFICATION.pdf"
+        "$RECALL_NOTIFICATION.pdf",
+        details
       )
     } returns documentId
 
-    val (createdDocumentId, recallNotification) = underTest.generateAndStorePdf(recallId, createdByUserId, "Changed a value so recreating").block()!!
+    val createdDocumentId = underTest.generateAndStorePdf(recallId, createdByUserId, details).block()!!
 
     verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) }
 
-    assertThat(recallNotification, equalTo(mergedBytes))
     assertThat(createdDocumentId, equalTo(documentId))
     assertThat(
       documentsToMergeSlot.captured,

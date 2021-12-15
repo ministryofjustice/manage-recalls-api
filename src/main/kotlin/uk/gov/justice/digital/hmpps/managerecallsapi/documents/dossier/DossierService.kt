@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletEnglish
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletWelsh
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -29,12 +30,15 @@ class DossierService(
   @Autowired private val dossierContextFactory: DossierContextFactory
 ) {
 
-  fun getOrCreatePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> =
+  fun getOrGeneratePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER)
       ?.let { Mono.just(it) }
-      ?: createDossier(recallId, currentUserId)
+      ?: generatePdf(recallId, currentUserId).map { it.second }
 
-  private fun createDossier(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> {
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String): Mono<DocumentId> =
+    generatePdf(recallId, currentUserId, documentDetails).map { it.first }
+
+  private fun generatePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> {
     val dossierContext = dossierContextFactory.createContext(recallId)
 
     return reasonsForRecallService.getOrGeneratePdf(dossierContext, currentUserId).map { reasonsForRecallPdfBytes ->
@@ -50,8 +54,8 @@ class DossierService(
     }.map { mergedPdfContentBytes ->
       pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
     }.map { mergedBytes ->
-      documentService.storeDocument(recallId, currentUserId, mergedBytes, DOSSIER, "$DOSSIER.pdf")
-      mergedBytes
+      val documentId = documentService.storeDocument(recallId, currentUserId, mergedBytes, DOSSIER, "$DOSSIER.pdf", documentDetails)
+      Pair(documentId, mergedBytes)
     }
   }
 
