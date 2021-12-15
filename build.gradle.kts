@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.15"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.16"
   kotlin("plugin.spring") version "1.5.10"
   kotlin("plugin.jpa") version "1.5.20"
   kotlin("plugin.serialization") version "1.4.31"
@@ -25,9 +25,6 @@ dependencyCheck {
   // scanConfigurations = ['debugCompileClasspath', 'acceptanceCompileClasspath', 'productionCompileClasspath']
   suppressionFiles.add("$rootDir/owasp.suppression.xml")
 }
-
-// Force log4j2.version to 2.16 for CVE-2021-45046
-project.extensions.extraProperties["log4j2.version"] = "2.16.0"
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.5.5")
