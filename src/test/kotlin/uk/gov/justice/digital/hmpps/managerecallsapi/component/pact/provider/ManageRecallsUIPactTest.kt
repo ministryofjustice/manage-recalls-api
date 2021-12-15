@@ -16,9 +16,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestTemplate
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
@@ -28,10 +30,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -50,9 +55,9 @@ import java.util.UUID
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val nomsNumber = NomsNumber("A1234AA")
-  private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
   private val documentId = DocumentId(UUID.fromString("11111111-0000-0000-0000-000000000000"))
   private val userIdOnes = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
+  private val revocationOrderBytes = ClassPathResource("/document/revocation-order.pdf").file.readBytes()
   private val details = "Random details"
 
   @MockkBean
@@ -77,11 +82,15 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a prisoner exists for NOMS number")
   fun `a prisoner exists for NOMS number`() {
+    mockPrisonerResponse(nomsNumber)
+  }
+
+  private fun mockPrisonerResponse(nomsNum: NomsNumber) {
     prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
-      prisonerSearchRequest,
+      PrisonerSearchRequest(nomsNum),
       listOf(
         Prisoner(
-          prisonerNumber = nomsNumber.value,
+          prisonerNumber = nomsNum.value,
           pncNumber = "98/7654Z",
           croNumber = "1234/56A",
           firstName = "Bobby",
@@ -91,7 +100,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
           gender = "Male"
         ),
         Prisoner(
-          prisonerNumber = nomsNumber.value,
+          prisonerNumber = nomsNum.value,
           pncNumber = "98/7654Z",
           croNumber = "1234/56A",
           firstName = "Bertie",
@@ -121,11 +130,20 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user and a fully populated recall without documents exists"
   )
   fun `a user and a fully populated recall without documents exists`() {
-    val recall = fullyPopulatedRecall(::RecallId.zeroes(), userIdOnes).copy(
-      documents = emptySet(),
-      missingDocumentsRecords = emptySet(),
-      assignee = userIdOnes.value
-    )
+    val recall = fullyPopulatedRecall(::RecallId.zeroes(), userIdOnes).let {
+      it.copy(
+        currentPrison = PrisonId("BMI"),
+        lastReleasePrison = PrisonId("CFI"),
+        sentencingInfo = it.sentencingInfo?.copy(sentencingCourt = CourtId("BANBCT")),
+        localPoliceForceId = PoliceForceId("avon-and-somerset"),
+        licenceNameCategory = NameFormatCategory.FIRST_LAST,
+        documents = emptySet(),
+        missingDocumentsRecords = emptySet(),
+        assignee = userIdOnes.value
+      )
+    }
+    mockPrisonerResponse(recall.nomsNumber)
+    gotenbergMockServer.stubGenerateRevocationOrder(revocationOrderBytes, recall.firstName.value)
     setupUserDetailsFor(userIdOnes)
     setupUserDetailsFor(::UserId.zeroes())
     setupUserDetailsFor(UserId(UUID.fromString("00000000-1111-0000-0000-000000000000")))
