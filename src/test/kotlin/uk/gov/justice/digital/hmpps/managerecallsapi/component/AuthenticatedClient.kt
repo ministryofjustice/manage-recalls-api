@@ -167,8 +167,8 @@ class AuthenticatedClient(
   ): T =
     postRequest("/users", addUserDetailsRequest, responseClass, expectedStatus)
 
-  fun getUserDetails(userId: UserId) =
-    getRequest("/users/${userId.value}", UserDetailsResponse::class.java)
+  fun getCurrentUserDetails() =
+    getRequest("/users/current", UserDetailsResponse::class.java)
 
   private fun <T> patchRequest(path: String, request: Any, responseClass: Class<T>): T =
     sendPatchRequest(path, request)

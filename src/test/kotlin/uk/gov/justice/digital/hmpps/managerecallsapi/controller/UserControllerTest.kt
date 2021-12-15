@@ -78,44 +78,6 @@ class UserControllerTest(@Autowired private val userController: UserController) 
   }
 
   @Test
-  fun `can get user details`() {
-    val userId = ::UserId.zeroes()
-    val firstName = FirstName("Jimmy")
-    val lastName = LastName("Ppud")
-    val email = Email("bertie@badger.org")
-    val phoneNumber = PhoneNumber("01234567890")
-    val signature = File("src/test/resources/signature.jpg").readBytes().encodeToBase64String()
-    val userDetails = UserDetails(
-      userId,
-      firstName,
-      lastName,
-      signature,
-      email,
-      phoneNumber,
-      CaseworkerBand.FOUR_PLUS,
-      OffsetDateTime.now()
-    )
-
-    every { userDetailsService.get(userId) } returns userDetails
-
-    val result = userController.getUserDetails(userId)
-    assertThat(
-      result,
-      equalTo(
-        UserDetailsResponse(
-          userId,
-          firstName,
-          lastName,
-          signature,
-          email,
-          phoneNumber,
-          CaseworkerBand.FOUR_PLUS
-        )
-      )
-    )
-  }
-
-  @Test
   fun `can get current user details`() {
     val userId = ::UserId.zeroes()
     val firstName = FirstName("Jimmy")
