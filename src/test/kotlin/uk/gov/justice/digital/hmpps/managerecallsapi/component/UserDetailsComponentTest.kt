@@ -111,13 +111,13 @@ class UserDetailsComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `can get saved user details`() {
+  fun `can get saved current user details`() {
     val firstName = FirstName("PPUD")
     val lastName = LastName("USER")
     val signature = base64EncodedFileContents("/signature.jpg")
     val email = Email("ppud.user@ppudreplacement.com")
     val phoneNumber = PhoneNumber("01234567890")
-    val createdDetails: UserDetailsResponse = authenticatedClient.addUserDetails(
+    authenticatedClient.addUserDetails(
       AddUserDetailsRequest(
         firstName,
         lastName,
@@ -129,7 +129,7 @@ class UserDetailsComponentTest : ComponentTestBase() {
       UserDetailsResponse::class.java
     )
 
-    val response = authenticatedClient.getUserDetails(createdDetails.userId)
+    val response = authenticatedClient.getCurrentUserDetails()
     assertThat(
       response,
       equalTo(
