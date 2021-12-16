@@ -9,7 +9,9 @@ fi
 
 ./scripts/stop-gotenburg.sh
 
-docker-compose up -d postgres localstack
+docker compose build localstack
+
+docker compose up -d postgres localstack
 
 ./gradlew ktlintFormat
 ./gradlew clean check
