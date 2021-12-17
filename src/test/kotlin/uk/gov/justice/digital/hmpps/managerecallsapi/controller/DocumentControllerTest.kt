@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
@@ -153,50 +154,6 @@ class DocumentControllerTest {
     verify { documentService.deleteDocument(recallId, documentId) }
   }
 
-  @Suppress("ReactiveStreamsUnusedPublisher")
-  @Test
-  fun `get recall notification returns Recall Notification PDF`() {
-    val recallId = ::RecallId.random()
-    val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
-    val userId = ::UserId.random()
-    val bearerToken = "BEARER TOKEN"
-
-    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { recallNotificationService.getOrGeneratePdf(recallId, userId) } returns Mono.just(expectedPdf)
-
-    val result = underTest.getRecallNotification(recallId, bearerToken)
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
-      }
-      .verifyComplete()
-  }
-
-  @Suppress("ReactiveStreamsUnusedPublisher")
-  @Test
-  fun `get dossier returns expected PDF`() {
-    val recallId = ::RecallId.random()
-    val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
-    val bearerToken = "BEARER TOKEN"
-    val userId = ::UserId.random()
-
-    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { dossierService.getOrGeneratePdf(recallId, userId) } returns Mono.just(expectedPdf)
-
-    val result = underTest.getDossier(recallId, bearerToken)
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
-      }
-      .verifyComplete()
-  }
-
   @Test
   fun `get letter to prison returns expected PDF`() {
     val recallId = ::RecallId.random()
@@ -206,7 +163,7 @@ class DocumentControllerTest {
     val userId = ::UserId.random()
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { letterToPrisonService.getPdf(recallId, userId) } returns Mono.just(expectedPdf)
+    every { letterToPrisonService.getOrGeneratePdf(recallId, userId) } returns Mono.just(expectedPdf)
 
     val result = underTest.getLetterToPrison(recallId, bearerToken)
 
@@ -237,6 +194,20 @@ class DocumentControllerTest {
   }
 
   @Test
+  fun `upload document throws exception for non-uploaded document categories`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+
+    DocumentCategory.values().filter { !it.uploaded }.forEach {
+      assertThrows<WrongDocumentTypeException> {
+        underTest.uploadDocument(recallId, UploadDocumentRequest(it, "blah, blah, blah", "filename"), bearerToken)
+      }
+    }
+  }
+
+  @Test
   fun `generate document throws exception for uploaded document categories`() {
     val bearerToken = "BEARER TOKEN"
     val userId = ::UserId.random()
@@ -257,7 +228,7 @@ class DocumentControllerTest {
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
 
-    DocumentCategory.values().filter { !it.uploaded && !setOf(RECALL_NOTIFICATION, REVOCATION_ORDER, REASONS_FOR_RECALL, DOSSIER).contains(it) }.forEach {
+    DocumentCategory.values().filter { !it.uploaded && !setOf(RECALL_NOTIFICATION, REVOCATION_ORDER, REASONS_FOR_RECALL, DOSSIER, LETTER_TO_PRISON).contains(it) }.forEach {
       assertThrows<WrongDocumentTypeException> {
         underTest.generateDocument(recallId, GenerateDocumentRequest(it, "blah, blah, blah"), bearerToken)
       }
@@ -354,5 +325,32 @@ class DocumentControllerTest {
     verify { recallNotificationService wasNot Called }
     verify { revocationOrderService wasNot Called }
     verify { reasonsForRecallService wasNot Called }
+  }
+
+  @Test
+  fun `generate new document without details`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+    val documentId = ::DocumentId.random()
+    val userDetails = mockk<UserDetails>()
+    val fullName = FullName("Bertie Caseworker")
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+    every { recallNotificationService.generateAndStorePdf(recallId, userId, null) } returns Mono.just(documentId)
+    every { userDetailsService.get(userId) } returns userDetails
+    every { userDetails.fullName() } returns fullName
+
+    val result = underTest.generateDocument(recallId, GenerateDocumentRequest(RECALL_NOTIFICATION, null), bearerToken)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body, equalTo(NewDocumentResponse(documentId)))
+      }
+      .verifyComplete()
+
+    verify { revocationOrderService wasNot Called }
+    verify { reasonsForRecallService wasNot Called }
+    verify { dossierService wasNot Called }
   }
 }

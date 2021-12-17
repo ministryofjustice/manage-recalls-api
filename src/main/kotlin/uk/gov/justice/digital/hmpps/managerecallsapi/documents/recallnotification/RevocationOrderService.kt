@@ -21,7 +21,7 @@ class RevocationOrderService(
   @Autowired private val revocationOrderGenerator: RevocationOrderGenerator,
 ) {
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String): Mono<DocumentId> =
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> =
     recallNotificationContextFactory.createContext(recallId, currentUserId).getRevocationOrderContext().let { ctx ->
       generateAndStorePdf(ctx, details).map { it.first }
     }

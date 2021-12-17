@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Compani
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -26,20 +27,15 @@ class LetterToPrisonService(
   @Autowired private val pdfDecorator: PdfDecorator,
 ) {
 
-  fun getPdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> {
-    val letterToPrison = documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
+  fun getOrGeneratePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> =
+    documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
+      ?.let { Mono.just(it) }
+      ?: generatePdf(recallId, currentUserId, null).map { it.second }
 
-    return if (letterToPrison == null) {
-      generatePdf(recallId, currentUserId).map { letterToPrisonBytes ->
-        documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
-        letterToPrisonBytes
-      }
-    } else {
-      Mono.just(letterToPrison)
-    }
-  }
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> =
+    generatePdf(recallId, currentUserId, details).map { it.first }
 
-  private fun generatePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> {
+  private fun generatePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<Pair<DocumentId, ByteArray>> {
     val context = letterToPrisonContextFactory.createContext(recallId, currentUserId)
     var letterToPrisonCustodyOfficePageCount = 0
 
@@ -67,6 +63,9 @@ class LetterToPrisonService(
           firstHeaderPage = letterToPrisonCustodyOfficePageCount + 1,
           footerText = "OFFICIAL"
         )
+      }.map { letterToPrisonBytes ->
+        val documentId = documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, "LETTER_TO_PRISON.pdf", details)
+        Pair(documentId, letterToPrisonBytes)
       }
   }
 

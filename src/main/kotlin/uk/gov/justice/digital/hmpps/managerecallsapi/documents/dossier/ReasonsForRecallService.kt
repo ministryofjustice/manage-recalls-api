@@ -25,7 +25,7 @@ class ReasonsForRecallService(
       ?.let { Mono.just(it) }
       ?: generateAndStorePdf(dossierContext.recall.recallId(), dossierContext.getReasonsForRecallContext(), currentUserId).map { it.second }
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String): Mono<DocumentId> =
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> =
     dossierContextFactory.createContext(recallId).getReasonsForRecallContext().let { ctx ->
       generateAndStorePdf(recallId, ctx, currentUserId, details)
     }.map { it.first }

@@ -35,7 +35,7 @@ class DossierService(
       ?.let { Mono.just(it) }
       ?: generatePdf(recallId, currentUserId).map { it.second }
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String): Mono<DocumentId> =
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String?): Mono<DocumentId> =
     generatePdf(recallId, currentUserId, documentDetails).map { it.first }
 
   private fun generatePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> {

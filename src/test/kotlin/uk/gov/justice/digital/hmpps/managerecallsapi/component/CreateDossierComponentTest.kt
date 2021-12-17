@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
@@ -39,6 +40,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
     val tableOfContentsFile = ClassPathResource("/document/table-of-contents.pdf").file
     val reasonsForRecallContentsFile = ClassPathResource("/document/reasons-for-recall.pdf").file // TODO use rep. pdf
 
+    gotenbergMockServer.stubGenerateRevocationOrder(revocationOrderFile.readBytes(), firstName)
     gotenbergMockServer.stubGenerateTableOfContents(tableOfContentsFile.readBytes())
     gotenbergMockServer.stubGenerateReasonsForRecall(reasonsForRecallContentsFile.readBytes())
 
@@ -49,14 +51,15 @@ class CreateDossierComponentTest : ComponentTestBase() {
       ClassPathResource("/document/licence.pdf").file.readText(),
       ClassPathResource("/document/part_a.pdf").file.readText(),
       revocationOrderFile.readText(),
-      // PS - not stubbing the reasonsForRecall since we now decorate this in the flow
     )
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(
         currentPrison = PrisonId("MWI"),
+        lastReleasePrison = PrisonId("CFI"),
+        localPoliceForceId = PoliceForceId("avon-and-somerset"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
         sentenceDate = LocalDate.of(2012, 5, 17),
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
@@ -83,11 +86,8 @@ class CreateDossierComponentTest : ComponentTestBase() {
       recall.recallId,
       UploadDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "part_a.pdf")
     )
-    // TODO:  This shouldn't be allowed by the API, temporary way of setting up the revocation order for this test to pass
-    authenticatedClient.uploadDocument(
-      recall.recallId,
-      UploadDocumentRequest(REVOCATION_ORDER, base64EncodedFileContents("/document/revocation-order.pdf"), "rev_o.pdf")
-    )
+
+    authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER)
 
     val dossier = authenticatedClient.getDossier(recall.recallId)
 
@@ -98,7 +98,7 @@ class CreateDossierComponentTest : ComponentTestBase() {
     prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
       PrisonerSearchRequest(nomsNumber),
       listOf(
-        Prisoner(prisonerNumber = nomsNumber.value, firstName = firstName, lastName = "Badger")
+        Prisoner(prisonerNumber = nomsNumber.value, firstName = firstName, lastName = "Badger", dateOfBirth = LocalDate.of(2001, 9, 28))
       )
     )
   }
