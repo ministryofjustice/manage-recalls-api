@@ -130,7 +130,7 @@ internal class LetterToPrisonServiceParameterizedTest {
       documentService.storeDocument(recallId, createdByUserId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
     } returns documentId
 
-    val result = underTest.getPdf(recallId, createdByUserId)
+    val result = underTest.getOrGeneratePdf(recallId, createdByUserId)
 
     StepVerifier
       .create(result)
