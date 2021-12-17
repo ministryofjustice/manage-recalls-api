@@ -4,6 +4,8 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -31,10 +33,11 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
       sentenceYears = 10
     )
 
-    val letterToPrison = authenticatedClient.getLetterToPrison(recall.recallId)
+    val letterToPrisonId = authenticatedClient.generateDocument(recall.recallId, LETTER_TO_PRISON)
+    val letterToPrison = authenticatedClient.getDocument(recall.recallId, letterToPrisonId.documentId)
     // writeBase64EncodedStringToFile("letter-to-prison-14-day-FTR-example.pdf", letterToPrison.content)  // i.e. sentence duration < 1 year
     // writeBase64EncodedStringToFile("letter-to-prison-28-day-FTR-example.pdf", letterToPrison.content)  // i.e. sentence duration >= 1 year
 
-    assertThat(letterToPrison, hasNumberOfPages(equalTo(5)))
+    assertThat(Pdf(letterToPrison.content), hasNumberOfPages(equalTo(5)))
   }
 }

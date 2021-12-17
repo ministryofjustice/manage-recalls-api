@@ -7,8 +7,10 @@ import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
@@ -26,7 +28,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 
-class CreateDossierComponentTest : ComponentTestBase() {
+class GenerateDossierComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val firstName = "Natalia"
@@ -89,9 +91,10 @@ class CreateDossierComponentTest : ComponentTestBase() {
 
     authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER)
 
-    val dossier = authenticatedClient.getDossier(recall.recallId)
+    val dossierId = authenticatedClient.generateDocument(recall.recallId, DOSSIER)
+    val dossier = authenticatedClient.getDocument(recall.recallId, dossierId.documentId)
 
-    assertThat(dossier, hasNumberOfPages(equalTo(3)))
+    assertThat(Pdf(dossier.content), hasNumberOfPages(equalTo(3)))
   }
 
   private fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, firstName: String) {

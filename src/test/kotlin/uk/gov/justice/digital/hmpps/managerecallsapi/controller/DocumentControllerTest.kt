@@ -38,7 +38,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.OffsetDateTime
@@ -152,27 +151,6 @@ class DocumentControllerTest {
     underTest.deleteDocument(recallId, documentId)
 
     verify { documentService.deleteDocument(recallId, documentId) }
-  }
-
-  @Test
-  fun `get letter to prison returns expected PDF`() {
-    val recallId = ::RecallId.random()
-    val expectedPdf = randomString().toByteArray()
-    val expectedBase64Pdf = expectedPdf.encodeToBase64String()
-    val bearerToken = "BEARER TOKEN"
-    val userId = ::UserId.random()
-
-    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { letterToPrisonService.getOrGeneratePdf(recallId, userId) } returns Mono.just(expectedPdf)
-
-    val result = underTest.getLetterToPrison(recallId, bearerToken)
-
-    StepVerifier
-      .create(result)
-      .assertNext {
-        assertThat(it.body?.content, equalTo(expectedBase64Pdf))
-      }
-      .verifyComplete()
   }
 
   @Test

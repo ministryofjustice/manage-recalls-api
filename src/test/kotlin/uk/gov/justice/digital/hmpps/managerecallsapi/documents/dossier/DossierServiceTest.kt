@@ -1,13 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
@@ -49,12 +45,12 @@ internal class DossierServiceTest {
   )
 
   @Test
-  fun `get dossier returns table of contents, English recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall and dossier doesnt already exist`() {
+  fun `generate dossier returns table of contents, English recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall`() {
     testDossierGetPdf(false)
   }
 
   @Test
-  fun `get dossier to include Welsh returns table of contents, both recall information leaflets, license, part A, revocation order and reasons for recall as dossier when all available for recall and dossier doesnt already exist`() {
+  fun `generate dossier to include Welsh returns table of contents, both recall information leaflets, license, part A, revocation order and reasons for recall as dossier when all available for recall`() {
     testDossierGetPdf(true)
   }
 
@@ -70,7 +66,6 @@ internal class DossierServiceTest {
     val numberedMergedBytes = randomString().toByteArray()
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
 
-    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns null
     every { dossierContext.includeWelsh() } returns includeWelshLeaflet
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
@@ -82,9 +77,7 @@ internal class DossierServiceTest {
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
     every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
 
-    val dossier = underTest.getOrGeneratePdf(recallId, createdByUserId).block()!!
-
-    assertArrayEquals(numberedMergedBytes, dossier)
+    underTest.generateAndStorePdf(recallId, createdByUserId, null).block()!!
 
     val expectedDocumentsToMerge = mutableListOf(
       byteArrayDocumentDataFor(tableOfContentBytes),
@@ -104,66 +97,6 @@ internal class DossierServiceTest {
       )
     )
 
-    assertThat(
-      documentsToMergeSlot.captured,
-      onlyContainsInOrder(
-        expectedDocumentsToMerge
-      )
-    )
-  }
-
-  @Test
-  fun `get dossier returns dossier if it already exists`() {
-    val recallId = ::RecallId.random()
-    val createdByUserId = ::UserId.random()
-    val documentBytes = randomString().toByteArray()
-
-    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) } returns documentBytes
-
-    val dossier = underTest.getOrGeneratePdf(recallId, createdByUserId).block()!!
-
-    assertArrayEquals(documentBytes, dossier)
-
-    verify { dossierContextFactory wasNot Called }
-    verify { reasonsForRecallService wasNot Called }
-    verify { tableOfContentsService wasNot Called }
-    verify { pdfDocumentGenerationService wasNot Called }
-    verify { pdfDecorator wasNot Called }
-    verify(exactly = 0) { documentService.storeDocument(any(), createdByUserId, any(), any(), any(), any()) }
-  }
-
-  // TODO: PUD-575 test/handling when any input doc is not available
-
-  @Test
-  fun `generate dossier generates dossier using latest existing docs`() {
-    val recallId = ::RecallId.random()
-    val createdByUserId = ::UserId.random()
-    val licenseContentBytes = randomString().toByteArray()
-    val partARecallReportContentBytes = randomString().toByteArray()
-    val revocationOrderContentBytes = randomString().toByteArray()
-    val reasonsForRecallContentBytes = randomString().toByteArray()
-    val mergedBytes = randomString().toByteArray()
-    val tableOfContentBytes = randomString().toByteArray()
-    val numberedMergedBytes = randomString().toByteArray()
-    val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
-    val documentId = ::DocumentId.random()
-    val documentDetails = "Blah blah blah"
-
-    every { dossierContext.includeWelsh() } returns false
-    every { dossierContextFactory.createContext(recallId) } returns dossierContext
-    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
-    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
-    every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER) } returns revocationOrderContentBytes
-    every { reasonsForRecallService.getOrGeneratePdf(dossierContext, createdByUserId) } returns Mono.just(reasonsForRecallContentBytes)
-    every { tableOfContentsService.generatePdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
-    every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
-    every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
-    every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf", documentDetails) } returns documentId
-
-    val result = underTest.generateAndStorePdf(recallId, createdByUserId, documentDetails).block()!!
-
-    assertThat(result, equalTo(documentId))
-
-    verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, DOSSIER) }
+    assertThat(documentsToMergeSlot.captured, onlyContainsInOrder(expectedDocumentsToMerge))
   }
 }

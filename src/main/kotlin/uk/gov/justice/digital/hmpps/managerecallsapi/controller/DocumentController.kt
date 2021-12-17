@@ -108,42 +108,6 @@ class DocumentController(
     )
   }
 
-  @Deprecated("Use the POST /recalls/{recallId}/documents/generated instead")
-  @GetMapping("/recalls/{recallId}/recallNotification")
-  fun getRecallNotification(
-    @PathVariable("recallId") recallId: RecallId,
-    @RequestHeader("Authorization") bearerToken: String
-  ): Mono<ResponseEntity<Pdf>> {
-    val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return recallNotificationService.getOrGeneratePdf(recallId, token.userUuid()).map {
-      ResponseEntity.ok(Pdf.encode(it))
-    }
-  }
-
-  @Deprecated("Use the POST /recalls/{recallId}/documents/generated instead")
-  @GetMapping("/recalls/{recallId}/dossier")
-  fun getDossier(
-    @PathVariable("recallId") recallId: RecallId,
-    @RequestHeader("Authorization") bearerToken: String
-  ): Mono<ResponseEntity<Pdf>> {
-    val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return dossierService.getOrGeneratePdf(recallId, token.userUuid()).map {
-      ResponseEntity.ok(Pdf.encode(it))
-    }
-  }
-
-  @Deprecated("Use the POST /recalls/{recallId}/documents/generated instead")
-  @GetMapping("/recalls/{recallId}/letter-to-prison")
-  fun getLetterToPrison(
-    @PathVariable("recallId") recallId: RecallId,
-    @RequestHeader("Authorization") bearerToken: String
-  ): Mono<ResponseEntity<Pdf>> {
-    val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return letterToPrisonService.getOrGeneratePdf(recallId, token.userUuid()).map {
-      ResponseEntity.ok(Pdf.encode(it))
-    }
-  }
-
   @ApiResponses(
     ApiResponse(
       code = 400, message = "Bad request, e.g. virus scan returns error", response = ErrorResponse::class,

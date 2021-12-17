@@ -51,9 +51,10 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       expectedPdf.decodeToString(),
     )
 
-    val getResponse = authenticatedClient.getRecallNotification(recall.recallId)
+    val recallDocId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallDoc = authenticatedClient.getDocument(recall.recallId, recallDocId.documentId)
 
-    assertThat(getResponse.content, equalTo(expectedBase64Pdf))
+    assertThat(recallDoc.content, equalTo(expectedBase64Pdf))
 
     val firstRecallNotification =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
