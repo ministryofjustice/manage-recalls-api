@@ -87,7 +87,7 @@ services:
     container_name: localstack_manage-recalls-api
     environment:
       - SERVICES=s3
-      - DATA_DIR=/tmp/localstack/data
+      - INIT_SCRIPTS_PATH=/tmp/localstack
 
   clamav:
     image: ghcr.io/ministryofjustice/hmpps-clamav-freshclammed

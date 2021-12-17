@@ -26,7 +26,7 @@ _db_localstack_docker_config: &db_localstack_docker_config
       POSTGRES_USER: ppud_user
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: manage_recalls
-  - image: localstack/localstack:0.12.10
+  - image: localstack/localstack:0.13.1
     environment:
       - SERVICES=s3
       - DATA_DIR=/tmp/localstack/data
@@ -43,7 +43,7 @@ _db_localstack_gotenberg_docker_config: &db_localstack_gotenberg_docker_config
       POSTGRES_USER: ppud_user
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: manage_recalls
-  - image: localstack/localstack:0.12.10
+  - image: localstack/localstack:0.13.1
     environment:
       - SERVICES=s3
       - DATA_DIR=/tmp/localstack/data
@@ -68,10 +68,7 @@ jobs:
           port: 4566
       - run:
           name: Create S3 bucket
-          command: |
-            export AWS_ACCESS_KEY_ID=dontcare
-            export AWS_SECRET_ACCESS_KEY=dontcare
-            aws s3api create-bucket --bucket test-manage-recalls-api --region eu-west-2 --endpoint-url http://localhost:4566
+          command: ./localstack-docker/scripts/01_create_bucket.sh
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"
           steps:
@@ -93,10 +90,7 @@ jobs:
           port: 4566
       - run:
           name: Create S3 bucket
-          command: |
-            export AWS_ACCESS_KEY_ID=dontcare
-            export AWS_SECRET_ACCESS_KEY=dontcare
-            aws s3api create-bucket --bucket test-manage-recalls-api --region eu-west-2 --endpoint-url http://localhost:4566
+          command: ./localstack-docker/scripts/01_create_bucket.sh
       - checkout
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"
@@ -126,10 +120,7 @@ jobs:
           port: 4566
       - run:
           name: Create S3 bucket
-          command: |
-            export AWS_ACCESS_KEY_ID=dontcare
-            export AWS_SECRET_ACCESS_KEY=dontcare
-            aws s3api create-bucket --bucket test-manage-recalls-api --region eu-west-2 --endpoint-url http://localhost:4566
+          command: ./localstack-docker/scripts/01_create_bucket.sh
       - checkout
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"

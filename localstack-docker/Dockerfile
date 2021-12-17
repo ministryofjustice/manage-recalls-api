@@ -1,3 +1,3 @@
-FROM localstack/localstack:0.12.20
+FROM localstack/localstack:latest
 
-COPY stubs/s3 /tmp/localstack
+COPY scripts /tmp/localstack
