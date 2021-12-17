@@ -7,25 +7,33 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
+import java.time.LocalDate
 
 class DocumentComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
@@ -283,19 +291,40 @@ class DocumentComponentTest : ComponentTestBase() {
   @Test
   fun `can't delete generated document for Recall being booked`() {
     expectNoVirusesWillBeFound()
+    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
+      PrisonerSearchRequest(nomsNumber),
+      listOf(
+        Prisoner(prisonerNumber = nomsNumber.value, firstName = "Barrie", lastName = "Badger", dateOfBirth = LocalDate.of(2001, 9, 28))
+      )
+    )
+    gotenbergMockServer.stubGenerateRevocationOrder(documentContents, "Barrie")
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val document = authenticatedClient.uploadDocument(
+    authenticatedClient.updateRecall(
       recall.recallId,
-      UploadDocumentRequest(RECALL_NOTIFICATION, base64EncodedDocumentContents, fileName) // This wouldn't be uploaded, but works for now.
+      UpdateRecallRequest(
+        currentPrison = PrisonId("MWI"),
+        lastReleasePrison = PrisonId("CFI"),
+        localPoliceForceId = PoliceForceId("avon-and-somerset"),
+        sentenceDate = LocalDate.of(2012, 5, 17),
+        licenceExpiryDate = LocalDate.of(2025, 12, 25),
+        sentenceExpiryDate = LocalDate.of(2021, 1, 12),
+        sentenceLength = Api.SentenceLength(10, 1, 5),
+        sentencingCourt = CourtId("CARLCT"),
+        indexOffence = "Badgering",
+        bookingNumber = "booking number",
+        licenceConditionsBreached = "he was a very naughty boy",
+        lastReleaseDate = LocalDate.now()
+      )
     )
+    val document = authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER)
 
     val response = authenticatedClient.deleteDocument(recall.recallId, document.documentId, BAD_REQUEST)
       .expectBody(ErrorResponse::class.java)
       .returnResult()
       .responseBody!!
 
-    assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document: Wrong status [BEING_BOOKED_ON] and/or document category [RECALL_NOTIFICATION]")))
+    assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document: Wrong status [BEING_BOOKED_ON] and/or document category [REVOCATION_ORDER]")))
   }
 
   @Test

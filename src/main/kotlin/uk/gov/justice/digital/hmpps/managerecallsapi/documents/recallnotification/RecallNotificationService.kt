@@ -27,7 +27,7 @@ class RecallNotificationService(
       ?.let { Mono.just(it) }
       ?: generatePdf(recallId, currentUserId).map { it.second }
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String): Mono<DocumentId> =
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> =
     generatePdf(recallId, currentUserId, details).map { it.first }
 
   private fun generatePdf(recallId: RecallId, currentUserId: UserId, details: String? = null): Mono<Pair<DocumentId, ByteArray>> {

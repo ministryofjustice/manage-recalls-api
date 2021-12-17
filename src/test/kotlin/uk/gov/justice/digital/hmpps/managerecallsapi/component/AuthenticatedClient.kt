@@ -96,14 +96,14 @@ class AuthenticatedClient(
     getRequest("/recalls/$recallId/letter-to-prison", Pdf::class.java)
 
   fun uploadDocument(recallId: RecallId, uploadDocumentRequest: UploadDocumentRequest): NewDocumentResponse =
-    postRequest("/recalls/$recallId/documents", uploadDocumentRequest, NewDocumentResponse::class.java)
+    postRequest("/recalls/$recallId/documents/uploaded", uploadDocumentRequest, NewDocumentResponse::class.java)
 
   fun uploadDocument(
     recallId: RecallId,
     uploadDocumentRequest: UploadDocumentRequest,
     expectedStatus: HttpStatus
   ): WebTestClient.ResponseSpec {
-    return sendPostRequest("/recalls/$recallId/documents", uploadDocumentRequest, expectedStatus)
+    return sendPostRequest("/recalls/$recallId/documents/uploaded", uploadDocumentRequest, expectedStatus)
   }
 
   fun updateDocumentCategory(
@@ -123,7 +123,7 @@ class AuthenticatedClient(
   fun deleteDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus = NO_CONTENT) =
     deleteRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
 
-  fun generateDocument(recallId: RecallId, category: DocumentCategory, detail: String) =
+  fun generateDocument(recallId: RecallId, category: DocumentCategory, detail: String? = null) =
     postRequest("/recalls/$recallId/documents/generated", GenerateDocumentRequest(category, detail), NewDocumentResponse::class.java)
 
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =

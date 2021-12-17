@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.onFailure
 import io.swagger.annotations.ApiResponse
@@ -46,6 +47,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult
 import java.net.URI
 import java.time.OffsetDateTime
 
@@ -105,6 +107,7 @@ class DocumentController(
     )
   }
 
+  @Deprecated("Use the POST /recalls/{recallId}/documents/generated instead")
   @GetMapping("/recalls/{recallId}/recallNotification")
   fun getRecallNotification(
     @PathVariable("recallId") recallId: RecallId,
@@ -116,6 +119,7 @@ class DocumentController(
     }
   }
 
+  @Deprecated("Use the POST /recalls/{recallId}/documents/generated instead")
   @GetMapping("/recalls/{recallId}/dossier")
   fun getDossier(
     @PathVariable("recallId") recallId: RecallId,
@@ -127,6 +131,7 @@ class DocumentController(
     }
   }
 
+  @Deprecated("Use the POST /recalls/{recallId}/documents/generated instead")
   @GetMapping("/recalls/{recallId}/letter-to-prison")
   fun getLetterToPrison(
     @PathVariable("recallId") recallId: RecallId,
@@ -149,11 +154,8 @@ class DocumentController(
       )
     )
   )
-  // TODO:  Restrict the types of documents that can be uploaded. i.e. RECALL_NOTIFICATION, REVOCATION_ORDER
-  @PostMapping(
-    "/recalls/{recallId}/documents",
-    "/recalls/{recallId}/documents/uploaded"
-  )
+
+  @PostMapping("/recalls/{recallId}/documents/uploaded")
   fun uploadDocument(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody uploadDocumentRequest: UploadDocumentRequest,
@@ -204,14 +206,19 @@ class DocumentController(
     recallId: RecallId,
     currentUserId: UserId,
     uploadDocumentRequest: UploadDocumentRequest
-  ) = documentService.scanAndStoreDocument(
-    recallId,
-    currentUserId,
-    uploadDocumentRequest.fileContent.toBase64DecodedByteArray(),
-    uploadDocumentRequest.category,
-    uploadDocumentRequest.fileName,
-    uploadDocumentRequest.details
-  )
+  ): Result<DocumentId, VirusScanResult> {
+    if (!uploadDocumentRequest.category.uploaded)
+      throw WrongDocumentTypeException(uploadDocumentRequest.category)
+
+    return documentService.scanAndStoreDocument(
+      recallId,
+      currentUserId,
+      uploadDocumentRequest.fileContent.toBase64DecodedByteArray(),
+      uploadDocumentRequest.category,
+      uploadDocumentRequest.fileName,
+      uploadDocumentRequest.details
+    )
+  }
 
   @PatchMapping("/recalls/{recallId}/documents/{documentId}")
   fun updateDocumentCategory(
@@ -262,7 +269,7 @@ data class UploadDocumentRequest(
 
 data class GenerateDocumentRequest(
   val category: DocumentCategory,
-  val details: String
+  val details: String?
 )
 
 data class NewDocumentResponse(val documentId: DocumentId)
