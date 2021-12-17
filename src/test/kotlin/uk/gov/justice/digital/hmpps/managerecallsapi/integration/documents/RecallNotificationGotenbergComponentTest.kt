@@ -5,6 +5,8 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -30,11 +32,12 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       currentPrisonId = PrisonId("MWI")
     )
 
-    val recallNotification = authenticatedClient.getRecallNotification(recall.recallId)
+    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
 //    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
-    assertThat(recallNotification, hasNumberOfPages(equalTo(3)))
-    assertThat(recallNotification, hasTotalPageCount(3))
+    assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(3)))
+    assertThat(Pdf(recallNotification.content), hasTotalPageCount(3))
   }
 
   @Test
@@ -52,10 +55,11 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       PrisonId("MWI"),
     )
 
-    val recallNotification = authenticatedClient.getRecallNotification(recall.recallId)
+    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
 //    writeBase64EncodedStringToFile("recall-notification-with-long-recall-summary.pdf", recallNotification.content)
-    assertThat(recallNotification, hasNumberOfPages(equalTo(4)))
-    assertThat(recallNotification, hasTotalPageCount(4))
+    assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(4)))
+    assertThat(Pdf(recallNotification.content), hasTotalPageCount(4))
   }
 }

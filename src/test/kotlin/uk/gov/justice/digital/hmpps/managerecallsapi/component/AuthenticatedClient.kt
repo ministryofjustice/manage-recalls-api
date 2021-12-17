@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
@@ -85,15 +84,6 @@ class AuthenticatedClient(
       .expectBody(object : ParameterizedTypeReference<List<RecallResponse>>() {})
       .returnResult()
       .responseBody!!
-
-  fun getRecallNotification(recallId: RecallId): Pdf =
-    getRequest("/recalls/$recallId/recallNotification", Pdf::class.java)
-
-  fun getDossier(recallId: RecallId): Pdf =
-    getRequest("/recalls/$recallId/dossier", Pdf::class.java)
-
-  fun getLetterToPrison(recallId: RecallId): Pdf =
-    getRequest("/recalls/$recallId/letter-to-prison", Pdf::class.java)
 
   fun uploadDocument(recallId: RecallId, uploadDocumentRequest: UploadDocumentRequest): NewDocumentResponse =
     postRequest("/recalls/$recallId/documents/uploaded", uploadDocumentRequest, NewDocumentResponse::class.java)

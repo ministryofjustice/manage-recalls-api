@@ -27,15 +27,7 @@ class LetterToPrisonService(
   @Autowired private val pdfDecorator: PdfDecorator,
 ) {
 
-  fun getOrGeneratePdf(recallId: RecallId, currentUserId: UserId): Mono<ByteArray> =
-    documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON)
-      ?.let { Mono.just(it) }
-      ?: generatePdf(recallId, currentUserId, null).map { it.second }
-
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> =
-    generatePdf(recallId, currentUserId, details).map { it.first }
-
-  private fun generatePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<Pair<DocumentId, ByteArray>> {
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String?): Mono<DocumentId> {
     val context = letterToPrisonContextFactory.createContext(recallId, currentUserId)
     var letterToPrisonCustodyOfficePageCount = 0
 
@@ -64,8 +56,7 @@ class LetterToPrisonService(
           footerText = "OFFICIAL"
         )
       }.map { letterToPrisonBytes ->
-        val documentId = documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, "LETTER_TO_PRISON.pdf", details)
-        Pair(documentId, letterToPrisonBytes)
+        documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf", documentDetails)
       }
   }
 

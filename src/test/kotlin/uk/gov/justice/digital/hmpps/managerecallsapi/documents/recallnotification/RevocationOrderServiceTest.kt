@@ -69,7 +69,7 @@ internal class RevocationOrderServiceTest {
       )
     } returns Mono.just(expectedBytes)
     every {
-      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf")
+      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "REVOCATION_ORDER.pdf")
     } returns ::DocumentId.random()
 
     val result = underTest.getOrGeneratePdf(revocationOrderContext)
@@ -137,7 +137,7 @@ internal class RevocationOrderServiceTest {
             createdByUserId,
             expectedBytes,
             REVOCATION_ORDER,
-            "$REVOCATION_ORDER.pdf",
+            "REVOCATION_ORDER.pdf",
             details
           )
         }

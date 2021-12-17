@@ -76,7 +76,7 @@ internal class LetterToPrisonServiceParameterizedTest {
 
   @ParameterizedTest
   @MethodSource("letterToPrisonParameters")
-  fun `creates a letter to prison for a recall `(recallLength: RecallLength, annexHeaderText: String) {
+  fun `generates a letter to prison for a recall `(recallLength: RecallLength, annexHeaderText: String) {
     val aRecall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), recallLength = recallLength)
     val documentId = ::DocumentId.random()
     val assessor = UserDetails(
@@ -104,7 +104,6 @@ internal class LetterToPrisonServiceParameterizedTest {
     val mergedNumberedBytes = randomString().toByteArray()
     val createdByUserId = ::UserId.random()
 
-    every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, LETTER_TO_PRISON) } returns null
     every { letterToPrisonContextFactory.createContext(recallId, createdByUserId) } returns context
     every { recallRepository.getByRecallId(recallId) } returns aRecall
     every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns custodyOfficeHtml
@@ -127,22 +126,22 @@ internal class LetterToPrisonServiceParameterizedTest {
       )
     } returns mergedNumberedBytes
     every {
-      documentService.storeDocument(recallId, createdByUserId, mergedNumberedBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf")
+      documentService.storeDocument(recallId, createdByUserId, mergedNumberedBytes, LETTER_TO_PRISON, "LETTER_TO_PRISON.pdf")
     } returns documentId
 
-    val result = underTest.getOrGeneratePdf(recallId, createdByUserId)
+    val result = underTest.generateAndStorePdf(recallId, createdByUserId, null)
 
     StepVerifier
       .create(result)
       .assertNext {
-        assertThat(it, equalTo(mergedNumberedBytes))
+        assertThat(it, equalTo(documentId))
         verify {
           documentService.storeDocument(
             recallId,
             createdByUserId,
             mergedNumberedBytes,
             LETTER_TO_PRISON,
-            "$LETTER_TO_PRISON.pdf"
+            "LETTER_TO_PRISON.pdf"
           )
         }
       }.verifyComplete()
