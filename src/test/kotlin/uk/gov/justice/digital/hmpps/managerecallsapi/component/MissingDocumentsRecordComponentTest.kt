@@ -41,7 +41,7 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `adding 2 MissingDocumentsRecords for the same recall, only the latest version will be returned on the recall`() {
+  fun `adding 2 MissingDocumentsRecords for the same recall, all missing documents will be returned on the recall`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
@@ -53,8 +53,9 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
 
     val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
     assertThat(recall.missingDocumentsRecords, isEmpty)
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(1))
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.first().version, equalTo(2))
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(2))
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[0].version, equalTo(2))
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[1].version, equalTo(1))
   }
 
   @Test

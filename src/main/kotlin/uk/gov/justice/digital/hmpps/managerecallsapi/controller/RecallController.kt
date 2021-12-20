@@ -128,7 +128,7 @@ class RecallController(
     licenceNameCategory = this.licenceNameCategory,
     status = this.status(),
     documents = latestDocuments(documents),
-    missingDocumentsRecords = latestMissingDocumentsRecord(),
+    missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse() },
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
@@ -184,11 +184,6 @@ class RecallController(
     bookedByUserName = this.bookedByUserId()?.let { userDetailsService.get(it).fullName() },
     dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.get(it).fullName() }
   )
-
-  private fun Recall.latestMissingDocumentsRecord() =
-    listOfNotNull(
-      missingDocumentsRecords.maxByOrNull { it.version }?.toResponse()
-    )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
     val partitionedDocs = documents.partition { it.category.versioned }
