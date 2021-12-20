@@ -52,7 +52,8 @@ class TableOfContentsGeneratorTest {
         FullName("Bertie Badger"),
         RecallLengthDescription(recallLength),
         currentPrisonName,
-        bookingNumber
+        bookingNumber,
+        2
       ),
       tableOfContentsItems
     )
@@ -71,7 +72,7 @@ class TableOfContentsGeneratorTest {
         has("currentPrisonName", { it.variableAsString("currentPrisonName") }, equalTo(currentPrisonName.value)),
         has("category", { it.variableAsString("category") }, equalTo("Not Applicable")),
         has("bookingNumber", { it.variableAsString("bookingNumber") }, equalTo(bookingNumber)),
-        has("version", { it.variableAsString("version") }, equalTo("0")),
+        has("version", { it.variableAsString("version") }, equalTo("0 (2)")),
         has("tableOfContentsItems", { it.variable("tableOfContentsItems") }, equalTo(tableOfContentsItems)),
       )
     )

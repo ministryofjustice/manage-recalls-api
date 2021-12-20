@@ -23,8 +23,8 @@ class RecallSummaryGenerator(
 
   fun generateHtml(recallSummaryContext: RecallSummaryContext, recallNotificationTotalNumberOfPages: Int?): String =
     Context().apply {
-      setVariable("createdDate", recallSummaryContext.createdDateTime.toLocalDate().asStandardDateFormat())
-      setVariable("createdTime", recallSummaryContext.createdDateTime.asStandardTimeFormat())
+      setVariable("createdDate", recallSummaryContext.originalCreatedDateTime.toLocalDate().asStandardDateFormat())
+      setVariable("createdTime", recallSummaryContext.originalCreatedDateTime.asStandardTimeFormat())
       setVariable("recallNotificationTotalNumberOfPages", recallNotificationTotalNumberOfPages)
 
       setVariable("prisonerNameOnLicense", recallSummaryContext.prisonerNameOnLicense)

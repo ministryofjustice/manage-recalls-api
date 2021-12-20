@@ -23,7 +23,8 @@ class TableOfContentsHtmlGeneratorTest(
         FullName("PrisonerFirstName PrisonerLastName"),
         RecallLengthDescription(TWENTY_EIGHT_DAYS),
         PrisonName("Current Prison (ABC)"),
-        "ABC1234F"
+        "ABC1234F",
+        2
       ),
       listOf(
         TableOfContentsItem("Document 1", 1),

@@ -115,7 +115,7 @@ class RecallNotificationContextTest {
     lastReleasePrisonName,
     sentencingCourtName,
     localPoliceForceName,
-    fixedClock
+    OffsetDateTime.now(fixedClock)
   )
 
   @Test
@@ -168,7 +168,7 @@ class RecallNotificationContextTest {
       lastReleasePrisonName,
       sentencingCourtName,
       localPoliceForceName,
-      fixedClock
+      OffsetDateTime.now()
     )
 
     assertDoesNotThrow { underTest.getRevocationOrderContext() }
@@ -185,7 +185,7 @@ class RecallNotificationContextTest {
       lastReleasePrisonName,
       sentencingCourtName,
       localPoliceForceName,
-      fixedClock
+      OffsetDateTime.now()
     )
 
     assertDoesNotThrow { underTest.getRecallSummaryContext() }

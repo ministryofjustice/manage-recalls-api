@@ -6,6 +6,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -29,6 +31,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.Clock
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -40,6 +43,8 @@ class RecallNotificationContextFactory(
   @Autowired private val userDetailsService: UserDetailsService,
   @Autowired private val courtLookupService: CourtLookupService,
   @Autowired private val policeForceLookupService: PoliceForceLookupService,
+  @Autowired private val documentRepository: DocumentRepository,
+  @Autowired private val clock: Clock
 ) {
   fun createContext(recallId: RecallId, currentUserId: UserId): RecallNotificationContext {
     val recall = recallRepository.getByRecallId(recallId)
@@ -49,7 +54,22 @@ class RecallNotificationContextFactory(
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
     val sentencingCourtName = courtLookupService.getCourtName(recall.sentencingInfo!!.sentencingCourt)
     val localPoliceForceName = policeForceLookupService.getPoliceForceName(recall.localPoliceForceId!!)
-    return RecallNotificationContext(recall, prisoner, currentUserDetails, currentPrisonName, lastReleasePrisonName, sentencingCourtName, localPoliceForceName)
+    val originalRecallNotificationCreatedDateTime = documentRepository.findByRecallIdAndCategoryAndVersion(
+      recallId.value,
+      RECALL_NOTIFICATION,
+      1
+    )?.createdDateTime
+      ?: OffsetDateTime.now(clock)
+    return RecallNotificationContext(
+      recall,
+      prisoner,
+      currentUserDetails,
+      currentPrisonName,
+      lastReleasePrisonName,
+      sentencingCourtName,
+      localPoliceForceName,
+      originalRecallNotificationCreatedDateTime
+    )
   }
 }
 
@@ -61,7 +81,7 @@ data class RecallNotificationContext(
   val lastReleasePrisonName: PrisonName,
   val sentencingCourtName: CourtName,
   val localPoliceForceName: PoliceForceName,
-  private val clock: Clock = Clock.systemUTC()
+  val originalRecallNotificationCreatedDateTime: OffsetDateTime
 ) {
   fun getRevocationOrderContext(): RevocationOrderContext {
     return RevocationOrderContext(
@@ -70,7 +90,7 @@ data class RecallNotificationContext(
       prisoner.dateOfBirth!!,
       recall.bookingNumber!!,
       prisoner.croNumber,
-      LocalDate.now(clock),
+      originalRecallNotificationCreatedDateTime.toLocalDate(),
       recall.lastReleaseDate!!,
       currentUserDetails.signature,
       currentUserDetails.userId()
@@ -79,7 +99,7 @@ data class RecallNotificationContext(
 
   fun getRecallSummaryContext(): RecallSummaryContext {
     return RecallSummaryContext(
-      ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Europe/London")),
+      originalRecallNotificationCreatedDateTime.toZonedDateTime().withZoneSameInstant(ZoneId.of("Europe/London")),
       recall.prisonerNameOnLicense(),
       prisoner.dateOfBirth!!,
       prisoner.croNumber,
@@ -112,7 +132,7 @@ data class RecallNotificationContext(
 
   fun getLetterToProbationContext(): LetterToProbationContext =
     LetterToProbationContext(
-      LocalDate.now(clock),
+      originalRecallNotificationCreatedDateTime.toLocalDate(),
       RecallLengthDescription(recall.recallLength!!),
       recall.probationInfo!!.probationOfficerName,
       recall.prisonerNameOnLicense(),
@@ -133,7 +153,7 @@ data class LetterToProbationContext(
 )
 
 data class RecallSummaryContext(
-  val createdDateTime: ZonedDateTime,
+  val originalCreatedDateTime: ZonedDateTime,
   val prisonerNameOnLicense: FullName,
   val dateOfBirth: LocalDate,
   val croNumber: String?, // TODO:  Can this really ever be null?  Breaks in dev because we have test prisoners without a croNumber

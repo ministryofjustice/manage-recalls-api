@@ -26,7 +26,7 @@ class TableOfContentsGenerator(
       setVariable("bookingNumber", tableOfContentsContext.bookingNumber)
       setVariable("tableOfContentsItems", tableOfContentsItems)
       setVariable("category", "Not Applicable")
-      setVariable("version", "0")
+      setVariable("version", "0 (${tableOfContentsContext.newVersion})")
     }.let {
       templateEngine.process("table-of-contents", it)
     }
