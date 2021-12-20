@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
@@ -14,21 +16,24 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 @Component
 class DossierContextFactory(
   @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val prisonLookupService: PrisonLookupService
+  @Autowired private val prisonLookupService: PrisonLookupService,
+  @Autowired private val documentRepository: DocumentRepository,
 ) {
   fun createContext(recallId: RecallId): DossierContext {
     val recall = recallRepository.getByRecallId(recallId)
     val currentPrisonId = recall.currentPrison!!
     val currentPrisonName = prisonLookupService.getPrisonName(currentPrisonId)
     val currentPrisonIsWelsh = prisonLookupService.isWelsh(currentPrisonId)
-    return DossierContext(recall, currentPrisonName, currentPrisonIsWelsh)
+    val version = (documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, DOSSIER)?.version ?: 0) + 1
+    return DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, version)
   }
 }
 
 data class DossierContext(
   val recall: Recall,
   val currentPrisonName: PrisonName,
-  val currentPrisonIsWelsh: Boolean
+  val currentPrisonIsWelsh: Boolean,
+  val version: Int
 ) {
   fun getReasonsForRecallContext(): ReasonsForRecallContext {
     return ReasonsForRecallContext(
@@ -44,7 +49,8 @@ data class DossierContext(
       recall.prisonerNameOnLicense(),
       RecallLengthDescription(recall.recallLength!!),
       currentPrisonName,
-      recall.bookingNumber!!
+      recall.bookingNumber!!,
+      version
     )
 
   fun includeWelsh(): Boolean {
@@ -57,7 +63,8 @@ data class TableOfContentsContext(
   val prisonerNameOnLicense: FullName,
   val recallLengthDescription: RecallLengthDescription,
   val currentPrisonName: PrisonName,
-  val bookingNumber: String
+  val bookingNumber: String,
+  val newVersion: Int
 )
 
 data class ReasonsForRecallContext(

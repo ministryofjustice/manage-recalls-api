@@ -44,7 +44,7 @@ class DossierContextTest {
 
   @Test
   fun `create ReasonsForRecallContext with all values correctly populated`() {
-    val underTest = DossierContext(recall, currentPrisonName, false)
+    val underTest = DossierContext(recall, currentPrisonName, false, 3)
 
     val result = underTest.getReasonsForRecallContext()
 
@@ -63,7 +63,7 @@ class DossierContextTest {
 
   @Test
   fun `create TableOfContentsContext with all values correctly populated`() {
-    val underTest = DossierContext(recall, currentPrisonName, false)
+    val underTest = DossierContext(recall, currentPrisonName, false, 3)
 
     val result = underTest.getTableOfContentsContext()
 
@@ -74,7 +74,8 @@ class DossierContextTest {
           PersonName(firstName, lastName = lastName).firstAndLastName(),
           RecallLengthDescription(recallLength),
           currentPrisonName,
-          bookingNumber
+          bookingNumber,
+          3
         )
       )
     )
@@ -91,7 +92,8 @@ class DossierContextTest {
     val underTest = DossierContext(
       recall.copy(probationInfo = probationInfo.copy(localDeliveryUnit = ldu)),
       currentPrisonName,
-      currentPrisonIsWelsh
+      currentPrisonIsWelsh,
+      2
     )
 
     assertThat(underTest.includeWelsh(), equalTo(expected))

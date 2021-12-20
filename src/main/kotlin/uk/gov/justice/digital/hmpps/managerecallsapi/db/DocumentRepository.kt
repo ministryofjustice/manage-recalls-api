@@ -30,6 +30,12 @@ interface JpaDocumentRepository : JpaRepository<Document, UUID> {
     @Param("recallId") recallId: UUID,
     @Param("category") category: DocumentCategory
   ): List<Document>
+
+  fun findByRecallIdAndCategoryAndVersion(
+    @Param("recallId") recallId: UUID,
+    @Param("category") category: DocumentCategory,
+    @Param("version") version: Int
+  ): Document?
 }
 
 @NoRepositoryBean
