@@ -4,59 +4,88 @@
   <meta http-equiv=Content-Type content="text/html; charset=utf-8">
   <meta name=Generator content="Microsoft Word 15 (filtered)">
 
-  <style id="dynCom" type="text/css"><!-- --></style>
+  <style id="dynCom" type="text/css"><!--
+  --></style>
   <style>
     <!--
     /* Font Definitions */
-    @font-face
-    {font-family:"Cambria Math";
-      panose-1:2 4 5 3 5 4 6 3 2 4;}
-    @font-face
-    {font-family:Georgia;
-      panose-1:2 4 5 2 5 4 5 2 3 3;}
-    @font-face
-    {font-family:"Noto Sans Symbols";
-      panose-1:2 11 6 4 2 2 2 2 2 4;}
-    @font-face
-    {font-family:"Open Sans";
-      panose-1:2 11 6 6 3 5 4 2 2 4;}
-    @font-face
-    {font-family:"Arial Bold";
-      panose-1:2 11 6 4 2 2 2 2 2 4;}
-    @font-face
-    {font-family:Tahoma;
-      panose-1:2 11 6 4 3 5 4 4 2 4;}
-    @font-face
-    {font-family:Times;
-      panose-1:0 0 5 0 0 0 0 2 0 0;}
-    @font-face
-    {font-family:Univers;
-      panose-1:2 11 5 3 2 2 2 2 2 4;}
+    @font-face {
+      font-family: "Cambria Math";
+      panose-1: 2 4 5 3 5 4 6 3 2 4;
+    }
+
+    @font-face {
+      font-family: Georgia;
+      panose-1: 2 4 5 2 5 4 5 2 3 3;
+    }
+
+    @font-face {
+      font-family: "Noto Sans Symbols";
+      panose-1: 2 11 6 4 2 2 2 2 2 4;
+    }
+
+    @font-face {
+      font-family: "Open Sans";
+      panose-1: 2 11 6 6 3 5 4 2 2 4;
+    }
+
+    @font-face {
+      font-family: "Arial Bold";
+      panose-1: 2 11 6 4 2 2 2 2 2 4;
+    }
+
+    @font-face {
+      font-family: Tahoma;
+      panose-1: 2 11 6 4 3 5 4 4 2 4;
+    }
+
+    @font-face {
+      font-family: Times;
+      panose-1: 0 0 5 0 0 0 0 2 0 0;
+    }
+
+    @font-face {
+      font-family: Univers;
+      panose-1: 2 11 5 3 2 2 2 2 2 4;
+    }
+
     /* Style Definitions */
-    p.MsoNormal, li.MsoNormal, div.MsoNormal
-    {margin-top:0cm;
-      margin-right:0cm;
-      margin-bottom:0cm;
-      margin-left:-.05pt;
-      text-indent:-.05pt;
-      line-height:14.0pt;
-      font-size:11.0pt;
-      font-family:"Arial",sans-serif;
-      position:relative;
-      top:.5pt;}
-    .MsoChpDefault
-    {font-size:11.0pt;
-      font-family:"Arial",sans-serif;}
+    p.MsoNormal, li.MsoNormal, div.MsoNormal {
+      margin-top: 0cm;
+      margin-right: 0cm;
+      margin-bottom: 0cm;
+      margin-left: -.05pt;
+      text-indent: -.05pt;
+      line-height: 14.0pt;
+      font-size: 11.0pt;
+      font-family: "Arial", sans-serif;
+      position: relative;
+      top: .5pt;
+    }
+
+    .MsoChpDefault {
+      font-size: 11.0pt;
+      font-family: "Arial", sans-serif;
+    }
+
     /* Page Definitions */
-    @page WordSection1
-    {margin:30.0pt 42.55pt 35.95pt 90.7pt;}
-    div.WordSection1
-    {page:WordSection1;}
+    @page WordSection1 {
+      margin: 30.0pt 42.55pt 35.95pt 90.7pt;
+    }
+
+    div.WordSection1 {
+      page: WordSection1;
+    }
+
     /* List Definitions */
-    ol
-    {margin-bottom:0cm;}
-    ul
-    {margin-bottom:0cm;}
+    ol {
+      margin-bottom: 0cm;
+    }
+
+    ul {
+      margin-bottom: 0cm;
+    }
+
     -->
   </style>
 
@@ -73,8 +102,7 @@ margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none'><b><span style
     <b><u>Please complete, scan and return by e-mail within
       <span>2</span>
       
-      working days
-    </u>.</b>
+      working days</u>.</b>
   </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
@@ -84,23 +112,27 @@ text-indent:-.15pt'><b><u><span style='font-size:14.0pt'>14 DAY FIXED TERM RECAL
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span>Billie Badger</span>                          Prison Number:</b>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><span>Billie Badger</span>                         
+    Prison Number:</b>
     <b><span>B1234</span></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal align=center style='margin-top:0cm;margin-right:0cm; margin-bottom:6.0pt;margin-left:0cm;text-align:center;text-indent:-.1pt;
-line-height:normal;border:none'><b><u><span style='color:black'>Confirmation Of Representations Against Recall</span></u></b></p>
+line-height:normal;border:none'><b><u><span
+    style='color:black'>Confirmation Of Representations Against Recall</span></u></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><u>Please delete the following as appropriate:</u></b></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b><u>Please delete the following as appropriate:</u></b>
+  </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><span style='font-family:"Noto Sans Symbols"'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><span style='font-family:"Noto Sans Symbols"'>●<span
+    style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><span dir=LTR></span>I wish to make written representations myself.</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
@@ -135,19 +167,38 @@ line-height:normal;border:none'><b><u><span style='color:black'>Confirmation Of 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'></p>
 
   <div style="text-align: center;">
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><u>Signed :_________________________</u></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'> </p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Name :___________________________ </p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Prison No :________________________</p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Date :____________________________ </p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Witness :__________________________ </p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Status  :____________________________ </p>
+    <table style="margin-left: auto;margin-right: auto">
+      <tr>
+        <td>
+          <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Signed : __________________________</p><br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Name : ___________________________ </p><br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Prison No : ________________________</p><br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Date : ____________________________ </p><br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Witness : _________________________ </p><br>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Status : ___________________________ </p><br>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
 
