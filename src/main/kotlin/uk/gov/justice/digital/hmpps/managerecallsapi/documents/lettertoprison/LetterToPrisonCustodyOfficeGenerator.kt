@@ -10,13 +10,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.Hmpps
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.asStandardDateFormat
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.shouldShowOnDocuments
-import java.time.Clock
-import java.time.LocalDate
 
 @Component
 class LetterToPrisonCustodyOfficeGenerator(
-  @Autowired private val templateEngine: SpringTemplateEngine,
-  @Autowired private val clock: Clock
+  @Autowired private val templateEngine: SpringTemplateEngine
 ) {
   fun generateHtml(context: LetterToPrisonContext): String =
     Context().apply {
@@ -24,7 +21,7 @@ class LetterToPrisonCustodyOfficeGenerator(
       setVariable("logoFileName", HmppsLogo.fileName)
       setVariable("teamName", RECALL_TEAM_NAME)
       setVariable("teamPhoneNumber", RECALL_TEAM_CONTACT_NUMBER)
-      setVariable("todaysDate", LocalDate.now(clock).asStandardDateFormat())
+      setVariable("todaysDate", context.originalCreatedDate.asStandardDateFormat())
 
       setVariable("fullName", context.prisonerNameOnLicense)
 
