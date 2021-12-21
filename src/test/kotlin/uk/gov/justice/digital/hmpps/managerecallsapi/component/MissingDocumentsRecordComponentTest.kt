@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.CREATED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 
 class MissingDocumentsRecordComponentTest : ComponentTestBase() {
@@ -30,9 +30,9 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
 
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, Api.MissingDocumentsRecord::class.java)
+    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
 
-    assertThat(response.missingDocumentsRecordId, present())
+    assertThat(response, present())
 
     val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
     assertThat(recall.missingDocumentsRecords, isEmpty)
@@ -46,16 +46,15 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
 
-    authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, Api.MissingDocumentsRecord::class.java)
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(detail = "Some details; some more detail"), CREATED, Api.MissingDocumentsRecord::class.java)
+    authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
+    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(detail = "Some details; some more detail"), CREATED, MissingDocumentsRecordId::class.java)
 
-    assertThat(response.missingDocumentsRecordId, present())
+    assertThat(response, present())
 
     val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
     assertThat(recall.missingDocumentsRecords, isEmpty)
     assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(2))
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[0].version, equalTo(2))
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[1].version, equalTo(1))
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[0].version, !equalTo(recallWithMissingDocumentsRecord.missingDocumentsRecords[1].version))
   }
 
   @Test

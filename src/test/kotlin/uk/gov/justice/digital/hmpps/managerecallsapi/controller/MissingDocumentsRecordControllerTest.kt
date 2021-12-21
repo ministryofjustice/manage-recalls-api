@@ -16,11 +16,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.OffsetDateTime
 
 class MissingDocumentsRecordControllerTest {
@@ -28,6 +30,7 @@ class MissingDocumentsRecordControllerTest {
   private val missingDocumentsRecordRepository = mockk<MissingDocumentsRecordRepository>()
   private val documentService = mockk<DocumentService>()
   private val tokenExtractor = mockk<TokenExtractor>()
+  private val userDetailService = mockk<UserDetailsService>()
 
   private val underTest = MissingDocumentsRecordController(
     recallRepository,
@@ -68,15 +71,7 @@ class MissingDocumentsRecordControllerTest {
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
 
     every { missingDocumentsRecordRepository.save(capture(savedMissingDocumentsRecord)) } returns record
-    every { record.toResponse() } returns Api.MissingDocumentsRecord(
-      missingDocumentsRecordId,
-      listOf(DocumentCategory.PART_A_RECALL_REPORT),
-      emailId,
-      "blah blah",
-      1,
-      userId,
-      createdDateTime
-    )
+    every { record.id() } returns missingDocumentsRecordId
 
     val request = MissingDocumentsRecordRequest(
       recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), "blah blah",
@@ -92,15 +87,7 @@ class MissingDocumentsRecordControllerTest {
     assertThat(
       response.body,
       equalTo(
-        Api.MissingDocumentsRecord(
-          missingDocumentsRecordId,
-          listOf(DocumentCategory.PART_A_RECALL_REPORT),
-          emailId,
-          "blah blah",
-          1,
-          userId,
-          createdDateTime
-        )
+        missingDocumentsRecordId
       )
     )
   }
@@ -117,11 +104,14 @@ class MissingDocumentsRecordControllerTest {
     val userId = ::UserId.random()
     val missingDocumentsRecordId = ::MissingDocumentsRecordId.random()
     val createdDateTime = OffsetDateTime.now()
+    val fullName = FullName("Harry Potter")
 
     val existingRecord = mockk<MissingDocumentsRecord>()
     every { recall.missingDocumentsRecords } returns setOf(existingRecord)
 
     every { existingRecord.version } returns 1
+
+    every { userDetailService.get(userId).fullName() } returns fullName
 
     every { recallRepository.getByRecallId(recallId) } returns recall
 
@@ -144,10 +134,10 @@ class MissingDocumentsRecordControllerTest {
       emailId,
       "blah blah \n blah blee blah",
       2,
-      userId,
+      fullName,
       createdDateTime
     )
-    every { record.toResponse() } returns missingDocumentsRecordResponse
+    every { record.id() } returns missingDocumentsRecordId
 
     val request = MissingDocumentsRecordRequest(
       recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), "blah blah \n blah blee blah",
@@ -163,7 +153,7 @@ class MissingDocumentsRecordControllerTest {
     assertThat(
       response.body,
       equalTo(
-        missingDocumentsRecordResponse
+        missingDocumentsRecordId
       )
     )
   }

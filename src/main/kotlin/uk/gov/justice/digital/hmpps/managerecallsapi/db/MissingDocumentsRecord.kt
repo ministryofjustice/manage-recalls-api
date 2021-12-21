@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -64,9 +63,6 @@ data class MissingDocumentsRecord(
 
   fun id() = MissingDocumentsRecordId(id)
   fun recallId() = RecallId(recallId)
-  private fun emailId() = DocumentId(emailId)
-  private fun createdByUserId() = UserId(createdByUserId)
-
-  fun toResponse() =
-    Api.MissingDocumentsRecord(this.id(), this.categories.toList(), this.emailId(), this.detail, this.version, this.createdByUserId(), this.createdDateTime)
+  fun emailId() = DocumentId(emailId)
+  fun createdByUserId() = UserId(createdByUserId)
 }

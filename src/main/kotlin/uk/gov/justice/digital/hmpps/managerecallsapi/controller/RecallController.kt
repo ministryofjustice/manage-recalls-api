@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.FOUR_PLUS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.THREE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
@@ -201,6 +202,8 @@ class RecallController(
       )
     }
   }
+
+  fun MissingDocumentsRecord.toResponse() = Api.MissingDocumentsRecord(this.id(), this.categories.toList(), this.emailId(), this.detail, this.version, userDetailsService.get(this.createdByUserId()).fullName(), this.createdDateTime)
 }
 
 fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
@@ -307,7 +310,7 @@ class Api {
     val emailId: DocumentId,
     val detail: String,
     val version: Int,
-    val createdByUserId: UserId,
+    val createdByUserName: FullName,
     val createdDateTime: OffsetDateTime
   )
 
