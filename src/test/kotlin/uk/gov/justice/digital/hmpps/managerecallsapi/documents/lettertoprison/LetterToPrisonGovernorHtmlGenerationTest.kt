@@ -20,16 +20,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import java.time.Clock
-import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.time.ZoneId
 
 class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
   HtmlGenerationTestCase() {
-  private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T16:48:30.00Z"), ZoneId.of("UTC"))
-  private val underTest = LetterToPrisonGovernorGenerator(templateEngine, fixedClock)
+  private val underTest = LetterToPrisonGovernorGenerator(templateEngine)
 
   @Test
   fun `generate fully populated HTML FTR 14 days`(approver: ContentApprover) {
@@ -56,7 +52,8 @@ class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEn
             PhoneNumber("09876543210"),
             CaseworkerBand.FOUR_PLUS,
             OffsetDateTime.now()
-          )
+          ),
+          LocalDate.of(2021, 10, 4)
         )
       )
     )
@@ -87,7 +84,8 @@ class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEn
             PhoneNumber("09876543210"),
             CaseworkerBand.FOUR_PLUS,
             OffsetDateTime.now()
-          )
+          ),
+          LocalDate.of(2021, 10, 4)
         )
       )
     )

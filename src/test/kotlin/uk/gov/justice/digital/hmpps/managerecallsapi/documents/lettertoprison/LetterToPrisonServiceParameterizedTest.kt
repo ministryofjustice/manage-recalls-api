@@ -36,6 +36,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.stream.Stream
 
@@ -95,7 +96,8 @@ internal class LetterToPrisonServiceParameterizedTest {
       PrisonName("A Prison"),
       PrisonName("Prison B"),
       RecallLengthDescription(recallLength),
-      assessor
+      assessor,
+      LocalDate.now()
     )
     val custodyOfficeHtml = "Some CO html, honest"
     val generatedHtml = "Some html, honest"

@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
@@ -50,7 +51,8 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
             PhoneNumber("09876543210"),
             CaseworkerBand.FOUR_PLUS,
             OffsetDateTime.now()
-          )
+          ),
+          LocalDate.now()
         )
       )
     )
