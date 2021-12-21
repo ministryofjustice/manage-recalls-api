@@ -90,7 +90,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.missingDocumentsRecords[0].detail").isEqualTo(missingDocumentsRecord.detail)
       .jsonPath("$.missingDocumentsRecords[0].version").isEqualTo(missingDocumentsRecord.version)
       .jsonPath("$.missingDocumentsRecords[0].emailId").isEqualTo(missingDocumentsRecord.emailId.toString())
-      .jsonPath("$.missingDocumentsRecords[0].createdByUserId").isEqualTo(missingDocumentsRecord.createdByUserId.toString())
+      .jsonPath("$.missingDocumentsRecords[0].createdByUserName").isEqualTo("Bertie Badger")
       .jsonPath("$.missingDocumentsRecords[0].createdDateTime").value(endsWith("Z"))
       .jsonPath("$.recallLength").isEqualTo(fullyPopulatedRecall.recallLength!!.name)
       .jsonPath("$.lastReleasePrison").isEqualTo(fullyPopulatedRecall.lastReleasePrison!!.value)

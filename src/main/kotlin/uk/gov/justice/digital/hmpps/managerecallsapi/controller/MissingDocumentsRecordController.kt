@@ -74,7 +74,7 @@ class MissingDocumentsRecordController(
           )
         )
 
-        ResponseEntity(mdr.toResponse(), HttpStatus.CREATED)
+        ResponseEntity(mdr.id(), HttpStatus.CREATED)
       }.onFailure {
         throw VirusFoundException()
       }
