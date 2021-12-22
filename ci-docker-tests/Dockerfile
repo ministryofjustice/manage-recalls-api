@@ -1,4 +1,4 @@
-FROM cimg/openjdk:16.0 AS GRADLE_BUILD_IMAGE
+FROM cimg/openjdk:17.0 AS GRADLE_BUILD_IMAGE
 USER circleci
 ENV APP_HOME=/home/circleci/project
 ENV GRADLE_USER_HOME=/home/circleci/gradle_cache
@@ -7,7 +7,7 @@ COPY --chown=circleci:circleci build.gradle.kts settings.gradle.kts gradle.prope
 COPY --chown=circleci:circleci gradle $APP_HOME/gradle
 RUN ./gradlew build -i -Dorg.gradle.daemon=false || true
 
-FROM cimg/openjdk:16.0
+FROM cimg/openjdk:17.0
 USER circleci
 ENV APP_HOME=/home/circleci/project
 WORKDIR $APP_HOME

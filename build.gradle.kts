@@ -83,7 +83,7 @@ dependencies {
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_16.toString()
+      jvmTarget = JavaVersion.VERSION_16.toString() // TODO Need Kotlin 1.6 to target JVM 17 - see PUD-1241
     }
   }
 
@@ -121,7 +121,7 @@ task<Test>("documentGenerationTest") {
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(16))
+    languageVersion.set(JavaLanguageVersion.of(16)) // TODO Need Kotlin 1.6 to target JVM 17 - see PUD-1241
     vendor.set(JvmVendorSpec.matching("AdoptOpenJDK"))
   }
 }

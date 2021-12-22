@@ -20,7 +20,7 @@ parameters:
     default: not_set
 
 _db_localstack_docker_config: &db_localstack_docker_config
-  - image: cimg/openjdk:16.0
+  - image: cimg/openjdk:17.0
   - image: circleci/postgres:10-alpine-ram
     environment:
       POSTGRES_USER: ppud_user
@@ -36,7 +36,7 @@ _db_localstack_docker_config: &db_localstack_docker_config
       - TMPDIR=/private
 
 _db_localstack_gotenberg_docker_config: &db_localstack_gotenberg_docker_config
-  - image: cimg/openjdk:16.0
+  - image: cimg/openjdk:17.0
   - image: thecodingmachine/gotenberg:6
   - image: circleci/postgres:10-alpine-ram
     environment:
@@ -59,7 +59,7 @@ executors:
     working_directory: ~/app
 
 jobs:
-  validate:
+  validate: # schema validation warning for lack of executor but passing on default (vs. occasional OOM with "hmpps/java")
     docker: *db_localstack_docker_config
     steps:
       - checkout
@@ -75,13 +75,13 @@ jobs:
             - run:
                 name: Run check
                 command: |
-                  ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" check
+                  ./gradlew check
       - store_test_results:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
 
-  document-generation-tests:
+  document-generation-tests: # schema validation warning for lack of executor but passing on default (vs. OOM with "hmpps/java")
     docker: *db_localstack_gotenberg_docker_config
     steps:
       - checkout
@@ -99,19 +99,18 @@ jobs:
                 name: Run document generation tests
                 command: |
                   export GOTENBERG_ENDPOINT_URL=http://localhost:3000
-                  ./gradlew -Dorg.gradle.jvmargs="--illegal-access=permit" -Dkotlin.daemon.jvm.options="--illegal-access=permit" documentGenerationTest
+                  ./gradlew documentGenerationTest
       - store_test_results:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
 
-  verify_pact_and_publish:
+  verify_pact_and_publish: # schema validation warning for lack of executor but passing on default (occasional OOM with "hmpps/java")
     parameters:
       consumer_tags:
         type: string
     environment:
       PACTBROKER_HOST: pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
-    executor: hmpps/java
     docker: *db_localstack_docker_config
     steps:
       - checkout
