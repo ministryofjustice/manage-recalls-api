@@ -52,6 +52,7 @@ data class Recall(
   val createdByUserId: UUID,
   @Column(nullable = false)
   val createdDateTime: OffsetDateTime,
+  val lastUpdatedByUserId: UUID,
   @Column(nullable = false)
   val lastUpdatedDateTime: OffsetDateTime,
   @Column(nullable = false)
@@ -111,8 +112,8 @@ data class Recall(
   @Enumerated(STRING)
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
-  val previousConvictionMainName: String? = null,
   // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
+  val previousConvictionMainName: String? = null,
   val assessedByUserId: UUID? = null,
   val bookedByUserId: UUID? = null,
   val dossierCreatedByUserId: UUID? = null,
@@ -128,6 +129,7 @@ data class Recall(
     middleNames: MiddleNames?,
     lastName: LastName,
     licenceNameCategory: NameFormatCategory = FIRST_LAST,
+    lastUpdatedByUserId: UserId = createdByUserId,
     lastUpdatedDateTime: OffsetDateTime = createdDateTime,
     documents: Set<Document> = emptySet(),
     missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
@@ -171,6 +173,7 @@ data class Recall(
       nomsNumber,
       createdByUserId.value,
       createdDateTime,
+      lastUpdatedByUserId.value,
       lastUpdatedDateTime,
       firstName,
       middleNames,

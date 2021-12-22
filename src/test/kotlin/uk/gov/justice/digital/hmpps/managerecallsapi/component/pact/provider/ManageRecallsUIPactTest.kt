@@ -148,7 +148,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     setupUserDetailsFor(::UserId.zeroes())
     setupUserDetailsFor(UserId(UUID.fromString("00000000-1111-0000-0000-000000000000")))
     setupUserDetailsFor(UserId(UUID.fromString("00000000-2222-0000-0000-000000000000")))
-    recallRepository.save(recall)
+    recallRepository.save(recall, userIdOnes)
   }
 
   @State(
@@ -161,7 +161,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       assignee = null
     )
     setupUserDetailsFor(userIdOnes)
-    recallRepository.save(recall)
+    recallRepository.save(recall, userIdOnes)
   }
 
   @State(
@@ -248,7 +248,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         FirstName("Barrie"),
         null,
         LastName("Badger")
-      )
+      ),
+      createdByUserId
     )
     `a document exists`(documentId, UNCATEGORISED, null, null)
   }

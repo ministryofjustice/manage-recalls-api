@@ -26,8 +26,8 @@ class GetRecallsComponentTest : ComponentTestBase() {
     val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), ZoneId.of("UTC"))
     val recall1 = Recall(::RecallId.random(), NomsNumber("123456"), createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
     val recall2 = Recall(::RecallId.random(), NomsNumber("987654"), createdByUserId, now, FirstName("Barrie"), MiddleNames("Barnie"), LastName("Badger"), licenceNameCategory = FIRST_MIDDLE_LAST)
-    recallRepository.save(recall1)
-    recallRepository.save(recall2)
+    recallRepository.save(recall1, createdByUserId)
+    recallRepository.save(recall2, createdByUserId)
 
     val response = authenticatedClient.getAllRecalls()
 

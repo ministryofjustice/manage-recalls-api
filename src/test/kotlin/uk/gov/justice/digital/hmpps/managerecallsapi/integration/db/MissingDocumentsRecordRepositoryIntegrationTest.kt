@@ -46,6 +46,7 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
 
   private val recallId = ::RecallId.random()
   private val createdByUserId = ::UserId.random()
+  private val currentUserId = ::UserId.random()
   private val nomsNumber = randomNoms()
   private val recall = Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
   private val documentId = ::DocumentId.random()
@@ -54,14 +55,30 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
 
   @BeforeEach
   fun `setup createdBy user`() {
-    userDetailsRepository.save(UserDetails(createdByUserId, FirstName("Test"), LastName("User"), "", Email("test@user.com"), PhoneNumber("09876543210"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()))
+    createUserDetails(createdByUserId)
+    createUserDetails(currentUserId)
+  }
+
+  private fun createUserDetails(userId: UserId) {
+    userDetailsRepository.save(
+      UserDetails(
+        userId,
+        FirstName("Test"),
+        LastName("User"),
+        "",
+        Email("test@user.com"),
+        PhoneNumber("09876543210"),
+        CaseworkerBand.FOUR_PLUS,
+        OffsetDateTime.now()
+      )
+    )
   }
 
   // Note: when using @Transactional to clean up after the tests we need to 'flush' to trigger the DB constraints, hence use of saveAndFlush()
   @Test
   @Transactional
   fun `can save and flush two distinct copies of an missing documents record for an existing recall`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
     documentRepository.saveAndFlush(
       Document(
         documentId,
@@ -92,7 +109,7 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `cannot save and flush 2 MDR for the same recall and version`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
     documentRepository.saveAndFlush(
       Document(
         documentId,

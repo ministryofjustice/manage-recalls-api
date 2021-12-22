@@ -32,6 +32,7 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), crea
       assessedByUserId = (createdByUserId ?: ::UserId.random()).value,
       bookedByUserId = (createdByUserId ?: ::UserId.random()).value,
       createdByUserId = (createdByUserId ?: ::UserId.random()).value,
+      lastUpdatedByUserId = (createdByUserId ?: ::UserId.random()).value,
       dossierCreatedByUserId = (createdByUserId ?: ::UserId.random()).value,
       documents = recall.documents.map {
         document ->

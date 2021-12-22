@@ -54,17 +54,34 @@ class DocumentRepositoryIntegrationTest(
   private val versionedCategory = randomVersionedDocumentCategory()
   private val unVersionedCategory = randomUnVersionedDocumentCategory()
   private val versionedRecallDocument = versionedDocument(documentId, recallId, versionedCategory, 1)
+  private val currentUserId = ::UserId.random()
 
   @BeforeEach
   fun `setup createdBy user`() {
-    userDetailsRepository.save(UserDetails(createdByUserId, FirstName("Test"), LastName("User"), "", Email("test@user.com"), PhoneNumber("09876543210"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()))
+    createUserDetails(createdByUserId)
+    createUserDetails(currentUserId)
+  }
+
+  private fun createUserDetails(userId: UserId) {
+    userDetailsRepository.save(
+      UserDetails(
+        userId,
+        FirstName("Test"),
+        LastName("User"),
+        "",
+        Email("test@user.com"),
+        PhoneNumber("09876543210"),
+        CaseworkerBand.FOUR_PLUS,
+        OffsetDateTime.now()
+      )
+    )
   }
 
   // Note: when using @Transactional to clean up after the tests we need to 'flush' to trigger the DB constraints, hence use of saveAndFlush()
   @Test
   @Transactional
   fun `can save and flush two distinct copies of an un-versioned document for an existing recall`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val idOne = ::DocumentId.random()
     val docOne = unVersionedDocument(idOne, recallId, unVersionedCategory)
@@ -83,7 +100,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can save and flush two distinct copies of a versioned document with different versions for an existing recall`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val idOne = ::DocumentId.random()
     val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
@@ -102,7 +119,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `when storing two distinct copies of a versioned document with different versions for an existing recall, getLatest returns the latest`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val idOne = ::DocumentId.random()
     val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
@@ -119,7 +136,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `when storing two distinct copies of a versioned document with different versions for an existing recall, then deleting the latest, getLatest returns the first`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val idOne = ::DocumentId.random()
     val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
@@ -145,7 +162,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `cannot save and flush two distinct copies of an versioned document with the same version for an existing recall throws DataIntegrityViolationException`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val idOne = ::DocumentId.random()
     val docOne = versionedDocument(idOne, recallId, versionedCategory, 1)
@@ -162,7 +179,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `cannot save and flush a versioned document with null version for an existing recall throws DataIntegrityViolationException`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val id = ::DocumentId.random()
     val document = versionedDocument(id, recallId, versionedCategory, 1).copy(version = null)
@@ -176,7 +193,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can save and flush a versioned document with details for an existing recall`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val details = "Random document details"
     val id = ::DocumentId.random()
@@ -192,7 +209,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can save and flush a versioned document without details for an existing recall`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val id = ::DocumentId.random()
     val documentWithoutDetails = versionedDocument(id, recallId, versionedCategory, 1).copy(version = 2, details = null)
@@ -207,7 +224,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `cannot save and flush an un-versioned document with non-null version for an existing recall throws DataIntegrityViolationException`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val id = ::DocumentId.random()
     val document = unVersionedDocument(id, recallId, unVersionedCategory).copy(version = 1)
@@ -221,7 +238,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `getByRecallIdAndDocumentId for an existing recall`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
     documentRepository.save(versionedRecallDocument)
 
     val retrieved = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
@@ -245,7 +262,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `findByRecallIdAndCategory for an existing recall`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
     documentRepository.save(versionedRecallDocument)
 
     val retrieved = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
@@ -256,7 +273,7 @@ class DocumentRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `findByRecallIdAndCategory returns null if no document exists`() {
-    recallRepository.save(recall)
+    recallRepository.save(recall, currentUserId)
 
     val retrieved = documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, versionedCategory)
 
