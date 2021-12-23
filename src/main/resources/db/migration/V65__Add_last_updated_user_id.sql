@@ -1,8 +1,8 @@
 ALTER TABLE recall
-    ADD COLUMN last_updated_by_user_id UUID references user_details(id);
+    ADD COLUMN last_updated_by_user_id UUID REFERENCES user_details(id);
 
-update recall set last_updated_by_user_id = created_by_user_id
-    where last_updated_by_user_id is null;
+UPDATE recall SET last_updated_by_user_id = created_by_user_id
+    WHERE last_updated_by_user_id IS NULL;
 
 ALTER TABLE recall
     ALTER COLUMN last_updated_by_user_id SET NOT NULL;

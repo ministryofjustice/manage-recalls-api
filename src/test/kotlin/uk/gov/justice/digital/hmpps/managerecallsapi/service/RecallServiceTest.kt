@@ -48,6 +48,7 @@ class RecallServiceTest {
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
   private val today = LocalDate.now()
+  private val currentUserId = ::UserId.random()
 
   private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
 
@@ -114,7 +115,6 @@ class RecallServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     val fixedClockTime = OffsetDateTime.now(fixedClock)
     val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = fixedClockTime, recallNotificationEmailSentDateTime = fixedClockTime)
-    val currentUserId = ::UserId.random()
     every { recallRepository.save(updatedRecallWithoutDocs, currentUserId) } returns updatedRecallWithoutDocs
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest, currentUserId)
@@ -124,7 +124,6 @@ class RecallServiceTest {
 
   @Test
   fun `cannot reset recall properties to null with update recall`() {
-    val currentUserId = ::UserId.random()
     val fullyPopulatedRecall: Recall = fullyPopulatedRecall(recallId)
     val updatedRecall = fullyPopulatedRecall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
     every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecall
@@ -138,7 +137,6 @@ class RecallServiceTest {
 
   @Test
   fun `assignee cleared when recall is stopped`() {
-    val currentUserId = ::UserId.random()
     val recall = existingRecall.copy(assignee = UUID.randomUUID())
     val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP, lastUpdatedDateTime = OffsetDateTime.now(fixedClock), recallType = FIXED)
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -200,7 +198,6 @@ class RecallServiceTest {
   }
 
   private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
-    val currentUserId = ::UserId.random()
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     // TODO: don't set the recallType unless we need to
     val updatedRecallWithType = existingRecall.copy(recallType = FIXED, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
@@ -213,7 +210,6 @@ class RecallServiceTest {
 
   @Test
   fun `can assign a recall`() {
-    val currentUserId = ::UserId.random()
     val nomsNumber = randomNoms()
     val now = OffsetDateTime.now()
     val createdByUserId = ::UserId.random()
@@ -231,7 +227,6 @@ class RecallServiceTest {
 
   @Test
   fun `can unassign a recall`() {
-    val currentUserId = ::UserId.random()
     val nomsNumber = randomNoms()
     val now = OffsetDateTime.now()
     val createdByUserId = ::UserId.random()
@@ -249,7 +244,6 @@ class RecallServiceTest {
   @Test
   @Throws(NotFoundException::class)
   fun `can't unassign a recall when assignee doesnt match`() {
-    val currentUserId = ::UserId.random()
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
     val nomsNumber = randomNoms()

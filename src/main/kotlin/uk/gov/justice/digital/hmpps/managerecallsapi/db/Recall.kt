@@ -112,8 +112,8 @@ data class Recall(
   @Enumerated(STRING)
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
   val hasDossierBeenChecked: Boolean? = null,
-  // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
   val previousConvictionMainName: String? = null,
+  // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
   val assessedByUserId: UUID? = null,
   val bookedByUserId: UUID? = null,
   val dossierCreatedByUserId: UUID? = null,

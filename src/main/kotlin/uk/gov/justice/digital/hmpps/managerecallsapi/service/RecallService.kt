@@ -105,9 +105,10 @@ class RecallService(
   fun calculateDossierTargetDate(recallNotificationEmailSentDateTime: OffsetDateTime?): LocalDate? {
     return recallNotificationEmailSentDateTime?.let {
       var dossierTargetDate = it.toLocalDate().plusDays(1)
-      while (dossierTargetDate.dayOfWeek == DayOfWeek.SATURDAY || dossierTargetDate.dayOfWeek == DayOfWeek.SUNDAY || bankHolidayService.isHoliday(
-          dossierTargetDate
-        )
+      while (
+        dossierTargetDate.dayOfWeek == DayOfWeek.SATURDAY ||
+        dossierTargetDate.dayOfWeek == DayOfWeek.SUNDAY ||
+        bankHolidayService.isHoliday(dossierTargetDate)
       ) {
         dossierTargetDate = dossierTargetDate.plusDays(1)
       }
