@@ -131,7 +131,7 @@ class RecallRepositoryIntegrationTest(
   fun `can find existing recalls by nomsNumber alone`() {
     repository.save(recall, currentUserId)
 
-    val retrieved = repository.findByNomsNumber(nomsNumber)
+    val retrieved = repository.findAllByNomsNumber(nomsNumber)
 
     assertThat(retrieved, equalTo(listOf(recall.copy(lastUpdatedByUserId = currentUserId.value))))
   }
@@ -141,7 +141,7 @@ class RecallRepositoryIntegrationTest(
   fun `search by nomsNumber returns empty list given no matching recalls`() {
     repository.save(recall, currentUserId)
 
-    assertThat(repository.findByNomsNumber(randomNoms()), equalTo(emptyList()))
+    assertThat(repository.findAllByNomsNumber(randomNoms()), equalTo(emptyList()))
   }
 
   @Test
