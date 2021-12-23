@@ -48,6 +48,7 @@ class RecallServiceTest {
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(recallId, NomsNumber("A9876ZZ"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
   private val today = LocalDate.now()
+  private val currentUserId = ::UserId.random()
 
   private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
 
@@ -114,9 +115,9 @@ class RecallServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     val fixedClockTime = OffsetDateTime.now(fixedClock)
     val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = fixedClockTime, recallNotificationEmailSentDateTime = fixedClockTime)
-    every { recallRepository.save(updatedRecallWithoutDocs) } returns updatedRecallWithoutDocs
+    every { recallRepository.save(updatedRecallWithoutDocs, currentUserId) } returns updatedRecallWithoutDocs
 
-    val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest)
+    val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest, currentUserId)
 
     assertThat(response, equalTo(updatedRecallWithoutDocs))
   }
@@ -126,10 +127,10 @@ class RecallServiceTest {
     val fullyPopulatedRecall: Recall = fullyPopulatedRecall(recallId)
     val updatedRecall = fullyPopulatedRecall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
     every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecall
-    every { recallRepository.save(updatedRecall) } returns updatedRecall
+    every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
 
     val emptyUpdateRecallRequest = UpdateRecallRequest()
-    val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest)
+    val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest, currentUserId)
 
     assertThat(response, equalTo(updatedRecall))
   }
@@ -139,10 +140,10 @@ class RecallServiceTest {
     val recall = existingRecall.copy(assignee = UUID.randomUUID())
     val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP, lastUpdatedDateTime = OffsetDateTime.now(fixedClock), recallType = FIXED)
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { recallRepository.save(updatedRecall) } returns updatedRecall
+    every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
 
     val updateRequest = UpdateRecallRequest(agreeWithRecall = NO_STOP)
-    val response = underTest.updateRecall(recallId, updateRequest)
+    val response = underTest.updateRecall(recallId, updateRequest, currentUserId)
 
     assertThat(response, equalTo(updatedRecall))
   }
@@ -200,9 +201,9 @@ class RecallServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     // TODO: don't set the recallType unless we need to
     val updatedRecallWithType = existingRecall.copy(recallType = FIXED, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
-    every { recallRepository.save(updatedRecallWithType) } returns updatedRecallWithType
+    every { recallRepository.save(updatedRecallWithType, currentUserId) } returns updatedRecallWithType
 
-    val response = underTest.updateRecall(recallId, request)
+    val response = underTest.updateRecall(recallId, request, currentUserId)
 
     assertThat(response, equalTo(updatedRecallWithType))
   }
@@ -218,9 +219,9 @@ class RecallServiceTest {
     val expected = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), lastUpdatedDateTime = OffsetDateTime.now(fixedClock), assignee = assignee)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { recallRepository.save(expected) } returns expected
+    every { recallRepository.save(expected, currentUserId) } returns expected
 
-    val assignedRecall = underTest.assignRecall(recallId, assignee)
+    val assignedRecall = underTest.assignRecall(recallId, assignee, currentUserId)
     assertThat(assignedRecall, equalTo(expected))
   }
 
@@ -234,9 +235,9 @@ class RecallServiceTest {
     val expected = recall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
 
     every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), assignee = assignee)
-    every { recallRepository.save(expected) } returns expected
+    every { recallRepository.save(expected, currentUserId) } returns expected
 
-    val assignedRecall = underTest.unassignRecall(recallId, assignee)
+    val assignedRecall = underTest.unassignRecall(recallId, assignee, currentUserId)
     assertThat(assignedRecall, equalTo(expected))
   }
 
@@ -250,7 +251,7 @@ class RecallServiceTest {
 
     every { recallRepository.getByRecallId(recallId) } returns Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), assignee = assignee)
 
-    assertThrows<NotFoundException> { underTest.unassignRecall(recallId, otherAssignee) }
+    assertThrows<NotFoundException> { underTest.unassignRecall(recallId, otherAssignee, currentUserId) }
   }
 
   private fun recallRequestWithMandatorySentencingInfo(

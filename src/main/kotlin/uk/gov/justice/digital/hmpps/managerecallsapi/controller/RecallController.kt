@@ -66,7 +66,7 @@ class RecallController(
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
 
     return ResponseEntity(
-      recallRepository.save(bookRecallRequest.toRecall(token.userUuid())).toResponse(),
+      recallRepository.save(bookRecallRequest.toRecall(token.userUuid()), token.userUuid()).toResponse(),
       HttpStatus.CREATED
     )
   }
@@ -90,14 +90,16 @@ class RecallController(
   @PatchMapping("/recalls/{recallId}")
   fun updateRecall(
     @PathVariable("recallId") recallId: RecallId,
-    @RequestBody updateRecallRequest: UpdateRecallRequest
+    @RequestBody updateRecallRequest: UpdateRecallRequest,
+    @RequestHeader("Authorization") bearerToken: String
   ): ResponseEntity<RecallResponse> =
     if (prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) &&
       prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) &&
       courtValidationService.isValid(updateRecallRequest.sentencingCourt)
     ) {
+      val token = tokenExtractor.getTokenFromHeader(bearerToken)
       ResponseEntity.ok(
-        recallService.updateRecall(recallId, updateRecallRequest).toResponse()
+        recallService.updateRecall(recallId, updateRecallRequest, token.userUuid()).toResponse()
       )
     } else {
       ResponseEntity.badRequest().build()
@@ -106,16 +108,23 @@ class RecallController(
   @PostMapping("/recalls/{recallId}/assignee/{assignee}")
   fun assignRecall(
     @PathVariable("recallId") recallId: RecallId,
-    @PathVariable("assignee") assignee: UserId
-  ): RecallResponse =
-    recallService.assignRecall(recallId, assignee).toResponse()
+    @PathVariable("assignee") assignee: UserId,
+    @RequestHeader("Authorization") bearerToken: String
+  ): RecallResponse {
+    val token = tokenExtractor.getTokenFromHeader(bearerToken)
+    return recallService.assignRecall(recallId, assignee, token.userUuid()).toResponse()
+  }
 
   @DeleteMapping("/recalls/{recallId}/assignee/{assignee}")
   fun unassignRecall(
     @PathVariable("recallId") recallId: RecallId,
-    @PathVariable("assignee") assignee: UserId
-  ): RecallResponse =
-    recallService.unassignRecall(recallId, assignee).toResponse()
+    @PathVariable("assignee") assignee: UserId,
+    @RequestHeader("Authorization") bearerToken: String
+  ): RecallResponse {
+    val token = tokenExtractor.getTokenFromHeader(bearerToken)
+
+    return recallService.unassignRecall(recallId, assignee, token.userUuid()).toResponse()
+  }
 
   fun Recall.toResponse() = RecallResponse(
     recallId = this.recallId(),

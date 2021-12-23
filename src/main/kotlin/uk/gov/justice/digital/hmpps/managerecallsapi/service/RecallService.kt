@@ -27,31 +27,31 @@ class RecallService(
 ) {
 
   @Transactional
-  fun assignRecall(recallId: RecallId, assignee: UserId): Recall {
+  fun assignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
     return recallRepository.getByRecallId(recallId)
       .copy(
         assignee = assignee.value,
         lastUpdatedDateTime = OffsetDateTime.now(clock)
       )
-      .let { recallRepository.save(it) }
+      .let { recallRepository.save(it, currentUserId) }
   }
 
   @Transactional
-  fun unassignRecall(recallId: RecallId, assignee: UserId): Recall {
+  fun unassignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
     return recallRepository.getByRecallId(recallId)
       .takeIf { it.assignee == assignee.value }
       ?.copy(
         assignee = null,
         lastUpdatedDateTime = OffsetDateTime.now(clock)
       )
-      ?.let { recallRepository.save(it) } ?: throw NotFoundException()
+      ?.let { recallRepository.save(it, currentUserId) } ?: throw NotFoundException()
   }
 
   @Transactional
-  fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): Recall =
+  fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest, currentUserId: UserId): Recall =
     recallRepository.getByRecallId(recallId)
       .updateWithRequestDetails(updateRecallRequest)
-      .let(recallRepository::save)
+      .let { recallRepository.save(it, currentUserId) }
 
   private fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
@@ -83,25 +83,33 @@ class RecallService(
       agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail ?: agreeWithRecallDetail,
       currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
       additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
-      additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail ?: additionalLicenceConditionsDetail,
+      additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail
+        ?: additionalLicenceConditionsDetail,
       differentNomsNumber = updateRecallRequest.differentNomsNumber ?: differentNomsNumber,
       differentNomsNumberDetail = updateRecallRequest.differentNomsNumberDetail ?: differentNomsNumberDetail,
-      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
+      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime
+        ?: recallNotificationEmailSentDateTime,
       dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate ?: dossierEmailSentDate,
-      previousConvictionMainNameCategory = updateRecallRequest.previousConvictionMainNameCategory ?: previousConvictionMainNameCategory,
+      previousConvictionMainNameCategory = updateRecallRequest.previousConvictionMainNameCategory
+        ?: previousConvictionMainNameCategory,
       hasDossierBeenChecked = updateRecallRequest.hasDossierBeenChecked ?: hasDossierBeenChecked,
       previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
       assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
       dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
-      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest.recallNotificationEmailSentDateTime) ?: dossierTargetDate
+      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest.recallNotificationEmailSentDateTime)
+        ?: dossierTargetDate
     )
   }
 
   fun calculateDossierTargetDate(recallNotificationEmailSentDateTime: OffsetDateTime?): LocalDate? {
     return recallNotificationEmailSentDateTime?.let {
       var dossierTargetDate = it.toLocalDate().plusDays(1)
-      while (dossierTargetDate.dayOfWeek == DayOfWeek.SATURDAY || dossierTargetDate.dayOfWeek == DayOfWeek.SUNDAY || bankHolidayService.isHoliday(dossierTargetDate)) {
+      while (
+        dossierTargetDate.dayOfWeek == DayOfWeek.SATURDAY ||
+        dossierTargetDate.dayOfWeek == DayOfWeek.SUNDAY ||
+        bankHolidayService.isHoliday(dossierTargetDate)
+      ) {
         dossierTargetDate = dossierTargetDate.plusDays(1)
       }
       dossierTargetDate

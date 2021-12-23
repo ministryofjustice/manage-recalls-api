@@ -22,31 +22,32 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
-internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), createdByUserId: UserId? = null): Recall =
+internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), knownUserId: UserId? = null): Recall =
   fullyPopulatedInstance<Recall>().let { recall ->
     // ensure recall length is valid for the random sentencing info as it is calculated on the fly
     recall.copy(
       id = recallId.value,
       recallLength = recall.sentencingInfo?.calculateRecallLength(),
-      assignee = (createdByUserId ?: ::UserId.random()).value,
-      assessedByUserId = (createdByUserId ?: ::UserId.random()).value,
-      bookedByUserId = (createdByUserId ?: ::UserId.random()).value,
-      createdByUserId = (createdByUserId ?: ::UserId.random()).value,
-      dossierCreatedByUserId = (createdByUserId ?: ::UserId.random()).value,
+      assignee = (knownUserId ?: ::UserId.random()).value,
+      assessedByUserId = (knownUserId ?: ::UserId.random()).value,
+      bookedByUserId = (knownUserId ?: ::UserId.random()).value,
+      createdByUserId = (knownUserId ?: ::UserId.random()).value,
+      lastUpdatedByUserId = (knownUserId ?: ::UserId.random()).value,
+      dossierCreatedByUserId = (knownUserId ?: ::UserId.random()).value,
       documents = recall.documents.map {
         document ->
         document.copy(
           recallId = recallId.value,
           // ensure document version is valid versus category
           version = if (document.category.versioned) Random.nextInt() else null,
-          createdByUserId = (createdByUserId ?: ::UserId.random()).value
+          createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
       }.toSet(),
       missingDocumentsRecords = recall.missingDocumentsRecords.map { mdr ->
         mdr.copy(
           recallId = recallId.value,
           emailId = recall.documents.random().id,
-          createdByUserId = (createdByUserId ?: ::UserId.random()).value
+          createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
       }.toSet()
     )

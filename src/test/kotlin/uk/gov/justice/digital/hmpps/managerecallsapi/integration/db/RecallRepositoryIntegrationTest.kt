@@ -51,38 +51,57 @@ class RecallRepositoryIntegrationTest(
   private val now = OffsetDateTime.now()
   private val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
   private val details = "Some string"
+  private val currentUserId = ::UserId.random()
 
   private val repository = RecallRepository(jpaRepository)
   private val documentRepository = DocumentRepository(jpaDocumentRepository)
 
   @BeforeEach
   fun `setup createdBy user`() {
-    userDetailsRepository.save(UserDetails(createdByUserId, FirstName("Test"), LastName("User"), "", Email("test@user.com"), PhoneNumber("09876543210"), CaseworkerBand.FOUR_PLUS, OffsetDateTime.now()))
+    createUserDetails(currentUserId)
+    createUserDetails(createdByUserId)
+  }
+
+  private fun createUserDetails(userId: UserId) {
+    userDetailsRepository.save(
+      UserDetails(
+        userId,
+        FirstName("Test"),
+        LastName("User"),
+        "",
+        Email("test@user.com"),
+        PhoneNumber("09876543210"),
+        CaseworkerBand.FOUR_PLUS,
+        OffsetDateTime.now()
+      )
+    )
   }
 
   @Test
   @Transactional
-  fun `saves and retrieves a recall`() {
-    repository.save(recall)
+  fun `saves and retrieves a recall with updated lastUpdatedByUserId`() {
+    repository.save(recall, currentUserId)
 
     val retrieved = repository.getByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(recall))
+    assertThat(retrieved, equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
   }
 
   @Test
   @Transactional
   fun `can update an existing recall`() {
-    repository.save(recall)
+    repository.save(recall, currentUserId)
 
-    assertThat(repository.getByRecallId(recallId), equalTo(recall))
+    assertThat(repository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
 
     val recallToUpdate = fullyPopulatedRecall(recallId)
-    repository.save(recallToUpdate)
+    val nextCurrentUserId = ::UserId.random()
+    createUserDetails(nextCurrentUserId)
+    repository.save(recallToUpdate, nextCurrentUserId)
 
     val updatedRecall = repository.getByRecallId(recallId)
 
-    assertThat(updatedRecall, equalTo(recallToUpdate))
+    assertThat(updatedRecall, equalTo(recallToUpdate.copy(lastUpdatedByUserId = nextCurrentUserId.value)))
   }
 
   @Test
@@ -95,11 +114,11 @@ class RecallRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can find an existing recall by recallId`() {
-    repository.save(recall)
+    repository.save(recall, currentUserId)
 
     val retrieved = repository.findByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(recall))
+    assertThat(retrieved, equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
   }
 
   @Test
@@ -110,17 +129,17 @@ class RecallRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can find existing recalls by nomsNumber alone`() {
-    repository.save(recall)
+    repository.save(recall, currentUserId)
 
     val retrieved = repository.findByNomsNumber(nomsNumber)
 
-    assertThat(retrieved, equalTo(listOf(recall)))
+    assertThat(retrieved, equalTo(listOf(recall.copy(lastUpdatedByUserId = currentUserId.value))))
   }
 
   @Test
   @Transactional
   fun `search by nomsNumber returns empty list given no matching recalls`() {
-    repository.save(recall)
+    repository.save(recall, currentUserId)
 
     assertThat(repository.findByNomsNumber(randomNoms()), equalTo(emptyList()))
   }
@@ -128,17 +147,17 @@ class RecallRepositoryIntegrationTest(
   @Test
   @Transactional
   fun `can find existing recalls by nomsNumber`() {
-    repository.save(recall)
+    repository.save(recall, currentUserId)
 
     val retrieved = repository.search(RecallSearchRequest(nomsNumber))
 
-    assertThat(retrieved, equalTo(listOf(recall)))
+    assertThat(retrieved, equalTo(listOf(recall.copy(lastUpdatedByUserId = currentUserId.value))))
   }
 
   @Test
   @Transactional
   fun `search returns empty list given no matching recalls`() {
-    repository.save(recall)
+    repository.save(recall, currentUserId)
 
     assertThat(repository.search(RecallSearchRequest(randomNoms())), equalTo(emptyList()))
   }
@@ -162,13 +181,13 @@ class RecallRepositoryIntegrationTest(
         document
       ),
     )
-    repository.save(recallToUpdate)
+    repository.save(recallToUpdate, currentUserId)
 
     val persistedDocument = documentRepository.getByRecallIdAndDocumentId(recallId, documentId)
     assertThat(document, equalTo(persistedDocument))
 
     val createdRecall = repository.getByRecallId(recallId)
 
-    assertThat(createdRecall, equalTo(recallToUpdate))
+    assertThat(createdRecall, equalTo(recallToUpdate.copy(lastUpdatedByUserId = currentUserId.value)))
   }
 }

@@ -54,7 +54,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
 
     val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
 
-    recallRepository.save(recall)
+    recallRepository.save(recall, createdByUserId)
     userDetailsRepository.save(
       UserDetails(
         assignee,
@@ -107,7 +107,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
       LastName("Badger"),
       assignee = assignee
     )
-    recallRepository.save(recall)
+    recallRepository.save(recall, createdByUserId)
 
     val response = authenticatedClient.unassignRecall(recallId, assignee)
 
@@ -148,7 +148,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
       LastName("Badger"),
       assignee = assignee
     )
-    recallRepository.save(recall)
+    recallRepository.save(recall, createdByUserId)
 
     authenticatedClient.unassignRecall(recallId, otherAssignee, HttpStatus.NOT_FOUND)
   }

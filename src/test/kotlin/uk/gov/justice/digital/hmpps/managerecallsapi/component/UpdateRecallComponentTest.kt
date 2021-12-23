@@ -65,7 +65,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         FirstName("Barrie"),
         null,
         LastName("Badger")
-      )
+      ),
+      createdByUserId
     )
     val instant = Instant.parse("2021-10-04T13:15:50.00Z")
     fixedClockTime = OffsetDateTime.ofInstant(instant, zone)

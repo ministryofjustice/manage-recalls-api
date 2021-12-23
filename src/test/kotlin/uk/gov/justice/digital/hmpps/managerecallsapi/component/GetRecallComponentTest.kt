@@ -39,7 +39,8 @@ class GetRecallComponentTest : ComponentTestBase() {
         FirstName("Barrie"),
         null,
         LastName("Badger")
-      )
+      ),
+      createdByUserId
     )
 
     val response = authenticatedClient.getRecall(recallId)
@@ -68,7 +69,7 @@ class GetRecallComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     val createdByUserId = authenticatedClient.userId
     val fullyPopulatedRecall = fullyPopulatedRecall(recallId, createdByUserId)
-    recallRepository.save(fullyPopulatedRecall)
+    recallRepository.save(fullyPopulatedRecall, createdByUserId)
 
     val missingDocumentsRecord = fullyPopulatedRecall.missingDocumentsRecords.first()
     // TODO:  MD Fix assertions, or move somewhere more sensible.

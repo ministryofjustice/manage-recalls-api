@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.lang.UnsupportedOperationException
 import java.util.UUID
 
 @Repository("jpaRecallRepository")
@@ -27,10 +29,8 @@ interface ExtendedRecallRepository : JpaRecallRepository {
   fun findByRecallId(recallId: RecallId): Recall?
 }
 
-@Component
-class RecallRepository(
-  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
-) : JpaRecallRepository by jpaRepository, ExtendedRecallRepository {
+// Needed to prevent access to saving directly
+class RawRecallRepository(@Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository) : JpaRecallRepository by jpaRepository, ExtendedRecallRepository {
   override fun getByRecallId(recallId: RecallId): Recall =
     findByRecallId(recallId) ?: throw RecallNotFoundException(recallId)
 
@@ -39,4 +39,18 @@ class RecallRepository(
 
   override fun findByRecallId(recallId: RecallId): Recall? =
     findById(recallId.value).orElse(null)
+}
+
+@Component
+class RecallRepository(
+  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
+) : RawRecallRepository(jpaRepository) {
+
+  @Deprecated(message = "Must be saved with lastUpdatedByUserId", replaceWith = ReplaceWith("save(entity, currentUserId)"), level = DeprecationLevel.ERROR)
+  override fun <S : Recall?> save(entity: S): S {
+    throw UnsupportedOperationException("Only save with userId to ensure lastUpdatedByUserId is correct")
+  }
+
+  fun save(entity: Recall, currentUserId: UserId) =
+    super.save(entity.copy(lastUpdatedByUserId = currentUserId.value))
 }
