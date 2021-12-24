@@ -21,7 +21,7 @@ parameters:
 
 _db_localstack_docker_config: &db_localstack_docker_config
   - image: cimg/openjdk:17.0
-  - image: circleci/postgres:10-alpine-ram
+  - image: circleci/postgres:13-postgis
     environment:
       POSTGRES_USER: ppud_user
       POSTGRES_PASSWORD: secret
@@ -38,7 +38,7 @@ _db_localstack_docker_config: &db_localstack_docker_config
 _db_localstack_gotenberg_docker_config: &db_localstack_gotenberg_docker_config
   - image: cimg/openjdk:17.0
   - image: thecodingmachine/gotenberg:6
-  - image: circleci/postgres:10-alpine-ram
+  - image: circleci/postgres:13-postgis
     environment:
       POSTGRES_USER: ppud_user
       POSTGRES_PASSWORD: secret

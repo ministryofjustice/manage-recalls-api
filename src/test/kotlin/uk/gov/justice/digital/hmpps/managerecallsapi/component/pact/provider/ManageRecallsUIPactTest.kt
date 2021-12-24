@@ -73,6 +73,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @BeforeEach
   fun `delete all recalls`() {
+    recallAuditRepository.deleteAll()
     missingDocumentsRecordRepository.deleteAll()
     documentRepository.deleteAll()
     recallRepository.deleteAll()

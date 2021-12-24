@@ -3,9 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.NoRepositoryBean
-import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -13,13 +11,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
-import java.lang.UnsupportedOperationException
 import java.util.UUID
 
 @Repository("jpaRecallRepository")
 interface JpaRecallRepository : JpaRepository<Recall, UUID> {
-  @Query("SELECT r from Recall r where r.nomsNumber = :nomsNumber")
-  fun findByNomsNumber(@Param("nomsNumber") nomsNumber: NomsNumber): List<Recall>
+  fun findAllByNomsNumber(nomsNumber: NomsNumber): List<Recall>
 }
 
 @NoRepositoryBean
@@ -35,7 +31,7 @@ class RawRecallRepository(@Qualifier("jpaRecallRepository") @Autowired private v
     findByRecallId(recallId) ?: throw RecallNotFoundException(recallId)
 
   override fun search(searchRequest: RecallSearchRequest): List<Recall> =
-    findByNomsNumber(searchRequest.nomsNumber) // Intention is to support a richer query object but use of QueryByExample has issues e.g. with non-nullable Recall.id
+    findAllByNomsNumber(searchRequest.nomsNumber) // Intention is to support a richer query object but use of QueryByExample has issues e.g. with non-nullable Recall.id
 
   override fun findByRecallId(recallId: RecallId): Recall? =
     findById(recallId.value).orElse(null)
@@ -51,6 +47,6 @@ class RecallRepository(
     throw UnsupportedOperationException("Only save with userId to ensure lastUpdatedByUserId is correct")
   }
 
-  fun save(entity: Recall, currentUserId: UserId) =
+  fun save(entity: Recall, currentUserId: UserId): Recall =
     super.save(entity.copy(lastUpdatedByUserId = currentUserId.value))
 }
