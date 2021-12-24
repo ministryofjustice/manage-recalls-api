@@ -70,7 +70,7 @@ class RecallAuditRepositoryIntegrationTest(
 
   @Test
   @Transactional
-  fun `can update an existing recalls`() {
+  fun `can get audit for updated recall`() {
     recallRepository.save(recall, currentUserId)
 
     assertThat(recallRepository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
@@ -78,7 +78,7 @@ class RecallAuditRepositoryIntegrationTest(
     val recallToUpdate = recall.copy(contrabandDetail = "blah blah blah")
     recallRepository.save(recallToUpdate, currentUserId)
 
-    val recallAudits = underTest.auditFoRecallIdAndColumnName(recall.id, "contraband_detail")
+    val recallAudits = underTest.auditForRecallIdAndColumnName(recall.id, "contraband_detail")
     assertThat(recallAudits.size, equalTo(1))
     assertThat(recallAudits[0].updatedValue, equalTo("blah blah blah"))
   }

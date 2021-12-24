@@ -9,7 +9,7 @@ fi
 
 ./scripts/stop-gotenburg.sh
 
-docker compose build localstack
+#docker compose build localstack
 
 docker compose up -d postgres localstack
 

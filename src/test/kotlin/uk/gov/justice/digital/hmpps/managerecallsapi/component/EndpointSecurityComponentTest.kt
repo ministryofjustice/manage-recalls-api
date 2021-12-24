@@ -65,6 +65,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}"),
       webTestClient.get().uri("/recalls/${UUID.randomUUID()}/documents?category=${DocumentCategory.values().random()}"),
       webTestClient.get().uri("/users/current"),
+      webTestClient.get().uri("/audit/${UUID.randomUUID()}/currentPrison"),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}").bodyValue(updateDocumentRequest),
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),

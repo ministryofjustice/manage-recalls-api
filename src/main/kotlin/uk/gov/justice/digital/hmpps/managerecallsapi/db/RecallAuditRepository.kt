@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
+import java.sql.Timestamp
 import java.time.OffsetDateTime
 import java.util.UUID
 import javax.persistence.Entity
@@ -17,13 +18,18 @@ import javax.persistence.Table
 interface JpaRecallAuditRepository : JpaRepository<RawRecallAudit, UUID> {
 
   @Query(
-    value = "select audit_id as auditId, cast(recall_id as varchar) as recallId, cast(updated_by_user_id as varchar) as updatedByUserId, action_timestamp as actionTimestamp, " +
+    value = "select audit_id as auditId, cast(recall_id as varchar) as recallId, " +
+      " concat(u.first_name , ' ', u.last_name) as updatedByUserName, " +
+      " updated_date_time as updatedDateTime, " +
       " updated_values ->> :columnName as updatedValue" +
-      "    from recall_audit where recall_id = :recallId " +
-      " and jsonb_exists(cast(updated_values as jsonb), :columnName)",
+      "    from recall_audit a," +
+      "    user_details u " +
+      " where a.updated_by_user_id = u.id " +
+      "  and recall_id = :recallId " +
+      "  and jsonb_exists(cast(updated_values as jsonb), :columnName)",
     nativeQuery = true
   )
-  fun auditFoRecallIdAndColumnName(recallId: UUID, columnName: String): List<RecallAudit>
+  fun auditForRecallIdAndColumnName(recallId: UUID, columnName: String): List<RecallFieldAudit>
 }
 
 @NoRepositoryBean
@@ -34,14 +40,15 @@ class RecallAuditRepository(
   @Qualifier("jpaRecallAuditRepository") @Autowired private val jpaRepository: JpaRecallAuditRepository
 ) : JpaRecallAuditRepository by jpaRepository, ExtendedRecallAuditRepository
 
-interface RecallAudit {
+interface RecallFieldAudit {
   val auditId: Int
   val recallId: UUID
-  val updatedByUserId: UUID
-  val actionTimestamp: OffsetDateTime
+  val updatedByUserName: String
+  val updatedDateTime: Timestamp
   val updatedValue: String
 }
 
+// Used only for schema-validation
 @Entity
 @Table(name = "recall_audit")
 data class RawRecallAudit(
@@ -49,5 +56,5 @@ data class RawRecallAudit(
   val auditId: Int,
   val recallId: UUID,
   val updatedByUserId: UUID,
-  val actionTimestamp: OffsetDateTime
+  val updatedDateTime: OffsetDateTime
 )

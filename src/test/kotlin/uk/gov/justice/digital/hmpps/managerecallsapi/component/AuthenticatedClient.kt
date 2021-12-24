@@ -13,6 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditEntry
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
@@ -159,6 +160,12 @@ class AuthenticatedClient(
 
   fun getCurrentUserDetails() =
     getRequest("/users/current", UserDetailsResponse::class.java)
+
+  fun auditForField(recallId: RecallId, fieldName: String) =
+    sendGetRequest("/audit/$recallId/$fieldName")
+      .expectBody(object : ParameterizedTypeReference<List<FieldAuditEntry>>() {})
+      .returnResult()
+      .responseBody!!
 
   private fun <T> patchRequest(path: String, request: Any, responseClass: Class<T>): T =
     sendPatchRequest(path, request)
