@@ -3,9 +3,27 @@
 [![CircleCI](https://circleci.com/gh/ministryofjustice/manage-recalls-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/manage-recalls-api)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://manage-recalls-api-dev.hmpps.service.justice.gov.uk/swagger-ui/)
 
-API service for managing recalls
+UK(ex-Scotland) MoJ API service for managing recalls.  The main Slack channel for
+the maintaining team is currently: `#ppud-replacement`
 
-## See Also
+## Usage
+A Recall in this sense is for an offender out on license to be recalled into detention
+based on infringement of license conditions.  Multiple agencies 
+participate in the Recall process including MoJ, HMPPS, prisons and police.
+
+The primary software client for this service is the related UI `manage-recalls-ui`.  
+
+### Limitations
+Current limitations of this service include:
+* it is not yet the reference source for any operational Recall information: 
+the PPUD system remains that.
+* no historical data, i.e. from PPUD, is currently accessible via this service (or from any other DPS/HMPPS
+digital service).
+* the exposed API is WIP: it has been created to satisfy the specific UI client; modifications to it may be
+appropriate for more general consumption.
+
+
+### See Also
 * pact/README.md
 * pact/pact-webhooks/README.md
 * helm_deploy/README.md
