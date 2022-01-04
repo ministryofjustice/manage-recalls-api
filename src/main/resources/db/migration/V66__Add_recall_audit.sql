@@ -1,4 +1,4 @@
-create extension hstore;
+create extension IF NOT EXISTS hstore;
 
 create table recall_audit (
                                 audit_id serial primary key,
