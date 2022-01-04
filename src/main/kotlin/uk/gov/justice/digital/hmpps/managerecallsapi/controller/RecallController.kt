@@ -212,7 +212,7 @@ class RecallController(
     }
   }
 
-  fun MissingDocumentsRecord.toResponse() = Api.MissingDocumentsRecord(this.id(), this.categories.toList(), this.emailId(), this.detail, this.version, userDetailsService.get(this.createdByUserId()).fullName(), this.createdDateTime)
+  fun MissingDocumentsRecord.toResponse() = Api.MissingDocumentsRecord(this.id(), this.categories.toList(), this.emailId(), this.details, this.version, userDetailsService.get(this.createdByUserId()).fullName(), this.createdDateTime)
 }
 
 fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
@@ -317,7 +317,7 @@ class Api {
     val missingDocumentsRecordId: MissingDocumentsRecordId,
     val categories: List<DocumentCategory>,
     val emailId: DocumentId,
-    val detail: String,
+    val details: String,
     val version: Int,
     val createdByUserName: FullName,
     val createdDateTime: OffsetDateTime

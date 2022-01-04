@@ -67,7 +67,7 @@ class MissingDocumentsRecordController(
             missingDocumentsRecordRequest.recallId,
             missingDocumentsRecordRequest.categories.toSet(),
             documentId,
-            missingDocumentsRecordRequest.detail,
+            missingDocumentsRecordRequest.details,
             currentVersion + 1,
             currentUserId,
             OffsetDateTime.now()
@@ -84,7 +84,7 @@ class MissingDocumentsRecordController(
 data class MissingDocumentsRecordRequest(
   val recallId: RecallId,
   val categories: List<DocumentCategory>,
-  val detail: String,
+  val details: String,
   val emailFileContent: String,
   val emailFileName: String
 )

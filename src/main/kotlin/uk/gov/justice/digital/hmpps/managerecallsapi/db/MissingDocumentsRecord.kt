@@ -36,7 +36,7 @@ data class MissingDocumentsRecord(
   val emailId: UUID,
 
   @Column(nullable = false)
-  val detail: String,
+  val details: String,
 
   @Column(nullable = false)
   val version: Int,
@@ -52,13 +52,13 @@ data class MissingDocumentsRecord(
     recallId: RecallId,
     categories: Set<DocumentCategory>,
     emailId: DocumentId,
-    detail: String,
+    details: String,
     version: Int,
     createdByUserId: UserId,
     createdDateTime: OffsetDateTime
   ) :
     this(
-      id.value, recallId.value, categories, emailId.value, detail, version, createdByUserId.value, createdDateTime
+      id.value, recallId.value, categories, emailId.value, details, version, createdByUserId.value, createdDateTime
     )
 
   fun id() = MissingDocumentsRecordId(id)

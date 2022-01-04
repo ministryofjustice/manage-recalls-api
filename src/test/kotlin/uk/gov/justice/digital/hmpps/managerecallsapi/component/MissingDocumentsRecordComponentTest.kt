@@ -47,7 +47,7 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
 
     authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(detail = "Some details; some more detail"), CREATED, MissingDocumentsRecordId::class.java)
+    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(details = "Some details; some more detail"), CREATED, MissingDocumentsRecordId::class.java)
 
     assertThat(response, present())
 
