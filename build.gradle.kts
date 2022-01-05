@@ -19,17 +19,15 @@ configurations {
 }
 
 dependencyCheck {
-  // Fail the build when there is a finding with "medium" severity.
-  // failBuildOnCVSS = 4
-  // Only check the compile classpath and ignore findings in other configurations.
-  // scanConfigurations = ['debugCompileClasspath', 'acceptanceCompileClasspath', 'productionCompileClasspath']
   suppressionFiles.add("$rootDir/owasp.suppression.xml")
 }
 
-// Force log4j2.version to 2.17 for CVE-2021-45105
-project.extensions.extraProperties["log4j2.version"] = "2.17.0"
+// Force log4j2.version to 2.17.1 for CVE-2021-44832
+project.extensions.extraProperties["log4j2.version"] = "2.17.1"
 // Force logback.version to 1.2.9 (latest stable) for CVE-2021-42550
 project.extensions.extraProperties["logback.version"] = "1.2.9"
+// Force uplift thymeleaf for CVE-2021-43466
+project.extensions.extraProperties["thymeleaf.version"] = "3.0.14.RELEASE"
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.5.5")
