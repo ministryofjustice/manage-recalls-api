@@ -28,7 +28,15 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   fun `create a MissingDocumentsRecord`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName, null)
+    val details = "Some detail"
+    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(
+      recall.recallId,
+      listOf(PART_A_RECALL_REPORT),
+      details,
+      base64EncodedDocumentContents,
+      fileName,
+      null
+    )
 
     val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
 
@@ -38,13 +46,22 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     assertThat(recall.missingDocumentsRecords, isEmpty)
     assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(1))
     assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.first().version, equalTo(1))
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.first().details, equalTo(details))
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.first().emailFileName, equalTo(fileName))
   }
 
   @Test
-  fun `create a MissingDocumentsRecord with temp form of request`() { // TODO PUD-1250: remove use of temp request and class when UI has transitioned
+  fun `create a MissingDocumentsRecord with temp form of request`() { // TODO PUD-1259: remove use of temp request and class when UI has transitioned
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), details = null, base64EncodedDocumentContents, fileName, detail = "old detail prop")
+    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(
+      recall.recallId,
+      listOf(PART_A_RECALL_REPORT),
+      details = null,
+      base64EncodedDocumentContents,
+      fileName,
+      detail = "old detail prop"
+    )
 
     val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
 
@@ -60,7 +77,14 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   fun `adding 2 MissingDocumentsRecords for the same recall, all missing documents will be returned on the recall`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName, null)
+    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(
+      recall.recallId,
+      listOf(PART_A_RECALL_REPORT),
+      "Some detail",
+      base64EncodedDocumentContents,
+      fileName,
+      null
+    )
 
     authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
     val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(details = "Some details; some more detail"), CREATED, MissingDocumentsRecordId::class.java)

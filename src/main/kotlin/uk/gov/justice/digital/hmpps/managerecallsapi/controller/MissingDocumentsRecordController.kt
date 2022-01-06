@@ -51,7 +51,7 @@ class MissingDocumentsRecordController(
     @RequestBody temp: TempMissingDocumentsRecordRequest,
     @RequestHeader("Authorization") bearerToken: String
   ): ResponseEntity<MissingDocumentsRecordId> {
-    // TODO PUD-1250: remove use of temp request and class when UI has transitioned
+    // TODO PUD-1259: remove use of temp request and class when UI has transitioned
     val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(
       temp.recallId,
       temp.categories,
