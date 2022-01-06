@@ -55,7 +55,7 @@ class RandomUtilitiesTest {
                 has("id", { it.id }, present()),
                 has("recallId", { it.recallId }, present()),
                 has("emailId", { it.emailId }, present()),
-                has(MissingDocumentsRecord::detail, present()),
+                has(MissingDocumentsRecord::details, present()),
                 has(MissingDocumentsRecord::version, present()),
                 has("createdByUserId", { it.createdByUserId }, present()),
                 has(MissingDocumentsRecord::createdDateTime, present())

@@ -88,7 +88,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.missingDocumentsRecords.length()").isEqualTo(1)
       .jsonPath("$.missingDocumentsRecords[0].missingDocumentsRecordId").isEqualTo(missingDocumentsRecord.id.toString())
       .jsonPath("$.missingDocumentsRecords[0].categories.length()").isEqualTo(missingDocumentsRecord.categories.size)
-      .jsonPath("$.missingDocumentsRecords[0].detail").isEqualTo(missingDocumentsRecord.detail)
+      .jsonPath("$.missingDocumentsRecords[0].details").isEqualTo(missingDocumentsRecord.details)
       .jsonPath("$.missingDocumentsRecords[0].version").isEqualTo(missingDocumentsRecord.version)
       .jsonPath("$.missingDocumentsRecords[0].emailId").isEqualTo(missingDocumentsRecord.emailId.toString())
       .jsonPath("$.missingDocumentsRecords[0].createdByUserName").isEqualTo("Bertie Badger")

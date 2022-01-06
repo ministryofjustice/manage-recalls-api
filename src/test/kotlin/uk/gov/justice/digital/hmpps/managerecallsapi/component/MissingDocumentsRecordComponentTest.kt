@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.CREATED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.TempMissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -28,7 +28,23 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   fun `create a MissingDocumentsRecord`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
+    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName, null)
+
+    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
+
+    assertThat(response, present())
+
+    val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
+    assertThat(recall.missingDocumentsRecords, isEmpty)
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(1))
+    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.first().version, equalTo(1))
+  }
+
+  @Test
+  fun `create a MissingDocumentsRecord with temp form of request`() { // TODO PUD-1250: remove use of temp request and class when UI has transitioned
+    expectNoVirusesWillBeFound()
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), details = null, base64EncodedDocumentContents, fileName, detail = "old detail prop")
 
     val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
 
@@ -44,10 +60,10 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   fun `adding 2 MissingDocumentsRecords for the same recall, all missing documents will be returned on the recall`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
+    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName, null)
 
     authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(detail = "Some details; some more detail"), CREATED, MissingDocumentsRecordId::class.java)
+    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(details = "Some details; some more detail"), CREATED, MissingDocumentsRecordId::class.java)
 
     assertThat(response, present())
 
@@ -62,7 +78,7 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     expectAVirusWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
+    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName, null)
 
     val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, BAD_REQUEST, ErrorResponse::class.java)
 

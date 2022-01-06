@@ -67,9 +67,10 @@ class MissingDocumentsRecordControllerTest {
     every { missingDocumentsRecordRepository.save(capture(savedMissingDocumentsRecord)) } returns record
     every { record.id() } returns missingDocumentsRecordId
 
-    val request = MissingDocumentsRecordRequest(
+    val request = TempMissingDocumentsRecordRequest(
       recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), "blah blah",
-      documentBytes.encodeToBase64String(), fileName
+      documentBytes.encodeToBase64String(), fileName,
+      "old detail property"
     )
 
     val response = underTest.createMissingDocumentsRecord(request, bearerToken)
@@ -115,9 +116,10 @@ class MissingDocumentsRecordControllerTest {
     every { missingDocumentsRecordRepository.save(capture(savedMissingDocumentsRecord)) } returns record
     every { record.id() } returns missingDocumentsRecordId
 
-    val request = MissingDocumentsRecordRequest(
+    val request = TempMissingDocumentsRecordRequest(
       recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), "blah blah \n blah blee blah",
-      documentBytes.encodeToBase64String(), fileName
+      documentBytes.encodeToBase64String(), fileName,
+      "original detail prop"
     )
 
     val response = underTest.createMissingDocumentsRecord(request, bearerToken)
