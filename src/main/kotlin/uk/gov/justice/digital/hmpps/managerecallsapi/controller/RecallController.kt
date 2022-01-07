@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
@@ -53,6 +54,7 @@ class RecallController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val userDetailsService: UserDetailsService,
   @Autowired private val recallService: RecallService,
+  @Autowired private val documentService: DocumentService,
   @Autowired private val prisonValidationService: PrisonValidationService,
   @Autowired private val courtValidationService: CourtValidationService,
   @Autowired private val tokenExtractor: TokenExtractor
@@ -212,7 +214,16 @@ class RecallController(
     }
   }
 
-  fun MissingDocumentsRecord.toResponse() = Api.MissingDocumentsRecord(this.id(), this.categories.toList(), this.emailId(), this.details, this.version, userDetailsService.get(this.createdByUserId()).fullName(), this.createdDateTime)
+  fun MissingDocumentsRecord.toResponse() = Api.MissingDocumentsRecord(
+    this.id(),
+    this.categories.toList(),
+    this.emailId(),
+    documentService.getRecallDocumentById(this.recallId(), this.emailId()).fileName,
+    this.details,
+    this.version,
+    userDetailsService.get(this.createdByUserId()).fullName(),
+    this.createdDateTime
+  )
 }
 
 fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
@@ -317,6 +328,7 @@ class Api {
     val missingDocumentsRecordId: MissingDocumentsRecordId,
     val categories: List<DocumentCategory>,
     val emailId: DocumentId,
+    val emailFileName: String,
     val details: String,
     val version: Int,
     val createdByUserName: FullName,

@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
@@ -40,6 +41,7 @@ class RecallControllerTest {
   private val recallRepository = mockk<RecallRepository>()
   private val userDetailsService = mockk<UserDetailsService>()
   private val recallService = mockk<RecallService>()
+  private val documentService = mockk<DocumentService>()
   private val prisonValidationService = mockk<PrisonValidationService>()
   private val courtValidationService = mockk<CourtValidationService>()
   private val tokenExtractor = mockk<TokenExtractor>()
@@ -49,6 +51,7 @@ class RecallControllerTest {
       recallRepository,
       userDetailsService,
       recallService,
+      documentService,
       prisonValidationService,
       courtValidationService,
       tokenExtractor

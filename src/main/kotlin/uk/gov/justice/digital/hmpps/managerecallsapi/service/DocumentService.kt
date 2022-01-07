@@ -109,7 +109,7 @@ class DocumentService(
       )
     }
 
-  private fun getRecallDocumentById(
+  fun getRecallDocumentById(
     recallId: RecallId,
     documentId: DocumentId
   ): Document = (
