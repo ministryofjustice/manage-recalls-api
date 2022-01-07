@@ -1,9 +1,40 @@
 version: 2.1
 
+slack-fail-post-step: &slack-fail-post-step
+  post-steps:
+    - slack/notify:
+        event: fail
+        branch_pattern: main
+        channel: << pipeline.parameters.alerts-slack-channel >>
+        custom: |
+          {
+            "text": "",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "❌ *Failure* #${CIRCLE_BUILD_NUM} `${CIRCLE_PROJECT_REPONAME}` on `${CIRCLE_BRANCH}`"
+                }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "text": { "type": "plain_text", "text": "View Job" },
+                    "url": "${CIRCLE_BUILD_URL}"
+                  }
+                ]
+              }
+            ]
+          }
+
 orbs:
   hmpps: ministryofjustice/hmpps@3.11
   gradle: circleci/gradle@2.2.0
   mem: circleci/rememborb@0.0.1
+  slack: circleci/slack@4.5
 
 parameters:
   alerts-slack-channel:
@@ -214,18 +245,30 @@ workflows:
   build-test-and-deploy:
     unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:
-      - validate
+      - validate:
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
-      - document-generation-tests
+      - document-generation-tests:
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/helm_lint:
           name: helm_lint
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/build_docker:
           name: build_docker
           publish: false
           persist_container_image: true
           additional_docker_build_args: --build-arg BUILD_URL=${CIRCLE_BUILD_URL}
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/trivy_pipeline_scan:
           name: trivy_scan_low_medium_cves
@@ -238,6 +281,9 @@ workflows:
           name: trivy_scan
           requires:
             - build_docker
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/publish_docker:
           name: publish_docker
@@ -250,17 +296,22 @@ workflows:
             branches:
               only:
                 - main
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
           name: deploy_dev
           env: dev
-          context: hmpps-common-vars
           filters:
             branches:
               only:
                 - main
           requires:
             - publish_docker
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - tag_pact_version:
           name: tag_pact_version_dev
@@ -269,6 +320,7 @@ workflows:
             - deploy_dev
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_dev
@@ -277,6 +329,9 @@ workflows:
           sentry_create_release: true
           requires:
             - deploy_dev
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/trigger_job:
           name: end-to-end-tests-dev
@@ -290,7 +345,9 @@ workflows:
               only:
                 - main
           context:
+            - hmpps-common-vars
             - ppud-replacement-circleci-vars
+          <<: *slack-fail-post-step
 
       - request-preprod-approval:
           type: approval
@@ -304,6 +361,7 @@ workflows:
             - request-preprod-approval
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
           name: deploy_preprod
@@ -313,6 +371,7 @@ workflows:
             - manage-recalls-api-preprod
           requires:
             - can_i_deploy_to_preprod
+          <<: *slack-fail-post-step
 
       - tag_pact_version:
           name: tag_pact_version_preprod
@@ -321,6 +380,7 @@ workflows:
             - deploy_preprod
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_preprod
@@ -328,6 +388,9 @@ workflows:
           sentry_environment: PRE-PROD
           requires:
             - deploy_preprod
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/trigger_job:
           name: end-to-end-tests-preprod
@@ -341,7 +404,9 @@ workflows:
               only:
                 - main
           context:
+            - hmpps-common-vars
             - ppud-replacement-circleci-vars
+          <<: *slack-fail-post-step
 
       - request-prod-approval:
           type: approval
@@ -355,6 +420,7 @@ workflows:
             - request-prod-approval
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/deploy_env:
           name: deploy_prod
@@ -366,6 +432,7 @@ workflows:
             - can_i_deploy_to_prod
           slack_notification: true
           slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          <<: *slack-fail-post-step
 
       - tag_pact_version:
           name: "tag_pact_version_prod"
@@ -374,6 +441,7 @@ workflows:
             - deploy_prod
           context:
             - hmpps-common-vars
+          <<: *slack-fail-post-step
 
       - hmpps/sentry_release_and_deploy:
           name: notify_sentry_prod
@@ -381,6 +449,9 @@ workflows:
           sentry_environment: PROD
           requires:
             - deploy_prod
+          context:
+            - hmpps-common-vars
+          <<: *slack-fail-post-step
 
   security:
     triggers:
