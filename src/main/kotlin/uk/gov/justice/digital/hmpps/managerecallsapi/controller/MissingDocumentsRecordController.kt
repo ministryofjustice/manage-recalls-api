@@ -48,18 +48,10 @@ class MissingDocumentsRecordController(
   )
   @PostMapping("/missing-documents-records")
   fun createMissingDocumentsRecord(
-    @RequestBody temp: TempMissingDocumentsRecordRequest,
+    @RequestBody missingDocumentsRecordRequest: MissingDocumentsRecordRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): ResponseEntity<MissingDocumentsRecordId> {
-    // TODO PUD-1259: remove use of temp request and class when UI has transitioned
-    val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(
-      temp.recallId,
-      temp.categories,
-      temp.details ?: temp.detail!!,
-      temp.emailFileContent,
-      temp.emailFileName
-    )
-    return recallRepository.getByRecallId(missingDocumentsRecordRequest.recallId).let {
+  ): ResponseEntity<MissingDocumentsRecordId> =
+    recallRepository.getByRecallId(missingDocumentsRecordRequest.recallId).let {
       val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       documentService.scanAndStoreDocument(
         missingDocumentsRecordRequest.recallId,
@@ -87,7 +79,6 @@ class MissingDocumentsRecordController(
         throw VirusFoundException()
       }
     }
-  }
 }
 
 data class MissingDocumentsRecordRequest(
@@ -96,13 +87,4 @@ data class MissingDocumentsRecordRequest(
   val details: String,
   val emailFileContent: String,
   val emailFileName: String
-)
-
-data class TempMissingDocumentsRecordRequest(
-  val recallId: RecallId,
-  val categories: List<DocumentCategory>,
-  val details: String?,
-  val emailFileContent: String,
-  val emailFileName: String,
-  val detail: String?,
 )

@@ -68,10 +68,9 @@ class MissingDocumentsRecordControllerTest {
     every { record.id() } returns missingDocumentsRecordId
 
     val details = "blah blah"
-    val request = TempMissingDocumentsRecordRequest(
+    val request = MissingDocumentsRecordRequest(
       recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), details,
-      documentBytes.encodeToBase64String(), fileName,
-      "old detail ignored as details is non-null"
+      documentBytes.encodeToBase64String(), fileName
     )
 
     val response = underTest.createMissingDocumentsRecord(request, bearerToken)
@@ -118,17 +117,14 @@ class MissingDocumentsRecordControllerTest {
     every { missingDocumentsRecordRepository.save(capture(savedMissingDocumentsRecord)) } returns record
     every { record.id() } returns missingDocumentsRecordId
 
-    val detail = "original detail prop"
-    val request = TempMissingDocumentsRecordRequest(
-      recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), null,
-      documentBytes.encodeToBase64String(), fileName,
-      detail
+    val request = MissingDocumentsRecordRequest(
+      recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), "detail",
+      documentBytes.encodeToBase64String(), fileName
     )
 
     val response = underTest.createMissingDocumentsRecord(request, bearerToken)
 
     assertThat(savedMissingDocumentsRecord.captured.version, equalTo(2))
-    assertThat(savedMissingDocumentsRecord.captured.details, equalTo(detail))
     assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
     assertThat(
       response.body,

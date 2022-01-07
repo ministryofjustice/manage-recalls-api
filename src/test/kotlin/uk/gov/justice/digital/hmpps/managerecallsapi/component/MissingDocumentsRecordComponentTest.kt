@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.CREATED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.TempMissingDocumentsRecordRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -29,13 +29,12 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val details = "Some detail"
-    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(
+    val missingDocsRecordReq = MissingDocumentsRecordRequest(
       recall.recallId,
       listOf(PART_A_RECALL_REPORT),
       details,
       base64EncodedDocumentContents,
-      fileName,
-      null
+      fileName
     )
 
     val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
@@ -51,43 +50,21 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `create a MissingDocumentsRecord with temp form of request`() { // TODO PUD-1259: remove use of temp request and class when UI has transitioned
-    expectNoVirusesWillBeFound()
-    val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(
-      recall.recallId,
-      listOf(PART_A_RECALL_REPORT),
-      details = null,
-      base64EncodedDocumentContents,
-      fileName,
-      detail = "old detail prop"
-    )
-
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
-
-    assertThat(response, present())
-
-    val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
-    assertThat(recall.missingDocumentsRecords, isEmpty)
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(1))
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.first().version, equalTo(1))
-  }
-
-  @Test
   fun `adding 2 MissingDocumentsRecords for the same recall, all missing documents will be returned on the recall`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(
+    val detailsOldest = "Some detail"
+    val missingDocsRecordReq = MissingDocumentsRecordRequest(
       recall.recallId,
       listOf(PART_A_RECALL_REPORT),
-      "Some detail",
+      detailsOldest,
       base64EncodedDocumentContents,
-      fileName,
-      null
+      fileName
     )
 
     authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(details = "Some details; some more detail"), CREATED, MissingDocumentsRecordId::class.java)
+    val detailsMostRecent = "Some details; some more detail"
+    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(details = detailsMostRecent), CREATED, MissingDocumentsRecordId::class.java)
 
     assertThat(response, present())
 
@@ -95,6 +72,9 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     assertThat(recall.missingDocumentsRecords, isEmpty)
     assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(2))
     assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[0].version, !equalTo(recallWithMissingDocumentsRecord.missingDocumentsRecords[1].version))
+    // TODO: following are unstable with the order of the returned records being non-deterministic when presumably we do want them to be
+    // assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[0].details, equalTo(detailsMostRecent))
+    // assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[1].details, equalTo(detailsOldest))
   }
 
   @Test
@@ -102,7 +82,7 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     expectAVirusWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = TempMissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName, null)
+    val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
 
     val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, BAD_REQUEST, ErrorResponse::class.java)
 
