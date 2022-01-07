@@ -17,12 +17,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditEntry
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditSummary
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.TempMissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -131,7 +131,7 @@ class AuthenticatedClient(
     deleteRequest("/recalls/$recallId/assignee/$assignee", expectedStatus)
 
   fun <T> missingDocumentsRecord(
-    request: TempMissingDocumentsRecordRequest,
+    request: MissingDocumentsRecordRequest,
     expectedStatus: HttpStatus = CREATED,
     responseClass: Class<T>
   ) =
