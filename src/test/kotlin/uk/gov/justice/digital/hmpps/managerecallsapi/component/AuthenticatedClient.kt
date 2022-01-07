@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRe
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditEntry
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditSummary
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
@@ -164,6 +165,12 @@ class AuthenticatedClient(
   fun auditForField(recallId: RecallId, fieldName: String) =
     sendGetRequest("/audit/$recallId/$fieldName")
       .expectBody(object : ParameterizedTypeReference<List<FieldAuditEntry>>() {})
+      .returnResult()
+      .responseBody!!
+
+  fun auditSummaryForRecall(recallId: RecallId) =
+    sendGetRequest("/audit/$recallId")
+      .expectBody(object : ParameterizedTypeReference<List<FieldAuditSummary>>() {})
       .returnResult()
       .responseBody!!
 

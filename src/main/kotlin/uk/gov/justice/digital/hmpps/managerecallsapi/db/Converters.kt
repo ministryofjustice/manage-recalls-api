@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -12,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import javax.persistence.AttributeConverter
 
 class FirstNameJpaConverter : CustomJpaConverter<FirstName, String>({ it.value }, ::FirstName)
+class FullNameJpaConverter : CustomJpaConverter<FullName, String>({ it.value }, ::FullName)
 class MiddleNamesJpaConverter : CustomJpaConverter<MiddleNames?, String?>({ it?.value }, { it?.let { MiddleNames(it) } })
 class LastNameJpaConverter : CustomJpaConverter<LastName, String>({ it.value }, ::LastName)
 class EmailJpaConverter : CustomJpaConverter<Email, String>({ it.value }, ::Email)

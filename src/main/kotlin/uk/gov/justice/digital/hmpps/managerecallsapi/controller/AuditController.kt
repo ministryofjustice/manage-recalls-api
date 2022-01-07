@@ -26,6 +26,12 @@ class AuditController(
     @PathVariable("fieldName") fieldName: FieldName
   ): List<FieldAuditEntry> =
     recallAuditService.getAuditForFieldName(recallId, fieldName)
+
+  @GetMapping("/audit/{recallId}")
+  fun auditSummaryForRecall(
+    @PathVariable("recallId") recallId: RecallId
+  ): List<FieldAuditSummary> =
+    recallAuditService.getAuditSummaryForRecall(recallId)
 }
 
 data class FieldAuditEntry(
@@ -34,4 +40,12 @@ data class FieldAuditEntry(
   val updatedByUserName: FullName,
   val updatedDateTime: OffsetDateTime,
   val updatedValue: Any
+)
+
+data class FieldAuditSummary(
+  val auditId: Int,
+  val fieldName: FieldName,
+  val updatedByUserName: FullName,
+  val updatedDateTime: OffsetDateTime,
+  val auditCount: Int
 )
