@@ -43,6 +43,7 @@ class ReferenceDataComponentTest : ComponentTestBase() {
       Court(CourtId("BANBCT"), CourtName("Banbury County Court")),
       Court(CourtId("CARLCT"), CourtName("Carlisle Combined Court Centre")),
       Court(CourtId("HVRFCT"), CourtName("Haverfordwest County Court")),
+      Court(CourtId("SOUTCT"), CourtName("Southport County Court")),
     )
 
     assertThat(response, equalTo(expectedResponse))
