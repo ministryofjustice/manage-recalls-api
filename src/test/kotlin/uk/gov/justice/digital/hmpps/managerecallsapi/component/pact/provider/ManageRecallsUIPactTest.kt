@@ -23,11 +23,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -195,33 +192,6 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         )
       )
     )
-  }
-
-  // TODO: delete as not in use?
-  @State(
-    "a recall notification and recall exists"
-  )
-  fun `a recall notification and recall exists`() {
-    `a user and a fully populated recall without documents exists`()
-    `a document exists`(matchedDocumentId, RECALL_NOTIFICATION, "filename.pdf", 2, null)
-  }
-
-  // TODO: delete as not in use?
-  @State(
-    "a dossier and recall exists"
-  )
-  fun `a dossier and recall exists`() {
-    `a user and a fully populated recall without documents exists`()
-    `a document exists`(matchedDocumentId, DOSSIER, "filename.pdf", 1, null)
-  }
-
-  // TODO: delete as not in use?
-  @State(
-    "a letter to prison and recall exists"
-  )
-  fun `a letter to prison and recall exists`() {
-    `a user and a fully populated recall without documents exists`()
-    `a document exists`(matchedDocumentId, LETTER_TO_PRISON, "filename.pdf", 1, null)
   }
 
   @State(
