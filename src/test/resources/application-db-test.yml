@@ -6,10 +6,10 @@ management.endpoint:
   info.cache.time-to-live: 0
 
 aws:
-  region: eu-west-1
+  region: eu-west-2
   credentials:
-    accessKey: randomAccessKey
-    secretKey: randomSecretKey
+    accessKey: ANYTHING_GOES
+    secretKey: ANYTHING_GOES
   s3:
     bucketName: test-manage-recalls-api
   local:

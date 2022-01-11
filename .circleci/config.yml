@@ -50,38 +50,34 @@ parameters:
     type: string
     default: not_set
 
-_db_localstack_docker_config: &db_localstack_docker_config
+_db_minio_docker_config: &db_minio_docker_config
   - image: cimg/openjdk:17.0
-  - image: circleci/postgres:13-postgis
+  - image: postgres:13-alpine
     environment:
       POSTGRES_USER: ppud_user
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: manage_recalls
-  - image: localstack/localstack:0.13.1
+  - image: minio/minio:latest
     environment:
-      - SERVICES=s3
-      - DATA_DIR=/tmp/localstack/data
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - AWS_EXECUTION_ENV=True
-      - DEFAULT_REGION=eu-west-2
-      - TMPDIR=/private
+      MINIO_ROOT_USER: ANYTHING_GOES
+      MINIO_ROOT_PASSWORD: ANYTHING_GOES
+    entrypoint: sh
+    command: -c 'mkdir -p /data/test-manage-recalls-api && /opt/bin/minio server /data --address ":4566" --console-address ":9001"'
 
-_db_localstack_gotenberg_docker_config: &db_localstack_gotenberg_docker_config
+_db_minio_gotenberg_docker_config: &db_minio_gotenberg_docker_config
   - image: cimg/openjdk:17.0
   - image: thecodingmachine/gotenberg:6
-  - image: circleci/postgres:13-postgis
+  - image: postgres:13-alpine
     environment:
       POSTGRES_USER: ppud_user
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: manage_recalls
-  - image: localstack/localstack:0.13.1
+  - image: minio/minio:latest
     environment:
-      - SERVICES=s3
-      - DATA_DIR=/tmp/localstack/data
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - AWS_EXECUTION_ENV=True
-      - DEFAULT_REGION=eu-west-2
-      - TMPDIR=/private
+      MINIO_ROOT_USER: ANYTHING_GOES
+      MINIO_ROOT_PASSWORD: ANYTHING_GOES
+    entrypoint: sh
+    command: -c 'mkdir -p /data/test-manage-recalls-api && /opt/bin/minio server /data --address ":4566" --console-address ":9001"'
 
 executors:
   local-docker:
@@ -91,15 +87,12 @@ executors:
 
 jobs:
   validate: # schema validation warning for lack of executor but passing on default (vs. occasional OOM with "hmpps/java")
-    docker: *db_localstack_docker_config
+    docker: *db_minio_docker_config
     steps:
       - checkout
       - hmpps/install_aws_cli
       - hmpps/wait_till_ready:
           port: 4566
-      - run:
-          name: Create S3 bucket
-          command: ./localstack-docker/scripts/01_create_bucket.sh
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"
           steps:
@@ -113,15 +106,12 @@ jobs:
           path: build/reports/tests
 
   document-generation-tests: # schema validation warning for lack of executor but passing on default (vs. OOM with "hmpps/java")
-    docker: *db_localstack_gotenberg_docker_config
+    docker: *db_minio_gotenberg_docker_config
     steps:
       - checkout
       - hmpps/install_aws_cli
       - hmpps/wait_till_ready:
           port: 4566
-      - run:
-          name: Create S3 bucket
-          command: ./localstack-docker/scripts/01_create_bucket.sh
       - checkout
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"
@@ -142,15 +132,12 @@ jobs:
         type: string
     environment:
       PACTBROKER_HOST: pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk
-    docker: *db_localstack_docker_config
+    docker: *db_minio_docker_config
     steps:
       - checkout
       - hmpps/install_aws_cli
       - hmpps/wait_till_ready:
           port: 4566
-      - run:
-          name: Create S3 bucket
-          command: ./localstack-docker/scripts/01_create_bucket.sh
       - checkout
       - gradle/with_cache:
           cache_checksum_file: "build.gradle.kts"
