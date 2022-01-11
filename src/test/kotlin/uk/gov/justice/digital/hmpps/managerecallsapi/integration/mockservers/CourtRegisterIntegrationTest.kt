@@ -63,7 +63,7 @@ class CourtRegisterIntegrationTest(
 
     val result = courtRegisterClient.getAllCourts().block()!!
 
-    assertThat(result, hasSize(equalTo(4)))
+    assertThat(result, hasSize(equalTo(5)))
   }
 
   @Test

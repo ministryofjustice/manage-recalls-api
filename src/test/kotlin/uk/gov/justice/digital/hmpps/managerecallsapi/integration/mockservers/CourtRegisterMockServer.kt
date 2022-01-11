@@ -36,6 +36,7 @@ class CourtRegisterMockServer(
         Court(CourtId("BANBCT"), CourtName("Banbury County Court")),
         Court(CourtId("CARLCT"), CourtName("Carlisle Combined Court Centre")),
         Court(CourtId("HVRFCT"), CourtName("Haverfordwest County Court")),
+        Court(CourtId("SOUTCT"), CourtName("Southport County Court")),
       )
     stubGet("/courts/all", courts)
     courts.forEach { stub(it) }
