@@ -18,6 +18,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3StorageService
 @ContextConfiguration(classes = [S3Config::class])
 @TestPropertySource(
   properties = [
+    "aws.credentials.accessKey=ANYTHING_GOES",
+    "aws.credentials.secretKey=ANYTHING_GOES",
     "aws.local.endpoint=http://localhost:4566",
     "aws.region=eu-west-2",
     "aws.s3.bucketName=test-manage-recalls-api"

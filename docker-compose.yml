@@ -6,7 +6,7 @@ services:
     networks:
       - manage-recalls-api
     container_name: manage-recalls-api
-    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg, localstack ]
+    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg, minio ]
     ports:
       - "8080:8080"
     healthcheck:
@@ -77,17 +77,19 @@ services:
     environment:
       - LOG_LEVEL=DEBUG
 
-  localstack:
-    build: ./localstack-docker
+  minio:
+    image: minio/minio:latest
+    container_name: minio_manage-recalls-api
     ports:
-      - "4566:4566"
-      - "4571:4571"
+      - 4566:4566
+      - 9001:9001
+    environment:
+      - MINIO_ROOT_USER=ANYTHING_GOES
+      - MINIO_ROOT_PASSWORD=ANYTHING_GOES
     networks:
       - manage-recalls-api
-    container_name: localstack_manage-recalls-api
-    environment:
-      - SERVICES=s3
-      - INIT_SCRIPTS_PATH=/tmp/localstack
+    entrypoint: sh
+    command: -c 'mkdir -p /data/test-manage-recalls-api && /opt/bin/minio server /data --address ":4566" --console-address ":9001"'
 
   clamav:
     image: ghcr.io/ministryofjustice/hmpps-clamav-freshclammed
