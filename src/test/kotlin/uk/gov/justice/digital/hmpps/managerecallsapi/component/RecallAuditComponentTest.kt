@@ -29,9 +29,9 @@ import java.util.stream.Stream
 class RecallAuditComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
+  private val today = LocalDate.now()
 
   private fun auditHistoryFieldValues(): Stream<Arguments>? {
-    val today = LocalDate.now()
     return Stream.of(
       Arguments.of(FieldName("currentPrison"), "String or Enum", UpdateRecallRequest(currentPrison = PrisonId("ABC")), "ABC"),
       Arguments.of(FieldName("contraband"), "Boolean", UpdateRecallRequest(contraband = true), true),
@@ -99,7 +99,7 @@ class RecallAuditComponentTest : ComponentTestBase() {
           "nomsNumber",
           "createdByUserId",
           "createdDateTime",
-          "id",
+          "reasonsForRecall",
           "firstName",
           "lastName"
         )
@@ -126,7 +126,7 @@ class RecallAuditComponentTest : ComponentTestBase() {
           "nomsNumber",
           "createdByUserId",
           "createdDateTime",
-          "id",
+          "reasonsForRecall",
           "recallType",
           "firstName",
           "lastName"
@@ -143,6 +143,11 @@ class RecallAuditComponentTest : ComponentTestBase() {
     assertThat(updatedAuditList[3].updatedByUserName, equalTo(FullName("Bertie Badger")))
     assertThat(updatedAuditList[3].auditCount, equalTo(2))
     assertOffsetDateTimesEqual(updatedAuditList[3].updatedDateTime, updatedRecall.lastUpdatedDateTime)
+
+    // assert that audit still works when sentencing info - which has nested values - is updated
+    authenticatedClient.updateRecall(recallId, UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today))
+    val sentencingUpdateAuditList = authenticatedClient.auditSummaryForRecall(recallId)
+    assertThat(sentencingUpdateAuditList.map { it.fieldName.value }.contains("sentencingInfo.sentenceLength.sentenceYears"))
   }
 
   // Due to differences in rounding (trigger drops last 0 on nano-seconds) we need to allow some variance on OffsetDateTimes
