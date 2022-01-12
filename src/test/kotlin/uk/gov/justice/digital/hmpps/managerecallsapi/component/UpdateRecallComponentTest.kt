@@ -405,7 +405,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @ParameterizedTest
   @MethodSource("invalidTimestampFields")
-  fun `validates timstamp fields`(requestJson: String) {
+  fun `validates timestamp fields`(requestJson: String) {
     authenticatedClient.patch(recallPath, requestJson)
       .expectStatus().isBadRequest
       .expectBody().jsonPath("$.message").value(Matchers.startsWith("JSON parse error"))

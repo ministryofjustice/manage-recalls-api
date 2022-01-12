@@ -6,6 +6,10 @@ import org.assertj.core.api.AbstractOffsetDateTimeAssert
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -19,54 +23,43 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
+import java.util.stream.Stream
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RecallAuditComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
 
-  @Test
-  fun `get currentPrison (String or Enum value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
-    val recallId = savedRecall.recallId
-
-    val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(currentPrison = PrisonId("ABC")))
-
-    val auditList = authenticatedClient.auditForField(recallId, "currentPrison")
-
-    assertThat(auditList.size, equalTo(1))
-    assertThat(auditList[0].updatedValue, equalTo("ABC"))
-    assertThat(auditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertOffsetDateTimesEqual(auditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
+  private fun auditHistoryFieldValues(): Stream<Arguments>? {
+    val today = LocalDate.now()
+    return Stream.of(
+      Arguments.of(FieldName("currentPrison"), "String or Enum", UpdateRecallRequest(currentPrison = PrisonId("ABC")), "ABC"),
+      Arguments.of(FieldName("contraband"), "Boolean", UpdateRecallRequest(contraband = true), true),
+      Arguments.of(FieldName("lastReleaseDate"), "LocalDate", UpdateRecallRequest(lastReleaseDate = today), today.toString()),
+      Arguments.of(FieldName("assessedByUserId"), "UUID", UpdateRecallRequest(assessedByUserId = authenticatedClient.userId), authenticatedClient.userId.toString()),
+      Arguments.of(FieldName("sentencingInfo.sentenceLength.sentenceYears"), "nested Integer", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), 3),
+      Arguments.of(FieldName("sentencingInfo.sentenceExpiryDate"), "nested LocalDate", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), today.toString()),
+    )
   }
 
-  @Test
-  fun `get contraband (Boolean value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
+  @ParameterizedTest(name = "get {0} ({1} value) audit history")
+  @MethodSource("auditHistoryFieldValues")
+  fun `get audit history for single field`(
+    fieldName: FieldName,
+    fieldType: String,
+    updateRequest: UpdateRecallRequest,
+    expectedValue: Any
+  ) {
+    val savedRecall =
+      authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
     val recallId = savedRecall.recallId
 
-    val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(contraband = true))
+    val updatedRecall = authenticatedClient.updateRecall(recallId, updateRequest)
 
-    val auditList = authenticatedClient.auditForField(recallId, "contraband")
-
-    assertThat(auditList.size, equalTo(1))
-    assertThat(auditList[0].updatedValue, equalTo(true))
-    assertThat(auditList[0].recallId, equalTo(recallId))
-    assertThat(auditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertOffsetDateTimesEqual(auditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
-  }
-
-  @Test
-  fun `get lastReleaseDate (LocalDate value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
-    val recallId = savedRecall.recallId
-
-    val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(lastReleaseDate = LocalDate.now()))
-
-    val auditList = authenticatedClient.auditForField(recallId, "lastReleaseDate")
+    val auditList = authenticatedClient.auditForField(recallId, fieldName.value)
 
     assertThat(auditList.size, equalTo(1))
-    assertThat(auditList[0].updatedValue, equalTo(LocalDate.now().toString()))
-    assertThat(auditList[0].recallId, equalTo(recallId))
+    assertThat(auditList[0].updatedValue, equalTo(expectedValue))
     assertThat(auditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
     assertOffsetDateTimesEqual(auditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
   }
@@ -89,81 +82,29 @@ class RecallAuditComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `get assessedByUserId (UUID value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
-    val recallId = savedRecall.recallId
-
-    val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(assessedByUserId = authenticatedClient.userId))
-
-    val auditList = authenticatedClient.auditForField(recallId, "assessedByUserId")
-
-    assertThat(auditList.size, equalTo(1))
-    assertThat(auditList[0].updatedValue, equalTo(authenticatedClient.userId.toString()))
-    assertThat(auditList[0].recallId, equalTo(recallId))
-    assertThat(auditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertOffsetDateTimesEqual(auditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
-  }
-
-  @Test
-  fun `get sentenceYears (nested Integer value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
-    val recallId = savedRecall.recallId
-
-    val updatedRecall = authenticatedClient.updateRecall(
-      recallId,
-      UpdateRecallRequest(
-        sentenceLength = Api.SentenceLength(3, 0, 0),
-        sentenceDate = LocalDate.now(),
-        licenceExpiryDate = LocalDate.now(),
-        indexOffence = "Offence 1",
-        sentencingCourt = CourtId("ACCRYC"),
-        sentenceExpiryDate = LocalDate.now()
-      )
-    )
-
-    val auditList = authenticatedClient.auditForField(recallId, "sentencingInfo.sentenceLength.sentenceYears")
-
-    assertThat(auditList.size, equalTo(1))
-    assertThat(auditList[0].updatedValue, equalTo(3))
-    assertThat(auditList[0].recallId, equalTo(recallId))
-    assertThat(auditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertOffsetDateTimesEqual(auditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
-  }
-
-  @Test
-  fun `get sentenceExpiryDate (nested LocalDate value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
-    val recallId = savedRecall.recallId
-
-    val updatedRecall = authenticatedClient.updateRecall(
-      recallId,
-      UpdateRecallRequest(
-        sentenceLength = Api.SentenceLength(3, 0, 0),
-        sentenceDate = LocalDate.now(),
-        licenceExpiryDate = LocalDate.now(),
-        indexOffence = "Offence 1",
-        sentencingCourt = CourtId("ACCRYC"),
-        sentenceExpiryDate = LocalDate.now()
-      )
-    )
-
-    val auditList = authenticatedClient.auditForField(recallId, "sentencingInfo.sentenceExpiryDate")
-
-    assertThat(auditList.size, equalTo(1))
-    assertThat(auditList[0].updatedValue, equalTo(LocalDate.now().toString()))
-    assertThat(auditList[0].recallId, equalTo(recallId))
-    assertThat(auditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertOffsetDateTimesEqual(auditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
-  }
-
-  @Test
   fun `get audit summary for a recall`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
+    val savedRecall =
+      authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
     val recallId = savedRecall.recallId
 
     val auditList = authenticatedClient.auditSummaryForRecall(recallId)
 
-    assertThat(auditList.map { it.fieldName.value }, equalTo(listOf("lastUpdatedByUserId", "licenceNameCategory", "lastUpdatedDateTime", "nomsNumber", "createdByUserId", "createdDateTime", "id", "firstName", "lastName")))
+    assertThat(
+      auditList.map { it.fieldName.value },
+      equalTo(
+        listOf(
+          "lastUpdatedByUserId",
+          "licenceNameCategory",
+          "lastUpdatedDateTime",
+          "nomsNumber",
+          "createdByUserId",
+          "createdDateTime",
+          "id",
+          "firstName",
+          "lastName"
+        )
+      )
+    )
 
     assertThat(auditList[2].fieldName, equalTo(FieldName("lastUpdatedDateTime")))
     assertThat(auditList[2].updatedByUserName, equalTo(FullName("Bertie Badger")))
@@ -174,7 +115,24 @@ class RecallAuditComponentTest : ComponentTestBase() {
 
     val updatedAuditList = authenticatedClient.auditSummaryForRecall(recallId)
 
-    assertThat(updatedAuditList.map { it.fieldName.value }, equalTo(listOf("contraband", "lastUpdatedByUserId", "licenceNameCategory", "lastUpdatedDateTime", "nomsNumber", "createdByUserId", "createdDateTime", "id", "recallType", "firstName", "lastName")))
+    assertThat(
+      updatedAuditList.map { it.fieldName.value },
+      equalTo(
+        listOf(
+          "contraband",
+          "lastUpdatedByUserId",
+          "licenceNameCategory",
+          "lastUpdatedDateTime",
+          "nomsNumber",
+          "createdByUserId",
+          "createdDateTime",
+          "id",
+          "recallType",
+          "firstName",
+          "lastName"
+        )
+      )
+    )
 
     assertThat(updatedAuditList[0].fieldName, equalTo(FieldName("contraband")))
     assertThat(updatedAuditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
@@ -187,7 +145,7 @@ class RecallAuditComponentTest : ComponentTestBase() {
     assertOffsetDateTimesEqual(updatedAuditList[3].updatedDateTime, updatedRecall.lastUpdatedDateTime)
   }
 
-  // Due to differences in precision we need to allow some variance on OffsetDateTimes
+  // Due to differences in rounding (trigger drops last 0 on nano-seconds) we need to allow some variance on OffsetDateTimes
   fun assertOffsetDateTimesEqual(expected: OffsetDateTime, actual: OffsetDateTime): AbstractOffsetDateTimeAssert<*> =
     assertThat(expected).isCloseTo(actual, within(1, ChronoUnit.MILLIS))!!
 }
