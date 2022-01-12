@@ -16,7 +16,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ColumnName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import java.lang.reflect.Field
+import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.EntityManagerFactory
 
@@ -58,7 +62,7 @@ class RecallAuditService(
     )
 
   private fun getColumnNameForField(fieldName: FieldName): ColumnName {
-    val recallField = Recall::class.java.getDeclaredField(fieldName.value)
+    val (recallField, fieldPath) = getRecallFieldAndPath(fieldName)
     return ColumnName(
       if (
         recallField.isAnnotationPresent(Column::class.java) &&
@@ -66,9 +70,22 @@ class RecallAuditService(
       ) {
         recallField.getAnnotation(Column::class.java).name
       } else {
-        persister.getPropertyColumnNames(recallField.name)[0]
+        if (persister.getSubclassPropertyColumnNames(fieldPath).isNotEmpty()) {
+          persister.getSubclassPropertyColumnNames(fieldPath)
+        } else {
+          persister.getPropertyColumnNames(fieldName.getNameFromPath())
+        }[0]
       }
     )
+  }
+
+  private fun getRecallFieldAndPath(fieldName: FieldName): Pair<Field, String> {
+    val fieldPathParts = fieldName.value.split(".")
+    var field = Recall::class.java.getDeclaredField(fieldPathParts[0])
+    for (i in 1 until fieldPathParts.size) {
+      field = field.type.getDeclaredField(fieldPathParts[i])
+    }
+    return Pair(field, fieldName.value)
   }
 
   private fun getFieldNameForColumn(columnName: ColumnName): FieldName {
@@ -77,9 +94,15 @@ class RecallAuditService(
     }.let { FieldName(it.name) }
   }
 
+  private fun FieldName.getNameFromPath(): String = this.value.split(".").last()
+
   private fun translateValue(updatedValue: String, fieldName: FieldName): Any =
-    when (fieldName) {
-      FieldName("contraband") -> booleanValue(updatedValue)
+    when (getRecallFieldAndPath(fieldName).first.type) {
+      java.lang.Boolean::class.java -> booleanValue(updatedValue)
+      LocalDate::class.java -> LocalDate.parse(updatedValue)
+      OffsetDateTime::class.java -> OffsetDateTime.parse(updatedValue.replace(" ", "T"))
+      UUID::class.java -> UUID.fromString(updatedValue)
+      Int::class.java -> updatedValue.toInt()
       else -> updatedValue
     }
 }
