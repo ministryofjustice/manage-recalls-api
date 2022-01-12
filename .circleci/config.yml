@@ -126,6 +126,17 @@ jobs:
       - store_artifacts:
           path: build/reports/tests
 
+  e2e-tests:
+    executor: hmpps/default
+    parameters:
+      environment:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Run E2E tests on '<< parameters.environment >>'
+          command: ./scripts/run-e2e-tests.sh -e << parameters.environment >>
+
   verify_pact_and_publish: # schema validation warning for lack of executor but passing on default (occasional OOM with "hmpps/java")
     parameters:
       consumer_tags:
@@ -320,11 +331,9 @@ workflows:
             - hmpps-common-vars
           <<: *slack-fail-post-step
 
-      - hmpps/trigger_job:
-          name: end-to-end-tests-dev
-          repository: manage-recalls-e2e-tests
-          token: $CIRCLECI_AUTH_TOKEN
-          build_parameters: '{ "only_run_deploy_check": true, "e2e_environment": "dev" }'
+      - e2e-tests:
+          name: e2e-tests-dev
+          environment: dev
           requires:
             - deploy_dev
           filters:
@@ -339,7 +348,7 @@ workflows:
       - request-preprod-approval:
           type: approval
           requires:
-            - end-to-end-tests-dev
+            - e2e-tests-dev
 
       - can_i_deploy:
           name: can_i_deploy_to_preprod
@@ -379,11 +388,9 @@ workflows:
             - hmpps-common-vars
           <<: *slack-fail-post-step
 
-      - hmpps/trigger_job:
-          name: end-to-end-tests-preprod
-          repository: manage-recalls-e2e-tests
-          token: $CIRCLECI_AUTH_TOKEN
-          build_parameters: '{ "only_run_deploy_check": true, "e2e_environment": "preprod" }'
+      - e2e-tests:
+          name: e2e-tests-preprod
+          environment: preprod
           requires:
             - deploy_preprod
           filters:
@@ -398,7 +405,7 @@ workflows:
       - request-prod-approval:
           type: approval
           requires:
-            - end-to-end-tests-preprod
+            - e2e-tests-preprod
 
       - can_i_deploy:
           name: can_i_deploy_to_prod
