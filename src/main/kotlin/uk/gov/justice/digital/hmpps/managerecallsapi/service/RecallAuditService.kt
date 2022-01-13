@@ -29,8 +29,8 @@ class RecallAuditService(
   @Autowired private val recallAuditRepository: RecallAuditRepository,
   @Autowired private val entityManagerFactory: EntityManagerFactory
 ) {
-  val sessionFactory: SessionFactory = entityManagerFactory.unwrap(SessionFactory::class.java)
-  val persister = sessionFactory.getClassMetadata(Recall::class.java) as AbstractEntityPersister
+  private val sessionFactory: SessionFactory = entityManagerFactory.unwrap(SessionFactory::class.java)
+  private val persister = sessionFactory.getClassMetadata(Recall::class.java) as AbstractEntityPersister
 
   fun getAuditForFieldName(recallId: RecallId, fieldName: FieldName): List<FieldAuditEntry> {
     val columnName = getColumnNameForField(fieldName)
@@ -70,7 +70,10 @@ class RecallAuditService(
       ) {
         recallField.getAnnotation(Column::class.java).name
       } else {
-        if (persister.getSubclassPropertyColumnNames(fieldPath).isNotEmpty()) {
+        if (
+          persister.getSubclassPropertyColumnNames(fieldPath) != null &&
+          persister.getSubclassPropertyColumnNames(fieldPath).isNotEmpty()
+        ) {
           persister.getSubclassPropertyColumnNames(fieldPath)
         } else {
           persister.getPropertyColumnNames(fieldName.getNameFromPath())
@@ -88,11 +91,26 @@ class RecallAuditService(
     return Pair(field, fieldName.value)
   }
 
-  private fun getFieldNameForColumn(columnName: ColumnName): FieldName {
-    return Recall::class.java.declaredFields.first { field ->
-      getColumnNameForField(FieldName(field.name)) == columnName
-    }.let { FieldName(it.name) }
-  }
+  private fun getFieldNameForColumn(columnName: ColumnName): FieldName =
+    Recall::class.java.declaredFields.flatMap { field ->
+      val propCols = persister.getPropertyColumnNames(field.name).map { ColumnName(it) to FieldName(field.name) }
+      if (propCols.size == 1) {
+        propCols
+      } else {
+        field.type.declaredFields.flatMap { childField ->
+          val childFieldPath = "${field.name}.${childField.name}"
+          val childProbCols = persister.getPropertyColumnNames(childFieldPath)
+          if (childProbCols.size == 1) {
+            childProbCols.map { ColumnName(it) to FieldName(childFieldPath) }
+          } else {
+            childField.type.declaredFields.flatMap { grandchildField ->
+              val grandchildFieldPath = "$childFieldPath.${grandchildField.name}"
+              persister.getPropertyColumnNames(grandchildFieldPath).map { ColumnName(it) to FieldName(grandchildFieldPath) }
+            }
+          }
+        }
+      }
+    }.toMap()[columnName]!!
 
   private fun FieldName.getNameFromPath(): String = this.value.split(".").last()
 
