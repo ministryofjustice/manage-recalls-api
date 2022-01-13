@@ -58,7 +58,8 @@ class MissingDocumentsRecordController(
         currentUserId,
         missingDocumentsRecordRequest.emailFileContent.toBase64DecodedByteArray(),
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
-        missingDocumentsRecordRequest.emailFileName
+        missingDocumentsRecordRequest.emailFileName,
+        missingDocumentsRecordRequest.details
       ).map { documentId ->
         val currentVersion = it.missingDocumentsRecords.maxByOrNull { it.version }?.version ?: 0
         val mdr = missingDocumentsRecordRepository.save(
