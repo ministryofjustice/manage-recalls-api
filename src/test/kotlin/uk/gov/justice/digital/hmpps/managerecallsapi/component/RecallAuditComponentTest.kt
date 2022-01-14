@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -33,19 +34,19 @@ class RecallAuditComponentTest : ComponentTestBase() {
 
   private fun auditHistoryFieldValues(): Stream<Arguments>? {
     return Stream.of(
-      Arguments.of(FieldName("currentPrison"), "String or Enum", UpdateRecallRequest(currentPrison = PrisonId("ABC")), "ABC"),
-      Arguments.of(FieldName("contraband"), "Boolean", UpdateRecallRequest(contraband = true), true),
-      Arguments.of(FieldName("lastReleaseDate"), "LocalDate", UpdateRecallRequest(lastReleaseDate = today), today.toString()),
-      Arguments.of(FieldName("assessedByUserId"), "UUID", UpdateRecallRequest(assessedByUserId = authenticatedClient.userId), authenticatedClient.userId.toString()),
-      Arguments.of(FieldName("sentencingInfo.sentenceLength.sentenceYears"), "nested Integer", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), 3),
-      Arguments.of(FieldName("sentencingInfo.sentenceExpiryDate"), "nested LocalDate", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), today.toString()),
+      Arguments.of(FieldPath("currentPrison"), "String or Enum", UpdateRecallRequest(currentPrison = PrisonId("ABC")), "ABC"),
+      Arguments.of(FieldPath("contraband"), "Boolean", UpdateRecallRequest(contraband = true), true),
+      Arguments.of(FieldPath("lastReleaseDate"), "LocalDate", UpdateRecallRequest(lastReleaseDate = today), today.toString()),
+      Arguments.of(FieldPath("assessedByUserId"), "UUID", UpdateRecallRequest(assessedByUserId = authenticatedClient.userId), authenticatedClient.userId.toString()),
+      Arguments.of(FieldPath("sentencingInfo.sentenceLength.sentenceYears"), "nested Integer", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), 3),
+      Arguments.of(FieldPath("sentencingInfo.sentenceExpiryDate"), "nested LocalDate", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), today.toString()),
     )
   }
 
   @ParameterizedTest(name = "get {0} ({1} value) audit history")
   @MethodSource("auditHistoryFieldValues")
   fun `get audit history for single field`(
-    fieldName: FieldName,
+    fieldPath: FieldPath,
     fieldType: String,
     updateRequest: UpdateRecallRequest,
     expectedValue: Any
@@ -56,7 +57,7 @@ class RecallAuditComponentTest : ComponentTestBase() {
 
     val updatedRecall = authenticatedClient.updateRecall(recallId, updateRequest)
 
-    val auditList = authenticatedClient.auditForField(recallId, fieldName.value)
+    val auditList = authenticatedClient.auditForField(recallId, fieldPath)
 
     assertThat(auditList.size, equalTo(1))
     assertThat(auditList[0].updatedValue, equalTo(expectedValue))
@@ -72,7 +73,7 @@ class RecallAuditComponentTest : ComponentTestBase() {
     val recallEmailReceivedDateTime = OffsetDateTime.now()
     val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(recallEmailReceivedDateTime = recallEmailReceivedDateTime))
 
-    val auditList = authenticatedClient.auditForField(recallId, "recallEmailReceivedDateTime")
+    val auditList = authenticatedClient.auditForField(recallId, FieldPath("recallEmailReceivedDateTime"))
 
     assertThat(auditList.size, equalTo(1))
     assertOffsetDateTimesEqual(OffsetDateTime.parse(auditList[0].updatedValue.toString()), recallEmailReceivedDateTime)
@@ -147,7 +148,9 @@ class RecallAuditComponentTest : ComponentTestBase() {
     // assert that audit still works when sentencing info - which has nested values - is updated
     authenticatedClient.updateRecall(recallId, UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today))
     val sentencingUpdateAuditList = authenticatedClient.auditSummaryForRecall(recallId)
-    assertThat(sentencingUpdateAuditList.map { it.fieldName.value }.contains("sentencingInfo.sentenceLength.sentenceYears"))
+
+    val sentenceAuditEntry = sentencingUpdateAuditList.first { it.fieldName.value == "sentenceYears" }
+    assertThat(sentenceAuditEntry.fieldPath, equalTo(FieldPath("sentencingInfo.sentenceLength.sentenceYears")))
   }
 
   // Due to differences in rounding (trigger drops last 0 on nano-seconds) we need to allow some variance on OffsetDateTimes
