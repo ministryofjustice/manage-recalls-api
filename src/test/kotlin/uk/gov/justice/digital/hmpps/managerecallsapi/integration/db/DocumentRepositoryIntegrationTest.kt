@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.startsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -99,7 +100,7 @@ class DocumentRepositoryIntegrationTest(
 
   @Test
   @Transactional
-  fun `can save and flush two distinct copies of a versioned document with different versions for an existing recall`() {
+  fun `can save and flush two distinct copies of a versioned document with different valid versions for an existing recall`() {
     recallRepository.save(recall, currentUserId)
 
     val idOne = ::DocumentId.random()
@@ -114,6 +115,34 @@ class DocumentRepositoryIntegrationTest(
 
     assertThat(retrievedOne, equalTo(docOne))
     assertThat(retrievedTwo, equalTo(docTwo))
+  }
+
+  @Test
+  @Transactional
+  fun `cannot save and flush version 0 of a versioned document throws DataIntegrityViolationException`() {
+    recallRepository.save(recall, currentUserId)
+
+    val id = ::DocumentId.random()
+    val documentWithBlankDetails = versionedDocument(id, recallId, versionedCategory, 0)
+
+    val thrown = assertThrows<DataIntegrityViolationException> {
+      documentRepository.saveAndFlush(documentWithBlankDetails)
+    }
+    assertThat(thrown.message!!, startsWith("could not execute statement"))
+  }
+
+  @Test
+  @Transactional
+  fun `cannot save and flush version -1 of a versioned document throws DataIntegrityViolationException`() {
+    recallRepository.save(recall, currentUserId)
+
+    val id = ::DocumentId.random()
+    val documentWithBlankDetails = versionedDocument(id, recallId, versionedCategory, -1)
+
+    val thrown = assertThrows<DataIntegrityViolationException> {
+      documentRepository.saveAndFlush(documentWithBlankDetails)
+    }
+    assertThat(thrown.message!!, startsWith("could not execute statement"))
   }
 
   @Test
@@ -173,7 +202,7 @@ class DocumentRepositoryIntegrationTest(
     val thrown = assertThrows<DataIntegrityViolationException> {
       documentRepository.saveAndFlush(docTwo)
     }
-    assertThat(thrown.message!!.substring(0, 27), equalTo("could not execute statement"))
+    assertThat(thrown.message!!, startsWith("could not execute statement"))
   }
 
   @Test
@@ -187,7 +216,7 @@ class DocumentRepositoryIntegrationTest(
     val thrown = assertThrows<DataIntegrityViolationException> {
       documentRepository.saveAndFlush(document)
     }
-    assertThat(thrown.message!!.substring(0, 27), equalTo("could not execute statement"))
+    assertThat(thrown.message!!, startsWith("could not execute statement"))
   }
 
   @Test
@@ -232,7 +261,7 @@ class DocumentRepositoryIntegrationTest(
     val thrown = assertThrows<DataIntegrityViolationException> {
       documentRepository.saveAndFlush(documentWithBlankDetails)
     }
-    assertThat(thrown.message!!.substring(0, 27), equalTo("could not execute statement"))
+    assertThat(thrown.message!!, startsWith("could not execute statement"))
   }
 
   @Test
@@ -246,7 +275,7 @@ class DocumentRepositoryIntegrationTest(
     val thrown = assertThrows<DataIntegrityViolationException> {
       documentRepository.saveAndFlush(document)
     }
-    assertThat(thrown.message!!.substring(0, 27), equalTo("could not execute statement"))
+    assertThat(thrown.message!!, startsWith("could not execute statement"))
   }
 
   @Test

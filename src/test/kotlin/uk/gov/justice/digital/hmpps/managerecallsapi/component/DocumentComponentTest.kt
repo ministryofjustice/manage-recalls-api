@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
+import com.natpryce.hamkrest.startsWith
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -82,7 +83,7 @@ class DocumentComponentTest : ComponentTestBase() {
       .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
 
     assertThat(result.status, equalTo(BAD_REQUEST))
-    assertThat(result.message.toString().substring(0, 29), equalTo("IllegalDocumentStateException"))
+    assertThat(result.message!!, startsWith("IllegalDocumentStateException"))
   }
 
   @Test
