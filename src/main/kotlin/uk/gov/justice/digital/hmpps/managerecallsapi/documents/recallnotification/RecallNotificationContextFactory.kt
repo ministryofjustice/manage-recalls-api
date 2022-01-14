@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -48,7 +47,7 @@ class RecallNotificationContextFactory(
 ) {
   fun createContext(recallId: RecallId, currentUserId: UserId): RecallNotificationContext {
     val recall = recallRepository.getByRecallId(recallId)
-    val prisoner = prisonerOffenderSearchClient.prisonerSearch(SearchRequest(recall.nomsNumber)).block()!!.first()
+    val prisoner = prisonerOffenderSearchClient.prisonerByNomsNumber(recall.nomsNumber).block()!!
     val currentUserDetails = userDetailsService.get(currentUserId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)

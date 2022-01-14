@@ -10,8 +10,8 @@ import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomAdultDateOfBirth
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
@@ -78,7 +78,7 @@ class SearchComponentTest : ComponentTestBase() {
 
     val response = authenticatedClient.search(apiSearchRequest)
 
-    assertThat(response, equalTo(listOf(prisoner1.searchResult(), prisoner2.searchResult())))
+    assertThat(response, equalTo(listOf(prisoner1.apiPrisoner(), prisoner2.apiPrisoner())))
   }
 
   @Test
@@ -95,16 +95,17 @@ class SearchComponentTest : ComponentTestBase() {
     )
   }
 
-  private fun Prisoner.searchResult(): SearchResult = SearchResult(
-    firstName,
-    middleNames,
-    lastName,
-    dateOfBirth,
-    gender,
-    prisonerNumber,
-    pncNumber,
-    croNumber,
-  )
+  private fun Prisoner.apiPrisoner(): SearchController.Api.Prisoner =
+    SearchController.Api.Prisoner(
+      firstName,
+      middleNames,
+      lastName,
+      dateOfBirth,
+      gender,
+      prisonerNumber,
+      pncNumber,
+      croNumber,
+    )
 
   private fun testPrisoner(nomsNumber: NomsNumber?) = Prisoner(
     prisonerNumber = nomsNumber?.value,

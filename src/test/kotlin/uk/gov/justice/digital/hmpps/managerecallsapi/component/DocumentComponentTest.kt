@@ -31,8 +31,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 
 class DocumentComponentTest : ComponentTestBase() {
@@ -291,12 +289,8 @@ class DocumentComponentTest : ComponentTestBase() {
   @Test
   fun `can't delete generated document for Recall being booked`() {
     expectNoVirusesWillBeFound()
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNumber),
-      listOf(
-        Prisoner(prisonerNumber = nomsNumber.value, firstName = "Barrie", lastName = "Badger", dateOfBirth = LocalDate.of(2001, 9, 28))
-      )
-    )
+    expectAPrisonerWillBeFoundFor(nomsNumber, "Barrie")
+
     gotenbergMockServer.stubGenerateRevocationOrder(documentContents, "Barrie")
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)

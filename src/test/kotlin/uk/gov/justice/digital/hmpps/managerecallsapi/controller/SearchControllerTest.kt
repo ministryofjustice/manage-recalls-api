@@ -54,8 +54,8 @@ class SearchControllerTest {
           present(
             equalTo(
               listOf(
-                searchResult(prisoner1),
-                searchResult(prisoner2)
+                prisoner1.toApiPrisoner(),
+                prisoner2.toApiPrisoner()
               )
             )
           )
@@ -64,16 +64,16 @@ class SearchControllerTest {
       .verifyComplete()
   }
 
-  private fun searchResult(p: Prisoner) =
-    SearchResult(
-      p.firstName,
-      p.middleNames,
-      p.lastName,
-      p.dateOfBirth,
-      p.gender,
-      p.prisonerNumber,
-      p.pncNumber,
-      p.croNumber
+  private fun Prisoner.toApiPrisoner() =
+    SearchController.Api.Prisoner(
+      this.firstName,
+      this.middleNames,
+      this.lastName,
+      this.dateOfBirth,
+      this.gender,
+      this.prisonerNumber,
+      this.pncNumber,
+      this.croNumber
     )
 
   private fun prisoner(
