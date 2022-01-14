@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -79,6 +80,7 @@ private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply 
   text(::PoliceForceId)
   text(::PoliceForceName)
   text(::FieldName)
+  text(::FieldPath)
   text(StringBiDiMappings.uuid().map(::RecallId, RecallId::value))
   text(StringBiDiMappings.uuid().map(::MissingDocumentsRecordId, MissingDocumentsRecordId::value))
   text(StringBiDiMappings.uuid().map(::DocumentId, DocumentId::value))

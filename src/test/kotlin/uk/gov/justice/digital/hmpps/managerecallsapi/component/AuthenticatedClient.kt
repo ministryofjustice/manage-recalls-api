@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRe
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -162,8 +163,8 @@ class AuthenticatedClient(
   fun getCurrentUserDetails() =
     getRequest("/users/current", UserDetailsResponse::class.java)
 
-  fun auditForField(recallId: RecallId, fieldName: String) =
-    sendGetRequest("/audit/$recallId/$fieldName")
+  fun auditForField(recallId: RecallId, fieldPath: FieldPath) =
+    sendGetRequest("/audit/$recallId/$fieldPath")
       .expectBody(object : ParameterizedTypeReference<List<FieldAuditEntry>>() {})
       .returnResult()
       .responseBody!!

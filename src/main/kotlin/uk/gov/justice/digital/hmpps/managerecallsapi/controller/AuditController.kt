@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallAuditService
@@ -20,12 +21,12 @@ class AuditController(
   @Autowired private val recallAuditService: RecallAuditService,
 ) {
 
-  @GetMapping("/audit/{recallId}/{fieldName}")
+  @GetMapping("/audit/{recallId}/{fieldPath}")
   fun auditForField(
     @PathVariable("recallId") recallId: RecallId,
-    @PathVariable("fieldName") fieldName: FieldName
+    @PathVariable("fieldPath") fieldPath: FieldPath
   ): List<FieldAuditEntry> =
-    recallAuditService.getAuditForFieldName(recallId, fieldName)
+    recallAuditService.getAuditForFieldName(recallId, fieldPath)
 
   @GetMapping("/audit/{recallId}")
   fun auditSummaryForRecall(
@@ -45,6 +46,7 @@ data class FieldAuditEntry(
 data class FieldAuditSummary(
   val auditId: Int,
   val fieldName: FieldName,
+  val fieldPath: FieldPath,
   val updatedByUserName: FullName,
   val updatedDateTime: OffsetDateTime,
   val auditCount: Int
