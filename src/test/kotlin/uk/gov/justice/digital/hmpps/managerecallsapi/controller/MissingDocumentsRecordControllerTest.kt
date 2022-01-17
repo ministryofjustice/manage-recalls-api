@@ -51,6 +51,7 @@ class MissingDocumentsRecordControllerTest {
     val bearerToken = "BEARER TOKEN"
     val userId = ::UserId.random()
     val missingDocumentsRecordId = ::MissingDocumentsRecordId.random()
+    val details = "blah blah"
 
     every { recall.missingDocumentsRecords } returns emptySet()
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -60,14 +61,14 @@ class MissingDocumentsRecordControllerTest {
         userId,
         documentBytes,
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
-        fileName
+        fileName,
+        details
       )
     } returns Success(emailId)
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
     every { missingDocumentsRecordRepository.save(capture(savedMissingDocumentsRecord)) } returns record
     every { record.id() } returns missingDocumentsRecordId
 
-    val details = "blah blah"
     val request = MissingDocumentsRecordRequest(
       recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), details,
       documentBytes.encodeToBase64String(), fileName
@@ -98,6 +99,7 @@ class MissingDocumentsRecordControllerTest {
     val userId = ::UserId.random()
     val missingDocumentsRecordId = ::MissingDocumentsRecordId.random()
     val fullName = FullName("Harry Potter")
+    val details = "detail"
 
     val existingRecord = mockk<MissingDocumentsRecord>()
     every { recall.missingDocumentsRecords } returns setOf(existingRecord)
@@ -110,7 +112,8 @@ class MissingDocumentsRecordControllerTest {
         userId,
         documentBytes,
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
-        fileName
+        fileName,
+        details
       )
     } returns Success(emailId)
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
@@ -118,7 +121,7 @@ class MissingDocumentsRecordControllerTest {
     every { record.id() } returns missingDocumentsRecordId
 
     val request = MissingDocumentsRecordRequest(
-      recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), "detail",
+      recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), details,
       documentBytes.encodeToBase64String(), fileName
     )
 

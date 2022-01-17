@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.startsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -132,6 +133,6 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
     val thrown = assertThrows<DataIntegrityViolationException> {
       missingDocumentsRecordRepository.saveAndFlush(mdrTwo)
     }
-    assertThat(thrown.message!!.substring(0, 27), equalTo("could not execute statement"))
+    assertThat(thrown.message!!, startsWith("could not execute statement"))
   }
 }
