@@ -24,8 +24,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 
 class GenerateDossierComponentTest : ComponentTestBase() {
@@ -95,14 +93,5 @@ class GenerateDossierComponentTest : ComponentTestBase() {
     val dossier = authenticatedClient.getDocument(recall.recallId, dossierId.documentId)
 
     assertThat(Pdf(dossier.content), hasNumberOfPages(equalTo(3)))
-  }
-
-  private fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, firstName: String) {
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNumber),
-      listOf(
-        Prisoner(prisonerNumber = nomsNumber.value, firstName = firstName, lastName = "Badger", dateOfBirth = LocalDate.of(2001, 9, 28))
-      )
-    )
   }
 }

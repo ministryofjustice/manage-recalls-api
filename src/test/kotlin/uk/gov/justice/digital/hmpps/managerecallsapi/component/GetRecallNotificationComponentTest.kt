@@ -22,8 +22,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 
 class GetRecallNotificationComponentTest : ComponentTestBase() {
@@ -114,21 +112,6 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         vulnerabilityDiversity = true,
         vulnerabilityDiversityDetail = "Some stuff",
         assessedByUserId = userId,
-      )
-    )
-  }
-
-  private fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, firstName: String) {
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNumber),
-      listOf(
-        Prisoner(
-          prisonerNumber = nomsNumber.value,
-          croNumber = "CRO Num/456",
-          firstName = firstName,
-          lastName = "Badger",
-          dateOfBirth = LocalDate.of(2000, 1, 31)
-        )
       )
     )
   }

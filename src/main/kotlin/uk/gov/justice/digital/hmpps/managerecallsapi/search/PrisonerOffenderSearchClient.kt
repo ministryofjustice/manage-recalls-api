@@ -24,6 +24,17 @@ class PrisonerOffenderSearchClient(
   @Qualifier("prisonerOffenderSearchWebClient")
   internal lateinit var webClient: AuthenticatingRestClient
 
+  fun prisonerByNomsNumber(nomsNumber: NomsNumber): Mono<Prisoner> =
+    webClient
+      .get("/prisoner/$nomsNumber")
+      .retrieve()
+      .bodyToMono(object : ParameterizedTypeReference<Prisoner>() {})
+      .onErrorResume(WebClientResponseException::class.java) { exception ->
+        Mono.error(ClientException(this.javaClass.simpleName, exception))
+      }
+      .timeout(Duration.ofSeconds(timeout))
+      .onErrorMap(TimeoutException::class.java) { ex -> ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName) }
+
   fun prisonerSearch(searchRequest: SearchRequest): Mono<List<Prisoner>> =
     webClient
       .post("/prisoner-search/match-prisoners", PrisonerSearchRequest(searchRequest.nomsNumber))

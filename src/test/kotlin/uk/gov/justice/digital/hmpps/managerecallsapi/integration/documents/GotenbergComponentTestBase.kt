@@ -13,13 +13,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRe
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import java.time.LocalDate
 
 @AutoConfigureWebTestClient(timeout = "10000")
@@ -122,22 +119,6 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     authenticatedClient.uploadDocument(
       recall.recallId,
       UploadDocumentRequest(DocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), "PART_A.pdf")
-    )
-  }
-
-  protected fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, prisonerFirstName: String) {
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNumber),
-      listOf(
-        Prisoner(
-          prisonerNumber = nomsNumber.value,
-          croNumber = "CRO Num/456",
-          firstName = prisonerFirstName,
-          lastName = "Badger",
-          dateOfBirth = LocalDate.of(2000, 1, 31),
-          bookNumber = "Book Num 123"
-        )
-      )
     )
   }
 }

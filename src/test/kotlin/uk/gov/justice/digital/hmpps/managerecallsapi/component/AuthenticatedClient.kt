@@ -21,8 +21,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocuments
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -143,7 +143,7 @@ class AuthenticatedClient(
 
   fun search(searchRequest: SearchRequest) =
     sendPostRequest("/search", searchRequest, OK)
-      .expectBody(object : ParameterizedTypeReference<List<SearchResult>>() {})
+      .expectBody(object : ParameterizedTypeReference<List<SearchController.Api.Prisoner>>() {})
       .returnResult()
       .responseBody!!
 
