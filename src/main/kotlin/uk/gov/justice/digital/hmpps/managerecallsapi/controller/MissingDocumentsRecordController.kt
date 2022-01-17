@@ -58,7 +58,8 @@ class MissingDocumentsRecordController(
         currentUserId,
         missingDocumentsRecordRequest.emailFileContent.toBase64DecodedByteArray(),
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
-        missingDocumentsRecordRequest.emailFileName
+        missingDocumentsRecordRequest.emailFileName,
+        missingDocumentsRecordRequest.details // The MDR "details" are stored twice - see below - for ease of use: its needed here to avoid PUD-1251
       ).map { documentId ->
         val currentVersion = it.missingDocumentsRecords.maxByOrNull { it.version }?.version ?: 0
         val mdr = missingDocumentsRecordRepository.save(

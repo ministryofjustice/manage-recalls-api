@@ -70,11 +70,12 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
 
     val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
     assertThat(recall.missingDocumentsRecords, isEmpty)
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(2))
-    assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[0].version, !equalTo(recallWithMissingDocumentsRecord.missingDocumentsRecords[1].version))
-    // TODO: following are unstable with the order of the returned records being non-deterministic when presumably we do want them to be
-    // assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[0].details, equalTo(detailsMostRecent))
-    // assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords[1].details, equalTo(detailsOldest))
+    val missingDocumentsRecords = recallWithMissingDocumentsRecord.missingDocumentsRecords
+    assertThat(missingDocumentsRecords.size, equalTo(2))
+    assertThat(missingDocumentsRecords[0].version, !equalTo(missingDocumentsRecords[1].version))
+    // There is no contract for the order of MDRs but the versions must be one-based incrementing positive integers, hence 1, 2, etc.
+    assertThat(missingDocumentsRecords[missingDocumentsRecords.indexOfFirst { it.version == 2 }].details, equalTo(detailsMostRecent))
+    assertThat(missingDocumentsRecords[missingDocumentsRecords.indexOfFirst { it.version == 1 }].details, equalTo(detailsOldest))
   }
 
   @Test

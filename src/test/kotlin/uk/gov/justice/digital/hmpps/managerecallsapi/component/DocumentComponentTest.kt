@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
+import com.natpryce.hamkrest.startsWith
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -64,6 +65,23 @@ class DocumentComponentTest : ComponentTestBase() {
       .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
 
     assertThat(result, equalTo(ErrorResponse(BAD_REQUEST, "VirusFoundException")))
+  }
+
+  @Test
+  fun `add a versioned document at version 2 with blank details returns bad request with body`() {
+    expectNoVirusesWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    val response = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest)
+
+    assertThat(response.documentId, present())
+
+    val result = authenticatedClient.uploadDocument(recall.recallId, addVersionedDocumentRequest.copy(details = " "), BAD_REQUEST)
+      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+
+    assertThat(result.status, equalTo(BAD_REQUEST))
+    assertThat(result.message!!, startsWith("IllegalDocumentStateException"))
   }
 
   @Test
@@ -376,19 +394,19 @@ class DocumentComponentTest : ComponentTestBase() {
     val category = PART_A_RECALL_REPORT
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName, null)
     )
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName, details)
     )
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(category, base64EncodedDocumentContents, fileName, details)
     )
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(LICENCE, base64EncodedDocumentContents, fileName)
+      UploadDocumentRequest(LICENCE, base64EncodedDocumentContents, fileName, null)
     )
     val recallDocuments = authenticatedClient.getRecallDocuments(recall.recallId, category)
 
