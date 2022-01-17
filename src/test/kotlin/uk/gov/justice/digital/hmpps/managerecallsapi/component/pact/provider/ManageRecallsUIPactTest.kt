@@ -84,10 +84,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a prisoner exists for NOMS number")
   fun `a prisoner exists for NOMS number`() {
-    mockPrisonerResponse(nomsNumber)
+    mockPrisonerResponses(nomsNumber)
   }
 
-  private fun mockPrisonerResponse(nomsNum: NomsNumber) {
+  private fun mockPrisonerResponses(nomsNum: NomsNumber) {
     prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
       PrisonerSearchRequest(nomsNum),
       listOf(
@@ -111,6 +111,19 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
           dateOfBirth = LocalDate.of(1990, 10, 30),
           gender = "Male"
         )
+      )
+    )
+    prisonerOffenderSearchMockServer.getPrisonerByNomsNumberRespondsWith(
+      nomsNum,
+      Prisoner(
+        prisonerNumber = nomsNum.value,
+        pncNumber = "98/7654Z",
+        croNumber = "1234/56A",
+        firstName = "Bobby",
+        middleNames = "John",
+        lastName = "Badger",
+        dateOfBirth = LocalDate.of(1999, 5, 28),
+        gender = "Male"
       )
     )
   }
@@ -144,7 +157,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         assignee = userIdOnes.value
       )
     }
-    mockPrisonerResponse(recall.nomsNumber)
+    mockPrisonerResponses(recall.nomsNumber)
     gotenbergMockServer.stubGenerateRevocationOrder(revocationOrderBytes, recall.firstName.value)
     setupUserDetailsFor(userIdOnes)
     setupUserDetailsFor(::UserId.zeroes())

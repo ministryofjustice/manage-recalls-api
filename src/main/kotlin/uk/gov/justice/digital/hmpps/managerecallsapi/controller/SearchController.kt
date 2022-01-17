@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,35 +22,46 @@ import java.time.LocalDate
 class SearchController(@Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient) {
 
   @PostMapping("/search")
-  fun prisonerSearch(@RequestBody searchRequest: SearchRequest): Mono<ResponseEntity<List<SearchResult>>> =
+  fun prisonerSearch(@RequestBody searchRequest: SearchRequest): Mono<ResponseEntity<List<Api.Prisoner>>> =
     prisonerOffenderSearchClient.prisonerSearch(searchRequest)
-      .map { ResponseEntity.ok(it.toSearchResults()) }
+      .map { ResponseEntity.ok(it.toApiPrisoners()) }
+
+  @GetMapping("/prisoner/{nomsNumber}")
+  fun prisonerByNomsNumber(@PathVariable("nomsNumber") nomsNumber: NomsNumber): Mono<ResponseEntity<Api.Prisoner>> =
+    prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber)
+      .map { ResponseEntity.ok(it.toApiPrisoner()) }
+
+  class Api {
+    data class Prisoner(
+      val firstName: String?,
+      val middleNames: String?,
+      val lastName: String?,
+      val dateOfBirth: LocalDate?,
+      val gender: String?,
+      val nomsNumber: String?,
+      val pncNumber: String?,
+      val croNumber: String?,
+    )
+  }
+
+  fun List<Prisoner>?.toApiPrisoners() =
+    this?.let { prisoners ->
+      prisoners.map {
+        it.toApiPrisoner()
+      }
+    }.orEmpty()
+
+  private fun Prisoner.toApiPrisoner() =
+    Api.Prisoner(
+      this.firstName,
+      this.middleNames,
+      this.lastName,
+      this.dateOfBirth,
+      this.gender,
+      this.prisonerNumber,
+      this.pncNumber,
+      this.croNumber
+    )
 }
 
-fun List<Prisoner>?.toSearchResults() =
-  this?.let { prisoners ->
-    prisoners.map {
-      SearchResult(
-        it.firstName,
-        it.middleNames,
-        it.lastName,
-        it.dateOfBirth,
-        it.gender,
-        it.prisonerNumber,
-        it.pncNumber,
-        it.croNumber
-      )
-    }
-  }.orEmpty()
-
 data class SearchRequest(val nomsNumber: NomsNumber)
-data class SearchResult(
-  val firstName: String?,
-  val middleNames: String?,
-  val lastName: String?,
-  val dateOfBirth: LocalDate?,
-  val gender: String?,
-  val nomsNumber: String?,
-  val pncNumber: String?,
-  val croNumber: String?,
-)

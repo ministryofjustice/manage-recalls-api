@@ -15,4 +15,10 @@ class AuthenticatingRestClient(
     .contentType(APPLICATION_JSON)
     .attributes(clientRegistrationId(oauthClient))
     .bodyValue(body)
+
+  fun get(path: String): WebClient.RequestHeadersSpec<*> = webClient
+    .get()
+    .uri(path)
+    .accept(APPLICATION_JSON)
+    .attributes(clientRegistrationId(oauthClient))
 }

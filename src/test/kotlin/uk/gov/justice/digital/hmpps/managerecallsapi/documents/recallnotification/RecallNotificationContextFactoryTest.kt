@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
@@ -98,7 +97,7 @@ class RecallNotificationContextFactoryTest {
 
     every { sentencingInfo.sentencingCourt } returns sentencingCourtId
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
+    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner)
     every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
     every { courtLookupService.getCourtName(sentencingCourtId) } returns sentencingCourtName
@@ -144,7 +143,7 @@ class RecallNotificationContextFactoryTest {
 
     every { sentencingInfo.sentencingCourt } returns sentencingCourtId
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
+    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner)
     every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
     every { courtLookupService.getCourtName(sentencingCourtId) } returns sentencingCourtName
@@ -215,7 +214,7 @@ class RecallNotificationContextFactoryTest {
       )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonerOffenderSearchClient.prisonerSearch(SearchRequest(nomsNumber)) } returns Mono.just(listOf(prisoner))
+    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner)
     every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
     every { courtLookupService.getCourtName(sentencingCourtId) } returns CourtName("County Court")
