@@ -39,7 +39,7 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
         document.copy(
           recallId = recallId.value,
           // ensure document version is valid versus category
-          version = if (document.category.versioned) Random.nextInt() else null,
+          version = if (document.category.versioned) Random.nextInt(1, Int.MAX_VALUE) else null,
           createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
       }.toSet(),
@@ -47,6 +47,7 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
         mdr.copy(
           recallId = recallId.value,
           emailId = recall.documents.random().id,
+          version = Random.nextInt(1, Int.MAX_VALUE),
           createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
       }.toSet()

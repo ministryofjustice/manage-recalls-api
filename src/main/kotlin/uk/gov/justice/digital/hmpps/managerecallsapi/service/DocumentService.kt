@@ -5,6 +5,7 @@ import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
@@ -79,18 +80,23 @@ class DocumentService(
     }
     val documentId = ::DocumentId.random()
 
-    documentRepository.save(
-      Document(
-        documentId,
-        recallId,
-        category,
-        fileName,
-        version,
-        details,
-        OffsetDateTime.now(clock),
-        currentUserId
+    try {
+      documentRepository.save(
+        Document(
+          documentId,
+          recallId,
+          category,
+          fileName,
+          version,
+          details,
+          OffsetDateTime.now(clock),
+          currentUserId
+        )
       )
-    )
+    } catch (ex: DataIntegrityViolationException) {
+      throw IllegalDocumentStateException(ex.message)
+    }
+
     try {
       s3Service.uploadFile(documentId, documentBytes)
     } catch (ex: Exception) {
@@ -184,6 +190,7 @@ data class RecallDocumentWithCategoryNotFoundException(
 open class NotFoundException : ManageRecallsException()
 class VirusFoundException : ManageRecallsException()
 class DocumentDeleteException(override val message: String?) : ManageRecallsException(message)
+class IllegalDocumentStateException(override val message: String?) : ManageRecallsException(message)
 
 data class VirusFoundEvent(
   val recallId: RecallId,
