@@ -20,6 +20,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -63,6 +65,8 @@ class SpringFoxConfig {
       .directModelSubstitute(CourtName::class.java, String::class.java)
       .directModelSubstitute(PoliceForceId::class.java, String::class.java)
       .directModelSubstitute(PoliceForceName::class.java, String::class.java)
+      .directModelSubstitute(FieldName::class.java, String::class.java)
+      .directModelSubstitute(FieldPath::class.java, String::class.java)
   }
 
   @Bean
