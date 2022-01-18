@@ -1,0 +1,1 @@
+helm_deploy/manage-recalls-api/templates/secrets.yaml filter=git-crypt diff=git-crypt
