@@ -31,7 +31,7 @@ slack-fail-post-step: &slack-fail-post-step
           }
 
 orbs:
-  hmpps: ministryofjustice/hmpps@3.11
+  hmpps: ministryofjustice/hmpps@dev:3462b2d
   gradle: circleci/gradle@2.2.0
   mem: circleci/rememborb@0.0.1
   slack: circleci/slack@4.5
@@ -255,6 +255,7 @@ workflows:
 
       - hmpps/helm_lint:
           name: helm_lint
+          use_git_crypt: true
           context:
             - hmpps-common-vars
           <<: *slack-fail-post-step
@@ -301,6 +302,7 @@ workflows:
       - hmpps/deploy_env:
           name: deploy_dev
           env: dev
+          use_git_crypt: true
           filters:
             branches:
               only:
@@ -362,6 +364,7 @@ workflows:
       - hmpps/deploy_env:
           name: deploy_preprod
           env: preprod
+          use_git_crypt: true
           context:
             - hmpps-common-vars
             - manage-recalls-api-preprod
@@ -419,6 +422,7 @@ workflows:
       - hmpps/deploy_env:
           name: deploy_prod
           env: prod
+          use_git_crypt: true
           context:
             - hmpps-common-vars
             - manage-recalls-api-prod
