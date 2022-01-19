@@ -82,6 +82,7 @@ data class Recall(
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   @Convert(converter = PoliceForceIdJpaConverter::class)
   val localPoliceForceId: PoliceForceId? = null,
+  val inCustody: Boolean? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversity: Boolean? = null,
@@ -139,6 +140,7 @@ data class Recall(
     lastReleaseDate: LocalDate? = null,
     recallEmailReceivedDateTime: OffsetDateTime? = null,
     localPoliceForceId: PoliceForceId? = null,
+    inCustody: Boolean? = null,
     contraband: Boolean? = null,
     contrabandDetail: String? = null,
     vulnerabilityDiversity: Boolean? = null,
@@ -187,6 +189,7 @@ data class Recall(
       lastReleaseDate,
       recallEmailReceivedDateTime,
       localPoliceForceId,
+      inCustody,
       contraband,
       contrabandDetail,
       vulnerabilityDiversity,
