@@ -32,6 +32,7 @@ generic-service:
   namespace_secrets:
     manage-recalls-api:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
+    manage-recalls-api-secrets-from-git:
       API_CLIENT_ID: "API_CLIENT_ID"
       API_CLIENT_SECRET: "API_CLIENT_SECRET"
 
