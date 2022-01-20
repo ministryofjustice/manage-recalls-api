@@ -341,11 +341,6 @@ class Api {
     val id: PoliceForceId,
     val name: PoliceForceName
   )
-
-  data class IndexOffence(
-    val id: String,
-    val name: String
-  )
 }
 
 data class Pdf(val content: String) {
