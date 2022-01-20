@@ -12,6 +12,9 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_EQUIPMENT_TAMPER
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FAILURE_CHARGE_BATTERY
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
@@ -83,7 +86,23 @@ class RecallAuditComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `get audit summary for a recall`() {
+  fun `get reasonsForRecall (Array value) audit history`() {
+    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
+    val recallId = savedRecall.recallId
+
+    val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(reasonsForRecall = setOf(OTHER, ELM_EQUIPMENT_TAMPER)))
+
+    val auditList = authenticatedClient.auditForField(recallId, FieldPath("reasonsForRecall"))
+
+    assertThat(auditList.size, equalTo(1))
+    assertThat(auditList[0].updatedValue == listOf(OTHER.name, ELM_EQUIPMENT_TAMPER.name))
+    assertThat(auditList[0].recallId, equalTo(recallId))
+    assertThat(auditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
+    assertOffsetDateTimesEqual(auditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
+  }
+
+  @Test
+  fun `get audit summary for a recall including reasons for recall`() {
     val savedRecall =
       authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
     val recallId = savedRecall.recallId
@@ -91,8 +110,7 @@ class RecallAuditComponentTest : ComponentTestBase() {
     val auditList = authenticatedClient.auditSummaryForRecall(recallId)
 
     assertThat(
-      auditList.map { it.fieldName.value },
-      equalTo(
+      auditList.map { it.fieldName.value } ==
         listOf(
           "lastUpdatedByUserId",
           "licenceNameCategory",
@@ -104,7 +122,6 @@ class RecallAuditComponentTest : ComponentTestBase() {
           "firstName",
           "lastName"
         )
-      )
     )
 
     assertThat(auditList[2].fieldName, equalTo(FieldName("lastUpdatedDateTime")))
@@ -112,13 +129,12 @@ class RecallAuditComponentTest : ComponentTestBase() {
     assertThat(auditList[2].auditCount, equalTo(1))
     assertOffsetDateTimesEqual(auditList[2].updatedDateTime, savedRecall.lastUpdatedDateTime)
 
-    val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(contraband = true))
+    val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(contraband = true, reasonsForRecall = setOf(ELM_EQUIPMENT_TAMPER, ELM_FAILURE_CHARGE_BATTERY, OTHER)))
 
     val updatedAuditList = authenticatedClient.auditSummaryForRecall(recallId)
 
     assertThat(
-      updatedAuditList.map { it.fieldName.value },
-      equalTo(
+      updatedAuditList.map { it.fieldName.value } ==
         listOf(
           "contraband",
           "lastUpdatedByUserId",
@@ -130,9 +146,9 @@ class RecallAuditComponentTest : ComponentTestBase() {
           "reasonsForRecall",
           "recallType",
           "firstName",
-          "lastName"
+          "lastName",
+          "reasonsForRecall"
         )
-      )
     )
 
     assertThat(updatedAuditList[0].fieldName, equalTo(FieldName("contraband")))
@@ -145,6 +161,12 @@ class RecallAuditComponentTest : ComponentTestBase() {
     assertThat(updatedAuditList[3].auditCount, equalTo(2))
     assertOffsetDateTimesEqual(updatedAuditList[3].updatedDateTime, updatedRecall.lastUpdatedDateTime)
 
+    val reasonsForRecallAudit = updatedAuditList.first { it.fieldName.value == "reasonsForRecall" }
+    assertThat(reasonsForRecallAudit.fieldPath, equalTo(FieldPath("reasonsForRecall")))
+    assertThat(reasonsForRecallAudit.updatedByUserName, equalTo(FullName("Bertie Badger")))
+    assertThat(reasonsForRecallAudit.auditCount, equalTo(1))
+    assertOffsetDateTimesEqual(reasonsForRecallAudit.updatedDateTime, updatedRecall.lastUpdatedDateTime)
+
     // assert that audit still works when sentencing info - which has nested values - is updated
     authenticatedClient.updateRecall(recallId, UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today))
     val sentencingUpdateAuditList = authenticatedClient.auditSummaryForRecall(recallId)
@@ -154,6 +176,6 @@ class RecallAuditComponentTest : ComponentTestBase() {
   }
 
   // Due to differences in rounding (trigger drops last 0 on nano-seconds) we need to allow some variance on OffsetDateTimes
-  fun assertOffsetDateTimesEqual(expected: OffsetDateTime, actual: OffsetDateTime): AbstractOffsetDateTimeAssert<*> =
-    assertThat(expected).isCloseTo(actual, within(1, ChronoUnit.MILLIS))!!
+  fun assertOffsetDateTimesEqual(actual: OffsetDateTime, expected: OffsetDateTime): AbstractOffsetDateTimeAssert<*> =
+    assertThat(actual).isCloseTo(expected, within(1, ChronoUnit.MILLIS))!!
 }

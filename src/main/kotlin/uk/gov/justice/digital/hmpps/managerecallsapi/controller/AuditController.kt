@@ -26,7 +26,7 @@ class AuditController(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("fieldPath") fieldPath: FieldPath
   ): List<FieldAuditEntry> =
-    recallAuditService.getAuditForFieldName(recallId, fieldPath)
+    recallAuditService.getAuditForField(recallId, fieldPath)
 
   @GetMapping("/audit/{recallId}")
   fun auditSummaryForRecall(

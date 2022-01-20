@@ -15,7 +15,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Repository("jpaRecallAuditRepository")
-interface JpaRecallAuditRepository : JpaRepository<RawRecallAudit, UUID> {
+interface JpaRecallAuditRepository : JpaRepository<RawRecallAudit, Int> {
 
   @Query(
     value = """
@@ -40,7 +40,8 @@ interface JpaRecallAuditRepository : JpaRepository<RawRecallAudit, UUID> {
         from ( 
           select max(updated_date_time) as updatedDateTime, max(audit_id) as auditId, column_name, count(*) as auditCount from ( 
               select audit_id, updated_date_time, json_object_keys(updated_values) as column_name 
-              from recall_audit where recall_id = :recallId) as audit_by_field 
+              from recall_audit where recall_id = :recallId) as audit_by_field
+         where column_name <> 'id' -- dont include ID as it clashes with array properties (e.g. reasonsForRecall)
           group by column_name) grouped_audit, 
            recall_audit a,
            user_details u 
