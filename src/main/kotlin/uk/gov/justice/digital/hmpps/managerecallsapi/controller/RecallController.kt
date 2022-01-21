@@ -195,7 +195,10 @@ class RecallController(
     recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
     assessedByUserName = this.assessedByUserId()?.let { userDetailsService.get(it).fullName() },
     bookedByUserName = this.bookedByUserId()?.let { userDetailsService.get(it).fullName() },
-    dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.get(it).fullName() }
+    dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.get(it).fullName() },
+    lastKnownAddressOption = this.lastKnownAddressOption,
+    arrestIssues = this.arrestIssues,
+    arrestIssuesDetail = this.arrestIssuesDetail
   )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
@@ -308,7 +311,10 @@ data class RecallResponse(
   val recallAssessmentDueDateTime: OffsetDateTime? = null,
   val assessedByUserName: FullName? = null,
   val bookedByUserName: FullName? = null,
-  val dossierCreatedByUserName: FullName? = null
+  val dossierCreatedByUserName: FullName? = null,
+  val lastKnownAddressOption: LastKnownAddressOption? = null,
+  val arrestIssues: Boolean? = null,
+  val arrestIssuesDetail: String? = null
 )
 
 class Api {
@@ -406,7 +412,10 @@ data class UpdateRecallRequest(
   val previousConvictionMainName: String? = null,
   val assessedByUserId: UserId? = null,
   val bookedByUserId: UserId? = null,
-  val dossierCreatedByUserId: UserId? = null
+  val dossierCreatedByUserId: UserId? = null,
+  val lastKnownAddressOption: LastKnownAddressOption? = null,
+  val arrestIssues: Boolean? = null,
+  val arrestIssuesDetail: String? = null
 )
 
 enum class RecallLength {
@@ -457,4 +466,9 @@ enum class NameFormatCategory {
   FIRST_LAST,
   FIRST_MIDDLE_LAST,
   OTHER
+}
+
+enum class LastKnownAddressOption {
+  YES,
+  NO_FIXED_ABODE
 }
