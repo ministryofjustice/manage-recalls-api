@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_BREACH_NON_CURFEW_CONDITION
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_EQUIPMENT_TAMPER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
@@ -32,6 +33,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
+import java.sql.Timestamp
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
@@ -83,23 +85,36 @@ class RecallReasonAuditRepositoryIntegrationTest(
 
     assertThat(recallRepository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
 
-    val recallToUpdate = recall.copy(reasonsForRecall = setOf(ELM_FURTHER_OFFENCE, ELM_EQUIPMENT_TAMPER, OTHER))
-    recallRepository.save(recallToUpdate, currentUserId)
+    val lastUpdatedDateTime1 = OffsetDateTime.now()
+    val recallToUpdate1 = recall.copy(reasonsForRecall = setOf(ELM_FURTHER_OFFENCE, ELM_EQUIPMENT_TAMPER, OTHER), lastUpdatedDateTime = lastUpdatedDateTime1)
+    recallRepository.save(recallToUpdate1, currentUserId)
 
-    val recallReasonAudits = underTest.recallReasonAuditForRecallId(recall.id)
-    assertThat(recallReasonAudits.size, equalTo(1))
-    val recallReasonActual = Json.decodeFromString<Array<String>>(recallReasonAudits[0].updatedValue)
+    val recallReasonAudits1 = underTest.auditDetailsForRecallId(recall.id)
+    assertThat(recallReasonAudits1.size, equalTo(1))
+    assertOffsetDateTimeNearEqual(recallReasonAudits1[0].updatedDateTime, lastUpdatedDateTime1)
+    val recallReasonActual1 = Json.decodeFromString<Array<String>>(recallReasonAudits1[0].updatedValue)
+    assertThat(recallReasonActual1.size, equalTo(3))
+    assert(recallReasonActual1.contains("OTHER"))
+    assert(recallReasonActual1.contains("ELM_FURTHER_OFFENCE"))
+    assert(recallReasonActual1.contains("ELM_EQUIPMENT_TAMPER"))
 
-    assertThat(recallReasonActual.size, equalTo(3))
-    assert(recallReasonActual.contains("OTHER"))
-    assert(recallReasonActual.contains("ELM_FURTHER_OFFENCE"))
-    assert(recallReasonActual.contains("ELM_EQUIPMENT_TAMPER"))
+    val lastUpdatedDateTime2 = OffsetDateTime.now()
+    val recallToUpdate2 = recall.copy(reasonsForRecall = setOf(ELM_BREACH_NON_CURFEW_CONDITION), lastUpdatedDateTime = lastUpdatedDateTime2)
+    recallRepository.save(recallToUpdate2, currentUserId)
+
+    val recallReasonAudits2 = underTest.auditDetailsForRecallId(recall.id)
+    assertThat(recallReasonAudits2.size, equalTo(2))
+    val latestAudit = recallReasonAudits2.maxByOrNull { it.auditId }
+    assertOffsetDateTimeNearEqual(latestAudit!!.updatedDateTime, lastUpdatedDateTime2)
+    val recallReasonActual2 = Json.decodeFromString<Array<String>>(latestAudit.updatedValue)
+
+    assertThat(recallReasonActual2.size, equalTo(1))
+    assert(recallReasonActual2.contains("ELM_BREACH_NON_CURFEW_CONDITION"))
   }
 
   @Test
-  @org.springframework.transaction.annotation.Transactional
+  @Transactional
   fun `can get audit summary for updated recall`() {
-    assertThat(underTest.count(), equalTo(0))
     recallRepository.saveAndFlush(recall.copy(lastUpdatedByUserId = currentUserId.value))
 
     assertThat(recallRepository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
@@ -108,16 +123,28 @@ class RecallReasonAuditRepositoryIntegrationTest(
     val recallToUpdate = recall.copy(lastUpdatedDateTime = lastUpdatedDateTime1, reasonsForRecall = setOf(ELM_FURTHER_OFFENCE, ELM_EQUIPMENT_TAMPER))
     recallRepository.saveAndFlush(recallToUpdate)
 
+    val recallReasonAudits1 = underTest.auditSummaryForRecallId(recall.id)
+    assertThat(recallReasonAudits1!!.columnName, equalTo("reasons_for_recall"))
+    assertThat(recallReasonAudits1.auditCount, equalTo(1))
+    assertThat(recallReasonAudits1.updatedByUserName, equalTo("Test User"))
+    assertOffsetDateTimeNearEqual(recallReasonAudits1.updatedDateTime, lastUpdatedDateTime1)
+
     val lastUpdatedDateTime2 = OffsetDateTime.now()
     val recallToUpdate2 = recall.copy(lastUpdatedDateTime = lastUpdatedDateTime2, reasonsForRecall = setOf(ELM_FURTHER_OFFENCE))
     recallRepository.saveAndFlush(recallToUpdate2)
 
-    assertThat(underTest.count(), equalTo(3))
-    val recallReasonAudits = underTest.auditSummaryForRecallId(recall.id)
-    assertThat(recallReasonAudits!!.columnName, equalTo("reasons_for_recall"))
-    assertThat(recallReasonAudits.auditCount, equalTo(2))
+    val recallReasonAudits2 = underTest.auditSummaryForRecallId(recall.id)
+    assertThat(recallReasonAudits2!!.columnName, equalTo("reasons_for_recall"))
+    assertThat(recallReasonAudits2.auditCount, equalTo(2))
+    assertThat(recallReasonAudits2.updatedByUserName, equalTo("Test User"))
+    assertOffsetDateTimeNearEqual(recallReasonAudits2.updatedDateTime, lastUpdatedDateTime2)
+  }
+
+  private fun assertOffsetDateTimeNearEqual(
+    actual: Timestamp,
+    expected: OffsetDateTime
+  ) {
     // Due to differences in rounding (trigger drops last 0 on nano-seconds) we need to allow some variance on OffsetDateTimes
-    Assertions.assertThat(recallReasonAudits.updatedDateTime.toLocalDateTime().atOffset(ZoneOffset.UTC))
-      .isCloseTo(lastUpdatedDateTime2, Assertions.within(1, ChronoUnit.MILLIS))!!
+    Assertions.assertThat(actual.toLocalDateTime().atOffset(ZoneOffset.UTC)).isCloseTo(expected, Assertions.within(1, ChronoUnit.MILLIS))!!
   }
 }

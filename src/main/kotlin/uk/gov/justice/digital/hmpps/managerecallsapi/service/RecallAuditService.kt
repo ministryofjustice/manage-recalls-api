@@ -39,10 +39,10 @@ class RecallAuditService(
 
   fun getAuditForField(recallId: RecallId, fieldPath: FieldPath): List<FieldAuditEntry> {
     return if (fieldPath == FieldPath("reasonsForRecall")) {
-      recallReasonAuditRepository.recallReasonAuditForRecallId(recallId.value)
+      recallReasonAuditRepository.auditDetailsForRecallId(recallId.value)
     } else {
       val columnName = getColumnNameForFieldPath(fieldPath)
-      recallAuditRepository.auditForRecallIdAndColumnName(recallId.value, columnName.value)
+      recallAuditRepository.auditDetailsForRecallIdAndColumnName(recallId.value, columnName.value)
     }.map { it.toFieldAuditEntry(fieldPath) }
   }
 

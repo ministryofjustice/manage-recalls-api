@@ -35,7 +35,7 @@ interface JpaRecallReasonAuditRepository : JpaRepository<RawRecallReasonAudit, I
       """,
     nativeQuery = true
   )
-  fun recallReasonAuditForRecallId(recallId: UUID): List<RecallFieldAudit>
+  fun auditDetailsForRecallId(recallId: UUID): List<RecallFieldAudit>
 
   @Query(
     value = """

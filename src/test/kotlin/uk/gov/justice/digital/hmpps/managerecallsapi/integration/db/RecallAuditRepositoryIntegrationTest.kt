@@ -78,7 +78,7 @@ class RecallAuditRepositoryIntegrationTest(
     val recallToUpdate = recall.copy(contrabandDetail = "blah blah blah")
     recallRepository.save(recallToUpdate, currentUserId)
 
-    val recallAudits = underTest.auditForRecallIdAndColumnName(recall.id, "contraband_detail")
+    val recallAudits = underTest.auditDetailsForRecallIdAndColumnName(recall.id, "contraband_detail")
     assertThat(recallAudits.size, equalTo(1))
     assertThat(recallAudits[0].updatedValue, equalTo("blah blah blah"))
   }

@@ -1,12 +1,12 @@
 create table recall_reason_audit (
-                                audit_id serial primary key,
-                                recall_id uuid not null references recall(id),
-                                updated_by_user_id uuid not null references user_details(id),
-                                updated_date_time TIMESTAMPTZ not null,
-                                action text not null check (action in ('INSERT','DELETE')),
-                                value_list json,
-                                updated_value text,
-                                query text
+    audit_id serial primary key,
+    recall_id uuid not null references recall(id),
+    updated_by_user_id uuid not null references user_details(id),
+    updated_date_time TIMESTAMPTZ not null,
+    action text not null check (action in ('INSERT','DELETE')),
+    value_list json,
+    updated_value text,
+    query text
 );
 
 create or replace function recall_reason_audit_func() returns trigger as $body$

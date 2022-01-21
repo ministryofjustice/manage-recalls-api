@@ -30,7 +30,7 @@ interface JpaRecallAuditRepository : JpaRepository<RawRecallAudit, Int> {
         and jsonb_exists(cast(updated_values as jsonb), :columnName)""",
     nativeQuery = true
   )
-  fun auditForRecallIdAndColumnName(recallId: UUID, columnName: String): List<RecallFieldAudit>
+  fun auditDetailsForRecallIdAndColumnName(recallId: UUID, columnName: String): List<RecallFieldAudit>
 
   @Query(
     value = """
