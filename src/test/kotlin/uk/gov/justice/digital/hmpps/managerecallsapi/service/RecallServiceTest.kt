@@ -107,7 +107,10 @@ class RecallServiceTest {
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
     bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
     dossierCreatedByUserId = fullyPopulatedUpdateRecallRequest.dossierCreatedByUserId!!.value,
-    dossierTargetDate = LocalDate.of(2021, 10, 5)
+    dossierTargetDate = LocalDate.of(2021, 10, 5),
+    lastKnownAddressOption = fullyPopulatedUpdateRecallRequest.lastKnownAddressOption,
+    arrestIssues = fullyPopulatedUpdateRecallRequest.arrestIssues,
+    arrestIssuesDetail = fullyPopulatedUpdateRecallRequest.arrestIssuesDetail,
   )
 
   @Test

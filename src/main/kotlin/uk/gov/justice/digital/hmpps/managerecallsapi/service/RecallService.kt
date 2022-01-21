@@ -99,7 +99,10 @@ class RecallService(
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
       dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
       dossierTargetDate = calculateDossierTargetDate(updateRecallRequest.recallNotificationEmailSentDateTime)
-        ?: dossierTargetDate
+        ?: dossierTargetDate,
+      lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
+      arrestIssues = updateRecallRequest.arrestIssues ?: arrestIssues,
+      arrestIssuesDetail = updateRecallRequest.arrestIssuesDetail ?: arrestIssuesDetail
     )
   }
 

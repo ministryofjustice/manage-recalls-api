@@ -137,6 +137,9 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.dossierCreatedByUserName").isEqualTo("Bertie Badger")
       .jsonPath("$.bookedByUserName").isEqualTo("Bertie Badger")
       .jsonPath("$.assessedByUserName").isEqualTo("Bertie Badger")
+      .jsonPath("$.lastKnownAddressOption").isEqualTo(fullyPopulatedRecall.lastKnownAddressOption!!.toString())
+      .jsonPath("$.arrestIssues").isEqualTo(fullyPopulatedRecall.arrestIssues!!)
+      .jsonPath("$.arrestIssuesDetail").isEqualTo(fullyPopulatedRecall.arrestIssuesDetail!!)
   }
 
   @Test

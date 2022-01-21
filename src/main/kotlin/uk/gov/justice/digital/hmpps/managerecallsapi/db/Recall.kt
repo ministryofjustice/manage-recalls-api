@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
@@ -119,7 +120,11 @@ data class Recall(
   val bookedByUserId: UUID? = null,
   val dossierCreatedByUserId: UUID? = null,
   val dossierTargetDate: LocalDate? = null,
-  val assignee: UUID? = null
+  val assignee: UUID? = null,
+  @Enumerated(STRING)
+  val lastKnownAddressOption: LastKnownAddressOption? = null,
+  val arrestIssues: Boolean? = null,
+  val arrestIssuesDetail: String? = null
 ) {
   constructor(
     recallId: RecallId,
@@ -168,7 +173,10 @@ data class Recall(
     bookedByUserId: UserId? = null,
     dossierCreatedByUserId: UserId? = null,
     dossierTargetDate: LocalDate? = null,
-    assignee: UserId? = null
+    assignee: UserId? = null,
+    lastKnownAddressOption: LastKnownAddressOption? = null,
+    arrestIssues: Boolean? = null,
+    arrestIssuesDetail: String? = null
   ) :
     this(
       recallId.value,
@@ -217,7 +225,10 @@ data class Recall(
       bookedByUserId?.value,
       dossierCreatedByUserId?.value,
       dossierTargetDate,
-      assignee?.value
+      assignee?.value,
+      lastKnownAddressOption,
+      arrestIssues,
+      arrestIssuesDetail
     )
 
   fun recallId() = RecallId(id)
