@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.hibernate.SessionFactory
 import org.hibernate.annotations.common.util.StringHelper.booleanValue
 import org.hibernate.persister.entity.AbstractEntityPersister
@@ -12,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallAuditRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallFieldAudit
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallFieldSummary
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReasonAuditRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ColumnName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
@@ -28,19 +31,30 @@ import javax.persistence.EntityManagerFactory
 @Service
 class RecallAuditService(
   @Autowired private val recallAuditRepository: RecallAuditRepository,
+  @Autowired private val recallReasonAuditRepository: RecallReasonAuditRepository,
   @Autowired private val entityManagerFactory: EntityManagerFactory
 ) {
   private val sessionFactory: SessionFactory = entityManagerFactory.unwrap(SessionFactory::class.java)
   private val persister = sessionFactory.getClassMetadata(Recall::class.java) as AbstractEntityPersister
 
-  fun getAuditForFieldName(recallId: RecallId, fieldPath: FieldPath): List<FieldAuditEntry> {
-    val columnName = getColumnNameForFieldPath(fieldPath)
-    return recallAuditRepository.auditForRecallIdAndColumnName(recallId.value, columnName.value)
-      .map { it.toFieldAuditEntry(fieldPath) }
+  fun getAuditForField(recallId: RecallId, fieldPath: FieldPath): List<FieldAuditEntry> {
+    return if (fieldPath == FieldPath("reasonsForRecall")) {
+      recallReasonAuditRepository.auditDetailsForRecallId(recallId.value)
+    } else {
+      val columnName = getColumnNameForFieldPath(fieldPath)
+      recallAuditRepository.auditDetailsForRecallIdAndColumnName(recallId.value, columnName.value)
+    }.map { it.toFieldAuditEntry(fieldPath) }
   }
 
   fun getAuditSummaryForRecall(recallId: RecallId): List<FieldAuditSummary> {
-    return recallAuditRepository.auditSummaryForRecall(recallId.value)
+    val recallReasonSummary = recallReasonAuditRepository.auditSummaryForRecallId(recallId.value)
+    val summary = recallAuditRepository.auditSummaryForRecall(recallId.value)
+
+    return if (recallReasonSummary == null) {
+      summary
+    } else {
+      summary + recallReasonSummary
+    }
       .map { it.toFieldAuditSummary() }
   }
 
@@ -54,7 +68,11 @@ class RecallAuditService(
     )
 
   private fun RecallFieldSummary.toFieldAuditSummary(): FieldAuditSummary {
-    val fieldPath = getFieldPathForColumn(ColumnName(this.columnName))
+    val fieldPath = if (this.columnName == "reasons_for_recall") {
+      FieldPath("reasonsForRecall")
+    } else {
+      getFieldPathForColumn(ColumnName(this.columnName))
+    }
     return FieldAuditSummary(
       this.auditId,
       fieldPath.getFieldName(),
@@ -125,6 +143,7 @@ class RecallAuditService(
       OffsetDateTime::class.java -> OffsetDateTime.parse(updatedValue.replace(" ", "T"))
       UUID::class.java -> UUID.fromString(updatedValue)
       Int::class.java -> updatedValue.toInt()
+      Set::class.java -> Json.decodeFromString<Array<String>>(updatedValue)
       else -> updatedValue
     }
 }

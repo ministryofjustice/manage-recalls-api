@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecordRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallAuditRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReasonAuditRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
@@ -68,6 +69,9 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
 
   @Autowired
   protected lateinit var recallAuditRepository: RecallAuditRepository
+
+  @Autowired
+  protected lateinit var recallReasonAuditRepository: RecallReasonAuditRepository
 
   @Autowired
   protected lateinit var userDetailsRepository: UserDetailsRepository
