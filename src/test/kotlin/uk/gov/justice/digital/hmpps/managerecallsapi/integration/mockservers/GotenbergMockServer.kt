@@ -38,6 +38,10 @@ class GotenbergMockServer : HealthServer(9093, "/ping") {
     stubPdfGeneration(generatedPdfContents, "LICENCE REVOCATION")
   }
 
+  fun stubGenerateOffenderNotification(generatedPdfContents: ByteArray) {
+    stubPdfGeneration(generatedPdfContents, "Licence Revocation and Recall To Custody")
+  }
+
   private fun stubPdfGenerationWithHmppsLogo(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, HmppsLogo)
   }

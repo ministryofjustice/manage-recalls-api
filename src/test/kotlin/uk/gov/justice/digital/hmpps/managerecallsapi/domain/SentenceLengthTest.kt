@@ -41,8 +41,8 @@ class SentenceLengthTest {
     assertThat(sentenceLength.toString(), equalTo(prettyPrint))
   }
 
-  private fun parameterArrays(): Stream<Arguments>? {
-    return Stream.of(
+  private fun parameterArrays(): Stream<Arguments>? =
+    Stream.of(
       Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 1, 0, 0, "1 years 0 months 0 days"),
       Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 0, 12, 0, "0 years 12 months 0 days"),
       Arguments.of(RecallLength.TWENTY_EIGHT_DAYS, 0, 0, 366, "0 years 0 months 366 days"),
@@ -51,5 +51,4 @@ class SentenceLengthTest {
       Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 0, 365, "0 years 0 months 365 days"),
       Arguments.of(RecallLength.FOURTEEN_DAYS, 0, 11, 30, "0 years 11 months 30 days"),
     )
-  }
 }

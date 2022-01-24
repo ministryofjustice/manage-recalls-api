@@ -59,7 +59,8 @@ class RecallSummaryHtmlGenerationTest(
           true,
           "Some stuff",
           PrisonName("Current Prison"),
-          PrisonName("Last Release Prison")
+          PrisonName("Last Release Prison"),
+          true
         ),
         3
       )

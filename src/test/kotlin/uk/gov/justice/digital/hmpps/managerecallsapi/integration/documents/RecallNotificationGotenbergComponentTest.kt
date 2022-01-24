@@ -22,7 +22,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
   private val prisonerFirstName = "Natalia"
 
   @Test
-  fun `can generate a recall notification using gotenberg`() {
+  fun `can generate a recall notification`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
@@ -38,6 +38,26 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 //    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
     assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(3)))
     assertThat(Pdf(recallNotification.content), hasTotalPageCount(3))
+  }
+
+  @Test
+  fun `can generate a not in custody recall notification`() {
+    expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
+
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
+    updateRecallWithRequiredInformationForTheDossier(
+      recall.recallId,
+      localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
+      currentPrisonId = PrisonId("MWI"),
+      inCustody = false
+    )
+
+    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
+
+    // writeBase64EncodedStringToFile("recall-notification-nic.pdf", recallNotification.content)
+    assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(5)))
+    assertThat(Pdf(recallNotification.content), hasTotalPageCount(5))
   }
 
   @Test

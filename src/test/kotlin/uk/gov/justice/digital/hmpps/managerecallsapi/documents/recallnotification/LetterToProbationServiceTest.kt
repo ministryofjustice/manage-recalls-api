@@ -20,16 +20,14 @@ class LetterToProbationServiceTest {
 
   @Test
   fun `create letter to probation generates html and creates the PDF`() {
-    val recallNotificationContext = mockk<RecallNotificationContext>()
     val letterToProbationContext = mockk<LetterToProbationContext>()
     val generatedHtml = "some html"
     val pdfBytes = "pdf".toByteArray()
 
-    every { recallNotificationContext.getLetterToProbationContext() } returns letterToProbationContext
     every { letterToProbationGenerator.generateHtml(letterToProbationContext) } returns generatedHtml
     every { pdfDocumentGenerationService.generatePdf(generatedHtml, recallImage(HmppsLogo)) } returns Mono.just(pdfBytes)
 
-    val result = underTest.generatePdf(recallNotificationContext).block()!!
+    val result = underTest.generatePdf(letterToProbationContext).block()!!
 
     assertArrayEquals(result, pdfBytes)
   }
