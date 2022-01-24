@@ -80,6 +80,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     recallReasonAuditRepository.deleteAll()
     recallAuditRepository.deleteAll()
     missingDocumentsRecordRepository.deleteAll()
+    lastKnownAddressRepository.deleteAll()
     documentRepository.deleteAll()
     recallRepository.deleteAll()
 
@@ -158,6 +159,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         licenceNameCategory = NameFormatCategory.FIRST_LAST,
         documents = emptySet(),
         missingDocumentsRecords = emptySet(),
+        lastKnownAddresses = emptySet(),
         assignee = userIdOnes.value
       )
     }

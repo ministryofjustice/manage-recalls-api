@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddressRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecordRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallAuditRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReasonAuditRepository
@@ -81,6 +82,9 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
 
   @Autowired
   protected lateinit var missingDocumentsRecordRepository: MissingDocumentsRecordRepository
+
+  @Autowired
+  protected lateinit var lastKnownAddressRepository: LastKnownAddressRepository
 
   @Autowired
   protected lateinit var prisonerOffenderSearchMockServer: PrisonerOffenderSearchMockServer

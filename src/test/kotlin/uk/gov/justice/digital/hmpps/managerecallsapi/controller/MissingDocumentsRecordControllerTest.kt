@@ -16,20 +16,17 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 
 class MissingDocumentsRecordControllerTest {
   private val recallRepository = mockk<RecallRepository>()
   private val missingDocumentsRecordRepository = mockk<MissingDocumentsRecordRepository>()
   private val documentService = mockk<DocumentService>()
   private val tokenExtractor = mockk<TokenExtractor>()
-  private val userDetailService = mockk<UserDetailsService>()
 
   private val underTest = MissingDocumentsRecordController(
     recallRepository,
@@ -98,13 +95,11 @@ class MissingDocumentsRecordControllerTest {
     val bearerToken = "BEARER TOKEN"
     val userId = ::UserId.random()
     val missingDocumentsRecordId = ::MissingDocumentsRecordId.random()
-    val fullName = FullName("Harry Potter")
     val details = "detail"
 
     val existingRecord = mockk<MissingDocumentsRecord>()
     every { recall.missingDocumentsRecords } returns setOf(existingRecord)
     every { existingRecord.version } returns 1
-    every { userDetailService.get(userId).fullName() } returns fullName
     every { recallRepository.getByRecallId(recallId) } returns recall
     every {
       documentService.scanAndStoreDocument(
