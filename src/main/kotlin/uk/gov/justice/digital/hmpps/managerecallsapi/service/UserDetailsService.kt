@@ -1,13 +1,13 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import net.sf.jmimemagic.Magic
-import org.postgresql.util.Base64
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import java.util.Base64
 
 @Service
 class UserDetailsService(
@@ -16,7 +16,7 @@ class UserDetailsService(
   private val validMimeTypes = setOf("jpg")
 
   fun save(userDetails: UserDetails): UserDetails =
-    forValidDocumentMimeType(Base64.decode(userDetails.signature)) {
+    forValidDocumentMimeType(Base64.getDecoder().decode(userDetails.signature)) {
       return userDetailsRepository.save(userDetails)
     }
 

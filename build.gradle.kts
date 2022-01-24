@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "3.3.16"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.0.1"
   kotlin("plugin.spring") version "1.5.10"
   kotlin("plugin.jpa") version "1.5.20"
   kotlin("plugin.serialization") version "1.4.31"
@@ -30,8 +30,8 @@ project.extensions.extraProperties["logback.version"] = "1.2.9"
 project.extensions.extraProperties["thymeleaf.version"] = "3.0.14.RELEASE"
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.5.5")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.7.5")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.2")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.8.2")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-security")
@@ -39,24 +39,24 @@ dependencies {
   implementation("org.springframework.security:spring-security-oauth2-client")
 
   implementation("io.springfox:springfox-boot-starter:3.0.0")
-  implementation("org.flywaydb:flyway-core:7.14.1")
-  implementation("org.postgresql:postgresql:42.2.22")
+  implementation("org.flywaydb:flyway-core:8.4.2")
+  implementation("org.postgresql:postgresql:42.3.1")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
-  implementation("software.amazon.awssdk:s3:2.17.46")
-  implementation("org.http4k:http4k-format-jackson:4.13.1.0")
+  implementation("software.amazon.awssdk:s3:2.17.112")
+  implementation("org.http4k:http4k-format-jackson:4.17.9.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:5.2.1")
-  implementation("io.sentry:sentry-logback:5.2.1")
+  implementation("io.sentry:sentry-spring-boot-starter:5.5.0")
+  implementation("io.sentry:sentry-logback:5.5.0")
   implementation("com.github.librepdf:openpdf:1.3.26")
   implementation("com.github.librepdf:openpdf-fonts-extra:1.3.26")
   implementation("xyz.capybara:clamav-client:2.0.2")
-  implementation("dev.forkhandles:result4k:1.11.2.1")
+  implementation("dev.forkhandles:result4k:2.0.0.0")
   implementation("net.sf.jmimemagic:jmimemagic:0.1.5") {
     exclude("log4j", "log4j")
   }
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 
@@ -66,24 +66,24 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
   }
 
-  testImplementation("io.mockk:mockk:1.12.0")
+  testImplementation("io.mockk:mockk:1.12.2")
   testImplementation("com.natpryce:hamkrest:1.8.0.1")
   testImplementation("com.github.tomakehurst:wiremock-standalone:2.27.2")
   testImplementation("org.flywaydb.flyway-test-extensions:flyway-spring-test:7.0.0")
-  testImplementation("io.zonky.test:embedded-database-spring-test:2.1.0")
+  testImplementation("io.zonky.test:embedded-database-spring-test:2.1.1")
   testImplementation("io.zonky.test:embedded-postgres:1.3.1")
   testImplementation("io.projectreactor:reactor-test")
-  testImplementation("com.ninja-squad:springmockk:3.0.1")
+  testImplementation("com.ninja-squad:springmockk:3.1.0")
 
-  testImplementation("au.com.dius.pact.provider:junit5:4.2.14")
-  testImplementation("au.com.dius.pact.provider:junit5spring:4.2.14")
-  testImplementation("org.http4k:http4k-testing-approval:4.13.1.0")
+  testImplementation("au.com.dius.pact.provider:junit5:4.3.4")
+  testImplementation("au.com.dius.pact.provider:junit5spring:4.3.4")
+  testImplementation("org.http4k:http4k-testing-approval:4.17.9.0")
 }
 
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_16.toString() // TODO Need Kotlin 1.6 to target JVM 17 - see PUD-1241
+      jvmTarget = JavaVersion.VERSION_17.toString()
     }
   }
 
@@ -121,7 +121,7 @@ task<Test>("documentGenerationTest") {
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(16)) // TODO Need Kotlin 1.6 to target JVM 17 - see PUD-1241
-    vendor.set(JvmVendorSpec.matching("AdoptOpenJDK"))
+    languageVersion.set(JavaLanguageVersion.of(17))
+    vendor.set(JvmVendorSpec.matching("OpenJDK"))
   }
 }
