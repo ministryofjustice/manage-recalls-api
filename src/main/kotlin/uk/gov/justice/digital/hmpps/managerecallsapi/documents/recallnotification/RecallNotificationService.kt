@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.ClassPathResource
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -18,6 +19,7 @@ class RecallNotificationService(
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val recallSummaryService: RecallSummaryService,
   @Autowired private val letterToProbationService: LetterToProbationService,
+  @Autowired private val offenderNotificationService: OffenderNotificationService,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val documentService: DocumentService,
 ) {
@@ -25,11 +27,14 @@ class RecallNotificationService(
   fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> {
     val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, currentUserId)
 
-    val documentGenerators = Flux.just(
-      { recallSummaryService.generatePdf(recallNotificationContext) },
-      { revocationOrderService.getOrGeneratePdf(recallNotificationContext.getRevocationOrderContext()) },
-      { letterToProbationService.generatePdf(recallNotificationContext) }
-    )
+    val documentGeneratorList: Array<() -> Mono<ByteArray>> = listOf(
+      { recallSummaryService.generatePdf(recallNotificationContext.getRecallSummaryContext()) },
+      { revocationOrderService.getOrGeneratePdf(recallNotificationContext.getRevocationOrderContext()) }
+    ).plus(getNotInCustodyDocumentGenerators(recallNotificationContext))
+      .plus { letterToProbationService.generatePdf(recallNotificationContext.getLetterToProbationContext()) }
+      .toTypedArray()
+
+    val documentGenerators: Flux<() -> Mono<ByteArray>> = Flux.just(*documentGeneratorList)
     return documentGenerators
       .flatMapSequential { it() }
       .map { documentData(it) }
@@ -38,5 +43,16 @@ class RecallNotificationService(
       .map { mergedBytes ->
         documentService.storeDocument(recallId, currentUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf", details)
       }
+  }
+
+  private fun getNotInCustodyDocumentGenerators(context: RecallNotificationContext): List<() -> Mono<ByteArray>> {
+    return if (!context.recall.inCustody!!) {
+      listOf(
+        { offenderNotificationService.generatePdf(context.getOffenderNotificationContext()) },
+        { Mono.just(ClassPathResource("/pdfs/Police-Notification.pdf").inputStream.readAllBytes()) }
+      )
+    } else {
+      emptyList()
+    }
   }
 }

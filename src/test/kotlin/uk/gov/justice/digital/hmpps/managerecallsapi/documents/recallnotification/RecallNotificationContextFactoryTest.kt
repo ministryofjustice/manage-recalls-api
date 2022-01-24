@@ -89,7 +89,8 @@ class RecallNotificationContextFactoryTest {
       lastReleasePrison = lastReleasePrisonId,
       sentencingInfo = sentencingInfo,
       currentPrison = currentPrisonId,
-      localPoliceForceId = localPoliceForceId
+      localPoliceForceId = localPoliceForceId,
+      inCustody = true
     )
     val userDetails = mockk<UserDetails>()
     val document = mockk<Document>()
@@ -137,7 +138,8 @@ class RecallNotificationContextFactoryTest {
       lastReleasePrison = lastReleasePrisonId,
       sentencingInfo = sentencingInfo,
       currentPrison = currentPrisonId,
-      localPoliceForceId = localPoliceForceId
+      localPoliceForceId = localPoliceForceId,
+      inCustody = true
     )
     val userDetails = mockk<UserDetails>()
 
@@ -205,6 +207,7 @@ class RecallNotificationContextFactoryTest {
       currentPrison = currentPrisonId,
       previousConvictionMainNameCategory = prevConsMainNameCategory,
       previousConvictionMainName = prevConsMainName,
+      inCustody = false
     )
     val userDetails =
       UserDetails(
@@ -225,5 +228,6 @@ class RecallNotificationContextFactoryTest {
     val result = underTest.createContext(recallId, userIdGeneratingRecallNotification).getRecallSummaryContext()
 
     assertThat(result.previousConvictionMainName, equalTo(expectedName))
+    assertThat(result.inCustody, equalTo(false))
   }
 }

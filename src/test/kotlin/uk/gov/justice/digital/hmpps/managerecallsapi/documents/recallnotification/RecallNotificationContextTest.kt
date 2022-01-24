@@ -81,7 +81,8 @@ class RecallNotificationContextTest {
     reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
     previousConvictionMainNameCategory = NameFormatCategory.OTHER,
     previousConvictionMainName = "Bryan Badger",
-    assessedByUserId = userId
+    assessedByUserId = userId,
+    inCustody = true
   )
 
   private val prisoner = Prisoner(

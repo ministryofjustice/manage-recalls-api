@@ -125,7 +125,8 @@ data class RecallNotificationContext(
       recall.vulnerabilityDiversity!!,
       recall.vulnerabilityDiversityDetail,
       currentPrisonName,
-      lastReleasePrisonName
+      lastReleasePrisonName,
+      recall.inCustody!!
     )
   }
 
@@ -139,7 +140,20 @@ data class RecallNotificationContext(
       currentPrisonName,
       currentUserDetails.personName()
     )
+
+  fun getOffenderNotificationContext(): OffenderNotificationContext =
+    OffenderNotificationContext(
+      recall.prisonerNameOnLicense(),
+      recall.bookingNumber!!,
+      originalRecallNotificationCreatedDateTime.toLocalDate()
+    )
 }
+
+data class OffenderNotificationContext(
+  val prisonerNameOnLicense: FullName,
+  val bookingNumber: String,
+  val licenceRevocationDate: LocalDate
+)
 
 data class LetterToProbationContext(
   val licenceRevocationDate: LocalDate,
@@ -179,7 +193,8 @@ data class RecallSummaryContext(
   val vulnerabilityDiversity: Boolean,
   val vulnerabilityDiversityDetail: String?,
   val currentPrisonName: PrisonName,
-  val lastReleasePrisonName: PrisonName
+  val lastReleasePrisonName: PrisonName,
+  val inCustody: Boolean
 )
 
 data class RevocationOrderContext(
