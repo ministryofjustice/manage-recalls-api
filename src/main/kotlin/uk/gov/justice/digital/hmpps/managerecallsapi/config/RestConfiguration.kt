@@ -53,7 +53,8 @@ class RestConfiguration {
 }
 
 object ManageRecallsApiJackson : ConfigurableJackson(
-  KotlinModule()
+  KotlinModule.Builder()
+    .build()
     .asConfigurable()
     .withStandardMappings()
     .withCustomMappings()

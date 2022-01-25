@@ -13,6 +13,8 @@ spring:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
 
+  mvc.pathmatch.matching-strategy: ant_path_matcher # To be deleted with PUD-1231
+
   security:
     oauth2:
       client:
@@ -82,6 +84,9 @@ management:
     metrics:
       enabled: true
     prometheus:
+      enabled: true
+  info:
+    env:
       enabled: true
 
 prisonerSearch:

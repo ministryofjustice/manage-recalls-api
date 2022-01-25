@@ -11,7 +11,7 @@ import au.com.dius.pact.provider.junitsupport.loader.PactFilter
 import au.com.dius.pact.provider.spring.junit5.PactVerificationSpringProvider
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import org.apache.http.HttpRequest
+import org.apache.hc.core5.http.HttpRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestTemplate
 import org.junit.jupiter.api.extension.ExtendWith
