@@ -31,6 +31,13 @@ Current limitations of this service include:
 - pact/pact-webhooks/README.md
 - helm_deploy/README.md
 
+## Prerequisite for running locally
+
+To upgrade Java to the required version:
+```
+brew install openjdk
+```
+
 ### Code style & formatting
 
 ```bash
