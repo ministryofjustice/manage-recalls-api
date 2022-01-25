@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -46,15 +47,20 @@ class MissingDocumentsRecordController(
       examples = Example(ExampleProperty(mediaType = "application/json", value = "{\n\"status\": 400,\n\"message\":\"VirusFoundException\"\n}"))
     )
   )
-  @PostMapping("/missing-documents-records")
+  @PostMapping(
+    "/recalls/{recallId}//missing-documents-records",
+    "/missing-documents-records" // FIXME PUD-1364
+  )
   fun createMissingDocumentsRecord(
+    @PathVariable("recallId") pathRecallId: RecallId?,
     @RequestBody missingDocumentsRecordRequest: MissingDocumentsRecordRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): ResponseEntity<MissingDocumentsRecordId> =
-    recallRepository.getByRecallId(missingDocumentsRecordRequest.recallId).let {
+  ): ResponseEntity<MissingDocumentsRecordId> {
+    val recallId = pathRecallId ?: missingDocumentsRecordRequest.recallId!!
+    return recallRepository.getByRecallId(recallId).let {
       val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       documentService.scanAndStoreDocument(
-        missingDocumentsRecordRequest.recallId,
+        recallId,
         currentUserId,
         missingDocumentsRecordRequest.emailFileContent.toBase64DecodedByteArray(),
         DocumentCategory.MISSING_DOCUMENTS_EMAIL,
@@ -65,7 +71,7 @@ class MissingDocumentsRecordController(
         val mdr = missingDocumentsRecordRepository.save(
           MissingDocumentsRecord(
             ::MissingDocumentsRecordId.random(),
-            missingDocumentsRecordRequest.recallId,
+            recallId,
             missingDocumentsRecordRequest.categories.toSet(),
             documentId,
             missingDocumentsRecordRequest.details,
@@ -80,10 +86,11 @@ class MissingDocumentsRecordController(
         throw VirusFoundException()
       }
     }
+  }
 }
 
 data class MissingDocumentsRecordRequest(
-  val recallId: RecallId,
+  val recallId: RecallId?,
   val categories: List<DocumentCategory>,
   val details: String,
   val emailFileContent: String,

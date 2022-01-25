@@ -3,9 +3,12 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.present
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
@@ -56,10 +59,10 @@ class LastKnownAddressControllerTest {
     every { lastKnownAddress.id() } returns lastKnownAddressId
 
     val request = CreateLastKnownAddressRequest(
-      recallId, line1, line2, town, postcode, source
+      null, line1, line2, town, postcode, source
     )
 
-    val response = underTest.createLastKnownAddress(request, bearerToken)
+    val response = underTest.createLastKnownAddress(recallId, request, bearerToken)
 
     assertThat(savedLastKnownAddress.captured.index, equalTo(1))
     assertThat(UUID.fromString(savedLastKnownAddress.captured.id.toString()), present())
@@ -93,10 +96,10 @@ class LastKnownAddressControllerTest {
     val postcode = null
     val source = AddressSource.MANUAL
 
-    val prexistingLastKnownAddress = mockk<LastKnownAddress>()
-    every { recall.lastKnownAddresses } returns setOf(prexistingLastKnownAddress)
+    val preExistingLastKnownAddress = mockk<LastKnownAddress>()
+    every { recall.lastKnownAddresses } returns setOf(preExistingLastKnownAddress)
     val previousMaxIndex = randomIndex()
-    every { prexistingLastKnownAddress.index } returns previousMaxIndex
+    every { preExistingLastKnownAddress.index } returns previousMaxIndex
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
     every { lastKnownAddressRepository.save(capture(savedLastKnownAddress)) } returns address
@@ -106,7 +109,7 @@ class LastKnownAddressControllerTest {
       recallId, line1, line2, town, postcode, source
     )
 
-    val response = underTest.createLastKnownAddress(request, bearerToken)
+    val response = underTest.createLastKnownAddress(null, request, bearerToken)
 
     assertThat(savedLastKnownAddress.captured.index, equalTo(previousMaxIndex + 1))
     assertThat(savedLastKnownAddress.captured.line1, equalTo(line1))
@@ -121,5 +124,16 @@ class LastKnownAddressControllerTest {
         lastKnownAddressId
       )
     )
+  }
+
+  @Test
+  fun `deletes address`() {
+    val lastKnownAddressId = ::LastKnownAddressId.random()
+    val recallId = ::RecallId.random()
+    every { lastKnownAddressRepository.deleteByRecallIdAndLastKnownAddressId(recallId, lastKnownAddressId) } just Runs
+
+    underTest.deleteAddress(recallId, lastKnownAddressId)
+
+    verify { lastKnownAddressRepository.deleteByRecallIdAndLastKnownAddressId(recallId, lastKnownAddressId) }
   }
 }

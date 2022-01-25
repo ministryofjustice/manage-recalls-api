@@ -190,8 +190,6 @@ class DocumentComponentTest : ComponentTestBase() {
 
   @Test
   fun `get document returns 404 if the recall exists but the document does not`() {
-    expectNoVirusesWillBeFound()
-
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
     authenticatedClient.getDocument(recall.recallId, ::DocumentId.random(), expectedStatus = NOT_FOUND)
@@ -336,7 +334,7 @@ class DocumentComponentTest : ComponentTestBase() {
       .returnResult()
       .responseBody!!
 
-    assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document: Wrong status [BEING_BOOKED_ON] and/or document category [REVOCATION_ORDER]")))
+    assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "DocumentDeleteException: Unable to delete document [Recall: ${recall.recallId}, Document: ${document.documentId}]: Wrong status [BEING_BOOKED_ON] and/or document category [REVOCATION_ORDER]")))
   }
 
   @Test
