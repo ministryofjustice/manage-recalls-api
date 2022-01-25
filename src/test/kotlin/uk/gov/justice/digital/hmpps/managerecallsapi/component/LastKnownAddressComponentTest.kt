@@ -86,8 +86,8 @@ class LastKnownAddressComponentTest : ComponentTestBase() {
     // There is no contract for the order of LastKnownAddresses but the index must be one-based incrementing positive integers, hence 1, 2, etc.
     val lastKnownAddressIndex1 = lastKnownAddresses[lastKnownAddresses.indexOfFirst { it.index == 1 }]
     val lastKnownAddressIndex2 = lastKnownAddresses[lastKnownAddresses.indexOfFirst { it.index == 2 }]
-    assertThat(lastKnownAddressIndex1.lastKnownAddressId.toString(), equalTo(lastKnownAddressId1.toString()))
-    assertThat(lastKnownAddressIndex2.lastKnownAddressId.toString(), equalTo(lastKnownAddressId2.toString()))
+    assertThat(lastKnownAddressIndex1.lastKnownAddressId, equalTo(lastKnownAddressId1))
+    assertThat(lastKnownAddressIndex2.lastKnownAddressId, equalTo(lastKnownAddressId2))
     assertThat(lastKnownAddressIndex1.town, equalTo("first town"))
     assertThat(lastKnownAddressIndex2.town, equalTo("second town"))
     assertThat(lastKnownAddressIndex1.source.toString(), equalTo("LOOKUP"))

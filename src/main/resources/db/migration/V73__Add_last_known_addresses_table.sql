@@ -7,10 +7,9 @@ CREATE TABLE last_known_address (
           postcode TEXT NULL,
           source TEXT NOT NULL,
           index INTEGER NOT NULL,
-          created_by_user_id UUID references user_details(id),
+          created_by_user_id UUID NOT NULL references user_details(id),
           created_date_time TIMESTAMPTZ NOT NULL,
           UNIQUE (recall_id, index),
+          CONSTRAINT source_in_enum CHECK (source IN ('MANUAL','LOOKUP')),
           CONSTRAINT index_positive_integer CHECK (index >= 1)
 );
-
--- DROP TABLE last_known_address;
