@@ -122,6 +122,6 @@ task<Test>("documentGenerationTest") {
 java {
   toolchain {
     languageVersion.set(JavaLanguageVersion.of(17))
-    vendor.set(JvmVendorSpec.matching("OpenJDK"))
+    vendor.set(JvmVendorSpec.matching("AdoptOpenJDK"))
   }
 }
