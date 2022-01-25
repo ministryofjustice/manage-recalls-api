@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64Str
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -77,10 +78,13 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/search").bodyValue(apiSearchRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
       webTestClient.post().uri("/users/").bodyValue(userDetailsRequest),
+      webTestClient.post().uri("/recalls/${UUID.randomUUID()}/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
       webTestClient.post().uri("/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
       webTestClient.post().uri("/last-known-addresses").bodyValue(createLastKnownAddressRequest),
+      webTestClient.post().uri("/recalls/${UUID.randomUUID()}/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
-      webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}")
+      webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}"),
+      webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/last-known-addresses/${::LastKnownAddressId.random()}")
     )
   }
 

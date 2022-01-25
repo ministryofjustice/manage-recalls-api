@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -171,7 +172,7 @@ class DocumentService(
     if (recall.status() == Status.BEING_BOOKED_ON && document.category.uploaded) {
       documentRepository.deleteByDocumentId(documentId)
     } else {
-      throw DocumentDeleteException("Unable to delete document: Wrong status [${recall.status()}] and/or document category [${document.category}]")
+      throw DocumentDeleteException("Unable to delete document [Recall: $recallId, Document: $documentId]: Wrong status [${recall.status()}] and/or document category [${document.category}]")
     }
   }
 
@@ -182,6 +183,7 @@ class DocumentService(
 
 data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
 data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
+data class LastKnownAddressNotFoundException(val recallId: RecallId, val lastKnownAddressId: LastKnownAddressId) : NotFoundException()
 data class RecallDocumentWithCategoryNotFoundException(
   val recallId: RecallId,
   val documentCategory: DocumentCategory

@@ -71,7 +71,7 @@ class MissingDocumentsRecordControllerTest {
       documentBytes.encodeToBase64String(), fileName
     )
 
-    val response = underTest.createMissingDocumentsRecord(request, bearerToken)
+    val response = underTest.createMissingDocumentsRecord(null, request, bearerToken)
 
     assertThat(savedMissingDocumentsRecord.captured.version, equalTo(1))
     assertThat(savedMissingDocumentsRecord.captured.details, equalTo(details))
@@ -116,11 +116,11 @@ class MissingDocumentsRecordControllerTest {
     every { record.id() } returns missingDocumentsRecordId
 
     val request = MissingDocumentsRecordRequest(
-      recallId, listOf(DocumentCategory.PART_A_RECALL_REPORT), details,
+      null, listOf(DocumentCategory.PART_A_RECALL_REPORT), details,
       documentBytes.encodeToBase64String(), fileName
     )
 
-    val response = underTest.createMissingDocumentsRecord(request, bearerToken)
+    val response = underTest.createMissingDocumentsRecord(recallId, request, bearerToken)
 
     assertThat(savedMissingDocumentsRecord.captured.version, equalTo(2))
     assertThat(response.statusCode, equalTo(HttpStatus.CREATED))

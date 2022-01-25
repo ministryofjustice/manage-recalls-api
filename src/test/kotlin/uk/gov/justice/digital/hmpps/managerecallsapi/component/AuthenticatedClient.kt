@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -139,12 +140,32 @@ class AuthenticatedClient(
   ) =
     postRequest("/missing-documents-records", request, responseClass, expectedStatus)
 
-  fun <T> lastKnownAddress(
+  fun <T> missingDocumentsRecord(
+    recallId: RecallId,
+    request: MissingDocumentsRecordRequest,
+    expectedStatus: HttpStatus = CREATED,
+    responseClass: Class<T>
+  ) =
+    postRequest("/recalls/$recallId/missing-documents-records", request, responseClass, expectedStatus)
+
+  // FIXME PUD-1364
+  fun <T> addLastKnownAddress(
     request: CreateLastKnownAddressRequest,
     expectedStatus: HttpStatus = CREATED,
     responseClass: Class<T>
   ) =
     postRequest("/last-known-addresses", request, responseClass, expectedStatus)
+
+  fun <T> addLastKnownAddress(
+    recallId: RecallId,
+    request: CreateLastKnownAddressRequest,
+    expectedStatus: HttpStatus = CREATED,
+    responseClass: Class<T>
+  ) =
+    postRequest("/recalls/$recallId/last-known-addresses", request, responseClass, expectedStatus)
+
+  fun deleteLastKnownAddress(recallId: RecallId, lastKnownAddressId: LastKnownAddressId, expectedStatus: HttpStatus = NO_CONTENT) =
+    deleteRequest("/recalls/$recallId/last-known-addresses/$lastKnownAddressId", expectedStatus)
 
   fun search(searchRequest: SearchRequest, expectedStatus: HttpStatus) =
     sendPostRequest("/search", searchRequest, expectedStatus)

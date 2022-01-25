@@ -34,7 +34,7 @@ class LastKnownAddressComponentTest : ComponentTestBase() {
       AddressSource.MANUAL
     )
 
-    val lastKnownAddressId = authenticatedClient.lastKnownAddress(createLastKnownAddressRequest, CREATED, LastKnownAddressId::class.java)
+    val lastKnownAddressId = authenticatedClient.addLastKnownAddress(createLastKnownAddressRequest, CREATED, LastKnownAddressId::class.java)
     assertThat(lastKnownAddressId, present())
 
     val updatedRecall = authenticatedClient.getRecall(originalRecall.recallId)
@@ -63,22 +63,23 @@ class LastKnownAddressComponentTest : ComponentTestBase() {
       AddressSource.LOOKUP
     )
 
-    val lastKnownAddressId1 = authenticatedClient.lastKnownAddress(firstLastKnownAddressRequest, CREATED, LastKnownAddressId::class.java)
+    val lastKnownAddressId1 = authenticatedClient.addLastKnownAddress(firstLastKnownAddressRequest, CREATED, LastKnownAddressId::class.java)
     assertThat(lastKnownAddressId1, present())
 
     val secondLastKnownAddressRequest = firstLastKnownAddressRequest.copy(
+      recallId = null,
       line2 = null,
       town = "second town",
       postcode = null,
       source = AddressSource.MANUAL
     )
-    val lastKnownAddressId2 = authenticatedClient.lastKnownAddress(secondLastKnownAddressRequest, CREATED, LastKnownAddressId::class.java)
+    val lastKnownAddressId2 = authenticatedClient.addLastKnownAddress(originalRecall.recallId, secondLastKnownAddressRequest, CREATED, LastKnownAddressId::class.java)
     assertThat(lastKnownAddressId2, present())
     assertThat(lastKnownAddressId1, !equalTo(lastKnownAddressId2))
 
-    val updatedRecall = authenticatedClient.getRecall(originalRecall.recallId)
     assertThat(originalRecall.lastKnownAddresses, isEmpty)
 
+    val updatedRecall = authenticatedClient.getRecall(originalRecall.recallId)
     val lastKnownAddresses = updatedRecall.lastKnownAddresses
     assertThat(lastKnownAddresses.size, equalTo(2))
 
@@ -100,7 +101,7 @@ class LastKnownAddressComponentTest : ComponentTestBase() {
   fun `add a LastKnownAddress with an incorrect recallId returns NOT_FOUND with message`() {
     val notFoundRecallId = ::RecallId.random()
     val createLastKnownAddressRequest = CreateLastKnownAddressRequest(
-      notFoundRecallId,
+      null,
       "address line 1",
       "some line 2",
       "some town",
@@ -109,9 +110,32 @@ class LastKnownAddressComponentTest : ComponentTestBase() {
     )
 
     val expectedStatus = HttpStatus.NOT_FOUND
-    val response = authenticatedClient.lastKnownAddress(createLastKnownAddressRequest, expectedStatus, ErrorResponse::class.java)
+    val response = authenticatedClient.addLastKnownAddress(notFoundRecallId, createLastKnownAddressRequest, expectedStatus, ErrorResponse::class.java)
 
     assertThat(response, present())
     assertThat(response, equalTo(ErrorResponse(expectedStatus, "RecallNotFoundException(recallId=$notFoundRecallId)")))
+  }
+
+  @Test
+  fun `can delete a LastKnownAddress`() {
+    val originalRecall = authenticatedClient.bookRecall(bookRecallRequest)
+    val firstLastKnownAddressRequest = CreateLastKnownAddressRequest(
+      null,
+      "address line 1",
+      "some line 2",
+      "first town",
+      "the postcode",
+      AddressSource.LOOKUP
+    )
+
+    val lastKnownAddressId = authenticatedClient.addLastKnownAddress(originalRecall.recallId, firstLastKnownAddressRequest, CREATED, LastKnownAddressId::class.java)
+
+    authenticatedClient.deleteLastKnownAddress(originalRecall.recallId, lastKnownAddressId)
+  }
+
+  @Test
+  fun `error thrown trying to delete a LastKnownAddress that doesnt exist`() {
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    authenticatedClient.deleteLastKnownAddress(recall.recallId, ::LastKnownAddressId.random(), expectedStatus = HttpStatus.NOT_FOUND)
   }
 }

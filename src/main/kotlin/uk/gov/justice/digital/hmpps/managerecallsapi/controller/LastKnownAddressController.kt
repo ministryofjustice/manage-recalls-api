@@ -9,10 +9,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
@@ -23,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.LastKnownAddressNotFoundException
 import java.time.OffsetDateTime
 
 @RestController
@@ -37,21 +41,31 @@ class LastKnownAddressController(
   @ApiResponses(
     ApiResponse(
       code = 404, message = "RecallNotFoundException(recallId=...)", response = ErrorResponse::class,
-      examples = Example(ExampleProperty(mediaType = "application/json", value = "{\n\"status\": 404,\n\"message\":\"RecallNotFoundException(recallId=...)\"\n}"))
+      examples = Example(
+        ExampleProperty(
+          mediaType = "application/json",
+          value = "{\n\"status\": 404,\n\"message\":\"RecallNotFoundException(recallId=...)\"\n}"
+        )
+      )
     )
   )
-  @PostMapping("/last-known-addresses")
+  @PostMapping(
+    "/recalls/{recallId}/last-known-addresses",
+    "/last-known-addresses" // FIXME PUD-1364
+  )
   fun createLastKnownAddress(
+    @PathVariable("recallId") pathRecallId: RecallId?,
     @RequestBody request: CreateLastKnownAddressRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): ResponseEntity<LastKnownAddressId> =
-    recallRepository.getByRecallId(request.recallId).let { recall ->
+  ): ResponseEntity<LastKnownAddressId> {
+    val recallId = pathRecallId ?: request.recallId!!
+    return recallRepository.getByRecallId(recallId).let { recall ->
       val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       val previousIndex = recall.lastKnownAddresses.maxByOrNull { it.index }?.index ?: 0
       val saved = lastKnownAddressRepository.save(
         LastKnownAddress(
           ::LastKnownAddressId.random(),
-          request.recallId,
+          recallId,
           request.line1,
           request.line2,
           request.town,
@@ -64,10 +78,21 @@ class LastKnownAddressController(
       )
       ResponseEntity(saved.id(), HttpStatus.CREATED)
     }
+  }
+
+  @Throws(LastKnownAddressNotFoundException::class)
+  @DeleteMapping("recalls/{recallId}/last-known-addresses/{lastKnownAddressId}")
+  @ResponseStatus(value = HttpStatus.NO_CONTENT)
+  fun deleteAddress(
+    @PathVariable("recallId") recallId: RecallId,
+    @PathVariable("lastKnownAddressId") lastKnownAddressId: LastKnownAddressId
+  ) {
+    lastKnownAddressRepository.deleteByRecallIdAndLastKnownAddressId(recallId, lastKnownAddressId)
+  }
 }
 
 data class CreateLastKnownAddressRequest(
-  val recallId: RecallId,
+  val recallId: RecallId?,
   val line1: String,
   val line2: String?,
   val town: String,

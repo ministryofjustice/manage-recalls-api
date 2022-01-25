@@ -64,7 +64,7 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
 
     authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
     val detailsMostRecent = "Some details; some more detail"
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq.copy(details = detailsMostRecent), CREATED, MissingDocumentsRecordId::class.java)
+    val response = authenticatedClient.missingDocumentsRecord(recall.recallId, missingDocsRecordReq.copy(recallId = null, details = detailsMostRecent), CREATED, MissingDocumentsRecordId::class.java)
 
     assertThat(response, present())
 
@@ -83,9 +83,9 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     expectAVirusWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = MissingDocumentsRecordRequest(recall.recallId, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
+    val missingDocsRecordReq = MissingDocumentsRecordRequest(null, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
 
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, BAD_REQUEST, ErrorResponse::class.java)
+    val response = authenticatedClient.missingDocumentsRecord(recall.recallId, missingDocsRecordReq, BAD_REQUEST, ErrorResponse::class.java)
 
     assertThat(response, equalTo(ErrorResponse(BAD_REQUEST, "VirusFoundException")))
   }

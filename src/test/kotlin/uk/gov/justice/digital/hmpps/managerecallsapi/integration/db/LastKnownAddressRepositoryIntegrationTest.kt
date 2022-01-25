@@ -9,7 +9,9 @@ import org.springframework.dao.DataIntegrityViolationException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.LastKnownAddressNotFoundException
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
 
@@ -103,4 +105,37 @@ class LastKnownAddressRepositoryIntegrationTest : IntegrationTestBase() {
     createdByUserId,
     OffsetDateTime.now()
   )
+
+  @Test
+  @Transactional
+  fun `deleting a last known address that exists for recall`() {
+    val lastKnownAddressId = ::LastKnownAddressId.random()
+    recallRepository.save(recall, currentUserId)
+
+    lastKnownAddressRepository.saveAndFlush(lastKnownAddress(lastKnownAddressId, 1))
+
+    lastKnownAddressRepository.deleteByRecallIdAndLastKnownAddressId(recallId, lastKnownAddressId)
+  }
+
+  @Test
+  @Transactional
+  fun `deleting a last known address that doesnt exist throws exception`() {
+    val lastKnownAddressId = ::LastKnownAddressId.random()
+    recallRepository.save(recall, currentUserId)
+    assertThrows<LastKnownAddressNotFoundException> {
+      lastKnownAddressRepository.deleteByRecallIdAndLastKnownAddressId(recall.recallId(), lastKnownAddressId)
+    }
+  }
+
+  @Test
+  @Transactional
+  fun `deleting a last known address that exists for different recall throws exception`() {
+    val lastKnownAddressId = ::LastKnownAddressId.random()
+    recallRepository.save(recall, currentUserId)
+    lastKnownAddressRepository.saveAndFlush(lastKnownAddress(lastKnownAddressId, 1))
+
+    assertThrows<LastKnownAddressNotFoundException> {
+      lastKnownAddressRepository.deleteByRecallIdAndLastKnownAddressId(::RecallId.random(), lastKnownAddressId)
+    }
+  }
 }
