@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.FOUR_PLUS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.THREE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -28,6 +30,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
@@ -141,6 +144,7 @@ class RecallController(
     status = this.status(),
     documents = latestDocuments(documents),
     missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse() },
+    lastKnownAddresses = lastKnownAddresses.map { address -> address.toResponse() },
     recallLength = this.recallLength,
     lastReleasePrison = this.lastReleasePrison,
     lastReleaseDate = this.lastReleaseDate,
@@ -228,6 +232,18 @@ class RecallController(
     userDetailsService.get(this.createdByUserId()).fullName(),
     this.createdDateTime
   )
+
+  fun LastKnownAddress.toResponse() = Api.LastKnownAddress(
+    this.id(),
+    this.line1,
+    this.line2,
+    this.town,
+    this.postcode,
+    this.source,
+    this.index,
+    userDetailsService.get(this.createdByUserId()).fullName(),
+    this.createdDateTime
+  )
 }
 
 fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
@@ -263,6 +279,7 @@ data class RecallResponse(
   val status: Status,
   val documents: List<Api.RecallDocument> = emptyList(),
   val missingDocumentsRecords: List<Api.MissingDocumentsRecord> = emptyList(),
+  val lastKnownAddresses: List<Api.LastKnownAddress> = emptyList(),
   val recallLength: RecallLength? = null,
   val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
@@ -339,6 +356,18 @@ class Api {
     val emailFileName: String,
     val details: String,
     val version: Int,
+    val createdByUserName: FullName,
+    val createdDateTime: OffsetDateTime
+  )
+
+  data class LastKnownAddress(
+    val lastKnownAddressId: LastKnownAddressId,
+    val line1: String,
+    val line2: String?,
+    val town: String,
+    val postcode: String?,
+    val source: AddressSource,
+    val index: Int,
     val createdByUserName: FullName,
     val createdDateTime: OffsetDateTime
   )

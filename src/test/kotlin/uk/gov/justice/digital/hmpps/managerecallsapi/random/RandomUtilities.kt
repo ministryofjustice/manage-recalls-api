@@ -24,9 +24,9 @@ import kotlin.reflect.full.isSubclassOf
 
 internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), knownUserId: UserId? = null): Recall =
   fullyPopulatedInstance<Recall>().let { recall ->
-    // ensure recall length is valid for the random sentencing info as it is calculated on the fly
     recall.copy(
       id = recallId.value,
+      // ensure recall length is valid for the random sentencing info as it is calculated on the fly
       recallLength = recall.sentencingInfo?.calculateRecallLength(),
       assignee = (knownUserId ?: ::UserId.random()).value,
       assessedByUserId = (knownUserId ?: ::UserId.random()).value,
@@ -34,12 +34,11 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
       createdByUserId = (knownUserId ?: ::UserId.random()).value,
       lastUpdatedByUserId = (knownUserId ?: ::UserId.random()).value,
       dossierCreatedByUserId = (knownUserId ?: ::UserId.random()).value,
-      documents = recall.documents.map {
-        document ->
+      documents = recall.documents.map { document ->
         document.copy(
           recallId = recallId.value,
           // ensure document version is valid versus category
-          version = if (document.category.versioned) Random.nextInt(1, Int.MAX_VALUE) else null,
+          version = if (document.category.versioned) randomVersion() else null,
           createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
       }.toSet(),
@@ -47,7 +46,14 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
         mdr.copy(
           recallId = recallId.value,
           emailId = recall.documents.random().id,
-          version = Random.nextInt(1, Int.MAX_VALUE),
+          version = randomVersion(),
+          createdByUserId = (knownUserId ?: ::UserId.random()).value
+        )
+      }.toSet(),
+      lastKnownAddresses = recall.lastKnownAddresses.map { lka ->
+        lka.copy(
+          recallId = recallId.value,
+          index = randomIndex(),
           createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
       }.toSet()
@@ -105,6 +111,8 @@ private fun makeRandomSet(kclass: KClass<*>, type: KType): Set<Any> {
 
 fun <T : Validated<UUID>> ((UUID) -> T).zeroes() = this(UUID(0, 0))
 fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
+fun randomVersion(): Int = Random.nextInt(1, Int.MAX_VALUE)
+fun randomIndex(): Int = randomVersion()
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
 fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))

@@ -72,6 +72,8 @@ class GetRecallComponentTest : ComponentTestBase() {
     recallRepository.save(fullyPopulatedRecall, createdByUserId)
 
     val missingDocumentsRecord = fullyPopulatedRecall.missingDocumentsRecords.first()
+    val lastKnownAddress = fullyPopulatedRecall.lastKnownAddresses.first()
+
     // TODO:  MD Fix assertions, or move somewhere more sensible.
     authenticatedClient.get("/recalls/$recallId")
       .expectBody()
@@ -93,6 +95,16 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.missingDocumentsRecords[0].emailId").isEqualTo(missingDocumentsRecord.emailId.toString())
       .jsonPath("$.missingDocumentsRecords[0].createdByUserName").isEqualTo("Bertie Badger")
       .jsonPath("$.missingDocumentsRecords[0].createdDateTime").value(endsWith("Z"))
+      .jsonPath("$.lastKnownAddresses.length()").isEqualTo(1)
+      .jsonPath("$.lastKnownAddresses[0].lastKnownAddressId").isEqualTo(lastKnownAddress.id.toString())
+      .jsonPath("$.lastKnownAddresses[0].line1").isEqualTo(lastKnownAddress.line1)
+      .jsonPath("$.lastKnownAddresses[0].line2").isEqualTo(lastKnownAddress.line2!!)
+      .jsonPath("$.lastKnownAddresses[0].town").isEqualTo(lastKnownAddress.town)
+      .jsonPath("$.lastKnownAddresses[0].postcode").isEqualTo(lastKnownAddress.postcode!!)
+      .jsonPath("$.lastKnownAddresses[0].index").isEqualTo(lastKnownAddress.index)
+      .jsonPath("$.lastKnownAddresses[0].source").isEqualTo(lastKnownAddress.source.name)
+      .jsonPath("$.lastKnownAddresses[0].createdByUserName").isEqualTo("Bertie Badger")
+      .jsonPath("$.lastKnownAddresses[0].createdDateTime").value(endsWith("Z"))
       .jsonPath("$.recallLength").isEqualTo(fullyPopulatedRecall.recallLength!!.name)
       .jsonPath("$.lastReleasePrison").isEqualTo(fullyPopulatedRecall.lastReleasePrison!!.value)
       .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))

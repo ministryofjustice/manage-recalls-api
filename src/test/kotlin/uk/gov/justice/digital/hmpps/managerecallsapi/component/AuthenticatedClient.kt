@@ -13,6 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditEntry
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditSummary
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
@@ -137,6 +138,13 @@ class AuthenticatedClient(
     responseClass: Class<T>
   ) =
     postRequest("/missing-documents-records", request, responseClass, expectedStatus)
+
+  fun <T> lastKnownAddress(
+    request: CreateLastKnownAddressRequest,
+    expectedStatus: HttpStatus = CREATED,
+    responseClass: Class<T>
+  ) =
+    postRequest("/last-known-addresses", request, responseClass, expectedStatus)
 
   fun search(searchRequest: SearchRequest, expectedStatus: HttpStatus) =
     sendPostRequest("/search", searchRequest, expectedStatus)

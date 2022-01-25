@@ -6,6 +6,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.RequestBodySpec
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -13,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
@@ -50,6 +52,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.values().random())
   private val generateDocumentRequest = GenerateDocumentRequest(DocumentCategory.RECALL_NOTIFICATION, "some more detail")
   private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", "email.msg")
+  private val createLastKnownAddressRequest = CreateLastKnownAddressRequest(::RecallId.random(), "address line 1", "address line 2", "some town", "some postcode", AddressSource.LOOKUP)
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
@@ -75,6 +78,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
       webTestClient.post().uri("/users/").bodyValue(userDetailsRequest),
       webTestClient.post().uri("/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
+      webTestClient.post().uri("/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}")
     )
