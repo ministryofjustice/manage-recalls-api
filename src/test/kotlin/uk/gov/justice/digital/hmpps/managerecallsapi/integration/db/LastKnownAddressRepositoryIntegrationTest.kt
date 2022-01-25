@@ -132,7 +132,7 @@ class LastKnownAddressRepositoryIntegrationTest : IntegrationTestBase() {
   fun `deleting a last known address that exists for different recall throws exception`() {
     val lastKnownAddressId = ::LastKnownAddressId.random()
     recallRepository.save(recall, currentUserId)
-    lastKnownAddressRepository.save(lastKnownAddress(lastKnownAddressId, 1))
+    lastKnownAddressRepository.saveAndFlush(lastKnownAddress(lastKnownAddressId, 1))
 
     assertThrows<LastKnownAddressNotFoundException> {
       lastKnownAddressRepository.deleteByRecallIdAndLastKnownAddressId(::RecallId.random(), lastKnownAddressId)

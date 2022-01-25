@@ -17,7 +17,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import javax.transaction.Transactional
 
 class LastKnownAddressComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
@@ -118,7 +117,6 @@ class LastKnownAddressComponentTest : ComponentTestBase() {
   }
 
   @Test
-  @Transactional
   fun `can delete a LastKnownAddress`() {
     val originalRecall = authenticatedClient.bookRecall(bookRecallRequest)
     val firstLastKnownAddressRequest = CreateLastKnownAddressRequest(
