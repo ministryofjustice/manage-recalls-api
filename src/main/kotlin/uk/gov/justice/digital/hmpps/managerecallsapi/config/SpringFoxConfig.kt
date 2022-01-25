@@ -103,7 +103,7 @@ class SpringFoxConfig {
     }
   }
 
-  // Fixes incompatibility with latest spring-boot: https://github.com/springfox/springfox/issues/3462
+  // Until PUD-1231 - Fixes incompatibility with latest spring-boot: https://github.com/springfox/springfox/issues/3462
   @Bean
   fun webEndpointServletHandlerMapping(
     webEndpointsSupplier: WebEndpointsSupplier,
