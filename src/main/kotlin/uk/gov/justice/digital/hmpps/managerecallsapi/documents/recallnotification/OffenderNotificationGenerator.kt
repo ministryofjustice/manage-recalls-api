@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.asStandardDateFormat
 
 @Component
@@ -13,6 +14,7 @@ class OffenderNotificationGenerator(
 
   fun generateHtml(context: OffenderNotificationContext): String =
     Context().apply {
+      setVariable("logoFileName", RecallImage.HmppsLogo.fileName)
       setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
       setVariable("prisonerNameOnLicense", context.prisonerNameOnLicense)
       setVariable("bookingNumber", context.bookingNumber)

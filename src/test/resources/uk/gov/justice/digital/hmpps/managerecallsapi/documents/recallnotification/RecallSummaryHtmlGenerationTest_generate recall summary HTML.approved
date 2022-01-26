@@ -53,42 +53,6 @@
     border-bottom-style: solid
   }
 
-  .c26 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 291.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c65 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 241.2pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
   .c39 {
     border-right-style: solid;
     padding: 0pt 5.4pt 0pt 5.4pt;
@@ -103,60 +67,6 @@
     border-left-style: solid;
     border-bottom-width: 1pt;
     width: 506.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c56 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 75.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c73 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 82.3pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c51 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 170.7pt;
     border-top-color: #000000;
     border-bottom-style: solid
   }
@@ -179,24 +89,6 @@
     border-bottom-style: solid
   }
 
-  .c16 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 70.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
   .c42 {
     border-right-style: solid;
     padding: 0pt 5.4pt 0pt 5.4pt;
@@ -211,24 +103,6 @@
     border-left-style: solid;
     border-bottom-width: 0pt;
     width: 75.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c41 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 11.8pt;
     border-top-color: #000000;
     border-bottom-style: solid
   }
@@ -269,42 +143,6 @@
     border-bottom-style: solid
   }
 
-  .c64 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 172.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c38 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 61pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
   .c12 {
     border-right-style: solid;
     padding: 0pt 5.4pt 0pt 5.4pt;
@@ -337,24 +175,6 @@
     border-left-style: solid;
     border-bottom-width: 0pt;
     width: 158.4pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c71 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 202.7pt;
     border-top-color: #000000;
     border-bottom-style: solid
   }
@@ -413,24 +233,6 @@
     border-bottom-style: solid
   }
 
-  .c32 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 230.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
   .c9 {
     border-right-style: solid;
     padding: 0pt 5.4pt 0pt 5.4pt;
@@ -483,27 +285,6 @@
     width: 158.4pt;
     border-top-color: #000000;
     border-bottom-style: solid
-  }
-
-  .c8 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.0;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: center;
-    height: 10pt
-  }
-
-  .c15 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.0;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: center
   }
 
   .c6 {
@@ -560,37 +341,12 @@
     text-align: justify
   }
 
-  .c5 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.0;
-    orphans: 2;
-    widows: 2;
-    text-align: right
-  }
-
   .c17 {
     color: #000000;
     text-decoration: none;
     font-size: 18pt;
     font-family: "Arial";
     font-style: normal
-  }
-
-  .c10 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.15;
-    text-align: left;
-    height: 10pt
-  }
-
-  .c23 {
-    -webkit-text-decoration-skip: none;
-    color: #ff0000;
-    text-decoration: underline;
-    text-decoration-skip-ink: none;
-    font-size: 14pt
   }
 
   .c57 {
@@ -608,13 +364,6 @@
     font-style: normal
   }
 
-  .c74 {
-    margin-left: -36.8pt;
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin-right: auto
-  }
-
   .c50 {
     margin-left: -5pt;
     border-spacing: 0;
@@ -622,33 +371,10 @@
     margin-right: auto
   }
 
-  .c60 {
-    font-weight: 400;
-    text-decoration: none;
-    font-family: "Open Sans";
-    font-style: normal
-  }
-
   .c34 {
     background-color: #ffffff;
     max-width: 496pt;
     padding: 0pt 42.5pt 0pt 56.7pt
-  }
-
-  .c43 {
-    font-weight: 400;
-    font-family: "Arial";
-    font-style: normal
-  }
-
-  .c53 {
-    color: #ff0000;
-    text-decoration: none
-  }
-
-  .c4 {
-    vertical-align: baseline;
-    font-style: italic
   }
 
   .c59 {
@@ -659,20 +385,6 @@
   .c1 {
     vertical-align: baseline;
     font-weight: 700
-  }
-
-  .c48 {
-    margin-left: 252pt;
-    text-indent: 36pt
-  }
-
-  .c70 {
-    margin-left: 0.1pt;
-    text-indent: -0.1pt
-  }
-
-  .c44 {
-    vertical-align: super
   }
 
   .c72 {
@@ -706,14 +418,6 @@
     height: 10pt
   }
 
-  .c22 {
-    height: 8.5pt
-  }
-
-  .c55 {
-    margin-left: 252pt
-  }
-
   .c49 {
     height: 0pt
   }
@@ -735,14 +439,6 @@
     vertical-align: baseline
   }
 
-  .c62 {
-    font-size: 11.5pt
-  }
-
-  .c18 {
-    height: 28.4pt
-  }
-
   .c68 {
     height: 34.9pt
   }
@@ -751,54 +447,8 @@
     height: 18pt
   }
 
-  .c66 {
-    font-style: normal
-  }
-
   .c33 {
     height: 21pt
-  }
-
-  .c2 {
-    font-size: 11pt
-  }
-
-  .c14 {
-    font-size: 8.5pt
-  }
-
-  .c19 {
-    height: 68pt
-  }
-
-  .c36 {
-    color: #000000
-  }
-
-  .title {
-    padding-top: 24pt;
-    color: #000000;
-    font-weight: 700;
-    font-size: 36pt;
-    padding-bottom: 6pt;
-    font-family: "Arial";
-    line-height: 1.0;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: left
-  }
-
-  .subtitle {
-    padding-top: 0pt;
-    color: #000000;
-    font-size: 12pt;
-    padding-bottom: 3pt;
-    font-family: "Calibri";
-    line-height: 1.0;
-    orphans: 2;
-    widows: 2;
-    text-align: center
   }
 
   li {

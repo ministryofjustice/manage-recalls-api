@@ -120,32 +120,6 @@
     font-size: 11pt
   }
 
-  .title {
-    padding-top: 0pt;
-    color: #000000;
-    font-size: 26pt;
-    padding-bottom: 3pt;
-    font-family: "Arial";
-    line-height: 1.15;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: left
-  }
-
-  .subtitle {
-    padding-top: 0pt;
-    color: #666666;
-    font-size: 15pt;
-    padding-bottom: 16pt;
-    font-family: "Arial";
-    line-height: 1.15;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: left
-  }
-
   li {
     color: #000000;
     font-size: 11pt;
