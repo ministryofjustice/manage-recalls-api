@@ -13,137 +13,6 @@
     padding: 0
   }
 
-  .c42 {
-    border-right-style: solid;
-    padding-top: 1pt;
-    border-top-width: 0.5pt;
-    border-bottom-color: #000000;
-    border-right-width: 0.5pt;
-    padding-left: 4pt;
-    border-left-color: #000000;
-    padding-bottom: 31pt;
-    line-height: 1.0;
-    border-right-color: #000000;
-    border-left-width: 0.5pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid;
-    orphans: 2;
-    widows: 2;
-    text-align: left;
-    padding-right: 4pt
-  }
-
-  .c11 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 172.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c31 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 75.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c32 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 202.7pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c57 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 75.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c77 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 158.4pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c63 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 202.7pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
   .c41 {
     border-right-style: solid;
     padding: 0pt 5.4pt 0pt 5.4pt;
@@ -158,24 +27,6 @@
     border-left-style: solid;
     border-bottom-width: 0pt;
     width: 230.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c13 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 253.4pt;
     border-top-color: #000000;
     border-bottom-style: solid
   }
@@ -198,60 +49,6 @@
     border-bottom-style: solid
   }
 
-  .c26 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 450.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c50 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 180pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c70 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 496.4pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
   .c55 {
     border-right-style: solid;
     padding: 0pt 5.4pt 0pt 5.4pt;
@@ -266,78 +63,6 @@
     border-left-style: solid;
     border-bottom-width: 0pt;
     width: 61pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c74 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 248.2pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c71 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 158.4pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c29 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 45.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c58 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 506.9pt;
     border-top-color: #000000;
     border-bottom-style: solid
   }
@@ -378,42 +103,6 @@
     border-bottom-style: solid
   }
 
-  .c69 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 172.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c39 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 70.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
   .c40 {
     border-right-style: solid;
     padding: 0pt 5.4pt 0pt 5.4pt;
@@ -428,42 +117,6 @@
     border-left-style: solid;
     border-bottom-width: 0pt;
     width: 291.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c75 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 171pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c60 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 180pt;
     border-top-color: #000000;
     border-bottom-style: solid
   }
@@ -484,46 +137,6 @@
     width: 241.2pt;
     border-top-color: #000000;
     border-bottom-style: solid
-  }
-
-  .c67 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 171pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c34 {
-    -webkit-text-decoration-skip: none;
-    color: #ff0000;
-    font-weight: 400;
-    text-decoration: underline;
-    text-decoration-skip-ink: none;
-    font-size: 14pt;
-    font-family: "Arial";
-    font-style: normal
-  }
-
-  .c8 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.0;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: justify;
-    height: 10pt
   }
 
   .c3 {
@@ -574,15 +187,6 @@
     text-align: left
   }
 
-  .c56 {
-    padding-top: 9pt;
-    padding-bottom: 0pt;
-    line-height: 1.0;
-    orphans: 2;
-    widows: 2;
-    text-align: left
-  }
-
   .c19 {
     padding-top: 0pt;
     padding-bottom: 0pt;
@@ -601,49 +205,11 @@
     text-align: center
   }
 
-  .c12 {
-    color: #000000;
-    text-decoration: none;
-    font-size: 18pt;
-    font-family: "Arial";
-    font-style: normal
-  }
-
-  .c25 {
-    font-weight: 400;
-    text-decoration: none;
-    vertical-align: baseline;
-    font-size: 11.5pt;
-    font-family: "Open Sans"
-  }
-
-  .c6 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.15;
-    text-align: left;
-    height: 10pt
-  }
-
   .c66 {
     -webkit-text-decoration-skip: none;
     color: #ff0000;
     text-decoration: underline;
     text-decoration-skip-ink: none
-  }
-
-  .c47 {
-    margin-left: -5.4pt;
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin-right: auto
-  }
-
-  .c64 {
-    margin-left: -5pt;
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin-right: auto
   }
 
   .c2 {
@@ -672,30 +238,6 @@
     padding: 35.5pt 42.5pt 42.5pt 56.7pt
   }
 
-  .c59 {
-    color: #ff0000;
-    font-weight: 400;
-    font-style: normal
-  }
-
-  .c35 {
-    font-weight: 400;
-    text-decoration: none;
-    font-family: "Open Sans"
-  }
-
-  .c21 {
-    text-decoration: none;
-    font-size: 10pt;
-    font-family: "Arial"
-  }
-
-  .c54 {
-    font-weight: 400;
-    text-decoration: none;
-    font-family: "Arial"
-  }
-
   .c53 {
     text-decoration: none;
     font-size: 8.5pt;
@@ -712,11 +254,6 @@
     text-indent: -0.1pt
   }
 
-  .c43 {
-    margin-left: 252pt;
-    text-indent: 36pt
-  }
-
   .c4 {
     vertical-align: baseline;
     font-style: italic
@@ -725,11 +262,6 @@
   .c14 {
     font-style: normal;
     color: #000000
-  }
-
-  .c48 {
-    font-size: 11.5pt;
-    font-family: "Open Sans"
   }
 
   .c17 {
@@ -741,110 +273,28 @@
     height: 8.5pt
   }
 
-  .c45 {
-    color: #000000
-  }
-
   .c73 {
     vertical-align: super
-  }
-
-  .c51 {
-    font-style: italic
   }
 
   .c27 {
     vertical-align: baseline
   }
 
-  .c37 {
-    height: 34.9pt
-  }
-
   .c46 {
     height: 68pt
-  }
-
-  .c79 {
-    height: 18.4pt
   }
 
   .c23 {
     height: 10pt
   }
 
-  .c28 {
-    height: 0pt
-  }
-
-  .c16 {
-    page-break-after: avoid
-  }
-
-  .c33 {
-    height: 31.1pt
-  }
-
-  .c49 {
-    height: 18pt
-  }
-
-  .c52 {
-    height: 21pt
-  }
-
-  .c36 {
-    height: 29pt
-  }
-
-  .c44 {
-    font-size: 11pt
-  }
-
   .c38 {
     font-size: 14pt
   }
 
-  .c61 {
-    font-size: 11.5pt
-  }
-
-  .c62 {
-    margin-left: 252pt
-  }
-
-  .c22 {
-    font-weight: 700
-  }
-
   .c5 {
     height: 28.4pt
-  }
-
-  .title {
-    padding-top: 24pt;
-    color: #000000;
-    font-weight: 700;
-    font-size: 36pt;
-    padding-bottom: 6pt;
-    font-family: "Arial";
-    line-height: 1.0;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: left
-  }
-
-  .subtitle {
-    padding-top: 0pt;
-    color: #000000;
-    font-size: 12pt;
-    padding-bottom: 3pt;
-    font-family: "Calibri";
-    line-height: 1.0;
-    orphans: 2;
-    widows: 2;
-    text-align: center
   }
 
   li {

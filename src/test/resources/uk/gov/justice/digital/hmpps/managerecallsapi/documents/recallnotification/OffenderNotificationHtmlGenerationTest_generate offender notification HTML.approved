@@ -34,32 +34,12 @@
     min-width: 18pt
   }
 
-  ul.lst-kix_list_1-3 {
-    list-style-type: none
-  }
-
   .lst-kix_list_1-0 > li:before {
     content: "\0025cf  "
   }
 
-  ul.lst-kix_list_1-4 {
-    list-style-type: none
-  }
-
   .lst-kix_list_1-8 > li:before {
     content: "\0025aa  "
-  }
-
-  ul.lst-kix_list_1-1 {
-    list-style-type: none
-  }
-
-  ul.lst-kix_list_1-2 {
-    list-style-type: none
-  }
-
-  ul.lst-kix_list_1-7 {
-    list-style-type: none
   }
 
   .lst-kix_list_1-1 > li:before {
@@ -70,18 +50,6 @@
     content: "\0025aa  "
   }
 
-  ul.lst-kix_list_1-8 {
-    list-style-type: none
-  }
-
-  ul.lst-kix_list_1-5 {
-    list-style-type: none
-  }
-
-  ul.lst-kix_list_1-6 {
-    list-style-type: none
-  }
-
   ol {
     margin: 0;
     padding: 0
@@ -89,428 +57,6 @@
 
   table td, table th {
     padding: 0
-  }
-
-  .c64 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 245.6pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c22 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 117pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c63 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 140.1pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c40 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 58.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c36 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 281.9pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c12 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 140.1pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c33 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 256pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c46 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 501.6pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c27 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 117pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c68 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 126.3pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c67 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 1pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 1pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 1pt;
-    width: 126.3pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c53 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 11.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c30 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 224.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c35 {
-    border-right-style: solid;
-    padding: 0pt 5.4pt 0pt 5.4pt;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 223pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c61 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 248.1pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c43 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 450.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c48 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 496.2pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c31 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 45.5pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c44 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 173.3pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c32 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 74.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c28 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 202.7pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c37 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 74.8pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c56 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 1pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 202.7pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
-  }
-
-  .c38 {
-    border-right-style: solid;
-    border-bottom-color: #000000;
-    border-top-width: 0pt;
-    border-right-width: 0pt;
-    border-left-color: #000000;
-    vertical-align: top;
-    border-right-color: #000000;
-    border-left-width: 0pt;
-    border-top-style: solid;
-    border-left-style: solid;
-    border-bottom-width: 0pt;
-    width: 173.3pt;
-    border-top-color: #000000;
-    border-bottom-style: solid
   }
 
   .c3 {
@@ -533,55 +79,6 @@
     font-style: normal
   }
 
-  .c6 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.0;
-    orphans: 2;
-    widows: 2;
-    text-align: center;
-    height: 10pt
-  }
-
-  .c11 {
-    color: #000000;
-    font-weight: 400;
-    text-decoration: none;
-    vertical-align: baseline;
-    font-size: 18pt;
-    font-family: "Arial";
-    font-style: normal
-  }
-
-  .c20 {
-    color: #000000;
-    font-weight: 400;
-    text-decoration: none;
-    vertical-align: baseline;
-    font-size: 11.5pt;
-    font-family: "Arial";
-    font-style: normal
-  }
-
-  .c29 {
-    color: #000000;
-    font-weight: 400;
-    text-decoration: none;
-    vertical-align: baseline;
-    font-size: 14pt;
-    font-family: "Arial";
-    font-style: normal
-  }
-
-  .c60 {
-    color: #000000;
-    font-weight: 400;
-    text-decoration: none;
-    font-size: 11.5pt;
-    font-family: "Open Sans";
-    font-style: normal
-  }
-
   .c4 {
     padding-top: 0pt;
     padding-bottom: 0pt;
@@ -596,48 +93,6 @@
     padding-bottom: 0pt;
     line-height: 1.0;
     text-align: center
-  }
-
-  .c52 {
-    margin-left: 0.4pt;
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin-right: auto
-  }
-
-  .c17 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.0;
-    text-align: right
-  }
-
-  .c15 {
-    margin-left: -36.5pt;
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin-right: auto
-  }
-
-  .c50 {
-    margin-left: -5.4pt;
-    border-spacing: 0;
-    border-collapse: collapse;
-    margin-right: auto
-  }
-
-  .c16 {
-    padding-top: 0pt;
-    padding-bottom: 0pt;
-    line-height: 1.15;
-    text-align: left
-  }
-
-  .c51 {
-    font-weight: 400;
-    text-decoration: none;
-    font-family: "Arial";
-    font-style: normal
   }
 
   .c7 {
@@ -659,17 +114,6 @@
     font-weight: 700
   }
 
-  .c41 {
-    -webkit-text-decoration-skip: none;
-    text-decoration: underline;
-    text-decoration-skip-ink: none
-  }
-
-  .c2 {
-    vertical-align: baseline;
-    font-weight: 700
-  }
-
   .c5 {
     vertical-align: baseline;
     font-size: 11pt
@@ -678,11 +122,6 @@
   .c8 {
     orphans: 2;
     widows: 2
-  }
-
-  .c9 {
-    border: 1px solid black;
-    margin: 5px
   }
 
   .c21 {
@@ -695,112 +134,8 @@
     margin: 0
   }
 
-  .c49 {
-    height: 34.9pt
-  }
-
-  .c25 {
-    page-break-after: avoid
-  }
-
   .c14 {
     height: 10pt
-  }
-
-  .c62 {
-    height: 8.9pt
-  }
-
-  .c65 {
-    font-size: 16pt
-  }
-
-  .c54 {
-    height: 29pt
-  }
-
-  .c39 {
-    color: #ff0000
-  }
-
-  .c45 {
-    height: 171.7pt
-  }
-
-  .c23 {
-    height: 18.4pt
-  }
-
-  .c13 {
-    font-style: italic
-  }
-
-  .c34 {
-    vertical-align: baseline
-  }
-
-  .c58 {
-    font-size: 14pt
-  }
-
-  .c18 {
-    font-weight: 700
-  }
-
-  .c0 {
-    height: 30.1pt
-  }
-
-  .c66 {
-    font-size: 9pt
-  }
-
-  .c42 {
-    height: 31.1pt
-  }
-
-  .c26 {
-    height: 72.3pt
-  }
-
-  .c59 {
-    height: 18pt
-  }
-
-  .c57 {
-    font-size: 18pt
-  }
-
-  .c24 {
-    height: 0pt
-  }
-
-  .title {
-    padding-top: 24pt;
-    color: #000000;
-    font-weight: 700;
-    font-size: 36pt;
-    padding-bottom: 6pt;
-    font-family: "Arial";
-    line-height: 1.0;
-    page-break-after: avoid;
-    orphans: 2;
-    widows: 2;
-    text-align: left
-  }
-
-  .subtitle {
-    padding-top: 18pt;
-    color: #666666;
-    font-size: 24pt;
-    padding-bottom: 4pt;
-    font-family: "Georgia";
-    line-height: 1.0;
-    page-break-after: avoid;
-    font-style: italic;
-    orphans: 2;
-    widows: 2;
-    text-align: left
   }
 
   li {
@@ -901,6 +236,9 @@
   }</style>
 </head>
 <body class="c47">
+<p class="c1"><span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 174.00px; height: 78.00px;"><img
+  src="hmpps-logo.png"
+  style="width: 174.00px; height: 78.00px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span></p>
 <p class="c7 c8 c14"><span class="c10"></span></p>
 <p class="c7 c8 c14"><span class="c10"></span></p>
 <p class="c7 c8"><span class="c1">To&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c1">Byron Badger</span></p>
