@@ -21,17 +21,20 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -242,6 +245,15 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
+    "a recall with last known addresses exists",
+  )
+  fun `a recall with last known addresses exists`() {
+    `a user and a fully populated recall without documents exists`()
+    `a last known address exists`(1, AddressSource.LOOKUP)
+    `a last known address exists`(2, AddressSource.MANUAL)
+  }
+
+  @State(
     "a recall in being booked on state with a document exists"
   )
   fun `a recall in being booked on state with a document exists`() {
@@ -308,6 +320,27 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         emailId,
         details,
         version,
+        userIdOnes,
+        OffsetDateTime.now()
+      )
+    )
+  }
+
+  fun `a last known address exists`(
+    index: Int,
+    source: AddressSource
+  ) {
+
+    lastKnownAddressRepository.save(
+      LastKnownAddress(
+        LastKnownAddressId(UUID.randomUUID()),
+        matchedRecallId,
+        "Highwood Cottage",
+        "43 Blandford Road",
+        "Wareham",
+        "DT3 7HU",
+        source,
+        index,
         userIdOnes,
         OffsetDateTime.now()
       )
