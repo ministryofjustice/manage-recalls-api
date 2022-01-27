@@ -14,7 +14,7 @@ slack-fail-post-step: &slack-fail-post-step
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": "❌ *Failure* `${CIRCLE_PROJECT_REPONAME}` (Build: #${CIRCLE_BUILD_NUM}) on `${CIRCLE_BRANCH}`"
+                  "text": "❌ *Failure* `${CIRCLE_PROJECT_REPONAME}` - `${CIRCLE_JOB}` (Build: #${CIRCLE_BUILD_NUM}) on `${CIRCLE_BRANCH}`"
                 }
               },
               {
