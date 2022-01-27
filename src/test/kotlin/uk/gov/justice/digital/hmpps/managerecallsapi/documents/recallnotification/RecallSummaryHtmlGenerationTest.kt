@@ -28,42 +28,56 @@ class RecallSummaryHtmlGenerationTest(
   private val underTest = RecallSummaryGenerator(templateEngine)
 
   @Test
-  fun `generate recall summary HTML`(approver: ContentApprover) {
+  fun `generate in custody recall summary HTML`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
-        RecallSummaryContext(
-          ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(17, 48), ZoneId.of("Europe/London")),
-          FullName("Bertie Badger"),
-          LocalDate.of(1995, 10, 3),
-          "croNumber",
-          PersonName("Maria", lastName = "Badger"),
-          Email("maria@thebadgers.set"),
-          PhoneNumber("09876543210"),
-          MappaLevel.LEVEL_3,
-          SentenceLength(2, 3, 10),
-          "Some offence",
-          CourtName("High Court"),
-          LocalDate.of(2020, 10, 1),
-          LocalDate.of(2020, 10, 29),
-          "Mr Probation Officer",
-          "01234567890",
-          PS_TOWER_HAMLETS,
-          "Bryan Badger",
-          "B1234",
-          NomsNumber("AA1234A"),
-          LocalDate.of(2020, 10, 1),
-          setOf(ELM_FURTHER_OFFENCE),
-          PoliceForceName("Devon & Cornwall Police"),
-          true,
-          "I believe that they will bring contraband to prison",
-          true,
-          "Some stuff",
-          PrisonName("Current Prison"),
-          PrisonName("Last Release Prison"),
-          true
-        ),
+        recallSummaryContext(true),
         3
       )
     )
   }
+
+  @Test
+  fun `generate not in custody recall summary HTML`(approver: ContentApprover) {
+    approver.assertApproved(
+      underTest.generateHtml(
+        recallSummaryContext(false),
+        3
+      )
+    )
+  }
+
+  private fun recallSummaryContext(inCustody: Boolean) = RecallSummaryContext(
+    ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(17, 48), ZoneId.of("Europe/London")),
+    FullName("Bertie Badger"),
+    LocalDate.of(1995, 10, 3),
+    "croNumber",
+    PersonName("Maria", lastName = "Badger"),
+    Email("maria@thebadgers.set"),
+    PhoneNumber("09876543210"),
+    MappaLevel.LEVEL_3,
+    SentenceLength(2, 3, 10),
+    "Some offence",
+    CourtName("High Court"),
+    LocalDate.of(2020, 10, 1),
+    LocalDate.of(2020, 10, 29),
+    "Mr Probation Officer",
+    "01234567890",
+    PS_TOWER_HAMLETS,
+    "Bryan Badger",
+    "B1234",
+    NomsNumber("AA1234A"),
+    LocalDate.of(2020, 10, 1),
+    setOf(ELM_FURTHER_OFFENCE),
+    PoliceForceName("Devon & Cornwall Police"),
+    inCustody,
+    "I believe that they will bring contraband to prison",
+    inCustody,
+    "Some stuff",
+    PrisonName("Current Prison"),
+    PrisonName("Last Release Prison"),
+    inCustody,
+    !inCustody,
+    if (!inCustody) "Some arrest issues" else null
+  )
 }

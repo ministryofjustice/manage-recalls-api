@@ -126,7 +126,9 @@ data class RecallNotificationContext(
       recall.vulnerabilityDiversityDetail,
       currentPrisonName,
       lastReleasePrisonName,
-      recall.inCustody!!
+      recall.inCustody!!,
+      recall.arrestIssues,
+      recall.arrestIssuesDetail
     )
   }
 
@@ -194,7 +196,9 @@ data class RecallSummaryContext(
   val vulnerabilityDiversityDetail: String?,
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
-  val inCustody: Boolean
+  val inCustody: Boolean,
+  val arrestIssues: Boolean?,
+  val arrestIssuesDetail: String?
 )
 
 data class RevocationOrderContext(
