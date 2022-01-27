@@ -65,13 +65,19 @@ server:
     include-message: always
 
 management:
+#  TODO: PUD-1377 - do not expose the metrics and health endpoints publicly.
+#        This work is blocked by PUD-1231 (the replacement of SpringFox).
+#  server:
+#    port: 8081
   endpoints:
+    enabled-by-default: false
     web:
       base-path: /
       exposure:
-        include: 'info, health, metrics, prometheus'
+        include: 'info, health, prometheus'
   endpoint:
     health:
+      enabled: true
       cache:
         time-to-live: 2000ms
       show-components: always
@@ -79,10 +85,9 @@ management:
       probes:
         enabled: true
     info:
+      enabled: true
       cache:
         time-to-live: 2000ms
-    metrics:
-      enabled: true
     prometheus:
       enabled: true
   info:
