@@ -60,6 +60,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val nomsNumber = NomsNumber("A1234AA")
   private val matchedRecallId = ::RecallId.zeroes()
   private val matchedDocumentId = DocumentId(UUID.fromString("11111111-0000-0000-0000-000000000000"))
+  private val matchedLastKnownAddressId = LastKnownAddressId(UUID.fromString("22222222-0000-0000-0000-000000000000"))
   private val userIdOnes = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
   private val revocationOrderBytes = ClassPathResource("/document/revocation-order.pdf").file.readBytes()
   private val details = "Random details"
@@ -249,7 +250,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   )
   fun `a recall with last known addresses exists`() {
     `a user and a fully populated recall without documents exists`()
-    `a last known address exists`(1, AddressSource.LOOKUP)
+    `a last known address exists`(1, AddressSource.LOOKUP, matchedLastKnownAddressId)
     `a last known address exists`(2, AddressSource.MANUAL)
   }
 
@@ -328,12 +329,13 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   fun `a last known address exists`(
     index: Int,
-    source: AddressSource
+    source: AddressSource,
+    lastKnownAddressId: LastKnownAddressId = ::LastKnownAddressId.random()
   ) {
 
     lastKnownAddressRepository.save(
       LastKnownAddress(
-        LastKnownAddressId(UUID.randomUUID()),
+        lastKnownAddressId,
         matchedRecallId,
         "Highwood Cottage",
         "43 Blandford Road",
@@ -372,6 +374,7 @@ class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
  * )
  * Or specify a local pact file by removing @PactBroker and replacing with:
  * e.g. @PactFolder("../manage-recalls-ui/pact/pacts")
+ * (if using @PactFolder, ensure it's been imported in this file with `import au.com.dius.pact.provider.junitsupport.loader.PactFolder`)
  */
 @ExtendWith(SpringExtension::class)
 @VerificationReports(value = ["console"])

@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -378,11 +377,7 @@ class Api {
   )
 }
 
-data class Pdf(val content: String) {
-  companion object {
-    fun encode(content: ByteArray): Pdf = Pdf(content.encodeToBase64String())
-  }
-}
+data class Pdf(val content: String)
 
 data class RecallSearchRequest(val nomsNumber: NomsNumber)
 
