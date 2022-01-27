@@ -93,8 +93,10 @@ data class Recall(
   val vulnerabilityDiversityDetail: String? = null,
   @Enumerated(STRING)
   val mappaLevel: MappaLevel? = null,
+  @Embedded
   val sentencingInfo: SentencingInfo? = null,
   val bookingNumber: String? = null,
+  @Embedded
   val probationInfo: ProbationInfo? = null,
   val licenceConditionsBreached: String? = null,
   @ElementCollection(targetClass = ReasonForRecall::class)
@@ -307,6 +309,7 @@ data class SentencingInfo(
   }
 }
 
+@Suppress("JpaAttributeMemberSignatureInspection") // Suppressing erroneous Idea error: https://youtrack.jetbrains.com/issue/IDEA-240844
 @Embeddable
 data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val sentenceDays: Int) {
   override fun toString(): String = "$sentenceYears years $sentenceMonths months $sentenceDays days"
