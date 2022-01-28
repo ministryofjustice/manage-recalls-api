@@ -35,11 +35,63 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   fun `get recall notification returns merged recall summary and revocation order and then generate recall notification generates new version but reuses existing revocation order`() {
     val userId = authenticatedClient.userId
     val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
-    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId)
+    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, true)
 
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
-    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "OFFENDER IS IN CUSTODY")
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
+
+    gotenbergMockServer.stubMergePdfs(
+      expectedPdf,
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+    )
+
+    val recallDocId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallDoc = authenticatedClient.getDocument(recall.recallId, recallDocId.documentId)
+
+    assertThat(recallDoc.content, equalTo(expectedBase64Pdf))
+
+    val firstRecallNotification =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
+    assertThat(firstRecallNotification.version, equalTo(1))
+    val firstRevocationOrder =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
+    assertThat(firstRevocationOrder.version, equalTo(1))
+
+    // Reset mocks to reassure that revocation order isnt regenerated
+    gotenbergMockServer.resetAll()
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "OFFENDER IS IN CUSTODY")
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
+
+    gotenbergMockServer.stubMergePdfs(
+      expectedPdf,
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+    )
+
+    authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, "Some detail")
+
+    val latestRecallNotification =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
+    assertThat(latestRecallNotification.version, equalTo(2))
+    val latestRevocationOrder =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
+    assertThat(latestRevocationOrder.version, equalTo(1))
+  }
+
+  @Test
+  fun `get recall notification for not in custody includes offender notification and police notification`() {
+    val userId = authenticatedClient.userId
+    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
+    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, false)
+
+    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
+    gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "RECALL NOTIFICATION")
     gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
     gotenbergMockServer.stubGenerateOffenderNotification(expectedPdf)
 
@@ -64,7 +116,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
 
     // Reset mocks to reassure that revocation order isnt regenerated
     gotenbergMockServer.resetAll()
-    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf)
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "RECALL NOTIFICATION")
     gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
     gotenbergMockServer.stubGenerateOffenderNotification(expectedPdf)
 
@@ -85,7 +137,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     assertThat(latestRevocationOrder.version, equalTo(1))
   }
 
-  private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId) {
+  private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId, inCustody: Boolean) {
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
@@ -114,7 +166,9 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         vulnerabilityDiversity = true,
         vulnerabilityDiversityDetail = "Some stuff",
         assessedByUserId = userId,
-        inCustody = false
+        inCustody = inCustody,
+        arrestIssues = !inCustody,
+        arrestIssuesDetail = if (inCustody) null else "Some arrest issues"
       )
     )
   }

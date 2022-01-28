@@ -207,7 +207,8 @@ class RecallNotificationContextFactoryTest {
       currentPrison = currentPrisonId,
       previousConvictionMainNameCategory = prevConsMainNameCategory,
       previousConvictionMainName = prevConsMainName,
-      inCustody = false
+      inCustody = false,
+      arrestIssues = false
     )
     val userDetails =
       UserDetails(

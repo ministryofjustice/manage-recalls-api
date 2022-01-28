@@ -60,7 +60,9 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         vulnerabilityDiversity = vulnerabilityDiversity,
         vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
         licenceConditionsBreached = "licenceConditionsBreached1\nlicenceConditionsBreached2",
-        inCustody = inCustody
+        inCustody = inCustody,
+        arrestIssues = !inCustody,
+        arrestIssuesDetail = if (inCustody) null else "Some arrest Issues"
       )
     )
   }

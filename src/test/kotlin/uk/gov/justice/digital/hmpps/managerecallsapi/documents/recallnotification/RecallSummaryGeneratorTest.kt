@@ -71,7 +71,9 @@ class RecallSummaryGeneratorTest {
         "Some stuff",
         PrisonName("Current Prison"),
         PrisonName("Last Release Prison"),
-        true
+        false,
+        arrestIssues = true,
+        arrestIssuesDetail = "Arrest issues such as..."
       ),
       3
     )
@@ -153,7 +155,9 @@ class RecallSummaryGeneratorTest {
         null,
         PrisonName("Current Prison"),
         PrisonName("Last Release Prison"),
-        true
+        true,
+        arrestIssues = null,
+        arrestIssuesDetail = null
       ),
       3
     )

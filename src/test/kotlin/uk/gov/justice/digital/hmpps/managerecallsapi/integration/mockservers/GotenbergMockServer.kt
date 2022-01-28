@@ -22,8 +22,8 @@ class GotenbergMockServer : HealthServer(9093, "/ping") {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RevocationOrderLogo)
   }
 
-  fun stubGenerateRecallSummary(generatedPdfContents: ByteArray) {
-    stubPdfGenerationWithHmppsLogo(generatedPdfContents, "OFFENDER IS IN CUSTODY")
+  fun stubGenerateRecallSummary(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
+    stubPdfGenerationWithHmppsLogo(generatedPdfContents, expectedTextInHtml)
   }
 
   fun stubGenerateLetterToProbation(generatedPdfContents: ByteArray, expectedTextInHtml: String) {

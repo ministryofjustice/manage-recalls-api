@@ -62,6 +62,10 @@ class RecallSummaryGenerator(
       setVariable("currentPrisonName", recallSummaryContext.currentPrisonName)
       setVariable("lastReleasePrisonName", recallSummaryContext.lastReleasePrisonName)
 
+      setVariable("inCustody", recallSummaryContext.inCustody)
+      setVariable("arrestIssues", recallSummaryContext.arrestIssues)
+      setVariable("arrestIssuesDetail", recallSummaryContext.arrestIssuesDetail)
+
       setVariable("logoFileName", HmppsLogo.fileName)
     }.let {
       templateEngine.process("recall-summary", it)
