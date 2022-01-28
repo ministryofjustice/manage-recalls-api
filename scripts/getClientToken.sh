@@ -1,18 +1,22 @@
 #!/bin/bash
 
 # With a valid hmpps-auth client_id and client_secret this script will create a temporary token for use
-# as a `Bearer` token via e.g. Postman or Swagger.
+# as a `Bearer` token via e.g. Postman or Swagger (use "Bearer <token>").
 # See also https://github.com/ministryofjustice/hmpps-auth/blob/main/README.md
 # Note that these "client credentials" are not the same as user (login) credentials and are separately administered
 # including e.g. associated ROLES.
+# To request personal client_id and client_secret see e.g. https://dsdmoj.atlassian.net/browse/HAAR-61
 # For use "as is" - with credentials from specific env vars - with env=dev, then set the following in the calling shell:
 # export HMPPS_AUTH_CLIENT_ID
 # export HMPPS_AUTH_CLIENT_SECRET_dev
-# Note that history expansion (!) characters will need to be escaped within e.g. the password value
+# Note that typical client secret values contain many special characters.
+# Hence in any such environment setting command, or on the CLI generally,
+# a few will need to be escaped (with \), specifically:
+# the history expansion (!) character and double-quote.
 # E.g.:
 # export HMPPS_AUTH_CLIENT_ID=your-client-id
-# export HMPPS_AUTH_CLIENT_SECRET_dev="*<lw-etc-etc-etc\!NY/p+qc'Ey"
-# Be careful about where you store or share any such credentials!
+# export HMPPS_AUTH_CLIENT_SECRET_dev="*<lw-etc-etc-etc\!NY/p+\"qc'Ey"
+# Finally, be careful about where you store or how you share any such client secret!
 
 set -euo pipefail
 

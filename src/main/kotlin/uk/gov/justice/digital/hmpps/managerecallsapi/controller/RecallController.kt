@@ -40,6 +40,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -201,7 +202,8 @@ class RecallController(
     dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.get(it).fullName() },
     lastKnownAddressOption = this.lastKnownAddressOption,
     arrestIssues = this.arrestIssues,
-    arrestIssuesDetail = this.arrestIssuesDetail
+    arrestIssuesDetail = this.arrestIssuesDetail,
+    warrantReferenceNumber = this.warrantReferenceNumber,
   )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
@@ -330,7 +332,8 @@ data class RecallResponse(
   val dossierCreatedByUserName: FullName? = null,
   val lastKnownAddressOption: LastKnownAddressOption? = null,
   val arrestIssues: Boolean? = null,
-  val arrestIssuesDetail: String? = null
+  val arrestIssuesDetail: String? = null,
+  val warrantReferenceNumber: WarrantReferenceNumber? = null,
 )
 
 class Api {
@@ -439,7 +442,8 @@ data class UpdateRecallRequest(
   val dossierCreatedByUserId: UserId? = null,
   val lastKnownAddressOption: LastKnownAddressOption? = null,
   val arrestIssues: Boolean? = null,
-  val arrestIssuesDetail: String? = null
+  val arrestIssuesDetail: String? = null,
+  val warrantReferenceNumber: WarrantReferenceNumber? = null,
 )
 
 enum class RecallLength {

@@ -111,6 +111,7 @@ class RecallServiceTest {
     lastKnownAddressOption = fullyPopulatedUpdateRecallRequest.lastKnownAddressOption,
     arrestIssues = fullyPopulatedUpdateRecallRequest.arrestIssues,
     arrestIssuesDetail = fullyPopulatedUpdateRecallRequest.arrestIssuesDetail,
+    warrantReferenceNumber = fullyPopulatedUpdateRecallRequest.warrantReferenceNumber,
   )
 
   @Test

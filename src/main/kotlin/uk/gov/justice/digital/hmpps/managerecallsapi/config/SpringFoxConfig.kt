@@ -29,6 +29,7 @@ import springfox.documentation.spi.DocumentationType
 import springfox.documentation.spring.web.plugins.Docket
 import springfox.documentation.spring.web.readers.operation.HandlerMethodResolver
 import springfox.documentation.swagger2.annotations.EnableSwagger2
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ColumnName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -49,6 +50,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import java.util.UUID
 
 @Configuration
@@ -69,6 +71,7 @@ class SpringFoxConfig {
       .directModelSubstitute(FullName::class.java, String::class.java)
       .directModelSubstitute(Email::class.java, String::class.java)
       .directModelSubstitute(PhoneNumber::class.java, String::class.java)
+      .directModelSubstitute(WarrantReferenceNumber::class.java, String::class.java)
       .directModelSubstitute(RecallId::class.java, UUID::class.java)
       .directModelSubstitute(DocumentId::class.java, UUID::class.java)
       .directModelSubstitute(MissingDocumentsRecordId::class.java, UUID::class.java)
@@ -82,6 +85,7 @@ class SpringFoxConfig {
       .directModelSubstitute(PoliceForceName::class.java, String::class.java)
       .directModelSubstitute(FieldName::class.java, String::class.java)
       .directModelSubstitute(FieldPath::class.java, String::class.java)
+      .directModelSubstitute(ColumnName::class.java, String::class.java)
   }
 
   @Bean

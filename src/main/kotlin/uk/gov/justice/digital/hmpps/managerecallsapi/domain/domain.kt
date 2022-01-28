@@ -34,6 +34,7 @@ class PoliceForceName(value: String) : Validated<String>(value, notBlank)
 class FieldName(value: String) : Validated<String>(value, notBlank)
 class FieldPath(value: String) : Validated<String>(value, notBlank)
 class ColumnName(value: String) : Validated<String>(value, notBlank)
+class WarrantReferenceNumber(value: String) : Validated<String>(value, notBlank)
 
 fun <T : Validated<UUID>> ((UUID) -> T).random() = this(UUID.randomUUID())
 

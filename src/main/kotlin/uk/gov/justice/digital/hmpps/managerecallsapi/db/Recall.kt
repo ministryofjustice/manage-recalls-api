@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -129,7 +130,9 @@ data class Recall(
   @Enumerated(STRING)
   val lastKnownAddressOption: LastKnownAddressOption? = null,
   val arrestIssues: Boolean? = null,
-  val arrestIssuesDetail: String? = null
+  val arrestIssuesDetail: String? = null,
+  @Convert(converter = WarrantReferenceNumberJpaConverter::class)
+  val warrantReferenceNumber: WarrantReferenceNumber? = null,
 ) {
   constructor(
     recallId: RecallId,
@@ -182,7 +185,8 @@ data class Recall(
     assignee: UserId? = null,
     lastKnownAddressOption: LastKnownAddressOption? = null,
     arrestIssues: Boolean? = null,
-    arrestIssuesDetail: String? = null
+    arrestIssuesDetail: String? = null,
+    warrantReferenceNumber: WarrantReferenceNumber? = null,
   ) :
     this(
       recallId.value,
@@ -235,7 +239,8 @@ data class Recall(
       assignee?.value,
       lastKnownAddressOption,
       arrestIssues,
-      arrestIssuesDetail
+      arrestIssuesDetail,
+      warrantReferenceNumber,
     )
 
   fun recallId() = RecallId(id)

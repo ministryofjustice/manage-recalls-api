@@ -102,7 +102,8 @@ class RecallService(
         ?: dossierTargetDate,
       lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
       arrestIssues = updateRecallRequest.arrestIssues ?: arrestIssues,
-      arrestIssuesDetail = updateRecallRequest.arrestIssuesDetail ?: arrestIssuesDetail
+      arrestIssuesDetail = updateRecallRequest.arrestIssuesDetail ?: arrestIssuesDetail,
+      warrantReferenceNumber = updateRecallRequest.warrantReferenceNumber ?: warrantReferenceNumber,
     )
   }
 

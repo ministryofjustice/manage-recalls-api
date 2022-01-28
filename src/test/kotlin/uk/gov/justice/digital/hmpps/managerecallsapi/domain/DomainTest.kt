@@ -24,6 +24,12 @@ class DomainTest {
     assertInvalid(::LastName, "", " ", "      ")
   }
 
+  @Test
+  fun `WarrantReferenceNumber should be not blank`() {
+    assertValid(::WarrantReferenceNumber, "02RC/1234567C12345", "1", "A")
+    assertInvalid(::WarrantReferenceNumber, "", " ", "      ")
+  }
+
   /**
    * The prison register is actually inconsistent here (https://github.com/ministryofjustice/prison-register)
    * The Api spec says it can be between 2 and 12 characters long
