@@ -68,7 +68,7 @@ function check_deploy_only_workflow_isnt_running() {
     echo "Waiting up to ${WAIT} seconds for the workflow to complete..."
     sleep 10
 
-    while [ "$(num_deploy_only_workflow_running)" -eq "0" ] && [ ${SECONDS} -le ${TIMEOUT} ]; do
+    while [ "$(num_deploy_only_workflow_running)" -gt "0" ] && [ ${SECONDS} -le ${TIMEOUT} ]; do
       echo " - waiting..."
       sleep 15
     done
