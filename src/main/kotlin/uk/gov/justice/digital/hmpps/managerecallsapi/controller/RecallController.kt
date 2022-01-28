@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -140,6 +141,8 @@ class RecallController(
     firstName = this.firstName,
     middleNames = this.middleNames,
     lastName = this.lastName,
+    croNumber = this.croNumber,
+    dateOfBirth = this.dateOfBirth,
     licenceNameCategory = this.licenceNameCategory,
     status = this.status(),
     documents = latestDocuments(documents),
@@ -256,7 +259,9 @@ fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
     now,
     this.firstName,
     this.middleNames,
-    this.lastName
+    this.lastName,
+    this.croNumber,
+    this.dateOfBirth
   )
 }
 
@@ -264,7 +269,9 @@ data class BookRecallRequest(
   val nomsNumber: NomsNumber,
   val firstName: FirstName,
   val middleNames: MiddleNames?,
-  val lastName: LastName
+  val lastName: LastName,
+  val croNumber: CroNumber,
+  val dateOfBirth: LocalDate,
 )
 
 data class RecallResponse(
@@ -276,6 +283,8 @@ data class RecallResponse(
   val firstName: FirstName,
   val middleNames: MiddleNames?,
   val lastName: LastName,
+  val croNumber: CroNumber,
+  val dateOfBirth: LocalDate,
   val licenceNameCategory: NameFormatCategory,
   val status: Status,
   val documents: List<Api.RecallDocument> = emptyList(),

@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.client.RestTemplate
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
@@ -70,6 +71,7 @@ object ManageRecallsApiJackson : ConfigurableJackson(
 
 private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply {
   text(::NomsNumber)
+  text(::CroNumber)
   text(::FirstName)
   text(::MiddleNames)
   text(::LastName)

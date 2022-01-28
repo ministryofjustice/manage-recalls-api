@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -65,6 +66,11 @@ data class Recall(
   @Column(nullable = false)
   @Convert(converter = LastNameJpaConverter::class)
   val lastName: LastName,
+  // FIXME - once Prod has values, this needs setting @Column(nullable = false)
+  @Convert(converter = CroNumberJpaConverter::class)
+  val croNumber: CroNumber,
+  // @Column(nullable = false)
+  val dateOfBirth: LocalDate,
   @Column(nullable = false)
   @Enumerated(STRING)
   val licenceNameCategory: NameFormatCategory,
@@ -142,6 +148,8 @@ data class Recall(
     firstName: FirstName,
     middleNames: MiddleNames?,
     lastName: LastName,
+    croNumber: CroNumber,
+    dateOfBirth: LocalDate,
     licenceNameCategory: NameFormatCategory = FIRST_LAST,
     lastUpdatedByUserId: UserId = createdByUserId,
     lastUpdatedDateTime: OffsetDateTime = createdDateTime,
@@ -198,6 +206,8 @@ data class Recall(
       firstName,
       middleNames,
       lastName,
+      croNumber,
+      dateOfBirth,
       licenceNameCategory,
       documents,
       missingDocumentsRecords,

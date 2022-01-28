@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -44,9 +45,10 @@ class LetterToPrisonContextFactoryTest {
     val recall = Recall(
       recallId, NomsNumber("AA1234A"), ::UserId.random(),
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+      CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
+      recallLength = recallLength,
       lastReleasePrison = PrisonId("BOB"),
-      currentPrison = PrisonId("WIM"),
-      recallLength = recallLength
+      currentPrison = PrisonId("WIM")
     )
     val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
@@ -85,9 +87,10 @@ class LetterToPrisonContextFactoryTest {
     val recall = Recall(
       recallId, NomsNumber("AA1234A"), ::UserId.random(),
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+      CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
+      recallLength = recallLength,
       lastReleasePrison = PrisonId("BOB"),
-      currentPrison = PrisonId("WIM"),
-      recallLength = recallLength
+      currentPrison = PrisonId("WIM")
     )
     val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")

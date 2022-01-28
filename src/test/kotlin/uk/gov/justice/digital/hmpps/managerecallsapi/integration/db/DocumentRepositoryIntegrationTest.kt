@@ -4,7 +4,6 @@ import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.startsWith
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -14,23 +13,12 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomUnVersionedDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomVersionedDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentNotFoundException
@@ -42,41 +30,13 @@ import javax.transaction.Transactional
 @ActiveProfiles("db-test")
 class DocumentRepositoryIntegrationTest(
   @Autowired private val documentRepository: DocumentRepository,
-  @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val userDetailsRepository: UserDetailsRepository
-) {
+) : IntegrationTestBase() {
 
-  private val recallId = ::RecallId.random()
-  private val createdByUserId = ::UserId.random()
-  private val nomsNumber = randomNoms()
-  private val recall = Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
   private val documentId = ::DocumentId.random()
   // TODO: parameterized tests driven from RecallDocumentCategory
   private val versionedCategory = randomVersionedDocumentCategory()
   private val unVersionedCategory = randomUnVersionedDocumentCategory()
   private val versionedRecallDocument = versionedDocument(documentId, recallId, versionedCategory, 1)
-  private val currentUserId = ::UserId.random()
-
-  @BeforeEach
-  fun `setup createdBy user`() {
-    createUserDetails(createdByUserId)
-    createUserDetails(currentUserId)
-  }
-
-  private fun createUserDetails(userId: UserId) {
-    userDetailsRepository.save(
-      UserDetails(
-        userId,
-        FirstName("Test"),
-        LastName("User"),
-        "",
-        Email("test@user.com"),
-        PhoneNumber("09876543210"),
-        CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
-      )
-    )
-  }
 
   // Note: when using @Transactional to clean up after the tests we need to 'flush' to trigger the DB constraints, hence use of saveAndFlush()
   @Test

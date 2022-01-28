@@ -12,14 +12,23 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import java.time.LocalDate
 
 class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
-  private val bookRecallRequest = BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger"))
+  private val bookRecallRequest = BookRecallRequest(
+    nomsNumber,
+    FirstName("Barrie"),
+    null,
+    LastName("Badger"),
+    CroNumber("1234/56A"),
+    LocalDate.now()
+  )
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = "fileName"

@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCatego
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -38,7 +39,9 @@ class GetRecallComponentTest : ComponentTestBase() {
         now,
         FirstName("Barrie"),
         null,
-        LastName("Badger")
+        LastName("Badger"),
+        CroNumber("ABC/1234A"),
+        LocalDate.of(1999, 12, 1)
       ),
       createdByUserId
     )
@@ -57,6 +60,8 @@ class GetRecallComponentTest : ComponentTestBase() {
           FirstName("Barrie"),
           null,
           LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON
         )
@@ -85,6 +90,8 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.firstName").isEqualTo(fullyPopulatedRecall.firstName.toString())
       .jsonPath("$.middleNames").isEqualTo(fullyPopulatedRecall.middleNames.toString())
       .jsonPath("$.lastName").isEqualTo(fullyPopulatedRecall.lastName.toString())
+      .jsonPath("$.croNumber").isEqualTo(fullyPopulatedRecall.croNumber.toString())
+      .jsonPath("$.dateOfBirth").isEqualTo(fullyPopulatedRecall.dateOfBirth.toString())
       .jsonPath("$.licenceNameCategory").isEqualTo(fullyPopulatedRecall.licenceNameCategory.toString())
       .jsonPath("$.documents.length()").isEqualTo(1)
       .jsonPath("$.missingDocumentsRecords.length()").isEqualTo(1)

@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -21,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.stream.Stream
 
@@ -36,10 +38,10 @@ class DossierContextTest {
   private val currentPrisonName = PrisonName("Wormwood Rubs")
   private val recall = Recall(
     ::RecallId.random(),
-    nomsNumber, ::UserId.random(), OffsetDateTime.now(), firstName, null, lastName,
+    nomsNumber, ::UserId.random(), OffsetDateTime.now(), firstName, null, lastName, CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
+    recallLength = recallLength,
     bookingNumber = bookingNumber,
-    licenceConditionsBreached = licenceConditionsBreached,
-    recallLength = recallLength
+    licenceConditionsBreached = licenceConditionsBreached
   )
 
   @Test

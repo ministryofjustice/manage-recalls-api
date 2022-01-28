@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
+import java.time.LocalDate
 
 class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
 
@@ -24,7 +26,16 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(assessedByUserId)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     updateRecallWithRequiredInformationForTheLetterToPrison(
       recall.recallId,
       assessedByUserId = assessedByUserId,

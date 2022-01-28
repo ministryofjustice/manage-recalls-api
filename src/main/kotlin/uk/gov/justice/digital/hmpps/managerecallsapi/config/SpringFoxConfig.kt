@@ -32,6 +32,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ColumnName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
@@ -65,6 +66,7 @@ class SpringFoxConfig {
       .paths(PathSelectors.any())
       .build()
       .directModelSubstitute(NomsNumber::class.java, String::class.java)
+      .directModelSubstitute(CroNumber::class.java, String::class.java)
       .directModelSubstitute(FirstName::class.java, String::class.java)
       .directModelSubstitute(MiddleNames::class.java, String::class.java)
       .directModelSubstitute(LastName::class.java, String::class.java)

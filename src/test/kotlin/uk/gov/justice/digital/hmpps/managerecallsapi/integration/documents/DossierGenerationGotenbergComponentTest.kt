@@ -8,11 +8,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
+import java.time.LocalDate
 
 class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
 
@@ -41,7 +43,16 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
     val recall =
-      authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
+      authenticatedClient.bookRecall(
+        BookRecallRequest(
+          nomsNumber,
+          FirstName("Barrie"),
+          null,
+          LastName("Badger"),
+          CroNumber("1234/56A"),
+          LocalDate.now()
+        )
+      )
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       localDeliveryUnit = localDeliveryUnit,

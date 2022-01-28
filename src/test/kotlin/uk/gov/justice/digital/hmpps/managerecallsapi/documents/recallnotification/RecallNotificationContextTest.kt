@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -53,10 +54,19 @@ class RecallNotificationContextTest {
   private val probationOfficerName = "Mr Probation Officer"
 
   private val recall = Recall(
-    recallId, NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+    recallId,
+    NomsNumber("AA1234A"),
+    ::UserId.random(),
+    OffsetDateTime.now(),
+    FirstName("Barrie"),
+    null,
+    LastName("Badger"),
+    CroNumber("ABC/1234A"),
+    LocalDate.of(1999, 12, 1),
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
     localPoliceForceId = PoliceForceId("metropolitan"),
+    inCustody = true,
     contraband = true,
     contrabandDetail = "I believe that they will bring contraband to prison",
     vulnerabilityDiversity = true,
@@ -81,8 +91,7 @@ class RecallNotificationContextTest {
     reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
     previousConvictionMainNameCategory = NameFormatCategory.OTHER,
     previousConvictionMainName = "Bryan Badger",
-    assessedByUserId = userId,
-    inCustody = true
+    assessedByUserId = userId
   )
 
   private val prisoner = Prisoner(

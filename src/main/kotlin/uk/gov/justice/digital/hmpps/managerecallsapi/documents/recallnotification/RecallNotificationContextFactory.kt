@@ -47,6 +47,7 @@ class RecallNotificationContextFactory(
 ) {
   fun createContext(recallId: RecallId, currentUserId: UserId): RecallNotificationContext {
     val recall = recallRepository.getByRecallId(recallId)
+    // FIXME - no longer need to look these values up
     val prisoner = prisonerOffenderSearchClient.prisonerByNomsNumber(recall.nomsNumber).block()!!
     val currentUserDetails = userDetailsService.get(currentUserId)
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)

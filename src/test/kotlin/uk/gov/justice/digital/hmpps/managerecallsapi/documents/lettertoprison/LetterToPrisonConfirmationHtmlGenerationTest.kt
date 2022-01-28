@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -34,7 +35,15 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+            ::RecallId.random(),
+            NomsNumber("AA1234A"),
+            ::UserId.random(),
+            OffsetDateTime.now(),
+            FirstName("Barrie"),
+            null,
+            LastName("Badger"),
+            CroNumber("ABC/1234A"),
+            LocalDate.of(1999, 12, 1),
             recallLength = recallLength,
             bookingNumber = "B1234",
           ),

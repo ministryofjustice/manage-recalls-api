@@ -9,16 +9,27 @@ import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import java.time.LocalDate
 
 class BookRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `book a recall creates a recall and returns recall details`() {
     val nomsNumber = NomsNumber("123456")
-    val response = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Bobby"), null, LastName("Badger")))
+    val response = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Bobby"),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
 
     assertThat(
       response,

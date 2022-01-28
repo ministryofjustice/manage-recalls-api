@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -16,12 +17,21 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 class RecallTest {
 
   private val recall = Recall(
-    ::RecallId.random(), NomsNumber("A12345AA"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), MiddleNames("Barnie"), LastName("Badger")
+    ::RecallId.random(),
+    NomsNumber("A12345AA"),
+    ::UserId.random(),
+    OffsetDateTime.now(),
+    FirstName("Barrie"),
+    MiddleNames("Barnie"),
+    LastName("Badger"),
+    CroNumber("ABC/1234A"),
+    LocalDate.of(1999, 12, 1)
   )
 
   @Test

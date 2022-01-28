@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEG
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -39,6 +40,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.Vir
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.UUID
@@ -64,7 +66,17 @@ internal class DocumentServiceTest {
   private val documentBytes = randomString().toByteArray()
   private val nomsNumber = NomsNumber("A1235B")
   private val aRecallWithoutDocuments =
-    Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
+    Recall(
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1)
+    )
   private val documentCategory = PART_A_RECALL_REPORT
   private val fileName = randomString()
 

@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -34,7 +35,16 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   @Test
   fun `get recall notification returns merged recall summary and revocation order and then generate recall notification generates new version but reuses existing revocation order`() {
     val userId = authenticatedClient.userId
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName(firstName),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, true)
 
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
@@ -86,7 +96,16 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   @Test
   fun `get recall notification for not in custody includes offender notification and police notification`() {
     val userId = authenticatedClient.userId
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName(firstName), null, LastName("Badger")))
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName(firstName),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, false)
 
     expectAPrisonerWillBeFoundFor(nomsNumber, firstName)

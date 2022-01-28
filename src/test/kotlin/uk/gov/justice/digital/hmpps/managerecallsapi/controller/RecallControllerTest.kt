@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -63,7 +64,15 @@ class RecallControllerTest {
   private val firstName = FirstName("Barrie")
   private val middleNames = MiddleNames("Barnie")
   private val lastName = LastName("Badger")
-  private val recallRequest = BookRecallRequest(nomsNumber, firstName, null, lastName)
+  private val croNumber = CroNumber("ABC/1234A")
+  private val recallRequest = BookRecallRequest(
+    nomsNumber,
+    firstName,
+    null,
+    lastName,
+    croNumber,
+    LocalDate.of(1999, 12, 1)
+  )
   private val fileName = "fileName"
   private val now = OffsetDateTime.now()
   private val bookedByUserId = ::UserId.random()
@@ -71,13 +80,19 @@ class RecallControllerTest {
   private val dossierCreatedByUserId = ::UserId.random()
   private val details = "Document details"
 
-  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, firstName, null, lastName)
+  private val recall = Recall(
+    recallId, nomsNumber, createdByUserId, now, firstName, null, lastName,
+    croNumber, LocalDate.of(1999, 12, 1)
+  )
 
   private val updateRecallRequest =
     UpdateRecallRequest(lastReleasePrison = PrisonId("ABC"), currentPrison = PrisonId("DEF"))
 
   private val recallResponse =
-    RecallResponse(recallId, nomsNumber, createdByUserId, now, now, firstName, null, lastName, NameFormatCategory.FIRST_LAST, Status.BEING_BOOKED_ON)
+    RecallResponse(
+      recallId, nomsNumber, createdByUserId, now, now, firstName, null, lastName,
+      croNumber, LocalDate.of(1999, 12, 1), NameFormatCategory.FIRST_LAST, Status.BEING_BOOKED_ON
+    )
 
   @Test
   fun `book recall returns request with id`() {
@@ -94,10 +109,24 @@ class RecallControllerTest {
   }
 
   private fun newRecall() =
-    Recall(::RecallId.random(), randomNoms(), createdByUserId, now, firstName, middleNames, lastName, licenceNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST)
+    Recall(
+      ::RecallId.random(),
+      randomNoms(),
+      createdByUserId,
+      now,
+      firstName,
+      middleNames,
+      lastName,
+      croNumber,
+      LocalDate.of(1999, 12, 1),
+      licenceNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST
+    )
 
   private fun recallResponse(recall: Recall, status: Status) =
-    RecallResponse(recall.recallId(), recall.nomsNumber, createdByUserId, now, now, firstName, middleNames, lastName, NameFormatCategory.FIRST_MIDDLE_LAST, status)
+    RecallResponse(
+      recall.recallId(), recall.nomsNumber, createdByUserId, now, now, firstName, middleNames, lastName,
+      croNumber, LocalDate.of(1999, 12, 1), NameFormatCategory.FIRST_MIDDLE_LAST, status
+    )
 
   private val beingBookedOnRecall = newRecall()
   private val bookedOnRecall = newRecall().copy(bookedByUserId = bookedByUserId.value)

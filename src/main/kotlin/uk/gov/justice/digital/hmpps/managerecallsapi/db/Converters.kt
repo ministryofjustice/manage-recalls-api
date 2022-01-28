@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -18,6 +19,7 @@ class LastNameJpaConverter : CustomJpaConverter<LastName, String>({ it.value }, 
 class EmailJpaConverter : CustomJpaConverter<Email, String>({ it.value }, ::Email)
 class PhoneNumberJpaConverter : CustomJpaConverter<PhoneNumber, String>({ it.value }, ::PhoneNumber)
 class NomsNumberJpaConverter : CustomJpaConverter<NomsNumber, String>({ it.value }, ::NomsNumber)
+class CroNumberJpaConverter : CustomJpaConverter<CroNumber, String>({ it.value }, ::CroNumber)
 class PrisonIdJpaConverter : CustomJpaConverter<PrisonId?, String?>({ it?.value }, { it?.let { PrisonId(it) } })
 class CourtIdJpaConverter : CustomJpaConverter<CourtId?, String?>({ it?.value }, { it?.let { CourtId(it) } })
 class PoliceForceIdJpaConverter : CustomJpaConverter<PoliceForceId?, String?>({ it?.value }, { it?.let { PoliceForceId(it) } })

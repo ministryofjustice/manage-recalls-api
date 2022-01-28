@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -19,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import kotlin.random.Random
 
@@ -40,7 +42,18 @@ class DossierContextFactoryTest {
     val currentPrisonIsWelsh = Random.nextBoolean()
     val document = mockk<Document>()
 
-    val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), currentPrison = currentPrison)
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
+      currentPrison = currentPrison
+    )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
@@ -60,7 +73,18 @@ class DossierContextFactoryTest {
     val currentPrisonName = PrisonName("Current Prison Name")
     val currentPrisonIsWelsh = Random.nextBoolean()
 
-    val recall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), currentPrison = currentPrison)
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
+      currentPrison = currentPrison
+    )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
