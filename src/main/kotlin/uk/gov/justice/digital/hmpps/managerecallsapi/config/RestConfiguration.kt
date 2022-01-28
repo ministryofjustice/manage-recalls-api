@@ -37,6 +37,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import java.util.Base64
 
 @Configuration
@@ -75,6 +76,7 @@ private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply 
   text(::FullName)
   text(::Email)
   text(::PhoneNumber)
+  text(::WarrantReferenceNumber)
   text(::PrisonName)
   text(::PrisonId)
   text(::CourtId)

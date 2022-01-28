@@ -152,6 +152,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.lastKnownAddressOption").isEqualTo(fullyPopulatedRecall.lastKnownAddressOption!!.toString())
       .jsonPath("$.arrestIssues").isEqualTo(fullyPopulatedRecall.arrestIssues!!)
       .jsonPath("$.arrestIssuesDetail").isEqualTo(fullyPopulatedRecall.arrestIssuesDetail!!)
+      .jsonPath("$.warrantReferenceNumber").isEqualTo(fullyPopulatedRecall.warrantReferenceNumber!!.value)
   }
 
   @Test
