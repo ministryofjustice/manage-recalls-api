@@ -41,10 +41,10 @@ will apply ktlint styles to intellij and also add a pre-commit hook to format al
 
 ### Run the service locally on the command line
 
-Requires postgres and minio:
+Requires the following:
 
 ```
-docker compose up -d postgres minio
+docker compose up -d postgres minio fake-prisoner-offender-search-api fake-prison-register-api fake-court-register-api gotenberg clamav
 ```
 
 Start with dev profile:
@@ -53,7 +53,7 @@ Start with dev profile:
 SPRING_PROFILES_ACTIVE=dev ./gradlew bootRun
 ```
 
-You can now access the API at: http://localhost:8080
+You can now check the API is up and running at: http://localhost:8080/health/liveness
 
 ### Run in docker-compose
 
