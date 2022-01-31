@@ -35,8 +35,6 @@ class GenerateDossierComponentTest : ComponentTestBase() {
 
   @Test
   fun `can generate the dossier sending the correct documents to gotenberg`() {
-    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
-
     val revocationOrderFile = ClassPathResource("/document/revocation-order.pdf").file
     val tableOfContentsFile = ClassPathResource("/document/table-of-contents.pdf").file
     val reasonsForRecallContentsFile = ClassPathResource("/document/reasons-for-recall.pdf").file // TODO use rep. pdf

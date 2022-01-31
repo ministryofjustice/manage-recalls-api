@@ -56,7 +56,6 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       HttpStatus.CREATED, LastKnownAddressId::class.java
     )
 
-    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
     gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "OFFENDER IS IN CUSTODY")
     gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
@@ -117,7 +116,6 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     )
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, false)
 
-    expectAPrisonerWillBeFoundFor(nomsNumber, firstName)
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
     gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "RECALL NOTIFICATION")
     gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")

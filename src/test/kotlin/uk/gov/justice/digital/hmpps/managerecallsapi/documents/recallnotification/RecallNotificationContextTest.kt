@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotificati
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.PS_TOWER_HAMLETS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
@@ -33,7 +32,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -46,7 +44,7 @@ class RecallNotificationContextTest {
   private val recallId = ::RecallId.zeroes()
   private val recallBookingNumber = "B1234"
   private val dateOfBirth = LocalDate.of(1995, 10, 3)
-  private val prisonerCroNumber = "prisonerCroNumber"
+  private val prisonerCroNumber = CroNumber("ABC/1234A")
   private val userSignature = "user signature"
   private val lastReleaseDate = LocalDate.of(2020, 10, 1)
 
@@ -61,8 +59,8 @@ class RecallNotificationContextTest {
     FirstName("Barrie"),
     null,
     LastName("Badger"),
-    CroNumber("ABC/1234A"),
-    LocalDate.of(1999, 12, 1),
+    prisonerCroNumber,
+    dateOfBirth,
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
     localPoliceForceId = PoliceForceId("metropolitan"),
@@ -94,13 +92,6 @@ class RecallNotificationContextTest {
     assessedByUserId = userId
   )
 
-  private val prisoner = Prisoner(
-    croNumber = prisonerCroNumber,
-    firstName = "Bertie",
-    lastName = "Badger",
-    dateOfBirth = dateOfBirth,
-    bookNumber = "prisonerBookNumber"
-  )
   private val currentUserDetails = UserDetails(
     userId,
     FirstName("Maria"),
@@ -119,7 +110,6 @@ class RecallNotificationContextTest {
 
   private val underTest = RecallNotificationContext(
     recall,
-    prisoner,
     currentUserDetails,
     currentPrisonName,
     lastReleasePrisonName,
@@ -165,39 +155,5 @@ class RecallNotificationContextTest {
         )
       )
     )
-  }
-
-  @Test
-  fun `can create RevocationOrderContext without croNumber`() {
-    val prisonerWithoutCroNumber = prisoner.copy(croNumber = null)
-    val underTest = RecallNotificationContext(
-      recall,
-      prisonerWithoutCroNumber,
-      currentUserDetails,
-      currentPrisonName,
-      lastReleasePrisonName,
-      sentencingCourtName,
-      localPoliceForceName,
-      OffsetDateTime.now()
-    )
-
-    assertDoesNotThrow { underTest.getRevocationOrderContext() }
-  }
-
-  @Test
-  fun `can create RecallSummaryContext without croNumber`() {
-    val prisonerWithoutCroNumber = prisoner.copy(croNumber = null)
-    val underTest = RecallNotificationContext(
-      recall,
-      prisonerWithoutCroNumber,
-      currentUserDetails,
-      currentPrisonName,
-      lastReleasePrisonName,
-      sentencingCourtName,
-      localPoliceForceName,
-      OffsetDateTime.now()
-    )
-
-    assertDoesNotThrow { underTest.getRecallSummaryContext() }
   }
 }
