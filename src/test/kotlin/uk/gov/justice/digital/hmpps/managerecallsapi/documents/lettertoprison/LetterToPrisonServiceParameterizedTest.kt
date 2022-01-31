@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -78,7 +79,18 @@ internal class LetterToPrisonServiceParameterizedTest {
   @ParameterizedTest
   @MethodSource("letterToPrisonParameters")
   fun `generates a letter to prison for a recall `(recallLength: RecallLength, annexHeaderText: String) {
-    val aRecall = Recall(recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"), recallLength = recallLength)
+    val aRecall = Recall(
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
+      recallLength = recallLength
+    )
     val documentId = ::DocumentId.random()
     val assessor = UserDetails(
       ::UserId.random(),
@@ -128,7 +140,13 @@ internal class LetterToPrisonServiceParameterizedTest {
       )
     } returns mergedNumberedBytes
     every {
-      documentService.storeDocument(recallId, createdByUserId, mergedNumberedBytes, LETTER_TO_PRISON, "LETTER_TO_PRISON.pdf")
+      documentService.storeDocument(
+        recallId,
+        createdByUserId,
+        mergedNumberedBytes,
+        LETTER_TO_PRISON,
+        "LETTER_TO_PRISON.pdf"
+      )
     } returns documentId
 
     val result = underTest.generateAndStorePdf(recallId, createdByUserId, null)

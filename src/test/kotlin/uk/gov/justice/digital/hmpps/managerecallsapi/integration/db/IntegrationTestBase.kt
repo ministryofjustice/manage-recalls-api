@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -22,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 @ExtendWith(SpringExtension::class)
@@ -33,7 +35,17 @@ abstract class IntegrationTestBase {
   final val createdByUserId = ::UserId.random()
   val currentUserId = ::UserId.random()
   final val nomsNumber = randomNoms()
-  val recall = Recall(recallId, nomsNumber, createdByUserId, OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
+  val recall = Recall(
+    recallId,
+    nomsNumber,
+    createdByUserId,
+    OffsetDateTime.now(),
+    FirstName("Barrie"),
+    null,
+    LastName("Badger"),
+    CroNumber("ABC/1234A"),
+    LocalDate.of(1999, 12, 1)
+  )
 
   @Autowired
   protected lateinit var userDetailsRepository: UserDetailsRepository
@@ -50,7 +62,7 @@ abstract class IntegrationTestBase {
     createUserDetails(currentUserId)
   }
 
-  private fun createUserDetails(userId: UserId) {
+  protected fun createUserDetails(userId: UserId) {
     userDetailsRepository.save(
       UserDetails(
         userId,

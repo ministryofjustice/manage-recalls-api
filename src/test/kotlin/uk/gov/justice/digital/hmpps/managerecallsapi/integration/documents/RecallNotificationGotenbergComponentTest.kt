@@ -7,12 +7,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasTotalPageCount
+import java.time.LocalDate
 
 class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
@@ -25,7 +27,16 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
   fun `can generate a recall notification`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
@@ -35,7 +46,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
     val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
-//    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
+    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
     assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(3)))
     assertThat(Pdf(recallNotification.content), hasTotalPageCount(3))
   }
@@ -44,7 +55,16 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
   fun `can generate a not in custody recall notification`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
@@ -55,7 +75,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
     val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
-    // writeBase64EncodedStringToFile("recall-notification-nic.pdf", recallNotification.content)
+    writeBase64EncodedStringToFile("recall-notification-nic.pdf", recallNotification.content)
     assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(5)))
     assertThat(Pdf(recallNotification.content), hasTotalPageCount(5))
   }
@@ -64,7 +84,16 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
   fun `recall notification with a long recall summary`() {
     expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
-    val recall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger")))
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       contraband = true,

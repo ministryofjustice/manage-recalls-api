@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -55,7 +56,16 @@ class RecallAuditComponentTest : ComponentTestBase() {
     expectedValue: Any
   ) {
     val savedRecall =
-      authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
+      authenticatedClient.bookRecall(
+        BookRecallRequest(
+          nomsNumber,
+          FirstName("Brian"),
+          null,
+          LastName("Badgering"),
+          CroNumber("1234/56A"),
+          LocalDate.now()
+        )
+      )
     val recallId = savedRecall.recallId
 
     val updatedRecall = authenticatedClient.updateRecall(recallId, updateRequest)
@@ -70,7 +80,16 @@ class RecallAuditComponentTest : ComponentTestBase() {
 
   @Test
   fun `get recallEmailReceivedDateTime (OffsetDateTime value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
+    val savedRecall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Brian"),
+        null,
+        LastName("Badgering"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     val recallId = savedRecall.recallId
 
     val recallEmailReceivedDateTime = OffsetDateTime.now()
@@ -87,7 +106,16 @@ class RecallAuditComponentTest : ComponentTestBase() {
 
   @Test
   fun `get reasonsForRecall (Array value) audit history`() {
-    val savedRecall = authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
+    val savedRecall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Brian"),
+        null,
+        LastName("Badgering"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
     val recallId = savedRecall.recallId
 
     val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(reasonsForRecall = setOf(OTHER, ELM_EQUIPMENT_TAMPER)))
@@ -104,7 +132,16 @@ class RecallAuditComponentTest : ComponentTestBase() {
   @Test
   fun `get audit summary for a recall including reasons for recall`() {
     val savedRecall =
-      authenticatedClient.bookRecall(BookRecallRequest(nomsNumber, FirstName("Brian"), null, LastName("Badgering")))
+      authenticatedClient.bookRecall(
+        BookRecallRequest(
+          nomsNumber,
+          FirstName("Brian"),
+          null,
+          LastName("Badgering"),
+          CroNumber("1234/56A"),
+          LocalDate.now()
+        )
+      )
     val recallId = savedRecall.recallId
 
     val auditList = authenticatedClient.auditSummaryForRecall(recallId)
@@ -124,10 +161,11 @@ class RecallAuditComponentTest : ComponentTestBase() {
         )
     )
 
-    assertThat(auditList[2].fieldName, equalTo(FieldName("lastUpdatedDateTime")))
-    assertThat(auditList[2].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertThat(auditList[2].auditCount, equalTo(1))
-    assertOffsetDateTimesEqual(auditList[2].updatedDateTime, savedRecall.lastUpdatedDateTime)
+    val lastUpdatedTimeAudit = auditList.first { it.fieldName.value == "lastUpdatedDateTime" }
+    assertThat(lastUpdatedTimeAudit.fieldName, equalTo(FieldName("lastUpdatedDateTime")))
+    assertThat(lastUpdatedTimeAudit.updatedByUserName, equalTo(FullName("Bertie Badger")))
+    assertThat(lastUpdatedTimeAudit.auditCount, equalTo(1))
+    assertOffsetDateTimesEqual(lastUpdatedTimeAudit.updatedDateTime, savedRecall.lastUpdatedDateTime)
 
     val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(contraband = true, reasonsForRecall = setOf(ELM_EQUIPMENT_TAMPER, ELM_FAILURE_CHARGE_BATTERY, OTHER)))
 
@@ -156,10 +194,10 @@ class RecallAuditComponentTest : ComponentTestBase() {
     assertThat(updatedAuditList[0].auditCount, equalTo(1))
     assertOffsetDateTimesEqual(updatedAuditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
 
-    assertThat(updatedAuditList[3].fieldName, equalTo(FieldName("lastUpdatedDateTime")))
-    assertThat(updatedAuditList[3].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertThat(updatedAuditList[3].auditCount, equalTo(2))
-    assertOffsetDateTimesEqual(updatedAuditList[3].updatedDateTime, updatedRecall.lastUpdatedDateTime)
+    val lastUpdatedTimeUpdatedAudit = updatedAuditList.first { it.fieldName.value == "lastUpdatedDateTime" }
+    assertThat(lastUpdatedTimeUpdatedAudit.updatedByUserName, equalTo(FullName("Bertie Badger")))
+    assertThat(lastUpdatedTimeUpdatedAudit.auditCount, equalTo(2))
+    assertOffsetDateTimesEqual(lastUpdatedTimeUpdatedAudit.updatedDateTime, updatedRecall.lastUpdatedDateTime)
 
     val reasonsForRecallAudit = updatedAuditList.first { it.fieldName.value == "reasonsForRecall" }
     assertThat(reasonsForRecallAudit.fieldPath, equalTo(FieldPath("reasonsForRecall")))

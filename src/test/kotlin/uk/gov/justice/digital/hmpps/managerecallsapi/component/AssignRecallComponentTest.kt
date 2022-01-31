@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -26,6 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import kotlin.jvm.Throws
@@ -52,7 +54,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
     setupUserDetailsFor(assignee)
     setupUserDetailsFor(createdByUserId)
 
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
+    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1))
 
     recallRepository.save(recall, createdByUserId)
     userDetailsRepository.save(
@@ -79,6 +81,8 @@ class AssignRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           OffsetDateTime.now(fixedClock), FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           assignee = assignee,
@@ -105,6 +109,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
       FirstName("Barrie"),
       null,
       LastName("Badger"),
+      CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
       assignee = assignee
     )
     recallRepository.save(recall, createdByUserId)
@@ -120,6 +125,8 @@ class AssignRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           OffsetDateTime.now(fixedClock), FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON
         )
@@ -146,6 +153,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
       FirstName("Barrie"),
       null,
       LastName("Badger"),
+      CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
       assignee = assignee
     )
     recallRepository.save(recall, createdByUserId)

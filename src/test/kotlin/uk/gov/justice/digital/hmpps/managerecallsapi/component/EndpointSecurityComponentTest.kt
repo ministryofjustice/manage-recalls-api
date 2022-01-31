@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -28,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.LocalDate
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -35,7 +37,14 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
   private val details = "Some details"
-  private val bookRecallRequest = BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger"))
+  private val bookRecallRequest = BookRecallRequest(
+    nomsNumber,
+    FirstName("Barrie"),
+    null,
+    LastName("Badger"),
+    CroNumber("1234/56A"),
+    LocalDate.now()
+  )
   private val fileBytes = "content".toByteArray()
   private val category = DocumentCategory.values().random()
   private val uploadDocumentRequest = UploadDocumentRequest(category, fileBytes.encodeToBase64String(), "part_a.pdf", details)

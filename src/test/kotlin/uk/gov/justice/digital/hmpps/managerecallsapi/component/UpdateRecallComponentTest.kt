@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -64,7 +65,9 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         now,
         FirstName("Barrie"),
         null,
-        LastName("Badger")
+        LastName("Badger"),
+        CroNumber("ABC/1234A"),
+        LocalDate.of(1999, 12, 1)
       ),
       createdByUserId
     )
@@ -94,6 +97,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_MIDDLE_LAST,
           Status.BEING_BOOKED_ON,
           lastReleasePrison = PrisonId("MWI"),
@@ -167,6 +172,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           recallLength = TWENTY_EIGHT_DAYS,
@@ -195,6 +202,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           bookingNumber = bookingNumber
@@ -223,6 +232,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           localPoliceForceId = policeForceId
@@ -251,6 +262,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           licenceConditionsBreached = "Breached",
@@ -280,6 +293,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           agreeWithRecall = AgreeWithRecall.YES,
@@ -308,6 +323,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.RECALL_NOTIFICATION_ISSUED,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
@@ -339,6 +356,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           status = Status.DOSSIER_ISSUED,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
@@ -368,6 +387,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           createdByUserId,
           now,
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           additionalLicenceConditions = request.additionalLicenceConditions,

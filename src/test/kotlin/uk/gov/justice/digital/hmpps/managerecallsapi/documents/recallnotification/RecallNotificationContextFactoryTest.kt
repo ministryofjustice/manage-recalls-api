@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -86,11 +87,13 @@ class RecallNotificationContextFactoryTest {
       nomsNumber,
       ::UserId.random(),
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
       lastReleasePrison = lastReleasePrisonId,
-      sentencingInfo = sentencingInfo,
-      currentPrison = currentPrisonId,
       localPoliceForceId = localPoliceForceId,
-      inCustody = true
+      inCustody = true,
+      sentencingInfo = sentencingInfo,
+      currentPrison = currentPrisonId
     )
     val userDetails = mockk<UserDetails>()
     val document = mockk<Document>()
@@ -135,11 +138,13 @@ class RecallNotificationContextFactoryTest {
       nomsNumber,
       ::UserId.random(),
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
       lastReleasePrison = lastReleasePrisonId,
-      sentencingInfo = sentencingInfo,
-      currentPrison = currentPrisonId,
       localPoliceForceId = localPoliceForceId,
-      inCustody = true
+      inCustody = true,
+      sentencingInfo = sentencingInfo,
+      currentPrison = currentPrisonId
     )
     val userDetails = mockk<UserDetails>()
 
@@ -194,10 +199,19 @@ class RecallNotificationContextFactoryTest {
       SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))
     val localPoliceForceId = PoliceForceId("XYZ")
     val recall = Recall(
-      recallId, nomsNumber, ::UserId.random(), OffsetDateTime.now(), FirstName("Andy"), MiddleNames("Bertie"), LastName("Badger"),
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Andy"),
+      MiddleNames("Bertie"),
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
       lastReleasePrison = lastReleasePrisonId,
       lastReleaseDate = LocalDate.now(),
       localPoliceForceId = localPoliceForceId,
+      inCustody = false,
       contraband = true,
       vulnerabilityDiversity = true,
       mappaLevel = MappaLevel.LEVEL_2,
@@ -207,7 +221,6 @@ class RecallNotificationContextFactoryTest {
       currentPrison = currentPrisonId,
       previousConvictionMainNameCategory = prevConsMainNameCategory,
       previousConvictionMainName = prevConsMainName,
-      inCustody = false,
       arrestIssues = false
     )
     val userDetails =

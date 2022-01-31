@@ -5,7 +5,6 @@ import com.natpryce.hamkrest.equalTo
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,22 +16,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_EQUIPMENT_TAMPER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallReasonAuditRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReasonAuditRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import java.sql.Timestamp
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -45,38 +31,8 @@ import javax.transaction.Transactional
 class RecallReasonAuditRepositoryIntegrationTest(
   @Qualifier("jpaRecallReasonAuditRepository") @Autowired private val jpaRepository: JpaRecallReasonAuditRepository,
   @Qualifier("jpaRecallRepository") @Autowired private val jpaRecallRepository: JpaRecallRepository,
-  @Autowired private val userDetailsRepository: UserDetailsRepository
-) {
-  private val nomsNumber = randomNoms()
-  private val createdByUserId = ::UserId.random()
-  private val recallId = ::RecallId.random()
-  private val now = OffsetDateTime.now()
-  private val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"))
-  private val currentUserId = ::UserId.random()
-
+) : IntegrationTestBase() {
   private val underTest = RecallReasonAuditRepository(jpaRepository)
-  private val recallRepository = RecallRepository(jpaRecallRepository)
-
-  @BeforeEach
-  fun `setup createdBy user`() {
-    createUserDetails(currentUserId)
-    createUserDetails(createdByUserId)
-  }
-
-  private fun createUserDetails(userId: UserId) {
-    userDetailsRepository.save(
-      UserDetails(
-        userId,
-        FirstName("Test"),
-        LastName("User"),
-        "",
-        Email("test@user.com"),
-        PhoneNumber("09876543210"),
-        CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
-      )
-    )
-  }
 
   @Test
   @Transactional

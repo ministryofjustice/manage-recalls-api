@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -35,7 +36,15 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+            ::RecallId.random(),
+            NomsNumber("AA1234A"),
+            ::UserId.random(),
+            OffsetDateTime.now(),
+            FirstName("Barrie"),
+            null,
+            LastName("Badger"),
+            CroNumber("ABC/1234A"),
+            LocalDate.of(1999, 12, 1),
             recallLength = recallLength,
             contraband = true,
             contrabandDetail = "Because...",
@@ -75,18 +84,26 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+            ::RecallId.random(),
+            NomsNumber("AA1234A"),
+            ::UserId.random(),
+            OffsetDateTime.now(),
+            FirstName("Barrie"),
+            null,
+            LastName("Badger"),
+            CroNumber("ABC/1234A"),
+            LocalDate.of(1999, 12, 1),
             recallLength = recallLength,
-            bookingNumber = "B1234",
-            differentNomsNumber = true,
-            differentNomsNumberDetail = "ABC1234F",
-            mappaLevel = MappaLevel.LEVEL_2,
-            additionalLicenceConditions = true,
-            additionalLicenceConditionsDetail = "Blah blah blah",
             contraband = true,
             contrabandDetail = "Because...",
             vulnerabilityDiversity = true,
             vulnerabilityDiversityDetail = "Yes, yadda yadda",
+            mappaLevel = MappaLevel.LEVEL_2,
+            bookingNumber = "B1234",
+            additionalLicenceConditions = true,
+            additionalLicenceConditionsDetail = "Blah blah blah",
+            differentNomsNumber = true,
+            differentNomsNumberDetail = "ABC1234F",
           ),
           FullName("Billie Badger"),
           PrisonName("Prison A"),
@@ -115,7 +132,15 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
       underTest.generateHtml(
         LetterToPrisonContext(
           Recall(
-            ::RecallId.random(), NomsNumber("AA1234A"), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
+            ::RecallId.random(),
+            NomsNumber("AA1234A"),
+            ::UserId.random(),
+            OffsetDateTime.now(),
+            FirstName("Barrie"),
+            null,
+            LastName("Badger"),
+            CroNumber("ABC/1234A"),
+            LocalDate.of(1999, 12, 1),
             recallLength = recallLength,
             contraband = true,
             contrabandDetail = "Because...",

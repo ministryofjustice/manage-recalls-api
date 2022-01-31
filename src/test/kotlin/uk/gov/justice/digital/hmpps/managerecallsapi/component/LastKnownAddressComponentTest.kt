@@ -11,16 +11,25 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.LocalDate
 
 class LastKnownAddressComponentTest : ComponentTestBase() {
   private val nomsNumber = NomsNumber("123456")
-  private val bookRecallRequest = BookRecallRequest(nomsNumber, FirstName("Barrie"), null, LastName("Badger"))
+  private val bookRecallRequest = BookRecallRequest(
+    nomsNumber,
+    FirstName("Barrie"),
+    null,
+    LastName("Badger"),
+    CroNumber("1234/56A"),
+    LocalDate.now()
+  )
 
   @Test
   fun `create and retrieve one LastKnownAddress for a recall`() {

@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -21,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 class ReasonsForRecallServiceTest {
@@ -44,7 +46,17 @@ class ReasonsForRecallServiceTest {
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), REASONS_FOR_RECALL) } returns null
     every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
-    every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
+    every { dossierContext.recall } returns Recall(
+      recallId,
+      randomNoms(),
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1)
+    )
     every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
     every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0) } returns Mono.just(expectedPdfBytes)
     every { pdfDecorator.centralHeader(expectedPdfBytes, "OFFICIAL") } returns expectedPdfWithHeaderBytes
@@ -71,7 +83,17 @@ class ReasonsForRecallServiceTest {
     val createdByUserId = ::UserId.random()
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), REASONS_FOR_RECALL) } returns expectedBytes
-    every { dossierContext.recall } returns Recall(recallId, randomNoms(), ::UserId.random(), OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"))
+    every { dossierContext.recall } returns Recall(
+      recallId,
+      randomNoms(),
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1)
+    )
 
     val generatedPdf = underTest.getOrGeneratePdf(dossierContext, createdByUserId).block()!!
 
