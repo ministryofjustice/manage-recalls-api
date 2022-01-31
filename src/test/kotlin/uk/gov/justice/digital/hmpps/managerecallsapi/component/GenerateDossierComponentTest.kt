@@ -83,7 +83,8 @@ class GenerateDossierComponentTest : ComponentTestBase() {
         probationOfficerName = "not empty",
         probationOfficerPhoneNumber = "not empty",
         probationOfficerEmail = "not empty",
-        authorisingAssistantChiefOfficer = "not empty"
+        authorisingAssistantChiefOfficer = "not empty",
+        inCustody = true
       )
     )
     expectNoVirusesWillBeFound()

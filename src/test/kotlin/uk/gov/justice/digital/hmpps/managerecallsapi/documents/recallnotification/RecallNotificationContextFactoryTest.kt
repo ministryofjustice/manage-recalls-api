@@ -10,13 +10,16 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -28,6 +31,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -183,8 +187,6 @@ class RecallNotificationContextFactoryTest {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("nomsNumber")
     val userIdGeneratingRecallNotification = ::UserId.random()
-    val currentPrisonId = PrisonId("AAA")
-    val currentPrisonName = PrisonName("Current Prison Name")
     val lastReleasePrisonId = PrisonId("XXX")
     val lastReleasePrisonName = PrisonName("Last Prison Name")
     val prisoner = Prisoner(
@@ -218,10 +220,14 @@ class RecallNotificationContextFactoryTest {
       sentencingInfo = sentencingInfo,
       bookingNumber = "1243A",
       probationInfo = probationInfo,
-      currentPrison = currentPrisonId,
       previousConvictionMainNameCategory = prevConsMainNameCategory,
       previousConvictionMainName = prevConsMainName,
-      arrestIssues = false
+      arrestIssues = false,
+      lastKnownAddressOption = LastKnownAddressOption.YES,
+      lastKnownAddresses = setOf(
+        LastKnownAddress(::LastKnownAddressId.random(), recallId, "Line 1", null, "A Town", null, AddressSource.MANUAL, 1, ::UserId.random(), OffsetDateTime.now()),
+        LastKnownAddress(::LastKnownAddressId.random(), recallId, "Line 1", "Line 2", "Another Town", "AB12 3CD", AddressSource.LOOKUP, 2, ::UserId.random(), OffsetDateTime.now()),
+      )
     )
     val userDetails =
       UserDetails(
@@ -232,7 +238,6 @@ class RecallNotificationContextFactoryTest {
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner)
-    every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
     every { courtLookupService.getCourtName(sentencingCourtId) } returns CourtName("County Court")
     every { policeForceLookupService.getPoliceForceName(localPoliceForceId) } returns PoliceForceName("Whatever Constabulary")
@@ -243,5 +248,14 @@ class RecallNotificationContextFactoryTest {
 
     assertThat(result.previousConvictionMainName, equalTo(expectedName))
     assertThat(result.inCustody, equalTo(false))
+    assertThat(
+      result.lastKnownAddress,
+      equalTo(
+        """
+          |Line 1; A Town
+          |Line 1; Line 2; Another Town; AB12 3CD
+        """.trimMargin()
+      )
+    )
   }
 }

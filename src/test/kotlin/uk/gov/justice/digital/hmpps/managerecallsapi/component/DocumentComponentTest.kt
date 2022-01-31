@@ -332,7 +332,8 @@ class DocumentComponentTest : ComponentTestBase() {
         indexOffence = "Badgering",
         bookingNumber = "booking number",
         licenceConditionsBreached = "he was a very naughty boy",
-        lastReleaseDate = LocalDate.now()
+        lastReleaseDate = LocalDate.now(),
+        inCustody = true
       )
     )
     val document = authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER)

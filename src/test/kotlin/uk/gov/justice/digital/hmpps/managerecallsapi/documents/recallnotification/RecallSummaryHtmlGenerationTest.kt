@@ -78,6 +78,7 @@ class RecallSummaryHtmlGenerationTest(
     PrisonName("Last Release Prison"),
     inCustody,
     !inCustody,
-    if (!inCustody) "Some arrest issues" else null
+    if (!inCustody) "Some arrest issues" else null,
+    if (!inCustody) "No Fixed Abode" else null
   )
 }

@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
@@ -62,7 +63,8 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         licenceConditionsBreached = "licenceConditionsBreached1\nlicenceConditionsBreached2",
         inCustody = inCustody,
         arrestIssues = !inCustody,
-        arrestIssuesDetail = if (inCustody) null else "Some arrest Issues"
+        arrestIssuesDetail = if (inCustody) null else "Some arrest Issues",
+        lastKnownAddressOption = if (inCustody) null else LastKnownAddressOption.YES
       )
     )
   }

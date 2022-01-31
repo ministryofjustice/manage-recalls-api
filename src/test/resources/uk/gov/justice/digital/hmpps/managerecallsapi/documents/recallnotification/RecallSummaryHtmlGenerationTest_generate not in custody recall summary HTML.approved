@@ -666,9 +666,12 @@ text-indent:-.1pt;page-break-after:avoid'><span style='font-size:11.0pt'><img
         class="c13"><br></span><span class="c1">OFFENDER MANAGER CONTACT NUMBER: <span>01234567890</span></span></p>
       <p class="c0"><span class="c1">POLICE SPOC: </span><span class="c13"><span>Devon &amp; Cornwall Police</span></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>
-      <p class="c0"><span class="c1">CURRENT PRISON:</span></p>
-      <p class="c0"><span class="c1"><span>Current Prison</span></span></p>
-      <p class="c0 c11"><span class="c6 c7"></span></p>
+
+<span>
+  <p class="c0"><span class="c1">LAST KNOWN ADDRESS:</span></p>
+  <p class="c0"><span class="c13"><span>No Fixed Abode</span></span></p>
+  <p class="c0 c11"><span class="c6 c7"></span></p>
+</span>
       <p class="c0"><span
         class="c1">SENTENCING COURT &amp; DATE: &nbsp;<span>High Court</span> <span>01 Oct 2020</span></span></p>
       <p class="c0 c11"><span class="c6 c7"></span></p>

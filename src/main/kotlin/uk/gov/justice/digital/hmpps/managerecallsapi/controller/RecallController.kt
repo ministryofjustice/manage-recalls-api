@@ -505,7 +505,7 @@ enum class NameFormatCategory {
   OTHER
 }
 
-enum class LastKnownAddressOption {
-  YES,
-  NO_FIXED_ABODE
+enum class LastKnownAddressOption(val label: String) {
+  YES("YES"),
+  NO_FIXED_ABODE("No Fixed Abode")
 }

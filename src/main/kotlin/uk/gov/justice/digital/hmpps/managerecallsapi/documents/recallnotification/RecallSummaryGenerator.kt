@@ -59,7 +59,11 @@ class RecallSummaryGenerator(
       setVariable("contrabandDetail", recallSummaryContext.contrabandDetail)
       setVariable("vulnerabilityDiversityDetail", ValueOrNone(recallSummaryContext.vulnerabilityDiversityDetail))
 
-      setVariable("currentPrisonName", recallSummaryContext.currentPrisonName)
+      if (recallSummaryContext.inCustody) {
+        setVariable("currentPrisonName", recallSummaryContext.currentPrisonName!!)
+      } else {
+        setVariable("lastKnownAddress", recallSummaryContext.lastKnownAddress!!)
+      }
       setVariable("lastReleasePrisonName", recallSummaryContext.lastReleasePrisonName)
 
       setVariable("inCustody", recallSummaryContext.inCustody)
