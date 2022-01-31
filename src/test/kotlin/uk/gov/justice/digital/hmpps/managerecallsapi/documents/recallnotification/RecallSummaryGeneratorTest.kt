@@ -35,7 +35,7 @@ class RecallSummaryGeneratorTest {
   private val underTest = RecallSummaryGenerator(templateEngine)
 
   @Test
-  fun `generate recall summary HTML with all values populated`() {
+  fun `generate NOT in custody recall summary HTML with all values populated`() {
     val expectedHtml = "expected HTML"
     val contextSlot = slot<IContext>()
 
@@ -69,11 +69,12 @@ class RecallSummaryGeneratorTest {
         "Some contraband detail",
         true,
         "Some stuff",
-        PrisonName("Current Prison"),
+        null,
         PrisonName("Last Release Prison"),
         false,
         arrestIssues = true,
-        arrestIssuesDetail = "Arrest issues such as..."
+        arrestIssuesDetail = "Arrest issues such as...",
+        "12 The Road; Some Place; AB12 3CD"
       ),
       3
     )
@@ -107,7 +108,7 @@ class RecallSummaryGeneratorTest {
         has("probationOfficerName", { it.variable("probationOfficerName") }, equalTo("Mr Probation Officer")),
         has("probationOfficerPhoneNumber", { it.variable("probationOfficerPhoneNumber") }, equalTo("01234567890")),
         has("localPoliceForce", { it.variable("localPoliceForce") }, equalTo("Devon & Cornwall Police")),
-        has("currentPrisonName", { it.variable("currentPrisonName") }, equalTo("Current Prison")),
+        has("lastKnownAddress", { it.variable("lastKnownAddress") }, equalTo("12 The Road; Some Place; AB12 3CD")),
         has("sentencingCourt", { it.variable("sentencingCourt") }, equalTo("High Court")),
         has("sentencingDate", { it.variable("sentencingDate") }, equalTo("01 Oct 2020")),
         has("sentenceExpiryDate", { it.variable("sentenceExpiryDate") }, equalTo("29 Oct 2020")),
@@ -119,7 +120,7 @@ class RecallSummaryGeneratorTest {
   }
 
   @Test
-  fun `generate recall summary HTML with optional values not populated`() {
+  fun `generate in custody recall summary HTML with optional values not populated`() {
     val expectedHtml = "expected HTML"
     val contextSlot = slot<IContext>()
 
@@ -157,7 +158,8 @@ class RecallSummaryGeneratorTest {
         PrisonName("Last Release Prison"),
         true,
         arrestIssues = null,
-        arrestIssuesDetail = null
+        arrestIssuesDetail = null,
+        lastKnownAddress = null
       ),
       3
     )

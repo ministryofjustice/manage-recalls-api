@@ -3,12 +3,16 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -46,7 +50,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
     val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
-    writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
+    // writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
     assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(3)))
     assertThat(Pdf(recallNotification.content), hasTotalPageCount(3))
   }
@@ -71,11 +75,15 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       currentPrisonId = PrisonId("MWI"),
       inCustody = false
     )
+    authenticatedClient.addLastKnownAddress(
+      recall.recallId, CreateLastKnownAddressRequest(null, "1 The Road", null, "A Town", "AB12 3CD", AddressSource.MANUAL),
+      HttpStatus.CREATED, LastKnownAddressId::class.java
+    )
 
     val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
     val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
-    writeBase64EncodedStringToFile("recall-notification-nic.pdf", recallNotification.content)
+    // writeBase64EncodedStringToFile("recall-notification-nic.pdf", recallNotification.content)
     assertThat(Pdf(recallNotification.content), hasNumberOfPages(equalTo(5)))
     assertThat(Pdf(recallNotification.content), hasTotalPageCount(5))
   }

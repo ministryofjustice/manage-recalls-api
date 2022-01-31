@@ -2,11 +2,13 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotificati
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
@@ -50,7 +52,7 @@ class RecallNotificationContextFactory(
     // FIXME - no longer need to look these values up
     val prisoner = prisonerOffenderSearchClient.prisonerByNomsNumber(recall.nomsNumber).block()!!
     val currentUserDetails = userDetailsService.get(currentUserId)
-    val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
+    val currentPrisonName = if (recall.inCustody!!) prisonLookupService.getPrisonName(recall.currentPrison!!) else null
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
     val sentencingCourtName = courtLookupService.getCourtName(recall.sentencingInfo!!.sentencingCourt)
     val localPoliceForceName = policeForceLookupService.getPoliceForceName(recall.localPoliceForceId!!)
@@ -77,7 +79,7 @@ data class RecallNotificationContext(
   val recall: Recall,
   val prisoner: Prisoner,
   val currentUserDetails: UserDetails,
-  val currentPrisonName: PrisonName,
+  val currentPrisonName: PrisonName?,
   val lastReleasePrisonName: PrisonName,
   val sentencingCourtName: CourtName,
   val localPoliceForceName: PoliceForceName,
@@ -129,8 +131,21 @@ data class RecallNotificationContext(
       lastReleasePrisonName,
       recall.inCustody!!,
       recall.arrestIssues,
-      recall.arrestIssuesDetail
+      recall.arrestIssuesDetail,
+      lastKnownAddressText(recall.inCustody, recall.lastKnownAddressOption, recall.lastKnownAddresses)
     )
+  }
+
+  private fun lastKnownAddressText(
+    inCustody: Boolean,
+    lastKnownAddressOption: LastKnownAddressOption?,
+    lastKnownAddresses: Set<LastKnownAddress>
+  ): String? {
+    if (inCustody) return null
+    return when (lastKnownAddressOption!!) {
+      LastKnownAddressOption.NO_FIXED_ABODE -> lastKnownAddressOption.label
+      else -> lastKnownAddresses.sortedBy { it.index }.joinToString("\n") { it.toAddressString() }
+    }
   }
 
   fun getLetterToProbationContext(): LetterToProbationContext =
@@ -152,6 +167,12 @@ data class RecallNotificationContext(
     )
 }
 
+private fun LastKnownAddress.toAddressString(): String {
+  val optionalLine2 = if (line2 == null) "" else "$line2; "
+  val optionalPostcode = if (postcode == null) "" else "; $postcode"
+  return "$line1; $optionalLine2$town$optionalPostcode"
+}
+
 data class OffenderNotificationContext(
   val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
@@ -164,7 +185,7 @@ data class LetterToProbationContext(
   val probationOfficerName: String,
   val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
-  val currentPrisonName: PrisonName,
+  val currentPrisonName: PrisonName?,
   val assessedByUserName: PersonName
 )
 
@@ -195,11 +216,12 @@ data class RecallSummaryContext(
   val contrabandDetail: String?,
   val vulnerabilityDiversity: Boolean,
   val vulnerabilityDiversityDetail: String?,
-  val currentPrisonName: PrisonName,
+  val currentPrisonName: PrisonName?,
   val lastReleasePrisonName: PrisonName,
   val inCustody: Boolean,
   val arrestIssues: Boolean?,
-  val arrestIssuesDetail: String?
+  val arrestIssuesDetail: String?,
+  val lastKnownAddress: String?
 )
 
 data class RevocationOrderContext(
