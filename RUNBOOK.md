@@ -129,8 +129,6 @@ Please see [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/PUD/pages/36228
 
 ### Health checks
 
-> How is the health of dependencies (components and systems) assessed? How does the system report its own health?
-
 #### Health of dependencies
 
 `/health` (i.e. https://manage-recalls-api.hmpps.service.justice.gov.uk/health) checks and reports the health of all services and components that the application depends upon. A HTTP 200 response code indicates that everything is healthy.
@@ -152,11 +150,11 @@ We use CircleCI to manage deployments (see [.circleci/config.yml](.circleci/conf
 
 ### Troubleshooting
 
-Please see [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/PUD/pages/3622830168/Monitoring+Operability#Debugging-an-Application-That-Fails-to-Start) for some generic troubleshooting notes.
+Please see [Confluence](<https://dsdmoj.atlassian.net/wiki/spaces/PUD/pages/3622830168/Monitoring+Operability#Direct-Log-Access-etc.-with-kubectl-(e.g.-Debugging-an-Application-That-Fails-to-Start)>) for some generic troubleshooting notes.
 
 ## Maintenance tasks
 
-#### Identified vulnerabilities
+### Identified vulnerabilities
 
 We scan the currently deployed docker containers daily with [trivy](https://github.com/aquasecurity/trivy). If any `HIGH` or `CRITICAL` vulnerabilities are identified the team is notified in the [#ppud-replacement-devs](https://mojdt.slack.com/archives/C0223AGGQU8) slack channel. **These issues should be fixed soon as possible.**
 
