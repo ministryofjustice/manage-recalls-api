@@ -8,7 +8,7 @@ This provides an API interface for creating and managing recalls within HMPPS.
 
 ### Technical overview
 
-Internal API based on Springboot, using Kotlin as the main language. Deployed in kubernetes using the configuration found in [helm_deploy](helm_deploy).
+Internal API based on Springboot, using Kotlin as the main language. Deployed in kubernetes (the HMPPS Cloud Platform) using the configuration found in [helm_deploy](helm_deploy).
 
 ### Service Level Agreements (SLAs)
 
@@ -33,11 +33,13 @@ Contact the [#ppud-replacement](https://mojdt.slack.com/archives/C020S8C0K9U) an
 
 ### Hours of operation
 
-_TBC_
+Available 24/7.
 
 ### Infrastructure design
 
 The application runs on the [HMPPS Cloud Platform](https://user-guide.cloud-platform.service.justice.gov.uk/) within the `manage-recalls-<tier>` namespaces (where `tier` is `dev`, `preprod` or `prod`).
+
+**NOTE:** The service runs on the `live` cluster, not the deprecated `live-1` instance.
 
 The main application runs as a deployment named `manage-recalls-api`, with the following support deployments (all deployed as part of the same helm/kubernetes configuration):
 
@@ -72,9 +74,9 @@ Infrastructure wise, all three tiers are identical, but `prod` has the following
 
 ## Security and access control
 
-In order to gain access to the `manage-recalls-<tier>` namespaces in kubernetes you will need to be a member of the [ministryofjustice](https://github.com/orgs/ministryofjustice) github organisation and a member of the [ppud-replacement-devs](https://github.com/orgs/ministryofjustice/teams/ppud-replacement-devs) team. Once joined, you should have access to the cluster within 24 hours.
+In order to gain access to the `manage-recalls-<tier>` namespaces in kubernetes you will need to be a member of the [ministryofjustice](https://github.com/orgs/ministryofjustice) github organisation and a member of the [ppud-replacement-devs](https://github.com/orgs/ministryofjustice/teams/ppud-replacement-devs) (github) team. Once joined, you should have access to the cluster within 24 hours.
 
-You will need to follow the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/kubectl-config.html#how-to-use-kubectl-to-connect-to-the-cluster) to setup your access from there.
+You will need to follow the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/kubectl-config.html#how-to-use-kubectl-to-connect-to-the-cluster) to setup your access from there - use instructions for connecting to the `live` cluster.
 
 ## System configuration
 
@@ -89,11 +91,23 @@ Secrets are stored within the `manage-recalls-<tier>` namespaces in kubernetes.
 
 Secrets with information from [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments) will be managed via the terraform code in there.
 
-All other secrets (i.e. `manage-recalls-api`) are currently created manually - this will be addressed in [PUD-22](https://dsdmoj.atlassian.net/browse/PUD-22).
+The contents of the `manage-recalls-api` secret are handled in the following way:
+
+- `API_CLIENT_ID` - managed externally via tooling in the `hmpps-auth` project.
+- `API_CLIENT_SECRET` - managed externally via tooling in the `hmpps-auth` project.
+- `APPINSIGHTS_INSTRUMENTATIONKEY` - managed externally via the [dps-project-bootstrap](https://github.com/ministryofjustice/dps-project-bootstrap) tooling.
 
 ## System backup and restore
 
-This is handled by the HMPPS Cloud Platform Team.
+This is handled by the HMPPS Cloud Platform Team, but details of how each component is considered is below.
+
+### Kubernetes Resources
+
+Nightly backups of cluster objects/resources are taken using a tool called [velero](https://velero.io/) - this will allow efficient recovery from backup should this need to be done.
+
+### Database/Object Persistence
+
+The application uses AWS's RDS (relational database service) and S3 (simple object storage) for persistence. RDS is configured to take daily snapshots of the database, and S3 is considered resilient enough to not need a full backup necessary.
 
 ## Monitoring and alerting
 
@@ -119,21 +133,19 @@ Please see [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/PUD/pages/36228
 
 #### Health of dependencies
 
-> (e.g. Use `/health` HTTP endpoint for internal components that expose it. Other systems and external endpoints: typically HTTP 200 but some synthetic checks for some services)
-
-_TBC_
+`/health` (i.e. https://manage-recalls-api.hmpps.service.justice.gov.uk/health) checks and reports the health of all services and components that the application depends upon. A HTTP 200 response code indicates that everything is healthy.
 
 #### Health of service
 
-> (e.g. Provide `/health` HTTP endpoint: 200 --> basic health, 500 --> bad configuration + `/health/deps` for checking dependencies)
+`/health/liveness` (i.e. https://manage-recalls-api.hmpps.service.justice.gov.uk/health/liveness) indicates that the application is started up, but does not indicate that it is ready to process work. A HTTP 200 response code indicates that the application has started.
 
-_TBC_
+`/health/readiness` (i.e. https://manage-recalls-api.hmpps.service.justice.gov.uk/health/readiness) indicates that the application is ready to handle requests as it has checked its connections to all dependencies are working. A HTTP 200 response code indicates that the application has started and is ready to handle requests.
 
 ## Operational tasks
 
 ### Deployment
 
-We use CircleCI to manage deployments:
+We use CircleCI to manage deployments (see [.circleci/config.yml](.circleci/config.yml) for the full configuration):
 
 - Built docker images are pushed to [quay.io](https://quay.io/repository/hmpps/manage-recalls-api).
 - Deployment to kubernetes uses helm.
@@ -146,7 +158,7 @@ Please see [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/PUD/pages/36228
 
 #### Identified vulnerabilities
 
-We scan the currently deployed docker containers daily with [trivy](https://github.com/aquasecurity/trivy). If any `HIGH` or `CRITICAL` vulnerabilities are identified the team is notified in the [#ppud-replacement-devs](https://mojdt.slack.com/archives/C0223AGGQU8) slack channel.
+We scan the currently deployed docker containers daily with [trivy](https://github.com/aquasecurity/trivy). If any `HIGH` or `CRITICAL` vulnerabilities are identified the team is notified in the [#ppud-replacement-devs](https://mojdt.slack.com/archives/C0223AGGQU8) slack channel. **These issues should be fixed soon as possible.**
 
 ### Data cleardown
 
