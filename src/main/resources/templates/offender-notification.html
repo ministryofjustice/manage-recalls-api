@@ -249,16 +249,12 @@
 <p class="c7 c8"><span class="c5">Your licence was revoked on </span><span class="c1" th:text="${licenceRevocationDate}"/><span
   class="c3">&nbsp;and you are recalled to custody because you have:</span></p>
 <p class="c7 c8 c14"><span class="c3"></span></p>
-<p class="c7 c8"><span class="c1">&#9744;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Failed to attend appointment(s) with your supervising officer</span>
-</p>
-<p class="c7 c8"><span class="c1">&#9744;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Failed to attend pre-arranged home visit(s)</span>
-</p>
-<p class="c7 c8"><span
-  class="c1">&#9744;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Failed to reside as approved</span></p>
-<p class="c7 c8"><span class="c1">&#9744;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c1">Allegedly committed a further offence</span></p>
-<p class="c7 c8"><span class="c1">&#9744;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Displayed poor behaviour</span>
-</p>
-<p class="c7 c8"><span class="c1">&#9744;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Other</span></p>
+
+<ul>
+  <li th:each="reason : ${reasonsForRecall}">
+    <p class="c7 c8"><span class="c1" th:text="${reason}"/></p>
+  </li>
+</ul>
 <p class="c7 c8 c14"><span class="c3"></span></p>
 <p class="c4"><span class="c3">You will receive more detailed reasons once you have been returned to custody. </span>
 </p>

@@ -473,25 +473,24 @@ enum class RecallType {
   FIXED
 }
 
-@Suppress("unused")
-enum class ReasonForRecall {
-  BREACH_EXCLUSION_ZONE,
-  ELM_BREACH_EXCLUSION_ZONE,
-  ELM_BREACH_NON_CURFEW_CONDITION,
-  ELM_FURTHER_OFFENCE,
-  ELM_EQUIPMENT_TAMPER,
-  ELM_FAILURE_CHARGE_BATTERY,
-  FAILED_HOME_VISIT,
-  FAILED_KEEP_IN_TOUCH,
-  FAILED_RESIDE,
-  FAILED_WORK_AS_APPROVED,
-  POOR_BEHAVIOUR_ALCOHOL,
-  POOR_BEHAVIOUR_FURTHER_OFFENCE,
-  POOR_BEHAVIOUR_DRUGS,
-  POOR_BEHAVIOUR_NON_COMPLIANCE,
-  POOR_BEHAVIOUR_RELATIONSHIPS,
-  TRAVELLING_OUTSIDE_UK,
-  OTHER
+enum class ReasonForRecall(val label: String) {
+  BREACH_EXCLUSION_ZONE("Breach of exclusion zone"),
+  ELM_BREACH_EXCLUSION_ZONE("Electronic locking and monitoring (ELM) - Breach of exclusion zone - detected by ELM"),
+  ELM_BREACH_NON_CURFEW_CONDITION("Electronic locking and monitoring (ELM) - Breach of non-curfew related condition"),
+  ELM_FURTHER_OFFENCE("Electronic locking and monitoring (ELM) - Charged with a further offence - detected by ELM"),
+  ELM_EQUIPMENT_TAMPER("Electronic locking and monitoring (ELM) - Equipment tamper"),
+  ELM_FAILURE_CHARGE_BATTERY("Electronic locking and monitoring (ELM) - Failure to charge battery"),
+  FAILED_HOME_VISIT("Failed home visit"),
+  FAILED_KEEP_IN_TOUCH("Failed to keep in touch"),
+  FAILED_RESIDE("Failed to reside"),
+  FAILED_WORK_AS_APPROVED("Failed to work as approved"),
+  POOR_BEHAVIOUR_ALCOHOL("Poor behaviour - Alcohol"),
+  POOR_BEHAVIOUR_FURTHER_OFFENCE("Poor behaviour - Charged with a further offence"),
+  POOR_BEHAVIOUR_DRUGS("Poor behaviour - Drugs"),
+  POOR_BEHAVIOUR_NON_COMPLIANCE("Poor behaviour - Non-compliance"),
+  POOR_BEHAVIOUR_RELATIONSHIPS("Poor behaviour - Relationships"),
+  TRAVELLING_OUTSIDE_UK("Travelling outside the UK"),
+  OTHER("Other")
 }
 
 enum class AgreeWithRecall {

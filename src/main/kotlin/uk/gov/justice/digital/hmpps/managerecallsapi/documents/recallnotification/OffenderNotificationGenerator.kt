@@ -18,6 +18,7 @@ class OffenderNotificationGenerator(
       setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
       setVariable("prisonerNameOnLicense", context.prisonerNameOnLicense)
       setVariable("bookingNumber", context.bookingNumber)
+      setVariable("reasonsForRecall", context.reasonsForRecall)
     }.let {
       templateEngine.process("offender-notification", it)
     }

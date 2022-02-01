@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
@@ -157,8 +158,18 @@ data class RecallNotificationContext(
     OffenderNotificationContext(
       recall.prisonerNameOnLicense(),
       recall.bookingNumber!!,
-      originalRecallNotificationCreatedDateTime.toLocalDate()
+      originalRecallNotificationCreatedDateTime.toLocalDate(),
+      buildReasonsForRecall()
     )
+
+  private fun buildReasonsForRecall(): List<String> {
+    val reasonsForRecall = recall.reasonsForRecall.filter { it != OTHER }.map { it.label }.sorted()
+    return if (reasonsForRecall.size < recall.reasonsForRecall.size) {
+      reasonsForRecall + recall.reasonsForRecallOtherDetail!!
+    } else {
+      reasonsForRecall
+    }
+  }
 }
 
 private fun LastKnownAddress.toAddressString(): String {
@@ -170,7 +181,8 @@ private fun LastKnownAddress.toAddressString(): String {
 data class OffenderNotificationContext(
   val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
-  val licenceRevocationDate: LocalDate
+  val licenceRevocationDate: LocalDate,
+  val reasonsForRecall: List<String>
 )
 
 data class LetterToProbationContext(
