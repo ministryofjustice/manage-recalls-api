@@ -286,7 +286,7 @@ data class Recall(
     if (dossierCreatedByUserId != null) {
       Status.DOSSIER_ISSUED
     } else if (recallNotificationEmailSentDateTime != null) {
-      if (assignee != null) {
+      if (assignee != null && inCustody != false) {
         Status.DOSSIER_IN_PROGRESS
       } else {
         Status.RECALL_NOTIFICATION_ISSUED
