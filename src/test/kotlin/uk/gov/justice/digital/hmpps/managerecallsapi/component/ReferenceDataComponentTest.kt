@@ -8,6 +8,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.PoliceForce
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnitResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevelResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallReasonResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -26,6 +30,28 @@ class ReferenceDataComponentTest : ComponentTestBase() {
       .responseBody!!
 
     val expectedResponse = LocalDeliveryUnit.values().map { LocalDeliveryUnitResponse(it.name, it.label) }
+    assertThat(response, equalTo(expectedResponse))
+  }
+
+  @Test
+  fun `can get recall reasons`() {
+    val response = unauthenticatedGetResponse("/reference-data/recall-reasons")
+      .expectBody(object : ParameterizedTypeReference<List<RecallReasonResponse>>() {})
+      .returnResult()
+      .responseBody!!
+
+    val expectedResponse = ReasonForRecall.values().map { RecallReasonResponse(it.name, it.label) }
+    assertThat(response, equalTo(expectedResponse))
+  }
+
+  @Test
+  fun `can get mappa levels`() {
+    val response = unauthenticatedGetResponse("/reference-data/mappa-levels")
+      .expectBody(object : ParameterizedTypeReference<List<MappaLevelResponse>>() {})
+      .returnResult()
+      .responseBody!!
+
+    val expectedResponse = MappaLevel.values().map { MappaLevelResponse(it.name, it.label) }
     assertThat(response, equalTo(expectedResponse))
   }
 

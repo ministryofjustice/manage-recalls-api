@@ -25,9 +25,9 @@ class ReferenceDataController(
   fun mappaLevels(): List<MappaLevelResponse> = MappaLevel.values()
     .map { MappaLevelResponse(it.name, it.label) }.toList()
 
-  @GetMapping("/reasons-for-recalls")
-  fun reasonsForRecalls(): List<ReasonsForRecallResponse> = ReasonForRecall.values()
-    .map { ldu -> ReasonsForRecallResponse(ldu.name, ldu.label) }.toList()
+  @GetMapping("/recall-reasons")
+  fun reasonsForRecalls(): List<RecallReasonResponse> = ReasonForRecall.values()
+    .map { ldu -> RecallReasonResponse(ldu.name, ldu.label) }.toList()
 
   @GetMapping("/courts")
   fun courts(): List<CourtRegisterClient.Court> = courtRegisterClient.getAllCourts().block()!!
@@ -41,8 +41,8 @@ class ReferenceDataController(
 
 // TODO: migrate name, label to id, name to be closer to e.g. courts and prisons responses
 data class LocalDeliveryUnitResponse(val name: String, val label: String)
-data class MappaLevelResponse(val name: String, val label: String)
-data class ReasonsForRecallResponse(val name: String, val label: String)
+data class MappaLevelResponse(val id: String, val name: String)
+data class RecallReasonResponse(val id: String, val name: String)
 
 @Suppress("unused")
 enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) {
