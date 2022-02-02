@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotificati
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit.PS_TOWER_HAMLETS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL_3
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
@@ -37,6 +38,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import kotlin.random.Random
 
 class RecallNotificationContextTest {
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
@@ -50,6 +52,7 @@ class RecallNotificationContextTest {
 
   private val recallLength = RecallLength.TWENTY_EIGHT_DAYS
   private val probationOfficerName = "Mr Probation Officer"
+  private val inCustody = Random.nextBoolean()
 
   private val recall = Recall(
     recallId,
@@ -64,7 +67,7 @@ class RecallNotificationContextTest {
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
     localPoliceForceId = PoliceForceId("metropolitan"),
-    inCustody = true,
+    inCustody = inCustody,
     contraband = true,
     contrabandDetail = "I believe that they will bring contraband to prison",
     vulnerabilityDiversity = true,
@@ -89,7 +92,8 @@ class RecallNotificationContextTest {
     reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
     previousConvictionMainNameCategory = NameFormatCategory.OTHER,
     previousConvictionMainName = "Bryan Badger",
-    assessedByUserId = userId
+    assessedByUserId = userId,
+    lastKnownAddressOption = if (!inCustody) LastKnownAddressOption.NO_FIXED_ABODE else null
   )
 
   private val currentUserDetails = UserDetails(
@@ -151,7 +155,8 @@ class RecallNotificationContextTest {
           FullName("Barrie Badger"),
           recallBookingNumber,
           currentPrisonName,
-          PersonName("Maria", lastName = "Badger")
+          PersonName("Maria", lastName = "Badger"),
+          inCustody,
         )
       )
     )
