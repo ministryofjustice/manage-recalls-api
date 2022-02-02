@@ -48,7 +48,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         sentenceLength = Api.SentenceLength(10, 1, 5),
         sentencingCourt = CourtId("ACCRYC"),
         indexOffence = "Some index offence",
-        reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
+        reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE, ReasonForRecall.OTHER),
         probationOfficerName = "Percy Pig",
         probationOfficerPhoneNumber = "0898909090",
         probationOfficerEmail = "probation.officer@moj.com",
@@ -64,7 +64,8 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         inCustody = inCustody,
         arrestIssues = !inCustody,
         arrestIssuesDetail = if (inCustody) null else "Some arrest Issues",
-        lastKnownAddressOption = if (inCustody) null else LastKnownAddressOption.YES
+        lastKnownAddressOption = if (inCustody) null else LastKnownAddressOption.YES,
+        reasonsForRecallOtherDetail = "Another reason for recall"
       )
     )
   }
