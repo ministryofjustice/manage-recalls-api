@@ -151,7 +151,8 @@ data class RecallNotificationContext(
       recall.prisonerNameOnLicense(),
       recall.bookingNumber!!,
       currentPrisonName,
-      currentUserDetails.personName()
+      currentUserDetails.personName(),
+      recall.inCustody!!,
     )
 
   fun getOffenderNotificationContext(): OffenderNotificationContext =
@@ -192,7 +193,8 @@ data class LetterToProbationContext(
   val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
   val currentPrisonName: PrisonName?,
-  val assessedByUserName: PersonName
+  val assessedByUserName: PersonName,
+  val inCustody: Boolean,
 )
 
 data class RecallSummaryContext(

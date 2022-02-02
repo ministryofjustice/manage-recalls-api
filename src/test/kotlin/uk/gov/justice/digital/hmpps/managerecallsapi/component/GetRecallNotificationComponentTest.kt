@@ -118,7 +118,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
 
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
     gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "RECALL NOTIFICATION")
-    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "IF AT ANY TIME THE PROBATION SERVICE RECEIVES INFORMATION THAT MAY AFFECT THE VALIDITY OF THE RECALL ACTION")
     gotenbergMockServer.stubGenerateOffenderNotification(expectedPdf)
 
     gotenbergMockServer.stubMergePdfs(
@@ -140,10 +140,10 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
     assertThat(firstRevocationOrder.version, equalTo(1))
 
-    // Reset mocks to reassure that revocation order isnt regenerated
+    // Reset mocks to reassure that revocation order is not regenerated
     gotenbergMockServer.resetAll()
     gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "RECALL NOTIFICATION")
-    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "28 DAY FIXED TERM RECALL")
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "IF AT ANY TIME THE PROBATION SERVICE RECEIVES INFORMATION THAT MAY AFFECT THE VALIDITY OF THE RECALL ACTION")
     gotenbergMockServer.stubGenerateOffenderNotification(expectedPdf)
 
     gotenbergMockServer.stubMergePdfs(

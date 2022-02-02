@@ -18,16 +18,31 @@ class LetterToProbationHtmlGenerationTest(
   private val underTest = LetterToProbationGenerator(templateEngine)
 
   @Test
-  fun `generate HTML`(approver: ContentApprover) {
-    val letterToProbationContext = LetterToProbationContext(
-      LocalDate.of(2021, 9, 29),
-      RecallLengthDescription(FOURTEEN_DAYS),
-      "Mr probation",
-      FullName("Bertie Offender"),
-      "bookingNumber",
-      PrisonName("Current prison name"),
-      PersonName("Bobby", lastName = "Caseworker")
+  fun `generate in custody letter to probation HTML`(approver: ContentApprover) {
+    approver.assertApproved(
+      underTest.generateHtml(
+        letterToProbationContext(true),
+      )
     )
-    approver.assertApproved(underTest.generateHtml(letterToProbationContext))
   }
+
+  @Test
+  fun `generate not in custody letter to probation HTML`(approver: ContentApprover) {
+    approver.assertApproved(
+      underTest.generateHtml(
+        letterToProbationContext(false),
+      )
+    )
+  }
+
+  private fun letterToProbationContext(inCustody: Boolean) = LetterToProbationContext(
+    LocalDate.of(2021, 9, 29),
+    RecallLengthDescription(FOURTEEN_DAYS),
+    "Mr probation",
+    FullName("Bertie Offender"),
+    "bookingNumber",
+    PrisonName("Current prison name"),
+    PersonName("Bobby", lastName = "Caseworker"),
+    inCustody
+  )
 }
