@@ -13,6 +13,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.BREACH_EXCLUSION_ZONE
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.FAILED_HOME_VISIT
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
@@ -30,6 +34,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
@@ -72,6 +77,13 @@ class RecallNotificationContextFactoryTest {
     documentRepository,
     fixedClock
   )
+
+  val userDetails =
+    UserDetails(
+      ::UserId.random(), FirstName("Sue"), LastName("Smith"), "", Email("s@smith.com"), PhoneNumber("0123"),
+      CaseworkerBand.FOUR_PLUS,
+      OffsetDateTime.now()
+    )
 
   @Test
   fun `create RecallNotificationContext with required details with licenseRevocationDate from first revocation order`() {
@@ -241,12 +253,6 @@ class RecallNotificationContextFactoryTest {
         LastKnownAddress(::LastKnownAddressId.random(), recallId, "Line 1", "Line 2", "Another Town", "AB12 3CD", AddressSource.LOOKUP, 2, ::UserId.random(), OffsetDateTime.now()),
       )
     )
-    val userDetails =
-      UserDetails(
-        ::UserId.random(), FirstName("Sue"), LastName("Smith"), "", Email("s@smith.com"), PhoneNumber("0123"),
-        CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
-      )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
@@ -266,6 +272,66 @@ class RecallNotificationContextFactoryTest {
           |Line 1; A Town
           |Line 1; Line 2; Another Town; AB12 3CD
         """.trimMargin()
+      )
+    )
+  }
+
+  @Test
+  fun `create OffenderNotificationContext with other reasons for recall detail added to end of list`() {
+    val recallId = ::RecallId.random()
+    val userIdGeneratingRecallNotification = ::UserId.random()
+    val nomsNumber = NomsNumber("nomsNumber")
+    val bookingNumber = "A12345"
+    val lastReleasePrisonId = PrisonId("XXX")
+    val lastReleasePrisonName = PrisonName("Last Prison Name")
+    val probationInfo = ProbationInfo("", "", "", LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, "")
+    val sentencingCourtId = CourtId("ABCDE")
+    val sentencingInfo =
+      SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))
+    val localPoliceForceId = PoliceForceId("XYZ")
+
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Andy"),
+      MiddleNames("Bertie"),
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
+      bookingNumber = bookingNumber,
+      reasonsForRecall = setOf(ELM_FURTHER_OFFENCE, BREACH_EXCLUSION_ZONE, FAILED_HOME_VISIT, OTHER),
+      reasonsForRecallOtherDetail = "Another reason",
+      inCustody = false,
+      lastReleasePrison = lastReleasePrisonId,
+      localPoliceForceId = localPoliceForceId,
+      sentencingInfo = sentencingInfo,
+      probationInfo = probationInfo,
+    )
+
+    every { recallRepository.getByRecallId(recallId) } returns recall
+    every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
+    every { courtLookupService.getCourtName(sentencingCourtId) } returns CourtName("County Court")
+    every { policeForceLookupService.getPoliceForceName(localPoliceForceId) } returns PoliceForceName("Whatever Constabulary")
+    every { userDetailsService.get(userIdGeneratingRecallNotification) } returns userDetails
+    every { documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, RECALL_NOTIFICATION, 1) } returns null
+
+    val context = underTest.createContext(recallId, userIdGeneratingRecallNotification)
+    assertThat(
+      context.getOffenderNotificationContext(),
+      equalTo(
+        OffenderNotificationContext(
+          FullName("Andy Badger"),
+          bookingNumber,
+          OffsetDateTime.now(fixedClock).toLocalDate(),
+          listOf(
+            "Breach of exclusion zone",
+            "Electronic locking and monitoring (ELM) - Charged with a further offence - detected by ELM",
+            "Failed home visit",
+            "Another reason"
+          )
+        )
       )
     )
   }
