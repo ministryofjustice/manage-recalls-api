@@ -313,7 +313,6 @@ class DocumentComponentTest : ComponentTestBase() {
   @Test
   fun `can't delete generated document for Recall being booked`() {
     expectNoVirusesWillBeFound()
-    expectAPrisonerWillBeFoundFor(nomsNumber, "Barrie")
 
     gotenbergMockServer.stubGenerateRevocationOrder(documentContents, "Barrie")
 

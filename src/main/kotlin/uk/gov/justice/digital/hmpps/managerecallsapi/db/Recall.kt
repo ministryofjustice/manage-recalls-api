@@ -66,10 +66,10 @@ data class Recall(
   @Column(nullable = false)
   @Convert(converter = LastNameJpaConverter::class)
   val lastName: LastName,
-  // FIXME - once Prod has values, this needs setting @Column(nullable = false)
+  @Column(nullable = false)
   @Convert(converter = CroNumberJpaConverter::class)
   val croNumber: CroNumber,
-  // @Column(nullable = false)
+  @Column(nullable = false)
   val dateOfBirth: LocalDate,
   @Column(nullable = false)
   @Enumerated(STRING)

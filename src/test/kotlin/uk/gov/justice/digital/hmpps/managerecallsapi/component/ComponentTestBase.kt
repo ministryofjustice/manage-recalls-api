@@ -33,7 +33,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedBy
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.CourtRegisterMockServer
@@ -41,14 +40,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.Got
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
 import xyz.capybara.clamav.ClamavClient
 import xyz.capybara.clamav.commands.scan.result.ScanResult
 import java.io.File
 import java.io.InputStream
-import java.time.LocalDate
 import java.time.OffsetDateTime
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -186,19 +183,5 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
 
   protected fun expectAVirusWillBeFound() {
     every { clamavClient.scan(any<InputStream>()) } returns ScanResult.VirusFound(mapOf())
-  }
-
-  protected fun expectAPrisonerWillBeFoundFor(nomsNumber: NomsNumber, prisonerFirstName: String) {
-    prisonerOffenderSearchMockServer.getPrisonerByNomsNumberRespondsWith(
-      nomsNumber,
-      Prisoner(
-        prisonerNumber = nomsNumber.value,
-        croNumber = "CRO Num/456",
-        firstName = prisonerFirstName,
-        lastName = "Badger",
-        dateOfBirth = LocalDate.of(2000, 1, 31),
-        bookNumber = "Book Num 123"
-      )
-    )
   }
 }

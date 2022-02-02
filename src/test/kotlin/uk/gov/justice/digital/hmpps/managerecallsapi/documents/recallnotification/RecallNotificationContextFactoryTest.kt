@@ -9,7 +9,6 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
@@ -43,8 +42,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PoliceForceLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
@@ -61,14 +58,19 @@ class RecallNotificationContextFactoryTest {
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val recallRepository = mockk<RecallRepository>()
   private val prisonLookupService = mockk<PrisonLookupService>()
-  private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val userDetailsService = mockk<UserDetailsService>()
   private val courtLookupService = mockk<CourtLookupService>()
   private val policeForceLookupService = mockk<PoliceForceLookupService>()
   private val documentRepository = mockk<DocumentRepository>()
 
   private val underTest = RecallNotificationContextFactory(
-    recallRepository, prisonLookupService, prisonerOffenderSearchClient, userDetailsService, courtLookupService, policeForceLookupService, documentRepository, fixedClock
+    recallRepository,
+    prisonLookupService,
+    userDetailsService,
+    courtLookupService,
+    policeForceLookupService,
+    documentRepository,
+    fixedClock
   )
 
   @Test
@@ -85,7 +87,6 @@ class RecallNotificationContextFactoryTest {
     val sentencingCourtName = CourtName("A Court")
     val localPoliceForceId = PoliceForceId("local-police-service")
     val localPoliceForceName = PoliceForceName("Police Service of Northern Ireland")
-    val prisoner = mockk<Prisoner>()
     val recall = Recall(
       recallId,
       nomsNumber,
@@ -105,7 +106,6 @@ class RecallNotificationContextFactoryTest {
 
     every { sentencingInfo.sentencingCourt } returns sentencingCourtId
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner)
     every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
     every { courtLookupService.getCourtName(sentencingCourtId) } returns sentencingCourtName
@@ -118,7 +118,17 @@ class RecallNotificationContextFactoryTest {
 
     assertThat(
       result,
-      equalTo(RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName, sentencingCourtName, localPoliceForceName, threeDaysAgo))
+      equalTo(
+        RecallNotificationContext(
+          recall,
+          userDetails,
+          currentPrisonName,
+          lastReleasePrisonName,
+          sentencingCourtName,
+          localPoliceForceName,
+          threeDaysAgo
+        )
+      )
     )
   }
 
@@ -136,7 +146,6 @@ class RecallNotificationContextFactoryTest {
     val sentencingCourtName = CourtName("A Court")
     val localPoliceForceId = PoliceForceId("local-police-service")
     val localPoliceForceName = PoliceForceName("Police Service of Northern Ireland")
-    val prisoner = mockk<Prisoner>()
     val recall = Recall(
       recallId,
       nomsNumber,
@@ -154,7 +163,6 @@ class RecallNotificationContextFactoryTest {
 
     every { sentencingInfo.sentencingCourt } returns sentencingCourtId
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner)
     every { prisonLookupService.getPrisonName(currentPrisonId) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
     every { courtLookupService.getCourtName(sentencingCourtId) } returns sentencingCourtName
@@ -166,7 +174,17 @@ class RecallNotificationContextFactoryTest {
 
     assertThat(
       result,
-      equalTo(RecallNotificationContext(recall, prisoner, userDetails, currentPrisonName, lastReleasePrisonName, sentencingCourtName, localPoliceForceName, OffsetDateTime.now(fixedClock)))
+      equalTo(
+        RecallNotificationContext(
+          recall,
+          userDetails,
+          currentPrisonName,
+          lastReleasePrisonName,
+          sentencingCourtName,
+          localPoliceForceName,
+          OffsetDateTime.now(fixedClock)
+        )
+      )
     )
   }
 
@@ -189,12 +207,6 @@ class RecallNotificationContextFactoryTest {
     val userIdGeneratingRecallNotification = ::UserId.random()
     val lastReleasePrisonId = PrisonId("XXX")
     val lastReleasePrisonName = PrisonName("Last Prison Name")
-    val prisoner = Prisoner(
-      firstName = "Andy",
-      middleNames = "Bertie",
-      lastName = "Badger",
-      dateOfBirth = LocalDate.of(2000, 1, 10)
-    )
     val probationInfo = ProbationInfo("", "", "", LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, "")
     val sentencingCourtId = CourtId("ABCDE")
     val sentencingInfo =
@@ -237,7 +249,6 @@ class RecallNotificationContextFactoryTest {
       )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner)
     every { prisonLookupService.getPrisonName(lastReleasePrisonId) } returns lastReleasePrisonName
     every { courtLookupService.getCourtName(sentencingCourtId) } returns CourtName("County Court")
     every { policeForceLookupService.getPoliceForceName(localPoliceForceId) } returns PoliceForceName("Whatever Constabulary")
