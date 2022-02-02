@@ -16,7 +16,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
@@ -99,7 +101,31 @@ class RecallTest {
   }
 
   @Test
-  fun `Recall with bookedByUserId and recallNotificationEmailSentDateTime returns status RECALL_NOTIFICATION_ISSUED`() {
+  fun `NOT in Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & warrantReferenceNumber set returns status AWAITING_RETURN_TO_CUSTODY`() {
+    val recall = recall.copy(
+      inCustody = false, // TODO, e.g. PUD-1429: using `inCustody` as a mutable status; expected to change
+      bookedByUserId = ::UserId.random().value,
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      warrantReferenceNumber = WarrantReferenceNumber(randomString())
+    )
+
+    assertThat(recall.status(), equalTo(Status.AWAITING_RETURN_TO_CUSTODY))
+  }
+
+  @Test
+  fun `In Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime ignores warrantReferenceNumber and returns status RECALL_NOTIFICATION_ISSUED`() {
+    val recall = recall.copy(
+      inCustody = true,
+      bookedByUserId = ::UserId.random().value,
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      warrantReferenceNumber = WarrantReferenceNumber(randomString())
+    )
+
+    assertThat(recall.status(), equalTo(Status.RECALL_NOTIFICATION_ISSUED))
+  }
+
+  @Test
+  fun `Recall with bookedByUserId and recallNotificationEmailSentDateTime but no assignee returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = recall.copy(
       bookedByUserId = ::UserId.random().value,
       recallNotificationEmailSentDateTime = OffsetDateTime.now()

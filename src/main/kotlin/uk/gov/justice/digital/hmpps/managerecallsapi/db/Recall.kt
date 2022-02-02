@@ -286,8 +286,10 @@ data class Recall(
     if (dossierCreatedByUserId != null) {
       Status.DOSSIER_ISSUED
     } else if (recallNotificationEmailSentDateTime != null) {
-      if (assignee != null && inCustody != false) {
+      if (assignee != null && inCustody != false) { // TODO, e.g. PUD-1429: using `inCustody` as a mutable status; expected to change
         Status.DOSSIER_IN_PROGRESS
+      } else if (inCustody == false && warrantReferenceNumber != null) {
+        Status.AWAITING_RETURN_TO_CUSTODY
       } else {
         Status.RECALL_NOTIFICATION_ISSUED
       }
