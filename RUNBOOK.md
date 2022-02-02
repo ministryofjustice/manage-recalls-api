@@ -50,6 +50,12 @@ The API is made avialable externally from the cluster via an Ingress.
 
 See the `values-<tier>.yaml` files in the [helm_deploy](helm_deploy) directory for the current configuration of each tier.
 
+### Security and access control
+
+In order to gain access to the `manage-recalls-<tier>` namespaces in kubernetes you will need to be a member of the [ministryofjustice](https://github.com/orgs/ministryofjustice) github organisation and a member of the [ppud-replacement-devs](https://github.com/orgs/ministryofjustice/teams/ppud-replacement-devs) (github) team. Once joined, you should have access to the cluster within 24 hours.
+
+You will need to follow the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/kubectl-config.html#how-to-use-kubectl-to-connect-to-the-cluster) to setup your access from there - use instructions for connecting to the `live` cluster.
+
 ### Throttling and partial shutdown
 
 If there is an issue with the service where it is causing load on downstream services and it needs to be shutdown quickly the following command will reduce the number of pod replicas to zero:
@@ -65,18 +71,12 @@ We do not currently have a strategy in place to throttle requests.
 Infrastructure wise, all three tiers are identical, but `prod` has the following differences:
 
 - It will have more pod replicas of the main application deployment.
-- As this is live data, you **must** be SC cleared to work on it or access the data held within it.
+- As this is live data, you **must** be SC cleared if you need log into the cluster and interact with the application pods or data held within. You **do not** however need to be SC cleared to make changes to the application and deploy via the CI pipelines.
 
 ### Tools
 
 - [port-forward-db.sh](scripts/port-forward-db.sh) - allows you to connect to the PostreSQL database from your local machine (as external access is blocked).
 - [port-forward-http-proxy.sh](scripts/port-forward-http-proxy.sh) - allows you to connect to the S3 bucket from your local machine via the aws-cli (as external access is blocked).
-
-## Security and access control
-
-In order to gain access to the `manage-recalls-<tier>` namespaces in kubernetes you will need to be a member of the [ministryofjustice](https://github.com/orgs/ministryofjustice) github organisation and a member of the [ppud-replacement-devs](https://github.com/orgs/ministryofjustice/teams/ppud-replacement-devs) (github) team. Once joined, you should have access to the cluster within 24 hours.
-
-You will need to follow the [Cloud Platform User Guide](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/kubectl-config.html#how-to-use-kubectl-to-connect-to-the-cluster) to setup your access from there - use instructions for connecting to the `live` cluster.
 
 ## System configuration
 
@@ -132,6 +132,8 @@ Please see [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/PUD/pages/36228
 #### Health of dependencies
 
 `/health` (i.e. https://manage-recalls-api.hmpps.service.justice.gov.uk/health) checks and reports the health of all services and components that the application depends upon. A HTTP 200 response code indicates that everything is healthy.
+
+You can see the services that this application depends on within the [application.yml file](src/main/resources/application.yml#L97-L127).
 
 #### Health of service
 
