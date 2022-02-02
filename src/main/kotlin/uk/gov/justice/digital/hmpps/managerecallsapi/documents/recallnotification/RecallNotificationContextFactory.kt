@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -24,8 +25,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PoliceForceLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
@@ -40,7 +39,6 @@ import java.time.ZonedDateTime
 class RecallNotificationContextFactory(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val prisonLookupService: PrisonLookupService,
-  @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
   @Autowired private val userDetailsService: UserDetailsService,
   @Autowired private val courtLookupService: CourtLookupService,
   @Autowired private val policeForceLookupService: PoliceForceLookupService,
@@ -49,8 +47,6 @@ class RecallNotificationContextFactory(
 ) {
   fun createContext(recallId: RecallId, currentUserId: UserId): RecallNotificationContext {
     val recall = recallRepository.getByRecallId(recallId)
-    // FIXME - no longer need to look these values up
-    val prisoner = prisonerOffenderSearchClient.prisonerByNomsNumber(recall.nomsNumber).block()!!
     val currentUserDetails = userDetailsService.get(currentUserId)
     val currentPrisonName = if (recall.inCustody!!) prisonLookupService.getPrisonName(recall.currentPrison!!) else null
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
@@ -64,7 +60,6 @@ class RecallNotificationContextFactory(
       ?: OffsetDateTime.now(clock)
     return RecallNotificationContext(
       recall,
-      prisoner,
       currentUserDetails,
       currentPrisonName,
       lastReleasePrisonName,
@@ -77,7 +72,6 @@ class RecallNotificationContextFactory(
 
 data class RecallNotificationContext(
   val recall: Recall,
-  val prisoner: Prisoner,
   val currentUserDetails: UserDetails,
   val currentPrisonName: PrisonName?,
   val lastReleasePrisonName: PrisonName,
@@ -89,9 +83,9 @@ data class RecallNotificationContext(
     return RevocationOrderContext(
       recall.recallId(),
       recall.prisonerNameOnLicense(),
-      prisoner.dateOfBirth!!,
+      recall.dateOfBirth,
       recall.bookingNumber!!,
-      prisoner.croNumber,
+      recall.croNumber,
       originalRecallNotificationCreatedDateTime.toLocalDate(),
       recall.lastReleaseDate!!,
       currentUserDetails.signature,
@@ -103,8 +97,8 @@ data class RecallNotificationContext(
     return RecallSummaryContext(
       originalRecallNotificationCreatedDateTime.toZonedDateTime().withZoneSameInstant(ZoneId.of("Europe/London")),
       recall.prisonerNameOnLicense(),
-      prisoner.dateOfBirth!!,
-      prisoner.croNumber,
+      recall.dateOfBirth,
+      recall.croNumber,
       currentUserDetails.personName(),
       currentUserDetails.email,
       currentUserDetails.phoneNumber,
@@ -193,7 +187,7 @@ data class RecallSummaryContext(
   val originalCreatedDateTime: ZonedDateTime,
   val prisonerNameOnLicense: FullName,
   val dateOfBirth: LocalDate,
-  val croNumber: String?, // TODO:  Can this really ever be null?  Breaks in dev because we have test prisoners without a croNumber
+  val croNumber: CroNumber,
   val assessedByUserName: PersonName,
   val assessedByUserEmail: Email,
   val assessedByUserPhoneNumber: PhoneNumber,
@@ -229,7 +223,7 @@ data class RevocationOrderContext(
   val prisonerNameOnLicense: FullName,
   val dateOfBirth: LocalDate,
   val bookingNumber: String,
-  val croNumber: String?,
+  val croNumber: CroNumber,
   val licenseRevocationDate: LocalDate,
   val lastReleaseDate: LocalDate,
   val currentUserSignature: String,

@@ -29,8 +29,6 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
   fun `can generate a recall notification`() {
-    expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
-
     val recall = authenticatedClient.bookRecall(
       BookRecallRequest(
         nomsNumber,
@@ -57,8 +55,6 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
   fun `can generate a not in custody recall notification`() {
-    expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
-
     val recall = authenticatedClient.bookRecall(
       BookRecallRequest(
         nomsNumber,
@@ -90,8 +86,6 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
   fun `recall notification with a long recall summary`() {
-    expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
-
     val recall = authenticatedClient.bookRecall(
       BookRecallRequest(
         nomsNumber,

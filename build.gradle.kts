@@ -40,7 +40,7 @@ dependencies {
 
   implementation("io.springfox:springfox-boot-starter:3.0.0")
   implementation("org.flywaydb:flyway-core:8.4.2")
-  implementation("org.postgresql:postgresql:42.3.1")
+  implementation("org.postgresql:postgresql:42.3.2")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 

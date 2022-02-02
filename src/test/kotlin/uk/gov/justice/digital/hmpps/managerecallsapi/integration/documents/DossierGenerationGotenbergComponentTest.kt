@@ -39,8 +39,6 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
     currentPrisonId: PrisonId
   ) {
     val nomsNumber = NomsNumber("123456")
-    val prisonerFirstName = "Natalia"
-    expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
 
     val recall =
       authenticatedClient.bookRecall(

@@ -23,7 +23,6 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
   fun `can generate a letter to prison using gotenberg`() {
-    expectAPrisonerWillBeFoundFor(nomsNumber, prisonerFirstName)
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(

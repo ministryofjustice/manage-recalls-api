@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -46,7 +47,7 @@ class RecallSummaryGeneratorTest {
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
         FullName("Bertie Badger"),
         LocalDate.of(1995, 10, 3),
-        "croNumber",
+        CroNumber("croNumber"),
         PersonName("Maria", lastName = "Badger"),
         Email("maria@thebadgers.set"),
         PhoneNumber("09876543210"),
@@ -131,7 +132,7 @@ class RecallSummaryGeneratorTest {
         ZonedDateTime.of(LocalDate.of(2021, 9, 1), LocalTime.of(19, 32), ZoneId.of("Europe/London")),
         FullName("Bertie Badger"),
         LocalDate.of(1995, 10, 3),
-        "croNumber",
+        CroNumber("croNumber"),
         PersonName("Maria", lastName = "Badger"),
         Email("maria@thebadgers.set"),
         PhoneNumber("09876543210"),
