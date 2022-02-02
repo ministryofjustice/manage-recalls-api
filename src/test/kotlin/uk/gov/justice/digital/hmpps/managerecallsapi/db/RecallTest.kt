@@ -109,8 +109,21 @@ class RecallTest {
   }
 
   @Test
-  fun `Recall with bookedByUserId, recallNotificationEmailSentDateTime & assignee set returns status DOSSIER_IN_PROGRESS`() {
+  fun `NOT in Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & assignee set returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = recall.copy(
+      inCustody = false,
+      bookedByUserId = ::UserId.random().value,
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assignee = ::UserId.random().value
+    )
+
+    assertThat(recall.status(), equalTo(Status.RECALL_NOTIFICATION_ISSUED))
+  }
+
+  @Test
+  fun `In Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & assignee set returns status DOSSIER_IN_PROGRESS`() {
+    val recall = recall.copy(
+      inCustody = true,
       bookedByUserId = ::UserId.random().value,
       recallNotificationEmailSentDateTime = OffsetDateTime.now(),
       assignee = ::UserId.random().value
