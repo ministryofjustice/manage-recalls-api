@@ -132,14 +132,15 @@ class RecallControllerTest {
   private val bookedOnRecall = newRecall().copy(bookedByUserId = bookedByUserId.value)
   private val inAssessmentRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, assignee = assignee.value)
   private val stoppedRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, agreeWithRecall = AgreeWithRecall.NO_STOP)
-  private val recallNotificationIssuedRecall = newRecall().copy(recallNotificationEmailSentDateTime = now)
-  private val dossierInProgressRecall = newRecall().copy(recallNotificationEmailSentDateTime = now, assignee = assignee.value)
+  private val inCustodyRecallNotificationIssuedRecall = newRecall().copy(inCustody = true, recallNotificationEmailSentDateTime = now)
+  private val notInCustodyRecallNotificationIssuedRecall = newRecall().copy(inCustody = false, recallNotificationEmailSentDateTime = now, assignee = assignee.value)
+  private val inCustodyDossierInProgressRecall = newRecall().copy(inCustody = true, recallNotificationEmailSentDateTime = now, assignee = assignee.value)
   private val dossierIssuedRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value)
 
   @Test
   fun `gets all recalls for a band FOUR_PLUS returns all recalls`() {
     val bearerToken = "Bearer header.payload"
-    every { recallRepository.findAll() } returns listOf(beingBookedOnRecall, bookedOnRecall, inAssessmentRecall, stoppedRecall, recallNotificationIssuedRecall, dossierInProgressRecall, dossierIssuedRecall)
+    every { recallRepository.findAll() } returns listOf(beingBookedOnRecall, bookedOnRecall, inAssessmentRecall, stoppedRecall, inCustodyRecallNotificationIssuedRecall, notInCustodyRecallNotificationIssuedRecall, inCustodyDossierInProgressRecall, dossierIssuedRecall)
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(::UserId.random().toString())
     val userDetails = mockk<UserDetails>()
     every { userDetailsService.get(any()) } returns userDetails
@@ -149,7 +150,7 @@ class RecallControllerTest {
 
     val results = underTest.findAll(bearerToken)
 
-    assertThat(results.size, equalTo(7))
+    assertThat(results.size, equalTo(8))
 
     assertThat(
       results,
@@ -159,8 +160,9 @@ class RecallControllerTest {
         recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId, bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = FullName("Mickey Mouse"), bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
-        recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
-        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = true, recallNotificationEmailSentDateTime = now),
+        recallResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = false, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(inCustody = true, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
         recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
     )
@@ -169,7 +171,7 @@ class RecallControllerTest {
   @Test
   fun `gets all recalls for a band THREE returns only recalls in BEING_BOOKED_ON, STOPPED, RECALL_NOTIFICATION_ISSUED, DOSSIER_IN_PROGRESS, DOSSIER_ISSUED statuses`() {
     val bearerToken = "Bearer header.payload"
-    every { recallRepository.findAll() } returns listOf(beingBookedOnRecall, bookedOnRecall, inAssessmentRecall, stoppedRecall, recallNotificationIssuedRecall, dossierInProgressRecall, dossierIssuedRecall)
+    every { recallRepository.findAll() } returns listOf(beingBookedOnRecall, bookedOnRecall, inAssessmentRecall, stoppedRecall, inCustodyRecallNotificationIssuedRecall, notInCustodyRecallNotificationIssuedRecall, inCustodyDossierInProgressRecall, dossierIssuedRecall)
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(::UserId.random().toString())
     val userDetails = mockk<UserDetails>()
     every { userDetailsService.get(any()) } returns userDetails
@@ -179,7 +181,7 @@ class RecallControllerTest {
 
     val results = underTest.findAll(bearerToken)
 
-    assertThat(results.size, equalTo(5))
+    assertThat(results.size, equalTo(6))
 
     assertThat(
       results,
@@ -187,8 +189,9 @@ class RecallControllerTest {
       listOf(
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
         recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
-        recallResponse(recallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(recallNotificationEmailSentDateTime = now),
-        recallResponse(dossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = true, recallNotificationEmailSentDateTime = now),
+        recallResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = false, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(inCustody = true, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
         recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
 
