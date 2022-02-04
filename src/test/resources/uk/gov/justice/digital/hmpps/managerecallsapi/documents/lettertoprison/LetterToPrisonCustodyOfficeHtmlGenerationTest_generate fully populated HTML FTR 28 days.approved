@@ -83,7 +83,7 @@ border:none'><span style='line-height:115%;color:black'>&nbsp;</span></p>
       <td width=322 colspan=2 rowspan=4 valign=top style='width:241.2pt;border:
   solid white 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt;color:black'>HerMajesty’s Prison &amp; Probation Service</span></b></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt;color:black'>Her Majesty’s Prison &amp; Probation Service</span></b></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'><span style='font-size:10.0pt'>Public Protection Group</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right; text-indent:-.1pt'><span style='font-size:10.0pt'>Public Protection Casework Section</span></p>
@@ -243,16 +243,18 @@ border:none'><span style='color:black'>&nbsp;</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>The number to which they should revert is <span>AA1234A</span>.</p>
+  <div>
+    <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>The number to which they should revert is <span>AA1234A</span>.</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
+    <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
+  </div>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span>Billie Badger</span>’s licence has been revoked as a Fixed Term Recall under Section 254 of the Criminal Justice Act 2003, as amended.  </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span>Billie Badger</span> must be released automatically <b>at the end of the <span>28</span> days in custody</b>,
-  beginning on the date that they return to custody, unless an expedited date for release has been specified.  This date will need to be urgently calculated and provided to the Community Offender Manager
+  beginning on the date that they return to custody, unless an expedited date for release has been specified. This date will need to be urgently calculated and provided to the Community Offender Manager
   and the Public Protection Casework Section.</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
@@ -275,27 +277,20 @@ border:none'><span style='color:black'>&nbsp;</span></p>
 
     <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><pre class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;white-space: pre-wrap'>Blah blah blah</pre></p>
   </div>
+  <div>
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><span style='color:black'>Please note that it has been brought to our attention that </span><span>Billie Badger</span><span style='color:black'> shows issues of vulnerability in custody in that: </span><pre class="MsoNormal" style="white-space: pre-wrap">Yes, yadda yadda</pre></p>
+  </div>
+  <div>
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <pre class="MsoNormal" style="white-space: pre-wrap">Because...</pre></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
+  </div>
+  <div>
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black'>Please note that <span>Billie Badger</span> is registered as MAPPA <span>Level 2</span></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><span style='color:black'>Please note that it has been brought to our attention that </span><span>Billie Badger</span><span style='color:black'> shows issues of vulnerability in custody in that: </span><pre class="MsoNormal" style="white-space: pre-wrap">Yes, yadda yadda</pre></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><b><span style='color:red'>&nbsp;</span></b></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <pre class="MsoNormal" style="white-space: pre-wrap">Because...</pre></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-border:none'>&nbsp;</p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-border:none'>&nbsp;</p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black'>Please note that <span>Billie Badger</span> is registered as MAPPA <span>Level 2</span></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>&nbsp;</span></p>
+  </div>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>Yours sincerely,</span></p>
