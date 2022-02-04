@@ -46,7 +46,7 @@ class RecallNotificationService(
   }
 
   private fun getNotInCustodyDocumentGenerators(context: RecallNotificationContext): List<() -> Mono<ByteArray>> {
-    return if (!context.recall.inCustody!!) {
+    return if (!context.recall.inCustodyRecall()) {
       listOf(
         { offenderNotificationService.generatePdf(context.getOffenderNotificationContext()) },
         { Mono.just(ClassPathResource("/pdfs/Police-Notification.pdf").inputStream.readAllBytes()) }

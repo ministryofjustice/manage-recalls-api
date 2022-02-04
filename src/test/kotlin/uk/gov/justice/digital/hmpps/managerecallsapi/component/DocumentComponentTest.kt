@@ -310,6 +310,7 @@ class DocumentComponentTest : ComponentTestBase() {
     authenticatedClient.deleteDocument(recall.recallId, document.documentId)
   }
 
+  // TODO: there are no documents generated prior to `Assess Recall` - so why this test "for Recall being booked"?
   @Test
   fun `can't delete generated document for Recall being booked`() {
     expectNoVirusesWillBeFound()
@@ -332,7 +333,8 @@ class DocumentComponentTest : ComponentTestBase() {
         bookingNumber = "booking number",
         licenceConditionsBreached = "he was a very naughty boy",
         lastReleaseDate = LocalDate.now(),
-        inCustody = true
+        inCustodyAtBooking = true,
+        inCustody = true,
       )
     )
     val document = authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER)

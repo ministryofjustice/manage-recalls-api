@@ -49,7 +49,7 @@ class RecallNotificationContextFactory(
   fun createContext(recallId: RecallId, currentUserId: UserId): RecallNotificationContext {
     val recall = recallRepository.getByRecallId(recallId)
     val currentUserDetails = userDetailsService.get(currentUserId)
-    val currentPrisonName = if (recall.inCustody!!) prisonLookupService.getPrisonName(recall.currentPrison!!) else null
+    val currentPrisonName = if (recall.inCustodyRecall()) prisonLookupService.getPrisonName(recall.currentPrison!!) else null
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
     val sentencingCourtName = courtLookupService.getCourtName(recall.sentencingInfo!!.sentencingCourt)
     val localPoliceForceName = policeForceLookupService.getPoliceForceName(recall.localPoliceForceId!!)
@@ -124,19 +124,19 @@ data class RecallNotificationContext(
       recall.vulnerabilityDiversityDetail,
       currentPrisonName,
       lastReleasePrisonName,
-      recall.inCustody!!,
+      recall.inCustodyRecall(),
       recall.arrestIssues,
       recall.arrestIssuesDetail,
-      lastKnownAddressText(recall.inCustody, recall.lastKnownAddressOption, recall.lastKnownAddresses)
+      lastKnownAddressText(recall.inCustodyRecall(), recall.lastKnownAddressOption, recall.lastKnownAddresses)
     )
   }
 
   private fun lastKnownAddressText(
-    inCustody: Boolean,
+    inCustodyRecall: Boolean,
     lastKnownAddressOption: LastKnownAddressOption?,
     lastKnownAddresses: Set<LastKnownAddress>
   ): String? {
-    if (inCustody) return null
+    if (inCustodyRecall) return null
     return when (lastKnownAddressOption!!) {
       LastKnownAddressOption.NO_FIXED_ABODE -> lastKnownAddressOption.label
       else -> lastKnownAddresses.sortedBy { it.index }.joinToString("\n") { it.toAddressString() }
@@ -152,7 +152,7 @@ data class RecallNotificationContext(
       recall.bookingNumber!!,
       currentPrisonName,
       currentUserDetails.personName(),
-      recall.inCustody!!,
+      recall.inCustodyRecall()
     )
 
   fun getOffenderNotificationContext(): OffenderNotificationContext =
@@ -194,7 +194,7 @@ data class LetterToProbationContext(
   val bookingNumber: String,
   val currentPrisonName: PrisonName?,
   val assessedByUserName: PersonName,
-  val inCustody: Boolean,
+  val inCustodyRecall: Boolean,
 )
 
 data class RecallSummaryContext(
@@ -226,7 +226,7 @@ data class RecallSummaryContext(
   val vulnerabilityDiversityDetail: String?,
   val currentPrisonName: PrisonName?,
   val lastReleasePrisonName: PrisonName,
-  val inCustody: Boolean,
+  val inCustodyRecall: Boolean,
   val arrestIssues: Boolean?,
   val arrestIssuesDetail: String?,
   val lastKnownAddress: String?

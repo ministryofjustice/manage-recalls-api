@@ -66,7 +66,7 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContext.getLetterToProbationContext() } returns letterToProbationContext
     every { recallNotificationContext.getRecallSummaryContext() } returns recallSummaryContext
     every { recallNotificationContext.recall } returns recall
-    every { recall.inCustody } returns true
+    every { recall.inCustodyRecall() } returns true
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
     every { letterToProbationService.generatePdf(letterToProbationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { recallSummaryService.generatePdf(recallSummaryContext) } returns Mono.just(recallSummaryContent.toByteArray())
@@ -128,7 +128,7 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContext.getRecallSummaryContext() } returns recallSummaryContext
     every { recallNotificationContext.getOffenderNotificationContext() } returns offenderNotificationContext
     every { recallNotificationContext.recall } returns recall
-    every { recall.inCustody } returns false
+    every { recall.inCustodyRecall() } returns false
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
     every { letterToProbationService.generatePdf(letterToProbationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { offenderNotificationService.generatePdf(offenderNotificationContext) } returns Mono.just(offenderNotificationContent.toByteArray())
