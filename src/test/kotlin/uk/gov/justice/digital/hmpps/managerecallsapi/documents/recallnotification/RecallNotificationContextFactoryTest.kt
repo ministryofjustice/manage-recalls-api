@@ -264,7 +264,7 @@ class RecallNotificationContextFactoryTest {
     val result = underTest.createContext(recallId, userIdGeneratingRecallNotification).getRecallSummaryContext()
 
     assertThat(result.previousConvictionMainName, equalTo(expectedName))
-    assertThat(result.inCustody, equalTo(false))
+    assertThat(result.inCustodyRecall, equalTo(false))
     assertThat(
       result.lastKnownAddress,
       equalTo(

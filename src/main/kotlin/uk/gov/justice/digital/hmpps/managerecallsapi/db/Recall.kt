@@ -94,6 +94,8 @@ data class Recall(
   @Convert(converter = PoliceForceIdJpaConverter::class)
   val localPoliceForceId: PoliceForceId? = null,
   val inCustody: Boolean? = null,
+  val inCustodyAtBooking: Boolean? = null,
+  val inCustodyAtAssessment: Boolean? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,
   val vulnerabilityDiversity: Boolean? = null,
@@ -163,6 +165,8 @@ data class Recall(
     recallEmailReceivedDateTime: OffsetDateTime? = null,
     localPoliceForceId: PoliceForceId? = null,
     inCustody: Boolean? = null,
+    inCustodyAtBooking: Boolean? = null,
+    inCustodyAtAssessment: Boolean? = null,
     contraband: Boolean? = null,
     contrabandDetail: String? = null,
     vulnerabilityDiversity: Boolean? = null,
@@ -219,6 +223,8 @@ data class Recall(
       recallEmailReceivedDateTime,
       localPoliceForceId,
       inCustody,
+      inCustodyAtBooking,
+      inCustodyAtAssessment,
       contraband,
       contrabandDetail,
       vulnerabilityDiversity,
@@ -282,13 +288,15 @@ data class Recall(
     }
   }
 
+  fun inCustodyRecall(): Boolean = inCustody ?: false || inCustodyAtAssessment ?: false
+
   fun status(): Status =
     if (dossierCreatedByUserId != null) {
       Status.DOSSIER_ISSUED
     } else if (recallNotificationEmailSentDateTime != null) {
-      if (assignee != null && inCustody != false) { // TODO, e.g. PUD-1429: using `inCustody` as a mutable status; expected to change
+      if (assignee != null && inCustodyRecall()) {
         Status.DOSSIER_IN_PROGRESS
-      } else if (inCustody == false && warrantReferenceNumber != null) {
+      } else if (!inCustodyRecall() && warrantReferenceNumber != null) {
         Status.AWAITING_RETURN_TO_CUSTODY
       } else {
         Status.RECALL_NOTIFICATION_ISSUED

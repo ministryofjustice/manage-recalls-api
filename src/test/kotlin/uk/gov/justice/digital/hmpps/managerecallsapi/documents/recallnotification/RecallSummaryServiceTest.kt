@@ -34,7 +34,7 @@ class RecallSummaryServiceTest {
 
     val pageCountSlot = slot<Int>()
 
-    every { recallSummaryContext.inCustody } returns inCustody
+    every { recallSummaryContext.inCustodyRecall } returns inCustody
     every { recallSummaryGenerator.generateHtml(recallSummaryContext, null) } returns recallSummaryHtmlWithoutPageCount
     every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithoutPageCount, 1.0, 1.0, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
     every { recallSummaryGenerator.generateHtml(recallSummaryContext, capture(pageCountSlot)) } returns recallSummaryHtmlWithPageCount

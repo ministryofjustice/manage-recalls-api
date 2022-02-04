@@ -16,15 +16,12 @@ class RecallSummaryService(
 
   fun generatePdf(context: RecallSummaryContext): Mono<ByteArray> =
     getRecallSummaryNumberOfPages(context).map { numberOfPages ->
-      context to otherPageInRecallNotification(context.inCustody) + numberOfPages
+      context to ( // This is the number of pages of the Revocation Order and Letter to Probation. but not in Custody has 2 other documents
+        if (context.inCustodyRecall) 2 else 4
+        ) + numberOfPages
     }.flatMap { contextWithActualNumberOfPages ->
       generatePdfContent(contextWithActualNumberOfPages.first, contextWithActualNumberOfPages.second)
     }
-
-  private fun otherPageInRecallNotification(inCustody: Boolean): Int {
-    // This is the number of pages of the Revocation Order and Letter to Probation. but not in Custody has 2 other documents
-    return if (inCustody) 2 else 4
-  }
 
   private fun getRecallSummaryNumberOfPages(recallSummaryContext: RecallSummaryContext) =
     generatePdfContent(recallSummaryContext).map { pdfBytes ->

@@ -26,7 +26,7 @@ class LetterToProbationGenerator(
       setVariable("bookingNumber", context.bookingNumber)
       setVariable("currentPrisonName", context.currentPrisonName)
       setVariable("assessedByUserName", context.assessedByUserName)
-      setVariable("inCustody", context.inCustody)
+      setVariable("inCustody", context.inCustodyRecall)
 
       setVariable("logoFileName", HmppsLogo.fileName)
     }.let {
