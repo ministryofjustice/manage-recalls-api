@@ -324,7 +324,7 @@ workflows:
           name: e2e-tests-dev
           repository: manage-recalls-e2e-tests
           token: $CIRCLECI_AUTH_TOKEN
-          build_parameters: '{ "only_run_deploy_check": true, "e2e_environment": "dev", "check-docker": false, "check-dev": true, "check-preprod": false }'
+          build_parameters: '{ "check-docker": false, "check-dev": true, "check-preprod": false }'
           requires:
             - deploy_dev
           context:
@@ -379,7 +379,7 @@ workflows:
           name: e2e-tests-preprod
           repository: manage-recalls-e2e-tests
           token: $CIRCLECI_AUTH_TOKEN
-          build_parameters: '{ "only_run_deploy_check": true, "e2e_environment": "preprod", "check-docker": false, "check-dev": false, "check-preprod": true }'
+          build_parameters: '{ "check-docker": false, "check-dev": false, "check-preprod": true }'
           requires:
             - deploy_preprod
           context:
