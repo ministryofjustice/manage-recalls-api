@@ -83,7 +83,7 @@ border:none'><span style='line-height:115%;color:black'>&nbsp;</span></p>
       <td width=322 colspan=2 rowspan=4 valign=top style='width:241.2pt;border:
   solid white 1.0pt;border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt;color:black'>HerMajesty’s Prison &amp; Probation Service</span></b></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt;color:black'>Her Majesty’s Prison &amp; Probation Service</span></b></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'><span style='font-size:10.0pt'>Public Protection Group</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right; text-indent:-.1pt'><span style='font-size:10.0pt'>Public Protection Casework Section</span></p>
@@ -243,16 +243,18 @@ border:none'><span style='color:black'>&nbsp;</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt' th:if="${differentNomsNumber}">The number to which they should revert is <span th:text="${originalNomisNumber}"/>.</p>
+  <div th:if="${differentNomsNumber}">
+    <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>The number to which they should revert is <span th:text="${originalNomisNumber}"/>.</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
+    <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
+  </div>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span th:text="${fullName}"/>’s licence has been revoked as a Fixed Term Recall under Section 254 of the Criminal Justice Act 2003, as amended.  </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span th:text="${fullName}"/> must be released automatically <b>at the end of the <span th:text="${recallLengthDays}"/> days in custody</b>,
-  beginning on the date that they return to custody, unless an expedited date for release has been specified.  This date will need to be urgently calculated and provided to the Community Offender Manager
+  beginning on the date that they return to custody, unless an expedited date for release has been specified. This date will need to be urgently calculated and provided to the Community Offender Manager
   and the Public Protection Casework Section.</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
@@ -275,27 +277,20 @@ border:none'><span style='color:black'>&nbsp;</span></p>
 
     <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><pre class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;white-space: pre-wrap' th:text="${additionalLicenceConditionsDetail}"></pre></p>
   </div>
+  <div th:if="${hasVulnerabilities}">
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><span style='color:black'>Please note that it has been brought to our attention that </span><span th:text="${fullName}"/><span style='color:black'> shows issues of vulnerability in custody in that: </span><pre class="MsoNormal" style="white-space: pre-wrap" th:text="${vulnerabilityDiversityDetail}"></pre></p>
+  </div>
+  <div th:if="${hasContraband}">
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <pre class="MsoNormal" style="white-space: pre-wrap" th:text="${contrabandDetail}"></pre></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
+  </div>
+  <div th:if="${hasMappaLevel}">
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black'>Please note that <span th:text="${fullName}"/> is registered as MAPPA <span th:text="${mappaLevel}"/></p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none' th:if="${hasVulnerabilities}"><span style='color:black'>Please note that it has been brought to our attention that </span><span th:text="${fullName}"/><span style='color:black'> shows issues of vulnerability in custody in that: </span><pre class="MsoNormal" style="white-space: pre-wrap" th:text="${vulnerabilityDiversityDetail}"></pre></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal; border:none'><b><span style='color:red'>&nbsp;</span></b></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt' th:if="${hasContraband}">Please note it is believed that the offender may be using recall to bring contraband into the prison estate: <pre class="MsoNormal" style="white-space: pre-wrap" th:text="${contrabandDetail}"></pre></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-border:none'>&nbsp;</p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-border:none'>&nbsp;</p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;border:none;color:black' th:if="${hasMappaLevel}">Please note that <span th:text="${fullName}"/> is registered as MAPPA <span th:text="${mappaLevel}"/></p>
-
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
+    <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>&nbsp;</span></p>
+  </div>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
 border:none'><span style='color:black'>Yours sincerely,</span></p>
