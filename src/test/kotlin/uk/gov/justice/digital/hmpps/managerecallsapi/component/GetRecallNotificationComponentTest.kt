@@ -192,7 +192,8 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         vulnerabilityDiversity = true,
         vulnerabilityDiversityDetail = "Some stuff",
         assessedByUserId = userId,
-        inCustody = inCustody,
+        inCustodyAtBooking = inCustody,
+        inCustodyAtAssessment = if (inCustody) null else false,
         arrestIssues = !inCustody,
         arrestIssuesDetail = if (inCustody) null else "Some arrest issues",
         lastKnownAddressOption = if (inCustody) null else LastKnownAddressOption.YES

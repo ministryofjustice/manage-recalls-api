@@ -85,7 +85,6 @@ class RecallServiceTest {
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
     localPoliceForceId = fullyPopulatedUpdateRecallRequest.localPoliceForceId,
-    inCustody = fullyPopulatedUpdateRecallRequest.inCustody,
     inCustodyAtBooking = fullyPopulatedUpdateRecallRequest.inCustodyAtBooking,
     inCustodyAtAssessment = fullyPopulatedUpdateRecallRequest.inCustodyAtAssessment,
     contraband = fullyPopulatedUpdateRecallRequest.contraband,

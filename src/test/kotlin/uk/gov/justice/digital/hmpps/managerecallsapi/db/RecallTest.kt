@@ -92,8 +92,9 @@ class RecallTest {
   }
 
   @Test
-  fun `Recall with recallNotificationEmailSentDateTime set returns status RECALL_NOTIFICATION_ISSUED`() {
+  fun `In Custody Recall with recallNotificationEmailSentDateTime set returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = recall.copy(
+      inCustodyAtBooking = true,
       recallNotificationEmailSentDateTime = OffsetDateTime.now()
     )
 
@@ -103,7 +104,8 @@ class RecallTest {
   @Test
   fun `NOT in Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & warrantReferenceNumber set returns status AWAITING_RETURN_TO_CUSTODY`() {
     val recall = recall.copy(
-      inCustody = false, // TODO, e.g. PUD-1429: using `inCustody` as a mutable status; expected to change
+      inCustodyAtBooking = false,
+      inCustodyAtAssessment = false,
       bookedByUserId = ::UserId.random().value,
       recallNotificationEmailSentDateTime = OffsetDateTime.now(),
       warrantReferenceNumber = WarrantReferenceNumber(randomString())
@@ -115,7 +117,7 @@ class RecallTest {
   @Test
   fun `In Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime ignores warrantReferenceNumber and returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = recall.copy(
-      inCustody = true,
+      inCustodyAtBooking = true,
       bookedByUserId = ::UserId.random().value,
       recallNotificationEmailSentDateTime = OffsetDateTime.now(),
       warrantReferenceNumber = WarrantReferenceNumber(randomString())
@@ -125,8 +127,9 @@ class RecallTest {
   }
 
   @Test
-  fun `Recall with bookedByUserId and recallNotificationEmailSentDateTime but no assignee returns status RECALL_NOTIFICATION_ISSUED`() {
+  fun `In Custody Recall with bookedByUserId and recallNotificationEmailSentDateTime but no assignee returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = recall.copy(
+      inCustodyAtBooking = true,
       bookedByUserId = ::UserId.random().value,
       recallNotificationEmailSentDateTime = OffsetDateTime.now()
     )
@@ -137,7 +140,8 @@ class RecallTest {
   @Test
   fun `NOT in Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & assignee set returns status RECALL_NOTIFICATION_ISSUED`() {
     val recall = recall.copy(
-      inCustody = false,
+      inCustodyAtBooking = false,
+      inCustodyAtAssessment = false,
       bookedByUserId = ::UserId.random().value,
       recallNotificationEmailSentDateTime = OffsetDateTime.now(),
       assignee = ::UserId.random().value
@@ -149,7 +153,7 @@ class RecallTest {
   @Test
   fun `In Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & assignee set returns status DOSSIER_IN_PROGRESS`() {
     val recall = recall.copy(
-      inCustody = true,
+      inCustodyAtBooking = true,
       bookedByUserId = ::UserId.random().value,
       recallNotificationEmailSentDateTime = OffsetDateTime.now(),
       assignee = ::UserId.random().value

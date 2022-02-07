@@ -93,7 +93,6 @@ data class Recall(
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   @Convert(converter = PoliceForceIdJpaConverter::class)
   val localPoliceForceId: PoliceForceId? = null,
-  val inCustody: Boolean? = null,
   val inCustodyAtBooking: Boolean? = null,
   val inCustodyAtAssessment: Boolean? = null,
   val contraband: Boolean? = null,
@@ -164,7 +163,6 @@ data class Recall(
     lastReleaseDate: LocalDate? = null,
     recallEmailReceivedDateTime: OffsetDateTime? = null,
     localPoliceForceId: PoliceForceId? = null,
-    inCustody: Boolean? = null,
     inCustodyAtBooking: Boolean? = null,
     inCustodyAtAssessment: Boolean? = null,
     contraband: Boolean? = null,
@@ -222,7 +220,6 @@ data class Recall(
       lastReleaseDate,
       recallEmailReceivedDateTime,
       localPoliceForceId,
-      inCustody,
       inCustodyAtBooking,
       inCustodyAtAssessment,
       contraband,
@@ -288,7 +285,7 @@ data class Recall(
     }
   }
 
-  fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking ?: inCustody ?: true
+  fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking!!
 
   fun status(): Status =
     if (dossierCreatedByUserId != null) {
