@@ -288,7 +288,7 @@ data class Recall(
     }
   }
 
-  fun inCustodyRecall(): Boolean = inCustody ?: false || inCustodyAtAssessment ?: false
+  fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking ?: inCustody ?: true
 
   fun status(): Status =
     if (dossierCreatedByUserId != null) {
