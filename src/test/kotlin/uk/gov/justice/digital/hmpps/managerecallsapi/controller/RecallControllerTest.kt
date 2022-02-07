@@ -132,9 +132,9 @@ class RecallControllerTest {
   private val bookedOnRecall = newRecall().copy(bookedByUserId = bookedByUserId.value)
   private val inAssessmentRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, assignee = assignee.value)
   private val stoppedRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, agreeWithRecall = AgreeWithRecall.NO_STOP)
-  private val inCustodyRecallNotificationIssuedRecall = newRecall().copy(inCustody = true, recallNotificationEmailSentDateTime = now)
-  private val notInCustodyRecallNotificationIssuedRecall = newRecall().copy(inCustody = false, recallNotificationEmailSentDateTime = now, assignee = assignee.value)
-  private val inCustodyDossierInProgressRecall = newRecall().copy(inCustody = true, recallNotificationEmailSentDateTime = now, assignee = assignee.value)
+  private val inCustodyRecallNotificationIssuedRecall = newRecall().copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now)
+  private val notInCustodyRecallNotificationIssuedRecall = newRecall().copy(inCustodyAtBooking = false, inCustodyAtAssessment = false, recallNotificationEmailSentDateTime = now, assignee = assignee.value)
+  private val inCustodyDossierInProgressRecall = newRecall().copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now, assignee = assignee.value)
   private val dossierIssuedRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value)
 
   @Test
@@ -160,9 +160,9 @@ class RecallControllerTest {
         recallResponse(bookedOnRecall, Status.BOOKED_ON).copy(bookedByUserId = bookedByUserId, bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(bookedByUserId = bookedByUserId, assignee = assignee, assigneeUserName = FullName("Mickey Mouse"), bookedByUserName = FullName("Mickey Mouse")),
         recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
-        recallResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = true, recallNotificationEmailSentDateTime = now),
-        recallResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = false, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(inCustody = true, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now),
+        recallResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustodyAtBooking = false, inCustodyAtAssessment = false, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
         recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
     )
@@ -189,9 +189,9 @@ class RecallControllerTest {
       listOf(
         recallResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
         recallResponse(stoppedRecall, Status.STOPPED).copy(bookedByUserId = bookedByUserId, agreeWithRecall = AgreeWithRecall.NO_STOP, bookedByUserName = FullName("Mickey Mouse")),
-        recallResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = true, recallNotificationEmailSentDateTime = now),
-        recallResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustody = false, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
-        recallResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(inCustody = true, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now),
+        recallResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(inCustodyAtBooking = false, inCustodyAtAssessment = false, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
+        recallResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now, assignee = assignee, assigneeUserName = FullName("Mickey Mouse")),
         recallResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED).copy(dossierCreatedByUserId = dossierCreatedByUserId, dossierCreatedByUserName = FullName("Mickey Mouse"))
       )
 

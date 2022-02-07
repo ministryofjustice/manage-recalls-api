@@ -305,10 +305,11 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `complete assessment of a recall updates recallNotificationEmailSentDateTime and assessedByUserId and calculates dossierTargetDate as after weekend and bank holidays`() {
+  fun `complete assessment of a in custody recall updates recallNotificationEmailSentDateTime and assessedByUserId and calculates dossierTargetDate as after weekend and bank holidays`() {
     val assessedByUserId = ::UserId.random()
     setupUserDetailsFor(assessedByUserId)
     val updateRecallRequest = UpdateRecallRequest(
+      inCustodyAtBooking = true,
       recallNotificationEmailSentDateTime = OffsetDateTime.of(2021, 12, 24, 12, 0, 0, 0, ZoneOffset.UTC),
       assessedByUserId = assessedByUserId
     )
@@ -327,6 +328,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.RECALL_NOTIFICATION_ISSUED,
+          inCustodyAtBooking = true,
           recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = assessedByUserId,
           assessedByUserName = FullName("Bertie Badger"),

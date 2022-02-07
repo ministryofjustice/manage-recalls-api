@@ -108,7 +108,7 @@ class RecallNotificationContextFactoryTest {
       LocalDate.of(1999, 12, 1),
       lastReleasePrison = lastReleasePrisonId,
       localPoliceForceId = localPoliceForceId,
-      inCustody = true,
+      inCustodyAtBooking = true,
       sentencingInfo = sentencingInfo,
       currentPrison = currentPrisonId
     )
@@ -167,7 +167,7 @@ class RecallNotificationContextFactoryTest {
       LocalDate.of(1999, 12, 1),
       lastReleasePrison = lastReleasePrisonId,
       localPoliceForceId = localPoliceForceId,
-      inCustody = true,
+      inCustodyAtBooking = true,
       sentencingInfo = sentencingInfo,
       currentPrison = currentPrisonId
     )
@@ -237,7 +237,8 @@ class RecallNotificationContextFactoryTest {
       lastReleasePrison = lastReleasePrisonId,
       lastReleaseDate = LocalDate.now(),
       localPoliceForceId = localPoliceForceId,
-      inCustody = false,
+      inCustodyAtBooking = false,
+      inCustodyAtAssessment = false,
       contraband = true,
       vulnerabilityDiversity = true,
       mappaLevel = MappaLevel.LEVEL_2,
@@ -303,7 +304,8 @@ class RecallNotificationContextFactoryTest {
       bookingNumber = bookingNumber,
       reasonsForRecall = setOf(ELM_FURTHER_OFFENCE, BREACH_EXCLUSION_ZONE, FAILED_HOME_VISIT, OTHER),
       reasonsForRecallOtherDetail = "Another reason",
-      inCustody = false,
+      inCustodyAtBooking = false,
+      inCustodyAtAssessment = false,
       lastReleasePrison = lastReleasePrisonId,
       localPoliceForceId = localPoliceForceId,
       sentencingInfo = sentencingInfo,
