@@ -1,6 +1,6 @@
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.0.3-beta"
-  kotlin("plugin.spring") version "1.5.10"
+  kotlin("plugin.spring") version "1.5.21"
   kotlin("plugin.jpa") version "1.5.20"
   kotlin("plugin.serialization") version "1.4.31"
   id("org.owasp.dependencycheck") version "6.5.0.1"
@@ -21,13 +21,6 @@ configurations {
 dependencyCheck {
   suppressionFiles.add("$rootDir/owasp.suppression.xml")
 }
-
-// Force log4j2.version to 2.17.1 for CVE-2021-44832
-project.extensions.extraProperties["log4j2.version"] = "2.17.1"
-// Force logback.version to 1.2.9 (latest stable) for CVE-2021-42550
-project.extensions.extraProperties["logback.version"] = "1.2.9"
-// Force uplift thymeleaf for CVE-2021-43466
-project.extensions.extraProperties["thymeleaf.version"] = "3.0.14.RELEASE"
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.2")
