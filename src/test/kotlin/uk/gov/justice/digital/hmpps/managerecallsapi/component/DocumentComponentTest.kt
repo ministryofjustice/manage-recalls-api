@@ -375,6 +375,9 @@ class DocumentComponentTest : ComponentTestBase() {
     )
 
     authenticatedClient.deleteDocument(recall.recallId, secondDocumentId)
+    val docs = authenticatedClient.getRecallDocuments(recall.recallId, versionedDocumentCategory)
+    assertThat(docs.size, equalTo(1))
+
     val documents = authenticatedClient.getRecall(recall.recallId).documents
 
     assertThat(firstDocumentId, !equalTo(secondDocumentId))
