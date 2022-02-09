@@ -7,8 +7,8 @@ function usage {
 
 Options:
     -h --> show usage
-    -f --> FROM environment (REQUIRED) - allowed values are 'preprod' or 'prod'
-    -t --> TO environment (REQUIRED) - allowed values are 'dev' or 'preprod'
+    -f --> FROM environment (REQUIRED) - allowed values are 'dev', 'preprod' or 'prod'
+    -t --> TO environment (REQUIRED) - allowed values are 'local', 'dev' or 'preprod'
   "
 }
 
@@ -52,11 +52,11 @@ done
 
 # check for the ENV variables
 set +u
-if [[ ! "${FROM_ENV}" =~ ^(preprod|prod)$ ]]; then
+if [[ ! "${FROM_ENV}" =~ ^(dev|preprod|prod)$ ]]; then
   usage
   exit 1
 fi
-if [[ ! "${TO_ENV}" =~ ^(dev|preprod)$ ]]; then
+if [[ ! "${TO_ENV}" =~ ^(local|dev|preprod)$ ]]; then
   usage
   exit 1
 fi
@@ -75,7 +75,7 @@ function kill_proxies {
 }
 
 function wait_for_db {
-  until pg_isready -q -h "127.0.0.1" -p 5432; do
+  until pg_isready -q -h "127.0.0.1" -p 5433; do
     echo "DB proxy is unavailable - waiting..."
     sleep 1
   done
@@ -98,7 +98,7 @@ FROM_DB_SECRET=manage-recalls-api-database
 DB_NAME=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_DB_SECRET}" -o json | jq -r '.data.name | @base64d')
 DB_USER=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_DB_SECRET}" -o json | jq -r '.data.username | @base64d')
 DB_PASS=$(kubectl -n "${FROM_NAMESPACE}" get secret "${FROM_DB_SECRET}" -o json | jq -r '.data.password | @base64d')
-DB_PORT=5432
+DB_PORT=5433
 export PGPASSWORD="${DB_PASS}"
 
 echo "Running pg_dump on the source database ..."
@@ -121,18 +121,26 @@ kill_proxies
 ## Import into the TO database...
 ##
 
-# kick off db port forward
-# shellcheck disable=SC1091,SC2086
-${SCRIPT_DIR}/port-forward-db.sh -e "${TO_ENV}" &
-sleep 5
-wait_for_db
-
-# db connection details
-TO_DB_SECRET=manage-recalls-api-database
-DB_NAME=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.name | @base64d')
-DB_USER=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.username | @base64d')
-DB_PASS=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.password | @base64d')
+# local db creds (as default)
+DB_NAME="manage_recalls"
 DB_PORT=5432
+DB_USER="ppud_user"
+DB_PASS="secret"
+
+if [ "${TO_ENV}" != "local" ]; then
+  # kick off db port forward
+  # shellcheck disable=SC1091,SC2086
+  ${SCRIPT_DIR}/port-forward-db.sh -e "${TO_ENV}" &
+  sleep 5
+  wait_for_db
+
+  # db connection details
+  TO_DB_SECRET=manage-recalls-api-database
+  DB_NAME=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.name | @base64d')
+  DB_USER=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.username | @base64d')
+  DB_PASS=$(kubectl -n "${TO_NAMESPACE}" get secret "${TO_DB_SECRET}" -o json | jq -r '.data.password | @base64d')
+fi
+
 export PGPASSWORD="${DB_PASS}"
 
 echo "Running pg_restore on the target database ..."
@@ -150,6 +158,8 @@ pg_restore \
 
 rm -f "${PGDUMP_FILE}"
 
-kill_proxies
+if [ "${TO_ENV}" != "local" ]; then
+  kill_proxies
+fi
 
 echo "done."
