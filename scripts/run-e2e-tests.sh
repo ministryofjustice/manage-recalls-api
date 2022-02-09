@@ -44,9 +44,9 @@ set -u
 
 echo "Triggering the workflow..."
 
-BUILD_PARAMS=("{\"check-docker\": false, \"check-dev\": true, \"check-preprod\": false}")
+BUILD_PARAMS=("{\"check-docker\": false, \"check-dev\": true, \"check-preprod\": false, \"invoked-by\": \"api\"}")
 if [ "${ENV}" == "preprod" ]; then
-  BUILD_PARAMS=("{\"check-docker\": false, \"check-dev\": false, \"check-preprod\": true}")
+  BUILD_PARAMS=("{\"check-docker\": false, \"check-dev\": false, \"check-preprod\": true, \"invoked-by\": \"api\"}")
 fi
 
 POST_BODY=("{\"branch\":\"main\", \"parameters\": ${BUILD_PARAMS[@]}}")
