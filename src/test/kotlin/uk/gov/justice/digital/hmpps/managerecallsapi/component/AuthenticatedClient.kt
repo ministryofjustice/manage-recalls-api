@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
@@ -84,9 +85,9 @@ class AuthenticatedClient(
     sendGetRequest("/recalls/$recallId", expectedStatus)
   }
 
-  fun getAllRecalls(): List<RecallResponse> =
+  fun getAllRecalls(): List<RecallResponseLite> =
     sendGetRequest("/recalls")
-      .expectBody(object : ParameterizedTypeReference<List<RecallResponse>>() {})
+      .expectBody(object : ParameterizedTypeReference<List<RecallResponseLite>>() {})
       .returnResult()
       .responseBody!!
 

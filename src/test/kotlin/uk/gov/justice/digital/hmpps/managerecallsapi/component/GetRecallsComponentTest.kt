@@ -4,7 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -55,9 +55,9 @@ class GetRecallsComponentTest : ComponentTestBase() {
     val response = authenticatedClient.getAllRecalls()
 
     assertThat(
-      response, List<RecallResponse>::containsAll,
+      response, List<RecallResponseLite>::containsAll,
       listOf(
-        RecallResponse(
+        RecallResponseLite(
           recall1.recallId(),
           recall1.nomsNumber,
           createdByUserId,
@@ -66,12 +66,10 @@ class GetRecallsComponentTest : ComponentTestBase() {
           FirstName("Barrie"),
           null,
           LastName("Badger"),
-          CroNumber("ABC/1234A"),
-          LocalDate.of(1999, 12, 1),
           FIRST_LAST,
           Status.BEING_BOOKED_ON
         ),
-        RecallResponse(
+        RecallResponseLite(
           recall2.recallId(),
           recall2.nomsNumber,
           createdByUserId,
@@ -80,8 +78,6 @@ class GetRecallsComponentTest : ComponentTestBase() {
           FirstName("Barrie"),
           MiddleNames("Barnie"),
           LastName("Badger"),
-          CroNumber("ABC/1234A"),
-          LocalDate.of(1999, 12, 1),
           FIRST_MIDDLE_LAST,
           Status.BEING_BOOKED_ON
         )

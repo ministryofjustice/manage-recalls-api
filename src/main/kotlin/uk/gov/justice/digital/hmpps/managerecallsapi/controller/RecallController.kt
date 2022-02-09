@@ -44,7 +44,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
@@ -58,7 +57,6 @@ class RecallController(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val userDetailsService: UserDetailsService,
   @Autowired private val recallService: RecallService,
-  @Autowired private val documentService: DocumentService,
   @Autowired private val prisonValidationService: PrisonValidationService,
   @Autowired private val courtValidationService: CourtValidationService,
   @Autowired private val tokenExtractor: TokenExtractor
@@ -78,11 +76,13 @@ class RecallController(
   }
 
   @GetMapping("/recalls")
-  fun findAll(@RequestHeader("Authorization") bearerToken: String): List<RecallResponse> {
+  fun findAll(@RequestHeader("Authorization") bearerToken: String): List<RecallResponseLite> {
+    userDetailsService.cacheAllIfEmpty()
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
     val band = userDetailsService.get(token.userUuid()).caseworkerBand
 
-    return recallRepository.findAll().filter { it.status().visibilityBands.contains(band) }.map { it.toResponse() }
+    return recallRepository.findAll().filter { it.status().visibilityBands.contains(band) }
+      .map { it.toResponseLite() }
   }
 
   @PostMapping("/recalls/search")
@@ -132,88 +132,110 @@ class RecallController(
     return recallService.unassignRecall(recallId, assignee, token.userUuid()).toResponse()
   }
 
+  fun Recall.toResponseLite() =
+    RecallResponseLite(
+      recallId = recallId(),
+      nomsNumber = nomsNumber,
+      createdByUserId = createdByUserId(),
+      createdDateTime = createdDateTime,
+      lastUpdatedDateTime = lastUpdatedDateTime,
+      firstName = firstName,
+      middleNames = middleNames,
+      lastName = lastName,
+      licenceNameCategory = licenceNameCategory,
+      status = status(),
+      inCustodyAtBooking = inCustodyAtBooking,
+      inCustodyAtAssessment = inCustodyAtAssessment,
+      dossierEmailSentDate = dossierEmailSentDate,
+      dossierTargetDate = dossierTargetDate,
+      recallAssessmentDueDateTime = recallAssessmentDueDateTime(),
+      assigneeUserName = assignee()?.let { userDetailsService.get(it).fullName() },
+    )
+
   fun Recall.toResponse() = RecallResponse(
-    recallId = this.recallId(),
-    nomsNumber = this.nomsNumber,
-    createdByUserId = this.createdByUserId(),
-    createdDateTime = this.createdDateTime,
-    lastUpdatedDateTime = this.lastUpdatedDateTime,
-    firstName = this.firstName,
-    middleNames = this.middleNames,
-    lastName = this.lastName,
-    croNumber = this.croNumber,
-    dateOfBirth = this.dateOfBirth,
-    licenceNameCategory = this.licenceNameCategory,
-    status = this.status(),
+    recallId = recallId(),
+    nomsNumber = nomsNumber,
+    createdByUserId = createdByUserId(),
+    createdDateTime = createdDateTime,
+    lastUpdatedDateTime = lastUpdatedDateTime,
+    firstName = firstName,
+    middleNames = middleNames,
+    lastName = lastName,
+    croNumber = croNumber,
+    dateOfBirth = dateOfBirth,
+    licenceNameCategory = licenceNameCategory,
+    status = status(),
     documents = latestDocuments(documents),
-    missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse() },
+    missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse(documents) },
     lastKnownAddresses = lastKnownAddresses.map { address -> address.toResponse() },
-    recallLength = this.recallLength,
-    lastReleasePrison = this.lastReleasePrison,
-    lastReleaseDate = this.lastReleaseDate,
-    recallEmailReceivedDateTime = this.recallEmailReceivedDateTime,
-    localPoliceForceId = this.localPoliceForceId,
-    inCustodyAtBooking = this.inCustodyAtBooking,
-    inCustodyAtAssessment = this.inCustodyAtAssessment,
-    contraband = this.contraband,
-    contrabandDetail = this.contrabandDetail,
-    vulnerabilityDiversity = this.vulnerabilityDiversity,
-    vulnerabilityDiversityDetail = this.vulnerabilityDiversityDetail,
-    mappaLevel = this.mappaLevel,
-    sentenceDate = this.sentencingInfo?.sentenceDate,
-    licenceExpiryDate = this.sentencingInfo?.licenceExpiryDate,
-    sentenceExpiryDate = this.sentencingInfo?.sentenceExpiryDate,
-    sentencingCourt = this.sentencingInfo?.sentencingCourt,
-    indexOffence = this.sentencingInfo?.indexOffence,
-    conditionalReleaseDate = this.sentencingInfo?.conditionalReleaseDate,
-    sentenceLength = this.sentencingInfo?.sentenceLength?.let {
+    recallLength = recallLength,
+    lastReleasePrison = lastReleasePrison,
+    lastReleaseDate = lastReleaseDate,
+    recallEmailReceivedDateTime = recallEmailReceivedDateTime,
+    localPoliceForceId = localPoliceForceId,
+    inCustodyAtBooking = inCustodyAtBooking,
+    inCustodyAtAssessment = inCustodyAtAssessment,
+    contraband = contraband,
+    contrabandDetail = contrabandDetail,
+    vulnerabilityDiversity = vulnerabilityDiversity,
+    vulnerabilityDiversityDetail = vulnerabilityDiversityDetail,
+    mappaLevel = mappaLevel,
+    sentenceDate = sentencingInfo?.sentenceDate,
+    licenceExpiryDate = sentencingInfo?.licenceExpiryDate,
+    sentenceExpiryDate = sentencingInfo?.sentenceExpiryDate,
+    sentencingCourt = sentencingInfo?.sentencingCourt,
+    indexOffence = sentencingInfo?.indexOffence,
+    conditionalReleaseDate = sentencingInfo?.conditionalReleaseDate,
+    sentenceLength = sentencingInfo?.sentenceLength?.let {
       Api.SentenceLength(
         it.sentenceYears,
         it.sentenceMonths,
         it.sentenceDays
       )
     },
-    bookingNumber = this.bookingNumber,
-    probationOfficerName = this.probationInfo?.probationOfficerName,
-    probationOfficerPhoneNumber = this.probationInfo?.probationOfficerPhoneNumber,
-    probationOfficerEmail = this.probationInfo?.probationOfficerEmail,
-    localDeliveryUnit = this.probationInfo?.localDeliveryUnit,
-    authorisingAssistantChiefOfficer = this.probationInfo?.authorisingAssistantChiefOfficer,
-    licenceConditionsBreached = this.licenceConditionsBreached,
-    reasonsForRecall = this.reasonsForRecall.toList(),
-    reasonsForRecallOtherDetail = this.reasonsForRecallOtherDetail,
-    agreeWithRecall = this.agreeWithRecall,
-    agreeWithRecallDetail = this.agreeWithRecallDetail,
-    currentPrison = this.currentPrison,
-    additionalLicenceConditions = this.additionalLicenceConditions,
-    additionalLicenceConditionsDetail = this.additionalLicenceConditionsDetail,
-    differentNomsNumber = this.differentNomsNumber,
-    differentNomsNumberDetail = this.differentNomsNumberDetail,
-    recallNotificationEmailSentDateTime = this.recallNotificationEmailSentDateTime,
-    dossierEmailSentDate = this.dossierEmailSentDate,
-    previousConvictionMainNameCategory = this.previousConvictionMainNameCategory,
-    hasDossierBeenChecked = this.hasDossierBeenChecked,
-    previousConvictionMainName = this.previousConvictionMainName,
-    assessedByUserId = this.assessedByUserId(),
-    bookedByUserId = this.bookedByUserId(),
-    dossierCreatedByUserId = this.dossierCreatedByUserId(),
-    dossierTargetDate = this.dossierTargetDate,
-    assignee = this.assignee(),
-    assigneeUserName = this.assignee()?.let { userDetailsService.get(it).fullName() },
-    recallAssessmentDueDateTime = this.recallAssessmentDueDateTime(),
-    assessedByUserName = this.assessedByUserId()?.let { userDetailsService.get(it).fullName() },
-    bookedByUserName = this.bookedByUserId()?.let { userDetailsService.get(it).fullName() },
-    dossierCreatedByUserName = this.dossierCreatedByUserId()?.let { userDetailsService.get(it).fullName() },
-    lastKnownAddressOption = this.lastKnownAddressOption,
-    arrestIssues = this.arrestIssues,
-    arrestIssuesDetail = this.arrestIssuesDetail,
-    warrantReferenceNumber = this.warrantReferenceNumber,
+    bookingNumber = bookingNumber,
+    probationOfficerName = probationInfo?.probationOfficerName,
+    probationOfficerPhoneNumber = probationInfo?.probationOfficerPhoneNumber,
+    probationOfficerEmail = probationInfo?.probationOfficerEmail,
+    localDeliveryUnit = probationInfo?.localDeliveryUnit,
+    authorisingAssistantChiefOfficer = probationInfo?.authorisingAssistantChiefOfficer,
+    licenceConditionsBreached = licenceConditionsBreached,
+    reasonsForRecall = reasonsForRecall.toList(),
+    reasonsForRecallOtherDetail = reasonsForRecallOtherDetail,
+    agreeWithRecall = agreeWithRecall,
+    agreeWithRecallDetail = agreeWithRecallDetail,
+    currentPrison = currentPrison,
+    additionalLicenceConditions = additionalLicenceConditions,
+    additionalLicenceConditionsDetail = additionalLicenceConditionsDetail,
+    differentNomsNumber = differentNomsNumber,
+    differentNomsNumberDetail = differentNomsNumberDetail,
+    recallNotificationEmailSentDateTime = recallNotificationEmailSentDateTime,
+    dossierEmailSentDate = dossierEmailSentDate,
+    previousConvictionMainNameCategory = previousConvictionMainNameCategory,
+    hasDossierBeenChecked = hasDossierBeenChecked,
+    previousConvictionMainName = previousConvictionMainName,
+    assessedByUserId = assessedByUserId(),
+    bookedByUserId = bookedByUserId(),
+    dossierCreatedByUserId = dossierCreatedByUserId(),
+    dossierTargetDate = dossierTargetDate,
+    assignee = assignee(),
+    assigneeUserName = assignee()?.let { userDetailsService.get(it).fullName() },
+    recallAssessmentDueDateTime = recallAssessmentDueDateTime(),
+    assessedByUserName = assessedByUserId()?.let { userDetailsService.get(it).fullName() },
+    bookedByUserName = bookedByUserId()?.let { userDetailsService.get(it).fullName() },
+    dossierCreatedByUserName = dossierCreatedByUserId()?.let { userDetailsService.get(it).fullName() },
+    lastKnownAddressOption = lastKnownAddressOption,
+    arrestIssues = arrestIssues,
+    arrestIssuesDetail = arrestIssuesDetail,
+    warrantReferenceNumber = warrantReferenceNumber,
   )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
     val partitionedDocs = documents.partition { it.category.versioned }
-    val latestDocuments = partitionedDocs.first.filter { it.category.versioned }
-      .groupBy { it.category }.values.map { it.sortedBy { d -> d.version }.last() } + partitionedDocs.second
+    val versionedDocs = partitionedDocs.first
+    val unversionedDocs = partitionedDocs.second
+    val latestDocuments =
+      versionedDocs.groupBy { it.category }.values.map { it.maxByOrNull { d -> d.version!! }!! } + unversionedDocs
     return latestDocuments.map {
       Api.RecallDocument(
         it.id(),
@@ -227,27 +249,27 @@ class RecallController(
     }
   }
 
-  fun MissingDocumentsRecord.toResponse() = Api.MissingDocumentsRecord(
-    this.id(),
-    this.categories.toList(),
-    this.emailId(),
-    documentService.getRecallDocumentById(this.recallId(), this.emailId()).fileName,
-    this.details,
-    this.version,
-    userDetailsService.get(this.createdByUserId()).fullName(),
-    this.createdDateTime
+  fun MissingDocumentsRecord.toResponse(documents: Set<Document>) = Api.MissingDocumentsRecord(
+    id(),
+    categories.toList(),
+    emailId(),
+    documents.first { it.id == emailId }.fileName,
+    details,
+    version,
+    userDetailsService.get(createdByUserId()).fullName(),
+    createdDateTime
   )
 
   fun LastKnownAddress.toResponse() = Api.LastKnownAddress(
-    this.id(),
-    this.line1,
-    this.line2,
-    this.town,
-    this.postcode,
-    this.source,
-    this.index,
-    userDetailsService.get(this.createdByUserId()).fullName(),
-    this.createdDateTime
+    id(),
+    line1,
+    line2,
+    town,
+    postcode,
+    source,
+    index,
+    userDetailsService.get(createdByUserId()).fullName(),
+    createdDateTime
   )
 }
 
@@ -255,14 +277,14 @@ fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
   val now = OffsetDateTime.now()
   return Recall(
     ::RecallId.random(),
-    this.nomsNumber,
+    nomsNumber,
     userUuid,
     now,
-    this.firstName,
-    this.middleNames,
-    this.lastName,
-    this.croNumber,
-    this.dateOfBirth
+    firstName,
+    middleNames,
+    lastName,
+    croNumber,
+    dateOfBirth
   )
 }
 
@@ -273,6 +295,25 @@ data class BookRecallRequest(
   val lastName: LastName,
   val croNumber: CroNumber,
   val dateOfBirth: LocalDate,
+)
+
+data class RecallResponseLite(
+  val recallId: RecallId,
+  val nomsNumber: NomsNumber,
+  val createdByUserId: UserId,
+  val createdDateTime: OffsetDateTime,
+  val lastUpdatedDateTime: OffsetDateTime,
+  val firstName: FirstName,
+  val middleNames: MiddleNames?,
+  val lastName: LastName,
+  val licenceNameCategory: NameFormatCategory,
+  val status: Status,
+  val inCustodyAtBooking: Boolean? = null,
+  val inCustodyAtAssessment: Boolean? = null,
+  val dossierEmailSentDate: LocalDate? = null,
+  val dossierTargetDate: LocalDate? = null,
+  val recallAssessmentDueDateTime: OffsetDateTime? = null,
+  val assigneeUserName: FullName? = null,
 )
 
 data class RecallResponse(
