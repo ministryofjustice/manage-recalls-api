@@ -2,9 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.http.ResponseEntity
@@ -165,13 +163,13 @@ class RecallControllerTest {
       inCustodyDossierInProgressRecall,
       dossierIssuedRecall
     )
-    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(::UserId.random().toString())
-    val userDetails = mockk<UserDetails>()
-    every { userDetailsService.cacheAllIfEmpty() } just Runs
-    every { userDetailsService.clearCache() } just Runs
-    every { userDetailsService.get(any()) } returns userDetails
-    every { userDetails.caseworkerBand } returns CaseworkerBand.FOUR_PLUS
-    every { userDetails.fullName() } returns FullName("Mickey Mouse")
+    val userId = ::UserId.random()
+    val currentUserDetails = mockk<UserDetails>()
+    val assigneeUserDetails = mockk<UserDetails>()
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userId.toString())
+    every { userDetailsService.getAll() } returns mapOf(userId to currentUserDetails, assignee to assigneeUserDetails)
+    every { currentUserDetails.caseworkerBand } returns CaseworkerBand.FOUR_PLUS
+    every { assigneeUserDetails.fullName() } returns FullName("Mickey Mouse")
 
     val results = underTest.findAll(bearerToken)
 
@@ -215,13 +213,13 @@ class RecallControllerTest {
       inCustodyDossierInProgressRecall,
       dossierIssuedRecall
     )
-    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(::UserId.random().toString())
-    val userDetails = mockk<UserDetails>()
-    every { userDetailsService.cacheAllIfEmpty() } just Runs
-    every { userDetailsService.clearCache() } just Runs
-    every { userDetailsService.get(any()) } returns userDetails
-    every { userDetails.caseworkerBand } returns CaseworkerBand.THREE
-    every { userDetails.fullName() } returns FullName("Mickey Mouse")
+    val userId = ::UserId.random()
+    val currentUserDetails = mockk<UserDetails>()
+    val assigneeUserDetails = mockk<UserDetails>()
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userId.toString())
+    every { userDetailsService.getAll() } returns mapOf(userId to currentUserDetails, assignee to assigneeUserDetails)
+    every { currentUserDetails.caseworkerBand } returns CaseworkerBand.THREE
+    every { assigneeUserDetails.fullName() } returns FullName("Mickey Mouse")
 
     val results = underTest.findAll(bearerToken)
 
