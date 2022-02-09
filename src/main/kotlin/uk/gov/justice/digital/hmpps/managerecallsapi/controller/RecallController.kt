@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -77,12 +78,13 @@ class RecallController(
 
   @GetMapping("/recalls")
   fun findAll(@RequestHeader("Authorization") bearerToken: String): List<RecallResponseLite> {
-    userDetailsService.cacheAllIfEmpty()
+    // Fetching all users to prevent repeated requests to database
+    val users = userDetailsService.getAll()
     val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    val band = userDetailsService.get(token.userUuid()).caseworkerBand
+    val band = users[token.userUuid()]!!.caseworkerBand
 
     return recallRepository.findAll().filter { it.status().visibilityBands.contains(band) }
-      .map { it.toResponseLite() }
+      .map { it.toResponseLite(users) }
   }
 
   @PostMapping("/recalls/search")
@@ -132,7 +134,7 @@ class RecallController(
     return recallService.unassignRecall(recallId, assignee, token.userUuid()).toResponse()
   }
 
-  fun Recall.toResponseLite() =
+  fun Recall.toResponseLite(users: Map<UserId, UserDetails>) =
     RecallResponseLite(
       recallId = recallId(),
       nomsNumber = nomsNumber,
@@ -149,7 +151,7 @@ class RecallController(
       dossierEmailSentDate = dossierEmailSentDate,
       dossierTargetDate = dossierTargetDate,
       recallAssessmentDueDateTime = recallAssessmentDueDateTime(),
-      assigneeUserName = assignee()?.let { userDetailsService.get(it).fullName() },
+      assigneeUserName = assignee()?.let { users[it]!!.fullName() },
     )
 
   fun Recall.toResponse() = RecallResponse(
