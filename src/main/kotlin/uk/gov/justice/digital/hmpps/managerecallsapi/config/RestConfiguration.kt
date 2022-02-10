@@ -36,6 +36,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Validated
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
@@ -92,6 +93,7 @@ private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply 
   text(StringBiDiMappings.uuid().map(::LastKnownAddressId, LastKnownAddressId::value))
   text(StringBiDiMappings.uuid().map(::DocumentId, DocumentId::value))
   text(StringBiDiMappings.uuid().map(::UserId, UserId::value))
+  text(StringBiDiMappings.uuid().map(::RescindRecordId, RescindRecordId::value))
 }
 
 inline fun <reified T : Validated<*>> AutoMappingConfiguration<ObjectMapper>.text(

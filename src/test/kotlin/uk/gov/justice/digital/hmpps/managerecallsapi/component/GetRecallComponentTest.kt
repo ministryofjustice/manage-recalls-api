@@ -78,6 +78,7 @@ class GetRecallComponentTest : ComponentTestBase() {
 
     val missingDocumentsRecord = fullyPopulatedRecall.missingDocumentsRecords.first()
     val lastKnownAddress = fullyPopulatedRecall.lastKnownAddresses.first()
+    val rescindRecord = fullyPopulatedRecall.rescindRecords.first()
 
     // TODO:  MD Fix assertions, or move somewhere more sensible.
     authenticatedClient.get("/recalls/$recallId")
@@ -112,6 +113,19 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.lastKnownAddresses[0].source").isEqualTo(lastKnownAddress.source.name)
       .jsonPath("$.lastKnownAddresses[0].createdByUserName").isEqualTo("Bertie Badger")
       .jsonPath("$.lastKnownAddresses[0].createdDateTime").value(endsWith("Z"))
+      .jsonPath("$.rescindRecords.length()").isEqualTo(1)
+      .jsonPath("$.rescindRecords[0].rescindRecordId").isEqualTo(rescindRecord.id.toString())
+      .jsonPath("$.rescindRecords[0].version").isEqualTo(rescindRecord.version)
+      .jsonPath("$.rescindRecords[0].requestDetails").isEqualTo(rescindRecord.requestDetails)
+      .jsonPath("$.rescindRecords[0].requestEmailId").isEqualTo(rescindRecord.requestEmailId.toString())
+      .jsonPath("$.rescindRecords[0].requestEmailReceivedDate").isEqualTo(rescindRecord.requestEmailReceivedDate.toString())
+      .jsonPath("$.rescindRecords[0].approved").isEqualTo(rescindRecord.approved!!)
+      .jsonPath("$.rescindRecords[0].decisionDetails").isEqualTo(rescindRecord.decisionDetails!!)
+      .jsonPath("$.rescindRecords[0].decisionEmailId").isEqualTo(rescindRecord.decisionEmailId!!.toString())
+      .jsonPath("$.rescindRecords[0].decisionEmailSentDate").isEqualTo(rescindRecord.decisionEmailSentDate!!.toString())
+      .jsonPath("$.rescindRecords[0].createdByUserName").isEqualTo("Bertie Badger")
+      .jsonPath("$.rescindRecords[0].createdDateTime").value(endsWith("Z"))
+      .jsonPath("$.rescindRecords[0].lastUpdatedDateTime").value(endsWith("Z"))
       .jsonPath("$.recallLength").isEqualTo(fullyPopulatedRecall.recallLength!!.name)
       .jsonPath("$.lastReleasePrison").isEqualTo(fullyPopulatedRecall.lastReleasePrison!!.value)
       .jsonPath("$.recallEmailReceivedDateTime").value(endsWith("Z"))

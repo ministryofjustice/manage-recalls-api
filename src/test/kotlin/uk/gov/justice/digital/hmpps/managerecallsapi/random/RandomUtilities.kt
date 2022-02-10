@@ -56,7 +56,16 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
           index = randomIndex(),
           createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
-      }.toSet()
+      }.toSet(),
+      rescindRecords = recall.rescindRecords.map { rr ->
+        rr.copy(
+          recallId = recallId.value,
+          requestEmailId = recall.documents.random().id,
+          decisionEmailId = recall.documents.random().id,
+          version = randomVersion(),
+          createdByUserId = (knownUserId ?: ::UserId.random()).value
+        )
+      }.toSet(),
     )
   }
 

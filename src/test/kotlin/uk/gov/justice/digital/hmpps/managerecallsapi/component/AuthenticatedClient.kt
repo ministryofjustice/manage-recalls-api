@@ -23,6 +23,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
@@ -35,6 +37,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 
@@ -67,6 +70,12 @@ class AuthenticatedClient(
 
   fun getRecall(recallId: RecallId): RecallResponse =
     getRequest("/recalls/$recallId", RecallResponse::class.java)
+
+  fun requestRescind(recallId: RecallId, request: RescindRequestRequest): RescindRecordId =
+    postRequest("/recalls/$recallId/rescind-records", request, RescindRecordId::class.java)
+
+  fun decideRescind(recallId: RecallId, rescindRecordId: RescindRecordId, request: RescindDecisionRequest, status: HttpStatus = OK) =
+    putRequest("/recalls/$recallId/rescind-records/$rescindRecordId", request, status)
 
   fun getRecallDocuments(recallId: RecallId, category: DocumentCategory): List<Api.RecallDocument> =
     webTestClient.get().uri { uriBuilder ->
@@ -229,6 +238,15 @@ class AuthenticatedClient(
       .expectBody(responseClass)
       .returnResult()
       .responseBody!!
+
+  private fun putRequest(
+    path: String,
+    request: Any,
+    responseStatus: HttpStatus = OK
+  ) =
+    webTestClient.put()
+      .sendRequestWithBody(path, request)
+      .expectStatus().isEqualTo(responseStatus)
 
   private fun <T> postWithoutBody(
     path: String,

@@ -50,6 +50,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import java.util.UUID
@@ -78,6 +79,7 @@ class SpringFoxConfig {
       .directModelSubstitute(DocumentId::class.java, UUID::class.java)
       .directModelSubstitute(MissingDocumentsRecordId::class.java, UUID::class.java)
       .directModelSubstitute(LastKnownAddressId::class.java, UUID::class.java)
+      .directModelSubstitute(RescindRecordId::class.java, UUID::class.java)
       .directModelSubstitute(UserId::class.java, UUID::class.java)
       .directModelSubstitute(PrisonId::class.java, String::class.java)
       .directModelSubstitute(PrisonName::class.java, String::class.java)

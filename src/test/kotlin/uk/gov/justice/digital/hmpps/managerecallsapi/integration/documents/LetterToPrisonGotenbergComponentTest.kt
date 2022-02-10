@@ -18,7 +18,6 @@ import java.time.LocalDate
 class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
-  private val prisonerFirstName = "Natalia"
   private val assessedByUserId = ::UserId.random()
 
   @Test
