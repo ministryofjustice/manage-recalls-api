@@ -124,10 +124,10 @@ internal class LetterToPrisonServiceParameterizedTest {
     every { letterToPrisonGovernorGenerator.generateHtml(context) } returns generatedHtml
     every { letterToPrisonConfirmationGenerator.generateHtml(context) } returns generatedHtml
     every {
-      pdfDocumentGenerationService.generatePdf(custodyOfficeHtml, 1.0, 1.0, recallImage(HmppsLogo))
+      pdfDocumentGenerationService.generatePdf(custodyOfficeHtml, 1.0, 0.8, recallImage(HmppsLogo))
     } returns Mono.just(pdfWith3Pages)
     every {
-      pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0, recallImage(HmppsLogo))
+      pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 0.8, recallImage(HmppsLogo))
     } returns Mono.just(expectedBytes)
     every { pdfDocumentGenerationService.generatePdf(generatedHtml) } returns Mono.just(expectedBytes)
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)

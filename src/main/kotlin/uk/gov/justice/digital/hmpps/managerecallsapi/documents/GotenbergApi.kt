@@ -16,10 +16,10 @@ class GotenbergApi(
   @Value("\${gotenberg.endpoint.url}") private val gotenbergEndpointUrl: String
 ) {
   fun merge(mergeRequest: MultiValueMap<String, HttpEntity<*>>): Mono<ByteArray> =
-    gotenbergResponse("/merge", mergeRequest)
+    gotenbergResponse("/forms/pdfengines/merge", mergeRequest)
 
   fun convertHtml(convertHtmlRequest: MultiValueMap<String, HttpEntity<*>>): Mono<ByteArray> =
-    gotenbergResponse("/convert/html", convertHtmlRequest)
+    gotenbergResponse("/forms/chromium/convert/html", convertHtmlRequest)
 
   private fun gotenbergResponse(
     path: String,

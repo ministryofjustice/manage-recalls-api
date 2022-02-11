@@ -68,7 +68,7 @@ services:
     command: --verbose --local-response-templating
 
   gotenberg:
-    image: thecodingmachine/gotenberg:6
+    image: gotenberg/gotenberg:7.5.0
     networks:
       - manage-recalls-api
     container_name: gotenberg_manage-recalls-api

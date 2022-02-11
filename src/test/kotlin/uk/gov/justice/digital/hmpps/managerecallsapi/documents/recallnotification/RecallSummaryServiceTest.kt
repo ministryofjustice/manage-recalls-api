@@ -36,9 +36,9 @@ class RecallSummaryServiceTest {
 
     every { recallSummaryContext.inCustodyRecall } returns inCustody
     every { recallSummaryGenerator.generateHtml(recallSummaryContext, null) } returns recallSummaryHtmlWithoutPageCount
-    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithoutPageCount, 1.0, 1.0, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
+    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithoutPageCount, 1.0, 0.8, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
     every { recallSummaryGenerator.generateHtml(recallSummaryContext, capture(pageCountSlot)) } returns recallSummaryHtmlWithPageCount
-    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithPageCount, 1.0, 1.0, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
+    every { pdfDocumentGenerationService.generatePdf(recallSummaryHtmlWithPageCount, 1.0, 0.8, recallImage(HmppsLogo)) } returns Mono.just(pdfWith3Pages)
 
     val result = underTest.generatePdf(recallSummaryContext).block()!!
 

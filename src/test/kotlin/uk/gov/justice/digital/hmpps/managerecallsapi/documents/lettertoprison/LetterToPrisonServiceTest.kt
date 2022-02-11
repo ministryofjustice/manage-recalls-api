@@ -58,9 +58,9 @@ internal class LetterToPrisonServiceTest {
     every { letterToPrisonConfirmationGenerator.generateHtml(context) } returns ltpConfirmationHtml
     every { pdfDocumentGenerationService.generatePdf(ltpConfirmationHtml) } returns Mono.just("Some Confirmation bytes".toByteArray())
     every { letterToPrisonGovernorGenerator.generateHtml(context) } returns ltpGovernorHtml
-    every { pdfDocumentGenerationService.generatePdf(ltpGovernorHtml, 1.0, 1.0, any()) } returns Mono.just("Some Governor bytes".toByteArray())
+    every { pdfDocumentGenerationService.generatePdf(ltpGovernorHtml, 1.0, 0.8, any()) } returns Mono.just("Some Governor bytes".toByteArray())
     every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns ltpCustodyOfficeHtml
-    every { pdfDocumentGenerationService.generatePdf(ltpCustodyOfficeHtml, 1.0, 1.0, any()) } returns Mono.just(
+    every { pdfDocumentGenerationService.generatePdf(ltpCustodyOfficeHtml, 1.0, 0.8, any()) } returns Mono.just(
       custodyOfficeBytes
     )
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
