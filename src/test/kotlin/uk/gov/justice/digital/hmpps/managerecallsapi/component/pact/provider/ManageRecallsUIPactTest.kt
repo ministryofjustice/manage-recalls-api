@@ -86,6 +86,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     recallAuditRepository.deleteAll()
     missingDocumentsRecordRepository.deleteAll()
     lastKnownAddressRepository.deleteAll()
+    rescindRecordRepository.deleteAll()
     documentRepository.deleteAll()
     recallRepository.deleteAll()
 
