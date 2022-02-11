@@ -57,6 +57,7 @@ data class Recall(
   val createdByUserId: UUID,
   @Column(nullable = false)
   val createdDateTime: OffsetDateTime,
+  // MD: ideally this (and others) would be UserId, but hibernate/postgres does not make this easy :-(
   val lastUpdatedByUserId: UUID,
   @Column(nullable = false)
   val lastUpdatedDateTime: OffsetDateTime,
@@ -135,7 +136,6 @@ data class Recall(
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
   @Embedded
   val probationInfo: ProbationInfo? = null,
-  // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
   val reasonsForRecallOtherDetail: String? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   @Enumerated(STRING)

@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RescindRecordNotFoundException
 import java.time.LocalDate
 import java.time.OffsetDateTime
@@ -189,6 +190,45 @@ class RescindRecordControllerTest {
     )
 
     assertThrows<RescindRecordNotFoundException> {
+      underTest.decideRescindRecord(recallId, ::RescindRecordId.random(), decisionRequest, bearerToken)
+    }
+  }
+
+  @Test
+  fun `NotFoundException thrown if recall does not exist on rescind request creation`() {
+    val documentBytes = "a document".toByteArray()
+    val fileName = "email.msg"
+    val details = "blah blah again"
+
+    every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException(recallId)
+
+    val request = RescindRequestRequest(
+      details,
+      LocalDate.now(),
+      documentBytes.encodeToBase64String(),
+      fileName
+    )
+
+    assertThrows<RecallNotFoundException> {
+      underTest.createRescindRecord(recallId, request, bearerToken)
+    }
+  }
+
+  @Test
+  fun `NotFoundException thrown if recall does not exist on rescind decision`() {
+    val documentBytes = "a document".toByteArray()
+    val fileName = "email.msg"
+    val decisionDetails = "blah blah again"
+
+    every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException(recallId)
+
+    val decisionRequest = RescindDecisionRequest(
+      false,
+      decisionDetails, LocalDate.now(),
+      documentBytes.encodeToBase64String(), fileName
+    )
+
+    assertThrows<RecallNotFoundException> {
       underTest.decideRescindRecord(recallId, ::RescindRecordId.random(), decisionRequest, bearerToken)
     }
   }
