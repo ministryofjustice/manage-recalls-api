@@ -19,6 +19,8 @@ enum class DocumentCategory(val uploaded: Boolean, val versioned: Boolean) {
   DOSSIER(false, true),
   REASONS_FOR_RECALL(false, true),
   MISSING_DOCUMENTS_EMAIL(true, true),
+  RESCIND_REQUEST_EMAIL(true, false),
+  RESCIND_DECISION_EMAIL(true, false),
   OTHER(true, false),
   UNCATEGORISED(true, false)
 }

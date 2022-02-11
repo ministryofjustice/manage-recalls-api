@@ -165,6 +165,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         documents = emptySet(),
         missingDocumentsRecords = emptySet(),
         lastKnownAddresses = emptySet(),
+        rescindRecords = emptySet(),
         assignee = userIdOnes.value
       )
     }
@@ -184,6 +185,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val recall = fullyPopulatedRecall(matchedRecallId, userIdOnes).copy(
       documents = emptySet(),
       missingDocumentsRecords = emptySet(),
+      rescindRecords = emptySet(),
       assignee = null
     )
     setupUserDetailsFor(userIdOnes)
@@ -200,18 +202,21 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
           nomsNumber = nomsNumber,
           documents = emptySet(),
           missingDocumentsRecords = emptySet(),
+          rescindRecords = emptySet(),
           assignee = null
         ),
         fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
           nomsNumber = randomNoms(),
           documents = emptySet(),
           missingDocumentsRecords = emptySet(),
+          rescindRecords = emptySet(),
           assignee = null
         ),
         fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
           nomsNumber = randomNoms(),
           documents = emptySet(),
           missingDocumentsRecords = emptySet(),
+          rescindRecords = emptySet(),
           assignee = null
         )
       )

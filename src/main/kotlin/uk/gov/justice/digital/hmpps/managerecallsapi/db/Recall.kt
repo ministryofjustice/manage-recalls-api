@@ -46,6 +46,8 @@ import javax.persistence.Table
 @Entity
 @Table(name = "recall")
 data class Recall(
+
+// NON-NULLABLE FIELDS
   @Id
   val id: UUID,
   @Column(nullable = false)
@@ -55,6 +57,7 @@ data class Recall(
   val createdByUserId: UUID,
   @Column(nullable = false)
   val createdDateTime: OffsetDateTime,
+  // MD: ideally this (and others) would be UserId, but hibernate/postgres does not make this easy :-(
   val lastUpdatedByUserId: UUID,
   @Column(nullable = false)
   val lastUpdatedDateTime: OffsetDateTime,
@@ -74,70 +77,76 @@ data class Recall(
   @Column(nullable = false)
   @Enumerated(STRING)
   val licenceNameCategory: NameFormatCategory,
+
+// COLLECTIONS
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val documents: Set<Document> = emptySet(),
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
-  val missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
+  val lastKnownAddresses: Set<LastKnownAddress> = emptySet(),
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
-  val lastKnownAddresses: Set<LastKnownAddress> = emptySet(),
-  @Enumerated(STRING)
-  val recallType: RecallType? = null,
-  @Enumerated(STRING)
-  val recallLength: RecallLength? = null,
-  @Convert(converter = PrisonIdJpaConverter::class)
-  val lastReleasePrison: PrisonId? = null,
-  val lastReleaseDate: LocalDate? = null,
-  val recallEmailReceivedDateTime: OffsetDateTime? = null,
-  @Convert(converter = PoliceForceIdJpaConverter::class)
-  val localPoliceForceId: PoliceForceId? = null,
-  val inCustodyAtBooking: Boolean? = null,
-  val inCustodyAtAssessment: Boolean? = null,
-  val contraband: Boolean? = null,
-  val contrabandDetail: String? = null,
-  val vulnerabilityDiversity: Boolean? = null,
-  val vulnerabilityDiversityDetail: String? = null,
-  @Enumerated(STRING)
-  val mappaLevel: MappaLevel? = null,
-  @Embedded
-  val sentencingInfo: SentencingInfo? = null,
-  val bookingNumber: String? = null,
-  @Embedded
-  val probationInfo: ProbationInfo? = null,
-  val licenceConditionsBreached: String? = null,
+  val missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
   @ElementCollection(targetClass = ReasonForRecall::class)
   @JoinTable(name = "recall_reason", joinColumns = [JoinColumn(name = "recall_id")])
   @Column(name = "reason_for_recall", nullable = false)
   @Enumerated(STRING)
   val reasonsForRecall: Set<ReasonForRecall> = emptySet(),
-  val reasonsForRecallOtherDetail: String? = null,
+  @OneToMany(cascade = [ALL])
+  @JoinColumn(name = "recall_id")
+  val rescindRecords: Set<RescindRecord> = emptySet(),
+
+// NULLABLE FIELDS
+  val additionalLicenceConditions: Boolean? = null,
+  val additionalLicenceConditionsDetail: String? = null,
   @Enumerated(STRING)
   val agreeWithRecall: AgreeWithRecall? = null,
   val agreeWithRecallDetail: String? = null,
-  @Convert(converter = PrisonIdJpaConverter::class)
-  val currentPrison: PrisonId? = null,
-  val additionalLicenceConditions: Boolean? = null,
-  val additionalLicenceConditionsDetail: String? = null,
-  val differentNomsNumber: Boolean? = null,
-  val differentNomsNumberDetail: String? = null,
-  val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
-  val dossierEmailSentDate: LocalDate? = null,
-  @Enumerated(STRING)
-  val previousConvictionMainNameCategory: NameFormatCategory? = null,
-  val hasDossierBeenChecked: Boolean? = null,
-  val previousConvictionMainName: String? = null,
-  // MD: ideally this would be UserId, but hibernate/postgres does not make this easy :-(
-  val assessedByUserId: UUID? = null,
-  val bookedByUserId: UUID? = null,
-  val dossierCreatedByUserId: UUID? = null,
-  val dossierTargetDate: LocalDate? = null,
-  val assignee: UUID? = null,
-  @Enumerated(STRING)
-  val lastKnownAddressOption: LastKnownAddressOption? = null,
   val arrestIssues: Boolean? = null,
   val arrestIssuesDetail: String? = null,
+  val assessedByUserId: UUID? = null,
+  val assignee: UUID? = null,
+  val bookedByUserId: UUID? = null,
+  val bookingNumber: String? = null,
+  val contraband: Boolean? = null,
+  val contrabandDetail: String? = null,
+  @Convert(converter = PrisonIdJpaConverter::class)
+  val currentPrison: PrisonId? = null,
+  val differentNomsNumber: Boolean? = null,
+  val differentNomsNumberDetail: String? = null,
+  val dossierCreatedByUserId: UUID? = null,
+  val dossierEmailSentDate: LocalDate? = null,
+  val dossierTargetDate: LocalDate? = null,
+  val hasDossierBeenChecked: Boolean? = null,
+  val inCustodyAtBooking: Boolean? = null,
+  val inCustodyAtAssessment: Boolean? = null,
+  @Enumerated(STRING)
+  val lastKnownAddressOption: LastKnownAddressOption? = null,
+  val lastReleaseDate: LocalDate? = null,
+  @Convert(converter = PrisonIdJpaConverter::class)
+  val lastReleasePrison: PrisonId? = null,
+  val licenceConditionsBreached: String? = null,
+  @Convert(converter = PoliceForceIdJpaConverter::class)
+  val localPoliceForceId: PoliceForceId? = null,
+  @Enumerated(STRING)
+  val mappaLevel: MappaLevel? = null,
+  val previousConvictionMainName: String? = null,
+  @Enumerated(STRING)
+  val previousConvictionMainNameCategory: NameFormatCategory? = null,
+  @Embedded
+  val probationInfo: ProbationInfo? = null,
+  val reasonsForRecallOtherDetail: String? = null,
+  val recallEmailReceivedDateTime: OffsetDateTime? = null,
+  @Enumerated(STRING)
+  val recallLength: RecallLength? = null,
+  val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
+  @Enumerated(STRING)
+  val recallType: RecallType? = null,
+  @Embedded
+  val sentencingInfo: SentencingInfo? = null,
+  val vulnerabilityDiversity: Boolean? = null,
+  val vulnerabilityDiversityDetail: String? = null,
   @Convert(converter = WarrantReferenceNumberJpaConverter::class)
   val warrantReferenceNumber: WarrantReferenceNumber? = null,
 ) {
@@ -157,6 +166,7 @@ data class Recall(
     documents: Set<Document> = emptySet(),
     missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
     lastKnownAddresses: Set<LastKnownAddress> = emptySet(),
+    rescindRecords: Set<RescindRecord> = emptySet(),
     recallType: RecallType? = null,
     recallLength: RecallLength? = null,
     lastReleasePrison: PrisonId? = null,
@@ -212,47 +222,48 @@ data class Recall(
       dateOfBirth,
       licenceNameCategory,
       documents,
-      missingDocumentsRecords,
       lastKnownAddresses,
-      recallType,
-      recallLength,
-      lastReleasePrison,
-      lastReleaseDate,
-      recallEmailReceivedDateTime,
-      localPoliceForceId,
-      inCustodyAtBooking,
-      inCustodyAtAssessment,
-      contraband,
-      contrabandDetail,
-      vulnerabilityDiversity,
-      vulnerabilityDiversityDetail,
-      mappaLevel,
-      sentencingInfo,
-      bookingNumber,
-      probationInfo,
-      licenceConditionsBreached,
+      missingDocumentsRecords,
       reasonsForRecall,
-      reasonsForRecallOtherDetail,
-      agreeWithRecall,
-      agreeWithRecallDetail,
-      currentPrison,
+      rescindRecords,
       additionalLicenceConditions,
       additionalLicenceConditionsDetail,
-      differentNomsNumber,
-      differentNomsNumberDetail,
-      recallNotificationEmailSentDateTime,
-      dossierEmailSentDate,
-      previousConvictionMainNameCategory,
-      hasDossierBeenChecked,
-      previousConvictionMainName,
-      assessedByUserId?.value,
-      bookedByUserId?.value,
-      dossierCreatedByUserId?.value,
-      dossierTargetDate,
-      assignee?.value,
-      lastKnownAddressOption,
+      agreeWithRecall,
+      agreeWithRecallDetail,
       arrestIssues,
       arrestIssuesDetail,
+      assessedByUserId?.value,
+      assignee?.value,
+      bookedByUserId?.value,
+      bookingNumber,
+      contraband,
+      contrabandDetail,
+      currentPrison,
+      differentNomsNumber,
+      differentNomsNumberDetail,
+      dossierCreatedByUserId?.value,
+      dossierEmailSentDate,
+      dossierTargetDate,
+      hasDossierBeenChecked,
+      inCustodyAtBooking,
+      inCustodyAtAssessment,
+      lastKnownAddressOption,
+      lastReleaseDate,
+      lastReleasePrison,
+      licenceConditionsBreached,
+      localPoliceForceId,
+      mappaLevel,
+      previousConvictionMainName,
+      previousConvictionMainNameCategory,
+      probationInfo,
+      reasonsForRecallOtherDetail,
+      recallEmailReceivedDateTime,
+      recallLength,
+      recallNotificationEmailSentDateTime,
+      recallType,
+      sentencingInfo,
+      vulnerabilityDiversity,
+      vulnerabilityDiversityDetail,
       warrantReferenceNumber,
     )
 

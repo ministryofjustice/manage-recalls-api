@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
@@ -184,6 +185,7 @@ class DocumentService(
 data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
 data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
 data class LastKnownAddressNotFoundException(val recallId: RecallId, val lastKnownAddressId: LastKnownAddressId) : NotFoundException()
+data class RescindRecordNotFoundException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : NotFoundException()
 data class RecallDocumentWithCategoryNotFoundException(
   val recallId: RecallId,
   val documentCategory: DocumentCategory
