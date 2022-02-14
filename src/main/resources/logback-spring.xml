@@ -32,7 +32,8 @@
 
     <logger name="org.apache.catalina" level="INFO"/>
 
-    <logger name="springfox" level="INFO"/>
+    <logger name="org.springdoc" level="INFO"/>
+    <logger name="io.swagger.v3.oas" level="INFO"/>
 
     <logger name="com.microsoft.applicationinsights" additivity="false" level="INFO">
         <appender-ref ref="appender2"/>

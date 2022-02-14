@@ -31,7 +31,10 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
   implementation("org.springframework.security:spring-security-oauth2-client")
 
-  implementation("io.springfox:springfox-boot-starter:3.0.0")
+  implementation("org.springdoc:springdoc-openapi-ui:1.6.6")
+  // implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.6")    // PUD-1485: not achieving any of what it promises?
+  implementation("org.springdoc:springdoc-openapi-kotlin:1.6.6")
+
   implementation("org.flywaydb:flyway-core:8.4.2")
   implementation("org.postgresql:postgresql:42.3.2")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -71,6 +74,7 @@ dependencies {
   testImplementation("au.com.dius.pact.provider:junit5:4.3.4")
   testImplementation("au.com.dius.pact.provider:junit5spring:4.3.4")
   testImplementation("org.http4k:http4k-testing-approval:4.17.9.0")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.0.30")
 }
 
 tasks {

@@ -33,6 +33,7 @@ class ResourceServerConfiguration : WebSecurityConfigurerAdapter() {
             "/info",
             "/v2/**",
             "/v3/**",
+            // "/webjars/**",   // PUD-1845: changed swagger path??
             "/swagger-ui/**",
             "/swagger-resources/**",
             "/swagger-ui.html",

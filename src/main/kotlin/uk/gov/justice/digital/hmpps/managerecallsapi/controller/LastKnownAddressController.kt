@@ -1,9 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
-import io.swagger.annotations.Example
-import io.swagger.annotations.ExampleProperty
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -40,13 +40,9 @@ class LastKnownAddressController(
 
   @ApiResponses(
     ApiResponse(
-      code = 404, message = "RecallNotFoundException(recallId=...)", response = ErrorResponse::class,
-      examples = Example(
-        ExampleProperty(
-          mediaType = "application/json",
-          value = "{\n\"status\": 404,\n\"message\":\"RecallNotFoundException(recallId=...)\"\n}"
-        )
-      )
+      responseCode = "404",
+      description = "RecallNotFoundException(recallId=...)",
+      content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
     )
   )
   @PostMapping(
