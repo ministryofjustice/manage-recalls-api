@@ -18,6 +18,14 @@ generic-service:
     annotations:
       external-dns.alpha.kubernetes.io/aws-weight: "100"
 
+  livenessProbe:
+    httpGet:
+      path: /health/liveness
+      port: metrics
+  readinessProbe:
+    httpGet:
+      path: /health/readiness
+      port: metrics
 
   env:
     JAVA_OPTS: "-Xmx512m"
@@ -39,6 +47,7 @@ generic-service:
     enabled: true
     scrapeInterval: 15s
     metricsPath: /prometheus
+    metricsPort: 8081
 
 generic-prometheus-alerts:
   targetApplication: manage-recalls-api

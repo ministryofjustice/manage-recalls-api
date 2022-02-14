@@ -65,9 +65,8 @@ server:
     include-message: always
 
 management:
-#  TODO: PUD-1377 - do not expose the metrics and health endpoints publicly.
-#  server:
-#    port: 8081
+  server:
+    port: 8081
   endpoints:
     enabled-by-default: false
     web:
