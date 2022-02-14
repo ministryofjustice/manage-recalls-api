@@ -66,7 +66,6 @@ server:
 
 management:
 #  TODO: PUD-1377 - do not expose the metrics and health endpoints publicly.
-#        This work is blocked by PUD-1231 (the replacement of SpringFox).
 #  server:
 #    port: 8081
   endpoints:

@@ -2,10 +2,10 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.onFailure
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
-import io.swagger.annotations.Example
-import io.swagger.annotations.ExampleProperty
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -43,8 +43,9 @@ class MissingDocumentsRecordController(
 
   @ApiResponses(
     ApiResponse(
-      code = 400, message = "Bad request, e.g. virus found exception", response = ErrorResponse::class,
-      examples = Example(ExampleProperty(mediaType = "application/json", value = "{\n\"status\": 400,\n\"message\":\"VirusFoundException\"\n}"))
+      responseCode = "400",
+      description = "Bad request, e.g. virus found exception",
+      content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
     )
   )
   @PostMapping(
