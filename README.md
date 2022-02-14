@@ -1,7 +1,7 @@
 # Manage Recall API
 
 [![CircleCI](https://circleci.com/gh/ministryofjustice/manage-recalls-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/manage-recalls-api)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://manage-recalls-api-dev.hmpps.service.justice.gov.uk/swagger-ui/)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://manage-recalls-api-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
 
 UK(ex-Scotland) MoJ API service for managing recalls. The main Slack channel for
 the maintaining team is currently: `#ppud-replacement`
