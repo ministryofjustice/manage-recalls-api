@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.VirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
+import java.lang.IllegalStateException
 import java.time.Clock
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
@@ -186,6 +187,8 @@ data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
 data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
 data class LastKnownAddressNotFoundException(val recallId: RecallId, val lastKnownAddressId: LastKnownAddressId) : NotFoundException()
 data class RescindRecordNotFoundException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : NotFoundException()
+data class RescindRecordAlreadyDecidedException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : IllegalStateException()
+data class UndecidedRescindRecordAlreadyExistsException(val recallId: RecallId) : IllegalStateException()
 data class RecallDocumentWithCategoryNotFoundException(
   val recallId: RecallId,
   val documentCategory: DocumentCategory

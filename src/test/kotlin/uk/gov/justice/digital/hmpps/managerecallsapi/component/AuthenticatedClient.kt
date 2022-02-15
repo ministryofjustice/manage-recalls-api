@@ -71,11 +71,16 @@ class AuthenticatedClient(
   fun getRecall(recallId: RecallId): RecallResponse =
     getRequest("/recalls/$recallId", RecallResponse::class.java)
 
+  fun requestRescind(recallId: RecallId, request: RescindRequestRequest, status: HttpStatus) =
+    sendPostRequest("/recalls/$recallId/rescind-records", request).expectStatus().isEqualTo(status)
+
   fun requestRescind(recallId: RecallId, request: RescindRequestRequest): RescindRecordId =
-    postRequest("/recalls/$recallId/rescind-records", request, RescindRecordId::class.java)
+    requestRescind(recallId, request, CREATED).expectBody(RescindRecordId::class.java)
+      .returnResult()
+      .responseBody!!
 
   fun decideRescind(recallId: RecallId, rescindRecordId: RescindRecordId, request: RescindDecisionRequest, status: HttpStatus = OK) =
-    putRequest("/recalls/$recallId/rescind-records/$rescindRecordId", request, status)
+    patchRequest("/recalls/$recallId/rescind-records/$rescindRecordId", request, status)
 
   fun getRecallDocuments(recallId: RecallId, category: DocumentCategory): List<Api.RecallDocument> =
     webTestClient.get().uri { uriBuilder ->
@@ -239,12 +244,12 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  private fun putRequest(
+  private fun patchRequest(
     path: String,
     request: Any,
     responseStatus: HttpStatus = OK
   ) =
-    webTestClient.put()
+    webTestClient.patch()
       .sendRequestWithBody(path, request)
       .expectStatus().isEqualTo(responseStatus)
 

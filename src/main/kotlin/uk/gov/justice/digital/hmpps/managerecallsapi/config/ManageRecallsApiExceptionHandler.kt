@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.config
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
+import java.lang.IllegalStateException
 
 @RestControllerAdvice
 class ManageRecallsApiExceptionHandler {
@@ -85,6 +87,14 @@ class ManageRecallsApiExceptionHandler {
     return ResponseEntity
       .status(BAD_REQUEST)
       .body(ErrorResponse(BAD_REQUEST, e.toString()))
+  }
+
+  @ExceptionHandler(IllegalStateException::class)
+  fun handleException(e: IllegalStateException): ResponseEntity<ErrorResponse> {
+    log.error("IllegalStateException", e)
+    return ResponseEntity
+      .status(FORBIDDEN)
+      .body(ErrorResponse(FORBIDDEN, e.toString()))
   }
 }
 
