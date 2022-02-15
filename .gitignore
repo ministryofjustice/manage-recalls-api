@@ -70,3 +70,7 @@ ecr.repo
 # generated test files
 *.actual
 *.pdf
+
+# helm files (generated when developing)
+helm_deploy/manage-recalls-api/Chart.lock
+helm_deploy/manage-recalls-api/charts/*

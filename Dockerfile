@@ -34,5 +34,6 @@ COPY --from=builder --chown=appuser:appgroup /app/build/libs/applicationinsights
 COPY --from=builder --chown=appuser:appgroup /app/applicationinsights.json /app
 
 USER 2000
+EXPOSE 8080 8081
 
 ENTRYPOINT ["java", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]
