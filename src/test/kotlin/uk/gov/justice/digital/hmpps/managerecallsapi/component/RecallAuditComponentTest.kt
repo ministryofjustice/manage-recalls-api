@@ -41,7 +41,7 @@ class RecallAuditComponentTest : ComponentTestBase() {
       Arguments.of(FieldPath("currentPrison"), "String or Enum", UpdateRecallRequest(currentPrison = PrisonId("ABC")), "ABC"),
       Arguments.of(FieldPath("contraband"), "Boolean", UpdateRecallRequest(contraband = true), true),
       Arguments.of(FieldPath("lastReleaseDate"), "LocalDate", UpdateRecallRequest(lastReleaseDate = today), today.toString()),
-      Arguments.of(FieldPath("assessedByUserId"), "UUID", UpdateRecallRequest(assessedByUserId = authenticatedClient.userId), authenticatedClient.userId.toString()),
+      Arguments.of(FieldPath("assessedByUserId"), "UUID", UpdateRecallRequest(inCustodyAtBooking = true, assessedByUserId = authenticatedClient.userId), authenticatedClient.userId.toString()),
       Arguments.of(FieldPath("sentencingInfo.sentenceLength.sentenceYears"), "nested Integer", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), 3),
       Arguments.of(FieldPath("sentencingInfo.sentenceExpiryDate"), "nested LocalDate", UpdateRecallRequest(sentenceLength = Api.SentenceLength(3, 0, 0), sentenceDate = today, licenceExpiryDate = today, indexOffence = "Offence 1", sentencingCourt = CourtId("ACCRYC"), sentenceExpiryDate = today), today.toString()),
     )

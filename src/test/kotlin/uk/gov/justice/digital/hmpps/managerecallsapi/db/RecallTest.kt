@@ -37,12 +37,12 @@ class RecallTest {
   )
 
   @Test
-  fun `Recall without recallNotificationEmailSentDateTime or bookedByUserId set returns BEING_BOOKED_ON status`() {
+  fun `Recall without assessedByUserId or bookedByUserId set returns BEING_BOOKED_ON status`() {
     assertThat(recall.status(), equalTo(Status.BEING_BOOKED_ON))
   }
 
   @Test
-  fun `Recall with bookedByUserId set but without recallNotificationEmailSentDateTime set returns status BOOKED_ON`() {
+  fun `Recall with bookedByUserId set but without assessedByUserId set returns status BOOKED_ON`() {
     val recall = recall.copy(
       bookedByUserId = ::UserId.random().value
     )
@@ -50,7 +50,7 @@ class RecallTest {
   }
 
   @Test
-  fun `Recall with bookedByUserId and assignee set but without recallNotificationEmailSentDateTime set returns status IN_ASSESSMENT`() {
+  fun `Recall with bookedByUserId and assignee set but without assessedByUserId set returns status IN_ASSESSMENT`() {
     val recall = recall.copy(
       bookedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value
@@ -92,22 +92,43 @@ class RecallTest {
   }
 
   @Test
-  fun `In Custody Recall with recallNotificationEmailSentDateTime set returns status RECALL_NOTIFICATION_ISSUED`() {
+  fun `In Custody Recall with assessedByUserId set returns status AWAITING_DOSSIER_CREATION`() {
     val recall = recall.copy(
       inCustodyAtBooking = true,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now()
+      assessedByUserId = ::UserId.random().value,
     )
 
-    assertThat(recall.status(), equalTo(Status.RECALL_NOTIFICATION_ISSUED))
+    assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))
   }
 
   @Test
-  fun `NOT in Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & warrantReferenceNumber set returns status AWAITING_RETURN_TO_CUSTODY`() {
+  fun `In Custody Recall with assessedByUserId and assessedByUserId set returns status AWAITING_DOSSIER_CREATION`() {
+    val recall = recall.copy(
+      inCustodyAtBooking = true,
+      assessedByUserId = ::UserId.random().value,
+    )
+
+    assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))
+  }
+
+  @Test
+  fun `NOT In Custody Recall with assessedByUserId and assessedByUserId set returns status ASSESSED`() {
+    val recall = recall.copy(
+      inCustodyAtBooking = false,
+      inCustodyAtAssessment = false,
+      assessedByUserId = ::UserId.random().value,
+    )
+
+    assertThat(recall.status(), equalTo(Status.ASSESSED_NOT_IN_CUSTODY))
+  }
+
+  @Test
+  fun `NOT in Custody Recall with bookedByUserId, assessedByUserId & warrantReferenceNumber set returns status AWAITING_RETURN_TO_CUSTODY`() {
     val recall = recall.copy(
       inCustodyAtBooking = false,
       inCustodyAtAssessment = false,
       bookedByUserId = ::UserId.random().value,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assessedByUserId = ::UserId.random().value,
       warrantReferenceNumber = WarrantReferenceNumber(randomString())
     )
 
@@ -115,47 +136,47 @@ class RecallTest {
   }
 
   @Test
-  fun `In Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime ignores warrantReferenceNumber and returns status RECALL_NOTIFICATION_ISSUED`() {
+  fun `In Custody Recall with bookedByUserId, assessedByUserId ignores warrantReferenceNumber and returns status AWAITING_DOSSIER_CREATION`() {
     val recall = recall.copy(
       inCustodyAtBooking = true,
       bookedByUserId = ::UserId.random().value,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assessedByUserId = ::UserId.random().value,
       warrantReferenceNumber = WarrantReferenceNumber(randomString())
     )
 
-    assertThat(recall.status(), equalTo(Status.RECALL_NOTIFICATION_ISSUED))
+    assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))
   }
 
   @Test
-  fun `In Custody Recall with bookedByUserId and recallNotificationEmailSentDateTime but no assignee returns status RECALL_NOTIFICATION_ISSUED`() {
+  fun `In Custody Recall with bookedByUserId and assessedByUserId but no assignee returns status AWAITING_DOSSIER_CREATION`() {
     val recall = recall.copy(
       inCustodyAtBooking = true,
       bookedByUserId = ::UserId.random().value,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now()
+      assessedByUserId = ::UserId.random().value,
     )
 
-    assertThat(recall.status(), equalTo(Status.RECALL_NOTIFICATION_ISSUED))
+    assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))
   }
 
   @Test
-  fun `NOT in Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & assignee set returns status RECALL_NOTIFICATION_ISSUED`() {
+  fun `NOT in Custody Recall with bookedByUserId, assessedByUserId & assignee set returns status ASSESSED_NOT_IN_CUSTODY`() {
     val recall = recall.copy(
       inCustodyAtBooking = false,
       inCustodyAtAssessment = false,
       bookedByUserId = ::UserId.random().value,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assessedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value
     )
 
-    assertThat(recall.status(), equalTo(Status.RECALL_NOTIFICATION_ISSUED))
+    assertThat(recall.status(), equalTo(Status.ASSESSED_NOT_IN_CUSTODY))
   }
 
   @Test
-  fun `In Custody Recall with bookedByUserId, recallNotificationEmailSentDateTime & assignee set returns status DOSSIER_IN_PROGRESS`() {
+  fun `In Custody Recall with bookedByUserId, assessedByUserId & assignee set returns status DOSSIER_IN_PROGRESS`() {
     val recall = recall.copy(
       inCustodyAtBooking = true,
       bookedByUserId = ::UserId.random().value,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assessedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value
     )
 
@@ -172,10 +193,10 @@ class RecallTest {
   }
 
   @Test
-  fun `Recall with bookedByUserId, recallNotificationEmailSentDateTime, dossierCreatedByUserId and assignee set returns status DOSSIER_ISSUED`() {
+  fun `Recall with bookedByUserId, assessedByUserId, dossierCreatedByUserId and assignee set returns status DOSSIER_ISSUED`() {
     val recall = recall.copy(
       bookedByUserId = ::UserId.random().value,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assessedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value,
       dossierCreatedByUserId = ::UserId.random().value
     )
@@ -184,10 +205,10 @@ class RecallTest {
   }
 
   @Test
-  fun `Recall with bookedByUserId, recallNotificationEmailSentDateTime and dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
+  fun `Recall with bookedByUserId, assessedByUserId and dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
     val recall = recall.copy(
       bookedByUserId = ::UserId.random().value,
-      recallNotificationEmailSentDateTime = OffsetDateTime.now(),
+      assessedByUserId = ::UserId.random().value,
       dossierCreatedByUserId = ::UserId.random().value,
     )
 

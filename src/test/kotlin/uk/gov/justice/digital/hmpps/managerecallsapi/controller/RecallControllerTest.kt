@@ -72,6 +72,7 @@ class RecallControllerTest {
   )
   private val fileName = "fileName"
   private val now = OffsetDateTime.now()
+  private val assessedByUserId = ::UserId.random()
   private val bookedByUserId = ::UserId.random()
   private val assignee = ::UserId.random()
   private val dossierCreatedByUserId = ::UserId.random()
@@ -138,16 +139,16 @@ class RecallControllerTest {
   private val inAssessmentRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, assignee = assignee.value)
   private val stoppedRecall =
     newRecall().copy(bookedByUserId = bookedByUserId.value, agreeWithRecall = AgreeWithRecall.NO_STOP)
-  private val inCustodyRecallNotificationIssuedRecall =
-    newRecall().copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now)
-  private val notInCustodyRecallNotificationIssuedRecall = newRecall().copy(
+  private val inCustodyAwaitingDossierCreationRecall =
+    newRecall().copy(inCustodyAtBooking = true, assessedByUserId = assessedByUserId.value)
+  private val notInCustodyAssessedRecall = newRecall().copy(
     inCustodyAtBooking = false,
     inCustodyAtAssessment = false,
-    recallNotificationEmailSentDateTime = now,
+    assessedByUserId = assessedByUserId.value,
     assignee = assignee.value
   )
   private val inCustodyDossierInProgressRecall =
-    newRecall().copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = now, assignee = assignee.value)
+    newRecall().copy(inCustodyAtBooking = true, assessedByUserId = assessedByUserId.value, assignee = assignee.value)
   private val dossierIssuedRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value)
 
   @Test
@@ -158,8 +159,8 @@ class RecallControllerTest {
       bookedOnRecall,
       inAssessmentRecall,
       stoppedRecall,
-      inCustodyRecallNotificationIssuedRecall,
-      notInCustodyRecallNotificationIssuedRecall,
+      inCustodyAwaitingDossierCreationRecall,
+      notInCustodyAssessedRecall,
       inCustodyDossierInProgressRecall,
       dossierIssuedRecall
     )
@@ -183,10 +184,10 @@ class RecallControllerTest {
         recallLiteResponse(bookedOnRecall, Status.BOOKED_ON),
         recallLiteResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(assigneeUserName = FullName("Mickey Mouse")),
         recallLiteResponse(stoppedRecall, Status.STOPPED),
-        recallLiteResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(
+        recallLiteResponse(inCustodyAwaitingDossierCreationRecall, Status.AWAITING_DOSSIER_CREATION).copy(
           inCustodyAtBooking = true
         ),
-        recallLiteResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(
+        recallLiteResponse(notInCustodyAssessedRecall, Status.ASSESSED_NOT_IN_CUSTODY).copy(
           inCustodyAtBooking = false,
           inCustodyAtAssessment = false,
           assigneeUserName = FullName("Mickey Mouse")
@@ -208,8 +209,8 @@ class RecallControllerTest {
       bookedOnRecall,
       inAssessmentRecall,
       stoppedRecall,
-      inCustodyRecallNotificationIssuedRecall,
-      notInCustodyRecallNotificationIssuedRecall,
+      inCustodyAwaitingDossierCreationRecall,
+      notInCustodyAssessedRecall,
       inCustodyDossierInProgressRecall,
       dossierIssuedRecall
     )
@@ -231,10 +232,10 @@ class RecallControllerTest {
       listOf(
         recallLiteResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
         recallLiteResponse(stoppedRecall, Status.STOPPED),
-        recallLiteResponse(inCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(
+        recallLiteResponse(inCustodyAwaitingDossierCreationRecall, Status.AWAITING_DOSSIER_CREATION).copy(
           inCustodyAtBooking = true
         ),
-        recallLiteResponse(notInCustodyRecallNotificationIssuedRecall, Status.RECALL_NOTIFICATION_ISSUED).copy(
+        recallLiteResponse(notInCustodyAssessedRecall, Status.ASSESSED_NOT_IN_CUSTODY).copy(
           inCustodyAtBooking = false,
           inCustodyAtAssessment = false,
           assigneeUserName = FullName("Mickey Mouse")

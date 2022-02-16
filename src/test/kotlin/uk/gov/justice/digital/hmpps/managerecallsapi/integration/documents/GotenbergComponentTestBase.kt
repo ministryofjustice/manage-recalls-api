@@ -111,7 +111,8 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         differentNomsNumber = true,
         differentNomsNumberDetail = "ABC123",
         additionalLicenceConditions = true,
-        additionalLicenceConditionsDetail = "Additional licence detail 1\n\nAdditional license detail 2"
+        additionalLicenceConditionsDetail = "Additional licence detail 1\n\nAdditional license detail 2",
+        inCustodyAtBooking = true,
       )
     )
   }
