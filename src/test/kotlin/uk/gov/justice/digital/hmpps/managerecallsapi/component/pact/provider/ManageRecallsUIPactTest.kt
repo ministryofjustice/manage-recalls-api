@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RESCIND_REQUEST_EMAIL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
@@ -370,6 +371,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   fun `an open rescind record exists`() {
+    `a document exists`(matchedDocumentId, RESCIND_REQUEST_EMAIL, "email.msg", null, null)
     rescindRecordRepository.save(
       RescindRecord(
         matchedRescindRecordId,
@@ -415,7 +417,7 @@ class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
 @VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
 @Consumer("manage-recalls-ui")
-@PactBroker()
+@PactBroker
 abstract class ManagerRecallsUiPactTestBase : ComponentTestBase() {
   @LocalServerPort
   private val port = 0
