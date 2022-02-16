@@ -7,12 +7,16 @@ import com.natpryce.hamkrest.isEmpty
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StoppedReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
@@ -35,7 +39,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
   private val approvalFileName = "approvalFileName"
 
   @Test
-  fun `create and complete the first RescindRecord for a recall`() {
+  fun `create and approve the first RescindRecord for a recall`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val requestDetails = "Some request detail"
@@ -46,7 +50,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
       base64EncodedDocumentContents,
       requestFileName
     )
-    val putRequest = RescindRecordController.RescindDecisionRequest(
+    val decisionRequest = RescindRecordController.RescindDecisionRequest(
       true,
       approvalDetails,
       LocalDate.now(),
@@ -71,10 +75,17 @@ class RescindRecordComponentTest : ComponentTestBase() {
     assertThat(recallWithRequestedRescindRecord.rescindRecords.first().decisionEmailFileName, absent())
     assertThat(recallWithRequestedRescindRecord.rescindRecords.first().decisionEmailId, absent())
     assertThat(recallWithRequestedRescindRecord.rescindRecords.first().decisionEmailSentDate, absent())
+    assertThat(recallWithRequestedRescindRecord.stoppedReason, absent())
+    assertThat(recallWithRequestedRescindRecord.stoppedByUserName, absent())
+    assertThat(recallWithRequestedRescindRecord.stoppedDateTime, absent())
 
-    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, putRequest)
+    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
     val recallWithApprovedRescindRecord = authenticatedClient.getRecall(recall.recallId)
 
+    assertThat(recallWithApprovedRescindRecord.status, equalTo(Status.STOPPED))
+    assertThat(recallWithApprovedRescindRecord.stoppedReason, equalTo(StoppedReason.RESCINDED))
+    assertThat(recallWithApprovedRescindRecord.stoppedByUserName, equalTo(FullName("Bertie Badger")))
+    assertThat(recallWithApprovedRescindRecord.stoppedDateTime, present())
     assertThat(recallWithApprovedRescindRecord.rescindRecords.size, equalTo(1))
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().rescindRecordId, equalTo(rescindRecordId))
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().version, equalTo(1))
@@ -87,6 +98,48 @@ class RescindRecordComponentTest : ComponentTestBase() {
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().decisionEmailFileName, equalTo(approvalFileName))
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().decisionEmailId, present())
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().decisionEmailSentDate, equalTo(LocalDate.now()))
+  }
+
+  @Test
+  fun `create and reject a RescindRecord for a recall`() {
+    expectNoVirusesWillBeFound()
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val requestDetails = "Some request detail"
+    val approvalDetails = "Some approval detail"
+    val createRequest = RescindRequestRequest(
+      requestDetails,
+      LocalDate.now().minusDays(3),
+      base64EncodedDocumentContents,
+      requestFileName
+    )
+    val decisionRequest = RescindRecordController.RescindDecisionRequest(
+      false,
+      approvalDetails,
+      LocalDate.now(),
+      base64EncodedDocumentContents,
+      approvalFileName
+    )
+
+    assertThat(recall.rescindRecords, isEmpty)
+
+    val rescindRecordId = authenticatedClient.requestRescind(recall.recallId, createRequest)
+    val recallWithRequestedRescindRecord = authenticatedClient.getRecall(recall.recallId)
+
+    assertThat(recallWithRequestedRescindRecord.rescindRecords.size, equalTo(1))
+    assertThat(recallWithRequestedRescindRecord.status, equalTo(Status.BEING_BOOKED_ON))
+    assertThat(recallWithRequestedRescindRecord.stoppedReason, absent())
+    assertThat(recallWithRequestedRescindRecord.stoppedByUserName, absent())
+    assertThat(recallWithRequestedRescindRecord.stoppedDateTime, absent())
+
+    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
+    val recallWithApprovedRescindRecord = authenticatedClient.getRecall(recall.recallId)
+
+    assertThat(recallWithApprovedRescindRecord.status, equalTo(Status.BEING_BOOKED_ON))
+    assertThat(recallWithApprovedRescindRecord.stoppedReason, absent())
+    assertThat(recallWithApprovedRescindRecord.stoppedByUserName, absent())
+    assertThat(recallWithApprovedRescindRecord.stoppedDateTime, absent())
+    assertThat(recallWithApprovedRescindRecord.rescindRecords.size, equalTo(1))
+    assertThat(recallWithApprovedRescindRecord.rescindRecords.first().approved, equalTo(false))
   }
 
   @Test
@@ -103,5 +156,67 @@ class RescindRecordComponentTest : ComponentTestBase() {
     )
 
     authenticatedClient.decideRescind(recall.recallId, ::RescindRecordId.random(), putRequest, HttpStatus.NOT_FOUND)
+  }
+
+  @Test
+  fun `add a document with a virus returns bad request with body`() {
+    expectAVirusWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    val requestDetails = "Some request detail"
+    val createRequest = RescindRequestRequest(
+      requestDetails,
+      LocalDate.now().minusDays(3),
+      base64EncodedDocumentContents,
+      requestFileName
+    )
+
+    val result = authenticatedClient.requestRescind(recall.recallId, createRequest, HttpStatus.BAD_REQUEST)
+      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+
+    assertThat(result, equalTo(ErrorResponse(HttpStatus.BAD_REQUEST, "VirusFoundException")))
+  }
+
+  @Test
+  fun `403 error thrown when requesting a new rescind if one is already in progress`() {
+    expectNoVirusesWillBeFound()
+
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    val createRequest = RescindRequestRequest(
+      "blah blah",
+      LocalDate.now().minusDays(3),
+      base64EncodedDocumentContents,
+      requestFileName
+    )
+    authenticatedClient.requestRescind(recall.recallId, createRequest)
+    authenticatedClient.requestRescind(recall.recallId, createRequest, HttpStatus.FORBIDDEN)
+  }
+
+  @Test
+  fun `cant update a record which has already been decided`() {
+    expectNoVirusesWillBeFound()
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+
+    val createRequest = RescindRequestRequest(
+      "blah blah",
+      LocalDate.now().minusDays(3),
+      base64EncodedDocumentContents,
+      requestFileName
+    )
+
+    val decisionRequest = RescindRecordController.RescindDecisionRequest(
+      true,
+      "More blah blah",
+      LocalDate.now(),
+      base64EncodedDocumentContents,
+      approvalFileName
+    )
+
+    val rescindRecordId = authenticatedClient.requestRescind(recall.recallId, createRequest)
+
+    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
+    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest, HttpStatus.FORBIDDEN)
   }
 }

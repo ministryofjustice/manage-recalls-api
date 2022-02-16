@@ -233,6 +233,9 @@ class RecallController(
     arrestIssues = arrestIssues,
     arrestIssuesDetail = arrestIssuesDetail,
     warrantReferenceNumber = warrantReferenceNumber,
+    stoppedReason = stopRecord?.stoppedReason,
+    stoppedDateTime = stopRecord?.stoppedDateTime,
+    stoppedByUserName = stopRecord?.let { userDetailsService.get(it.stoppedByUserId()).fullName() }
   )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
@@ -409,6 +412,9 @@ data class RecallResponse(
   val arrestIssues: Boolean? = null,
   val arrestIssuesDetail: String? = null,
   val warrantReferenceNumber: WarrantReferenceNumber? = null,
+  val stoppedReason: StoppedReason? = null,
+  val stoppedByUserName: FullName? = null,
+  val stoppedDateTime: OffsetDateTime? = null,
 )
 
 class Api {
@@ -488,6 +494,10 @@ enum class Status(val visibilityBands: Set<CaseworkerBand>) {
   DOSSIER_IN_PROGRESS(ALL_BANDINGS),
   DOSSIER_ISSUED(ALL_BANDINGS),
   STOPPED(ALL_BANDINGS);
+}
+
+enum class StoppedReason {
+  RESCINDED
 }
 
 data class UpdateRecallRequest(

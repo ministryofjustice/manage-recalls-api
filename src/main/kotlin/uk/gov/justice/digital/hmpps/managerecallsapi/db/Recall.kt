@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StoppedReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -145,6 +146,8 @@ data class Recall(
   val recallType: RecallType? = null,
   @Embedded
   val sentencingInfo: SentencingInfo? = null,
+  @Embedded
+  val stopRecord: StopRecord? = null,
   val vulnerabilityDiversity: Boolean? = null,
   val vulnerabilityDiversityDetail: String? = null,
   @Convert(converter = WarrantReferenceNumberJpaConverter::class)
@@ -207,6 +210,7 @@ data class Recall(
     arrestIssues: Boolean? = null,
     arrestIssuesDetail: String? = null,
     warrantReferenceNumber: WarrantReferenceNumber? = null,
+    stopRecord: StopRecord? = null,
   ) :
     this(
       recallId.value,
@@ -262,6 +266,7 @@ data class Recall(
       recallNotificationEmailSentDateTime,
       recallType,
       sentencingInfo,
+      stopRecord,
       vulnerabilityDiversity,
       vulnerabilityDiversityDetail,
       warrantReferenceNumber,
@@ -299,7 +304,9 @@ data class Recall(
   fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking!!
 
   fun status(): Status =
-    if (dossierCreatedByUserId != null) {
+    if (stopRecord != null) {
+      Status.STOPPED
+    } else if (dossierCreatedByUserId != null) {
       Status.DOSSIER_ISSUED
     } else if (recallNotificationEmailSentDateTime != null) {
       if (assignee != null && inCustodyRecall()) {
@@ -357,3 +364,20 @@ data class ProbationInfo(
   val localDeliveryUnit: LocalDeliveryUnit,
   val authorisingAssistantChiefOfficer: String
 )
+
+@Suppress("JpaAttributeMemberSignatureInspection")
+@Embeddable
+data class StopRecord(
+  @Enumerated(STRING)
+  val stoppedReason: StoppedReason,
+  val stoppedByUserId: UUID,
+  val stoppedDateTime: OffsetDateTime
+) {
+  constructor(stoppedReason: StoppedReason, stoppedByUserId: UserId, stoppedDateTime: OffsetDateTime) :
+    this(
+      stoppedReason,
+      stoppedByUserId.value,
+      stoppedDateTime
+    )
+  fun stoppedByUserId() = UserId(stoppedByUserId)
+}

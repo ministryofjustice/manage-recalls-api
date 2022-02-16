@@ -157,7 +157,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.currentPrison").isEqualTo(fullyPopulatedRecall.currentPrison!!.value)
       .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
       .jsonPath("$.dossierEmailSentDate").isEqualTo(LocalDate.now().toString())
-      .jsonPath("$.status").isEqualTo(Status.DOSSIER_ISSUED.toString())
+      .jsonPath("$.status").isEqualTo(Status.STOPPED.toString())
       .jsonPath("$.previousConvictionMainNameCategory").isEqualTo(fullyPopulatedRecall.previousConvictionMainNameCategory!!.toString())
       .jsonPath("$.hasDossierBeenChecked").isEqualTo(fullyPopulatedRecall.hasDossierBeenChecked!!)
       .jsonPath("$.previousConvictionMainName").isEqualTo(fullyPopulatedRecall.previousConvictionMainName!!)
@@ -175,6 +175,9 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.arrestIssues").isEqualTo(fullyPopulatedRecall.arrestIssues!!)
       .jsonPath("$.arrestIssuesDetail").isEqualTo(fullyPopulatedRecall.arrestIssuesDetail!!)
       .jsonPath("$.warrantReferenceNumber").isEqualTo(fullyPopulatedRecall.warrantReferenceNumber!!.value)
+      .jsonPath("$.stoppedReason").isEqualTo(fullyPopulatedRecall.stopRecord!!.stoppedReason.toString())
+      .jsonPath("$.stoppedByUserName").isEqualTo("Bertie Badger")
+      .jsonPath("$.stoppedDateTime").value(endsWith("Z"))
   }
 
   @Test

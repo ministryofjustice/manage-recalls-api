@@ -10,6 +10,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownA
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -63,6 +65,8 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val generateDocumentRequest = GenerateDocumentRequest(DocumentCategory.RECALL_NOTIFICATION, "some more detail")
   private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", "email.msg")
   private val createLastKnownAddressRequest = CreateLastKnownAddressRequest(::RecallId.random(), "address line 1", "address line 2", "some town", "some postcode", AddressSource.LOOKUP)
+  private val rescindRequestRequest = RescindRequestRequest("details", LocalDate.now(), "some content", "filename")
+  private val rescindDecisionRequest = RescindDecisionRequest(true, "details", LocalDate.now(), "some content", "filename")
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
@@ -81,6 +85,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.get().uri("/audit/${UUID.randomUUID()}/currentPrison"),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}").bodyValue(updateDocumentRequest),
+      webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/rescind-records/${UUID.randomUUID()}").bodyValue(rescindDecisionRequest),
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents/uploaded").bodyValue(uploadDocumentRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents/generated").bodyValue(generateDocumentRequest),
@@ -88,6 +93,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
       webTestClient.post().uri("/users/").bodyValue(userDetailsRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
+      webTestClient.post().uri("/recalls/${UUID.randomUUID()}/rescind-records").bodyValue(rescindRequestRequest),
       webTestClient.post().uri("/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
       webTestClient.post().uri("/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/last-known-addresses").bodyValue(createLastKnownAddressRequest),
