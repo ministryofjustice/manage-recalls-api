@@ -102,17 +102,7 @@ class RecallTest {
   }
 
   @Test
-  fun `In Custody Recall with assessedByUserId and assessedByUserId set returns status AWAITING_DOSSIER_CREATION`() {
-    val recall = recall.copy(
-      inCustodyAtBooking = true,
-      assessedByUserId = ::UserId.random().value,
-    )
-
-    assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))
-  }
-
-  @Test
-  fun `NOT In Custody Recall with assessedByUserId and assessedByUserId set returns status ASSESSED`() {
+  fun `NOT In Custody Recall with assessedByUserId set returns status ASSESSED_NOT_IN_CUSTODY`() {
     val recall = recall.copy(
       inCustodyAtBooking = false,
       inCustodyAtAssessment = false,
@@ -156,19 +146,6 @@ class RecallTest {
     )
 
     assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))
-  }
-
-  @Test
-  fun `NOT in Custody Recall with bookedByUserId, assessedByUserId & assignee set returns status ASSESSED_NOT_IN_CUSTODY`() {
-    val recall = recall.copy(
-      inCustodyAtBooking = false,
-      inCustodyAtAssessment = false,
-      bookedByUserId = ::UserId.random().value,
-      assessedByUserId = ::UserId.random().value,
-      assignee = ::UserId.random().value
-    )
-
-    assertThat(recall.status(), equalTo(Status.ASSESSED_NOT_IN_CUSTODY))
   }
 
   @Test
