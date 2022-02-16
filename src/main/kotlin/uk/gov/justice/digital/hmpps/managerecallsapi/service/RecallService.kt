@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.time.Clock
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -99,7 +98,7 @@ class RecallService(
       assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
       dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
-      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest.recallNotificationEmailSentDateTime)
+      dossierTargetDate = calculateInCustodyDossierTargetDate(inCustodyRecallOrBeingUpdatedToBeElseNull(updateRecallRequest), updateRecallRequest.recallNotificationEmailSentDateTime)
         ?: dossierTargetDate,
       lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
       arrestIssues = updateRecallRequest.arrestIssues ?: arrestIssues,
@@ -108,19 +107,18 @@ class RecallService(
     )
   }
 
-  fun calculateDossierTargetDate(recallNotificationEmailSentDateTime: OffsetDateTime?): LocalDate? {
-    return recallNotificationEmailSentDateTime?.let {
-      var dossierTargetDate = it.toLocalDate().plusDays(1)
-      while (
-        dossierTargetDate.dayOfWeek == DayOfWeek.SATURDAY ||
-        dossierTargetDate.dayOfWeek == DayOfWeek.SUNDAY ||
-        bankHolidayService.isHoliday(dossierTargetDate)
-      ) {
-        dossierTargetDate = dossierTargetDate.plusDays(1)
+  fun calculateInCustodyDossierTargetDate(
+    inCustodyRecall: Boolean?,
+    recallNotificationEmailSentDateTime: OffsetDateTime?
+  ): LocalDate? =
+    when (inCustodyRecall) {
+      true -> {
+        recallNotificationEmailSentDateTime?.let {
+          bankHolidayService.nextWorkingDate(it.toLocalDate())
+        }
       }
-      dossierTargetDate
+      else -> null
     }
-  }
 
   fun clearAssigneeIfRecallStopped(agreeWithRecall: AgreeWithRecall?, assignee: UUID?): UUID? {
     return assignee?.let {

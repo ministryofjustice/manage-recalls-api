@@ -67,7 +67,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         null,
         LastName("Badger"),
         CroNumber("ABC/1234A"),
-        LocalDate.of(1999, 12, 1)
+        LocalDate.of(1999, 12, 1),
       ),
       createdByUserId
     )
@@ -305,7 +305,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `complete assessment of a in custody recall updates assessedByUserId and calculates dossierTargetDate as after weekend and bank holidays`() {
+  fun `complete assessment of an in custody recall updates assessedByUserId and calculates dossierTargetDate as after weekend and bank holidays`() {
     val assessedByUserId = ::UserId.random()
     setupUserDetailsFor(assessedByUserId)
     val updateRecallRequest = UpdateRecallRequest(

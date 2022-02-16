@@ -126,6 +126,20 @@ class RecallTest {
   }
 
   @Test
+  fun `NOT in Custody Recall with bookedByUserId, assessedByUserId & warrantReferenceNumber and returnedToCustody set returns status AWAITING_DOSSIER_CREATION`() {
+    val recall = recall.copy(
+      inCustodyAtBooking = false,
+      inCustodyAtAssessment = false,
+      bookedByUserId = ::UserId.random().value,
+      assessedByUserId = ::UserId.random().value,
+      warrantReferenceNumber = WarrantReferenceNumber(randomString()),
+      returnedToCustody = ReturnedToCustodyRecord(OffsetDateTime.now(), OffsetDateTime.now(), ::UserId.random(), OffsetDateTime.now())
+    )
+
+    assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))
+  }
+
+  @Test
   fun `In Custody Recall with bookedByUserId, assessedByUserId ignores warrantReferenceNumber and returns status AWAITING_DOSSIER_CREATION`() {
     val recall = recall.copy(
       inCustodyAtBooking = true,

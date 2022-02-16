@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StoppedReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -145,6 +146,8 @@ data class Recall(
   @Enumerated(STRING)
   val recallType: RecallType? = null,
   @Embedded
+  val returnedToCustody: ReturnedToCustodyRecord? = null,
+  @Embedded
   val sentencingInfo: SentencingInfo? = null,
   @Embedded
   val stopRecord: StopRecord? = null,
@@ -211,6 +214,7 @@ data class Recall(
     arrestIssuesDetail: String? = null,
     warrantReferenceNumber: WarrantReferenceNumber? = null,
     stopRecord: StopRecord? = null,
+    returnedToCustodyRecord: ReturnedToCustodyRecord? = null
   ) :
     this(
       recallId.value,
@@ -265,6 +269,7 @@ data class Recall(
       recallLength,
       recallNotificationEmailSentDateTime,
       recallType,
+      returnedToCustodyRecord,
       sentencingInfo,
       stopRecord,
       vulnerabilityDiversity,
@@ -301,6 +306,8 @@ data class Recall(
     }
   }
 
+  fun inCustodyRecallOrBeingUpdatedToBeElseNull(updateRecallRequest: UpdateRecallRequest): Boolean? = inCustodyAtAssessment ?: inCustodyAtBooking ?: updateRecallRequest.inCustodyAtBooking ?: updateRecallRequest.inCustodyAtAssessment
+
   fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking!!
 
   fun status(): Status =
@@ -316,7 +323,9 @@ data class Recall(
           Status.AWAITING_DOSSIER_CREATION
         }
       } else {
-        if (warrantReferenceNumber != null) {
+        if (returnedToCustody != null) {
+          Status.AWAITING_DOSSIER_CREATION
+        } else if (warrantReferenceNumber != null) {
           Status.AWAITING_RETURN_TO_CUSTODY
         } else {
           Status.ASSESSED_NOT_IN_CUSTODY
@@ -386,4 +395,25 @@ data class StopRecord(
       stoppedDateTime
     )
   fun stoppedByUserId() = UserId(stoppedByUserId)
+}
+
+@Suppress("JpaAttributeMemberSignatureInspection")
+@Embeddable
+data class ReturnedToCustodyRecord(
+  val returnedToCustodyDateTime: OffsetDateTime,
+  @Column(name = "returned_to_custody_notification_date_time")
+  val notificationDateTime: OffsetDateTime,
+  @Column(name = "returned_to_custody_recorded_by_user_id")
+  val recordedByUserId: UUID?,
+  @Column(name = "returned_to_custody_recorded_date_time")
+  val recordedDateTime: OffsetDateTime
+) {
+  constructor(returnedToCustodyDateTime: OffsetDateTime, returnedToCustodyNotificationDateTime: OffsetDateTime, recordedByUserId: UserId, recordedDateTime: OffsetDateTime) :
+    this(
+      returnedToCustodyDateTime,
+      returnedToCustodyNotificationDateTime,
+      recordedByUserId.value,
+      recordedDateTime
+    )
+  fun recordedByUserId() = recordedByUserId?.let(::UserId)
 }

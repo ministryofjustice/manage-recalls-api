@@ -119,19 +119,24 @@ class RecallServiceTest {
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
     bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
     dossierCreatedByUserId = fullyPopulatedUpdateRecallRequest.dossierCreatedByUserId!!.value,
-    dossierTargetDate = LocalDate.of(2021, 10, 5),
+    dossierTargetDate = dossierTargetDate(fullyPopulatedUpdateRecallRequest),
     lastKnownAddressOption = fullyPopulatedUpdateRecallRequest.lastKnownAddressOption,
     arrestIssues = fullyPopulatedUpdateRecallRequest.arrestIssues,
     arrestIssuesDetail = fullyPopulatedUpdateRecallRequest.arrestIssuesDetail,
     warrantReferenceNumber = fullyPopulatedUpdateRecallRequest.warrantReferenceNumber,
   )
 
+  private fun dossierTargetDate(fullyPopulatedUpdateRecallRequest: UpdateRecallRequest) =
+    if (fullyPopulatedUpdateRecallRequest.inCustodyAtAssessment ?: fullyPopulatedUpdateRecallRequest.inCustodyAtBooking!!) {
+      LocalDate.of(2021, 10, 5)
+    } else null
+
   @Test
   fun `can update recall with all UpdateRecallRequest fields populated`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 5)) } returns false
+    every { bankHolidayService.nextWorkingDate(LocalDate.of(2021, 10, 4)) } returns LocalDate.of(2021, 10, 5)
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     val fixedClockTime = OffsetDateTime.now(fixedClock)
-    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = fixedClockTime, recallNotificationEmailSentDateTime = fixedClockTime)
+    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = fixedClockTime, recallNotificationEmailSentDateTime = fixedClockTime, returnedToCustody = null)
     every { recallRepository.save(updatedRecallWithoutDocs, currentUserId) } returns updatedRecallWithoutDocs
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest, currentUserId)
@@ -166,29 +171,24 @@ class RecallServiceTest {
   }
 
   @Test
-  fun `dossierTargetDate when recallNotificationEmailSentDateTime is on Wednesday should be Thursday`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 7)) } returns false
-    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-10-06T12:00Z"))
+  fun `dossierTargetDate set when in custody`() {
+    every { bankHolidayService.nextWorkingDate(LocalDate.of(2021, 10, 6)) } returns LocalDate.of(2021, 10, 7)
+    val dossierTargetDate = underTest.calculateInCustodyDossierTargetDate(
+      true,
+      OffsetDateTime.parse("2021-10-06T12:00Z")
+    )
 
     assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 10, 7)))
   }
 
   @Test
-  fun `dossierTargetDate when recallNotificationEmailSentDateTime is on Friday should be Monday`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 11)) } returns false
-    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-10-08T12:00Z"))
+  fun `dossierTargetDate not set when not in custody`() {
+    val dossierTargetDate = underTest.calculateInCustodyDossierTargetDate(
+      false,
+      OffsetDateTime.parse("2021-10-06T12:00Z")
+    )
 
-    assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 10, 11)))
-  }
-
-  @Test
-  fun `dossierTargetDate when recallNotificationEmailSentDateTime is day before weekend and bank holidays should be first non-weekend and non-bank-holiday`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 27)) } returns true
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 28)) } returns true
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 29)) } returns false
-    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-12-24T12:00Z"))
-
-    assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 12, 29)))
+    assertThat(dossierTargetDate, equalTo(null))
   }
 
   @Suppress("unused")
