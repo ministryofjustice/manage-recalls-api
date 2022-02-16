@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEG
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -42,6 +43,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
@@ -62,6 +64,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val matchedRecallId = ::RecallId.zeroes()
   private val matchedDocumentId = DocumentId(UUID.fromString("11111111-0000-0000-0000-000000000000"))
   private val matchedLastKnownAddressId = LastKnownAddressId(UUID.fromString("22222222-0000-0000-0000-000000000000"))
+  private val matchedRescindRecordId = RescindRecordId(UUID.fromString("33333333-0000-0000-0000-000000000000"))
   private val userIdOnes = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
   private val revocationOrderBytes = ClassPathResource("/document/revocation-order.pdf").file.readBytes()
   private val details = "Random details"
@@ -262,6 +265,14 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
+    "a recall with open rescind record exists",
+  )
+  fun `a recall with open rescind record exists`() {
+    `a user and a fully populated recall without documents exists`()
+    `an open rescind record exists`()
+  }
+
+  @State(
     "a recall in being booked on state with a document exists"
   )
   fun `a recall in being booked on state with a document exists`() {
@@ -357,6 +368,21 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       )
     )
   }
+
+  fun `an open rescind record exists`() {
+    rescindRecordRepository.save(
+      RescindRecord(
+        matchedRescindRecordId,
+        matchedRecallId,
+        1,
+        userIdOnes,
+        OffsetDateTime.now(),
+        matchedDocumentId,
+        "Some info about the rescind",
+        LocalDate.now()
+      )
+    )
+  }
 }
 
 @Suppress("unused")
@@ -389,7 +415,7 @@ class ManagerRecallsUiUnauthorizedPactTest : ManagerRecallsUiPactTestBase() {
 @VerificationReports(value = ["console"])
 @Provider("manage-recalls-api")
 @Consumer("manage-recalls-ui")
-@PactBroker
+@PactBroker()
 abstract class ManagerRecallsUiPactTestBase : ComponentTestBase() {
   @LocalServerPort
   private val port = 0
