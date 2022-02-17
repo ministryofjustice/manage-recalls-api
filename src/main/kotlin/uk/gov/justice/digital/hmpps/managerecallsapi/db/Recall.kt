@@ -308,13 +308,19 @@ data class Recall(
       Status.STOPPED
     } else if (dossierCreatedByUserId != null) {
       Status.DOSSIER_ISSUED
-    } else if (recallNotificationEmailSentDateTime != null) {
-      if (assignee != null && inCustodyRecall()) {
-        Status.DOSSIER_IN_PROGRESS
-      } else if (!inCustodyRecall() && warrantReferenceNumber != null) {
-        Status.AWAITING_RETURN_TO_CUSTODY
+    } else if (assessedByUserId != null) {
+      if (inCustodyRecall()) {
+        if (assignee != null) {
+          Status.DOSSIER_IN_PROGRESS
+        } else {
+          Status.AWAITING_DOSSIER_CREATION
+        }
       } else {
-        Status.RECALL_NOTIFICATION_ISSUED
+        if (warrantReferenceNumber != null) {
+          Status.AWAITING_RETURN_TO_CUSTODY
+        } else {
+          Status.ASSESSED_NOT_IN_CUSTODY
+        }
       }
     } else if (bookedByUserId != null) {
       if (agreeWithRecall == AgreeWithRecall.NO_STOP) {
