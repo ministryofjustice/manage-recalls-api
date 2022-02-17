@@ -178,6 +178,8 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.stoppedReason").isEqualTo(fullyPopulatedRecall.stopRecord!!.stoppedReason.toString())
       .jsonPath("$.stoppedByUserName").isEqualTo("Bertie Badger")
       .jsonPath("$.stoppedDateTime").value(endsWith("Z"))
+      .jsonPath("$.returnedToCustodyDateTime").value(endsWith("Z"))
+      .jsonPath("$.returnedToCustodyNotificationDateTime").value(endsWith("Z"))
   }
 
   @Test
