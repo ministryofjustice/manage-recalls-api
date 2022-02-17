@@ -2,9 +2,12 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.db
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +23,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallReasonAuditRepo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReasonAuditRepository
 import java.sql.Timestamp
+import java.time.Clock
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import javax.transaction.Transactional
@@ -34,14 +40,24 @@ class RecallReasonAuditRepositoryIntegrationTest(
 ) : IntegrationTestBase() {
   private val underTest = RecallReasonAuditRepository(jpaRepository)
 
+  @MockkBean
+  private lateinit var fixedClock: Clock
+
+  @BeforeEach
+  fun `set up clock`() {
+    every { fixedClock.instant() } returns Instant.parse("2021-10-04T13:15:50.00Z")
+    every { fixedClock.zone } returns ZoneId.of("UTC")
+  }
+
   @Test
   @Transactional
   fun `can get audit info for single field updated recall`() {
     recallRepository.save(recall, currentUserId)
 
-    assertThat(recallRepository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
+    assertThat(recallRepository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))))
 
     val lastUpdatedDateTime1 = OffsetDateTime.now()
+    every { fixedClock.instant() } returns lastUpdatedDateTime1.toInstant()
     val recallToUpdate1 = recall.copy(reasonsForRecall = setOf(ELM_FURTHER_OFFENCE, ELM_EQUIPMENT_TAMPER, OTHER), lastUpdatedDateTime = lastUpdatedDateTime1)
     recallRepository.save(recallToUpdate1, currentUserId)
 
@@ -55,6 +71,7 @@ class RecallReasonAuditRepositoryIntegrationTest(
     assert(recallReasonActual1.contains("ELM_EQUIPMENT_TAMPER"))
 
     val lastUpdatedDateTime2 = OffsetDateTime.now()
+    every { fixedClock.instant() } returns lastUpdatedDateTime2.toInstant()
     val recallToUpdate2 = recall.copy(reasonsForRecall = setOf(ELM_BREACH_NON_CURFEW_CONDITION), lastUpdatedDateTime = lastUpdatedDateTime2)
     recallRepository.save(recallToUpdate2, currentUserId)
 

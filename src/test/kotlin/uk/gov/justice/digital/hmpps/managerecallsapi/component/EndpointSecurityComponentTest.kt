@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocuments
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -32,6 +33,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -67,6 +69,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val createLastKnownAddressRequest = CreateLastKnownAddressRequest(::RecallId.random(), "address line 1", "address line 2", "some town", "some postcode", AddressSource.LOOKUP)
   private val rescindRequestRequest = RescindRequestRequest("details", LocalDate.now(), "some content", "filename")
   private val rescindDecisionRequest = RescindDecisionRequest(true, "details", LocalDate.now(), "some content", "filename")
+  private val returnedToCustodyRequest = ReturnedToCustodyRequest(OffsetDateTime.now().minusDays(1), OffsetDateTime.now().minusMinutes(1))
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
@@ -97,6 +100,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
       webTestClient.post().uri("/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/last-known-addresses").bodyValue(createLastKnownAddressRequest),
+      webTestClient.post().uri("/recalls/${UUID.randomUUID()}/returned-to-custody").bodyValue(returnedToCustodyRequest),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}"),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/last-known-addresses/${::LastKnownAddressId.random()}")

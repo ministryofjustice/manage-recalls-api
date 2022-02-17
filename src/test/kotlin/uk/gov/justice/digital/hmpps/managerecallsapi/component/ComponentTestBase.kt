@@ -2,6 +2,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
+import org.assertj.core.api.AbstractOffsetDateTimeAssert
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -47,12 +49,19 @@ import xyz.capybara.clamav.ClamavClient
 import xyz.capybara.clamav.commands.scan.result.ScanResult
 import java.io.File
 import java.io.InputStream
+import java.time.Clock
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("db-test")
 @TestInstance(PER_CLASS)
 abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = false) {
+
+  @MockkBean
+  protected lateinit var fixedClock: Clock
 
   @Autowired
   private lateinit var jwtAuthenticationHelper: JwtAuthenticationHelper
@@ -112,6 +121,8 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     AuthenticatedClient(webTestClient, jwtAuthenticationHelper)
   }
 
+  protected lateinit var fixedClockTime: OffsetDateTime
+
   @BeforeAll
   fun startMocks() {
     hmppsAuthMockServer.start()
@@ -140,6 +151,15 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     prisonRegisterMockServer.stubPrisons()
     courtRegisterMockServer.stubCourts()
     if (!useRealGotenbergServer) gotenbergMockServer.resetAll()
+  }
+
+  @BeforeEach
+  fun setUpFixedClock() {
+    val zone = ZoneId.of("UTC")
+    val instant = Instant.parse("2022-02-04T14:15:43.682078Z")
+    fixedClockTime = OffsetDateTime.ofInstant(instant, zone)
+    every { fixedClock.instant() } returns instant
+    every { fixedClock.zone } returns zone
   }
 
   @Configuration
@@ -188,4 +208,8 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   protected fun expectAVirusWillBeFound() {
     every { clamavClient.scan(any<InputStream>()) } returns ScanResult.VirusFound(mapOf())
   }
+
+  // Due to differences in rounding (trigger drops last 0 on nano-seconds) we need to allow some variance on OffsetDateTimes
+  fun assertOffsetDateTimesEqual(actual: OffsetDateTime, expected: OffsetDateTime): AbstractOffsetDateTimeAssert<*> =
+    Assertions.assertThat(actual).isCloseTo(expected, Assertions.within(1, ChronoUnit.MILLIS))!!
 }

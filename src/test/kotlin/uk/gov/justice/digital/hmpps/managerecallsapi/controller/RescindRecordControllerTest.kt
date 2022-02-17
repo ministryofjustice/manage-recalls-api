@@ -42,7 +42,7 @@ class RescindRecordControllerTest {
     val request = RescindRequestRequest(requestDetails, LocalDate.now(), documentBytes.encodeToBase64String(), fileName)
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
-    every { rescindRecordService.createRequest(recallId, userId, request) } returns Success(rescindRecordId)
+    every { rescindRecordService.createRecord(recallId, userId, request) } returns Success(rescindRecordId)
 
     val response = underTest.createRescindRecord(recallId, request, bearerToken)
 

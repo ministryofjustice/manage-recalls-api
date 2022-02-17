@@ -44,7 +44,7 @@ class RecallServiceTest {
   private val recallRepository = mockk<RecallRepository>()
   private val bankHolidayService = mockk<BankHolidayService>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
-  private val underTest = RecallService(recallRepository, bankHolidayService, fixedClock)
+  private val underTest = RecallService(recallRepository, bankHolidayService)
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(
@@ -61,7 +61,9 @@ class RecallServiceTest {
   private val today = LocalDate.now()
   private val currentUserId = ::UserId.random()
 
-  private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
+  private val nextWorkingDate = LocalDate.of(2021, 10, 5)
+
+  private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
     fullyPopulatedUpdateRecallRequest.sentenceDate!!,
@@ -119,7 +121,7 @@ class RecallServiceTest {
     assessedByUserId = fullyPopulatedUpdateRecallRequest.assessedByUserId!!.value,
     bookedByUserId = fullyPopulatedUpdateRecallRequest.bookedByUserId!!.value,
     dossierCreatedByUserId = fullyPopulatedUpdateRecallRequest.dossierCreatedByUserId!!.value,
-    dossierTargetDate = LocalDate.of(2021, 10, 5),
+    dossierTargetDate = nextWorkingDate,
     lastKnownAddressOption = fullyPopulatedUpdateRecallRequest.lastKnownAddressOption,
     arrestIssues = fullyPopulatedUpdateRecallRequest.arrestIssues,
     arrestIssuesDetail = fullyPopulatedUpdateRecallRequest.arrestIssuesDetail,
@@ -128,10 +130,9 @@ class RecallServiceTest {
 
   @Test
   fun `can update recall with all UpdateRecallRequest fields populated`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 5)) } returns false
+    every { bankHolidayService.nextWorkingDate(LocalDate.of(2021, 10, 4)) } returns nextWorkingDate
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    val fixedClockTime = OffsetDateTime.now(fixedClock)
-    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(lastUpdatedDateTime = fixedClockTime, recallNotificationEmailSentDateTime = fixedClockTime)
+    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock), returnedToCustody = null)
     every { recallRepository.save(updatedRecallWithoutDocs, currentUserId) } returns updatedRecallWithoutDocs
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest, currentUserId)
@@ -142,20 +143,19 @@ class RecallServiceTest {
   @Test
   fun `cannot reset recall properties to null with update recall`() {
     val fullyPopulatedRecall: Recall = fullyPopulatedRecall(recallId)
-    val updatedRecall = fullyPopulatedRecall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
     every { recallRepository.getByRecallId(recallId) } returns fullyPopulatedRecall
-    every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
+    every { recallRepository.save(fullyPopulatedRecall, currentUserId) } returns fullyPopulatedRecall
 
     val emptyUpdateRecallRequest = UpdateRecallRequest()
     val response = underTest.updateRecall(recallId, emptyUpdateRecallRequest, currentUserId)
 
-    assertThat(response, equalTo(updatedRecall))
+    assertThat(response, equalTo(fullyPopulatedRecall))
   }
 
   @Test
   fun `assignee cleared when recall is stopped`() {
     val recall = existingRecall.copy(assignee = UUID.randomUUID())
-    val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP, lastUpdatedDateTime = OffsetDateTime.now(fixedClock), recallType = FIXED)
+    val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP, recallType = FIXED)
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
 
@@ -166,29 +166,24 @@ class RecallServiceTest {
   }
 
   @Test
-  fun `dossierTargetDate when recallNotificationEmailSentDateTime is on Wednesday should be Thursday`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 7)) } returns false
-    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-10-06T12:00Z"))
+  fun `dossierTargetDate set when in custody`() {
+    every { bankHolidayService.nextWorkingDate(LocalDate.of(2021, 10, 6)) } returns LocalDate.of(2021, 10, 7)
+    val dossierTargetDate = underTest.calculateDossierTargetDate(
+      UpdateRecallRequest(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-06T12:00Z")),
+      existingRecall
+    )
 
     assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 10, 7)))
   }
 
   @Test
-  fun `dossierTargetDate when recallNotificationEmailSentDateTime is on Friday should be Monday`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 10, 11)) } returns false
-    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-10-08T12:00Z"))
+  fun `dossierTargetDate not set when not in custody`() {
+    val dossierTargetDate = underTest.calculateDossierTargetDate(
+      UpdateRecallRequest(recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-06T12:00Z")),
+      existingRecall
+    )
 
-    assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 10, 11)))
-  }
-
-  @Test
-  fun `dossierTargetDate when recallNotificationEmailSentDateTime is day before weekend and bank holidays should be first non-weekend and non-bank-holiday`() {
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 27)) } returns true
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 28)) } returns true
-    every { bankHolidayService.isHoliday(LocalDate.of(2021, 12, 29)) } returns false
-    val dossierTargetDate = underTest.calculateDossierTargetDate(OffsetDateTime.parse("2021-12-24T12:00Z"))
-
-    assertThat(dossierTargetDate, equalTo(LocalDate.of(2021, 12, 29)))
+    assertThat(dossierTargetDate, equalTo(null))
   }
 
   @Suppress("unused")
@@ -217,7 +212,7 @@ class RecallServiceTest {
   private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     // TODO: don't set the recallType unless we need to
-    val updatedRecallWithType = existingRecall.copy(recallType = FIXED, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
+    val updatedRecallWithType = existingRecall.copy(recallType = FIXED)
     every { recallRepository.save(updatedRecallWithType, currentUserId) } returns updatedRecallWithType
 
     val response = underTest.updateRecall(recallId, request, currentUserId)
@@ -243,7 +238,6 @@ class RecallServiceTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      lastUpdatedDateTime = OffsetDateTime.now(fixedClock),
       assignee = assignee
     )
 
@@ -259,9 +253,18 @@ class RecallServiceTest {
     val nomsNumber = randomNoms()
     val now = OffsetDateTime.now()
     val createdByUserId = ::UserId.random()
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1))
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      createdByUserId,
+      now,
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1)
+    )
     val assignee = ::UserId.random()
-    val expected = recall.copy(lastUpdatedDateTime = OffsetDateTime.now(fixedClock))
 
     every { recallRepository.getByRecallId(recallId) } returns Recall(
       recallId,
@@ -275,10 +278,10 @@ class RecallServiceTest {
       LocalDate.of(1999, 12, 1),
       assignee = assignee
     )
-    every { recallRepository.save(expected, currentUserId) } returns expected
+    every { recallRepository.save(recall, currentUserId) } returns recall
 
     val assignedRecall = underTest.unassignRecall(recallId, assignee, currentUserId)
-    assertThat(assignedRecall, equalTo(expected))
+    assertThat(assignedRecall, equalTo(recall))
   }
 
   @Test

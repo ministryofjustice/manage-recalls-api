@@ -2,9 +2,8 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import org.assertj.core.api.AbstractOffsetDateTimeAssert
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
@@ -27,7 +26,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.time.temporal.ChronoUnit
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -167,6 +165,8 @@ class RecallAuditComponentTest : ComponentTestBase() {
     assertThat(lastUpdatedTimeAudit.auditCount, equalTo(1))
     assertOffsetDateTimesEqual(lastUpdatedTimeAudit.updatedDateTime, savedRecall.lastUpdatedDateTime)
 
+    every { fixedClock.instant() } returns OffsetDateTime.now().toInstant()
+
     val updatedRecall = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(contraband = true, reasonsForRecall = setOf(ELM_EQUIPMENT_TAMPER, ELM_FAILURE_CHARGE_BATTERY, OTHER)))
 
     val updatedAuditList = authenticatedClient.auditSummaryForRecall(recallId)
@@ -212,8 +212,4 @@ class RecallAuditComponentTest : ComponentTestBase() {
     val sentenceAuditEntry = sentencingUpdateAuditList.first { it.fieldName.value == "sentenceYears" }
     assertThat(sentenceAuditEntry.fieldPath, equalTo(FieldPath("sentencingInfo.sentenceLength.sentenceYears")))
   }
-
-  // Due to differences in rounding (trigger drops last 0 on nano-seconds) we need to allow some variance on OffsetDateTimes
-  fun assertOffsetDateTimesEqual(actual: OffsetDateTime, expected: OffsetDateTime): AbstractOffsetDateTimeAssert<*> =
-    assertThat(actual).isCloseTo(expected, within(1, ChronoUnit.MILLIS))!!
 }

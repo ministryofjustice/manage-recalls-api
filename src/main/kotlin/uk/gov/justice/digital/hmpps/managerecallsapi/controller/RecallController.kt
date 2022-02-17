@@ -70,10 +70,10 @@ class RecallController(
     @RequestBody bookRecallRequest: BookRecallRequest,
     @RequestHeader("Authorization") bearerToken: String
   ): ResponseEntity<RecallResponse> {
-    val token = tokenExtractor.getTokenFromHeader(bearerToken)
+    val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
 
     return ResponseEntity(
-      recallRepository.save(bookRecallRequest.toRecall(token.userUuid()), token.userUuid()).toResponse(),
+      recallRepository.save(bookRecallRequest.toRecall(currentUserId), currentUserId).toResponse(),
       HttpStatus.CREATED
     )
   }

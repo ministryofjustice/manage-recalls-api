@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLi
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
@@ -40,6 +41,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import java.time.OffsetDateTime
 
 class AuthenticatedClient(
   private val webTestClient: WebTestClient,
@@ -147,6 +149,10 @@ class AuthenticatedClient(
 
   fun unassignRecall(recallId: RecallId, assignee: UserId, expectedStatus: HttpStatus) =
     deleteRequest("/recalls/$recallId/assignee/$assignee", expectedStatus)
+
+  fun returnedToCustody(recallId: RecallId, returnedToCustodyDateTime: OffsetDateTime, notificationDateTime: OffsetDateTime) =
+    sendPostRequest("/recalls/$recallId/returned-to-custody", ReturnedToCustodyRequest(returnedToCustodyDateTime, notificationDateTime))
+      .expectStatus().isEqualTo(OK)
 
   fun <T> missingDocumentsRecord(
     request: MissingDocumentsRecordRequest,

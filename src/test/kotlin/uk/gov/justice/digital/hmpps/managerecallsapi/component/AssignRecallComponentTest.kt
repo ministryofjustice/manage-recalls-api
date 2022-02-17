@@ -2,9 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.ninjasquad.springmockk.MockkBean
-import io.mockk.every
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
@@ -25,25 +22,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import kotlin.jvm.Throws
 
 class AssignRecallComponentTest : ComponentTestBase() {
-  @MockkBean
-  private lateinit var fixedClock: Clock
 
   private val zone = ZoneId.of("UTC")
   private val now = OffsetDateTime.ofInstant(Instant.parse("2021-10-04T14:15:43.682078Z"), zone)
-
-  @BeforeEach
-  fun `set up clock`() {
-    every { fixedClock.instant() } returns Instant.parse("2021-10-04T13:15:50.00Z")
-    every { fixedClock.zone } returns zone
-  }
 
   @Test
   fun `assign recall`() {

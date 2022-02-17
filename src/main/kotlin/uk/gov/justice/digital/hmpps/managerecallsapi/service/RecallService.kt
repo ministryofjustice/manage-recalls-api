@@ -12,10 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import java.time.Clock
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.OffsetDateTime
 import java.util.UUID
 import javax.transaction.Transactional
 
@@ -23,15 +20,13 @@ import javax.transaction.Transactional
 class RecallService(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val bankHolidayService: BankHolidayService,
-  @Autowired private val clock: Clock
 ) {
 
   @Transactional
   fun assignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
     return recallRepository.getByRecallId(recallId)
       .copy(
-        assignee = assignee.value,
-        lastUpdatedDateTime = OffsetDateTime.now(clock)
+        assignee = assignee.value
       )
       .let { recallRepository.save(it, currentUserId) }
   }
@@ -41,8 +36,7 @@ class RecallService(
     return recallRepository.getByRecallId(recallId)
       .takeIf { it.assignee == assignee.value }
       ?.copy(
-        assignee = null,
-        lastUpdatedDateTime = OffsetDateTime.now(clock)
+        assignee = null
       )
       ?.let { recallRepository.save(it, currentUserId) } ?: throw NotFoundException()
   }
@@ -56,7 +50,6 @@ class RecallService(
   private fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
-      lastUpdatedDateTime = OffsetDateTime.now(clock),
       licenceNameCategory = updateRecallRequest.licenceNameCategory ?: licenceNameCategory,
       recallType = FIXED,
       recallLength = sentencingInfo?.calculateRecallLength() ?: recallLength,
@@ -99,8 +92,7 @@ class RecallService(
       assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
       dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
-      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest.recallNotificationEmailSentDateTime)
-        ?: dossierTargetDate,
+      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest, this),
       lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
       arrestIssues = updateRecallRequest.arrestIssues ?: arrestIssues,
       arrestIssuesDetail = updateRecallRequest.arrestIssuesDetail ?: arrestIssuesDetail,
@@ -108,19 +100,15 @@ class RecallService(
     )
   }
 
-  fun calculateDossierTargetDate(recallNotificationEmailSentDateTime: OffsetDateTime?): LocalDate? {
-    return recallNotificationEmailSentDateTime?.let {
-      var dossierTargetDate = it.toLocalDate().plusDays(1)
-      while (
-        dossierTargetDate.dayOfWeek == DayOfWeek.SATURDAY ||
-        dossierTargetDate.dayOfWeek == DayOfWeek.SUNDAY ||
-        bankHolidayService.isHoliday(dossierTargetDate)
-      ) {
-        dossierTargetDate = dossierTargetDate.plusDays(1)
+  fun calculateDossierTargetDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? =
+    when (recall.inCustodyRecallOrBeingUpdatedToBeElseNull(updateRecallRequest)) {
+      true -> {
+        updateRecallRequest.recallNotificationEmailSentDateTime?.let {
+          bankHolidayService.nextWorkingDate(it.toLocalDate())
+        }
       }
-      dossierTargetDate
-    }
-  }
+      else -> null
+    } ?: recall.dossierTargetDate
 
   fun clearAssigneeIfRecallStopped(agreeWithRecall: AgreeWithRecall?, assignee: UUID?): UUID? {
     return assignee?.let {
@@ -133,7 +121,7 @@ class RecallService(
   }
 }
 
-fun UpdateRecallRequest.toSentencingInfo(
+private fun UpdateRecallRequest.toSentencingInfo(
   existingRecall: Recall
 ): SentencingInfo? =
   if (
@@ -157,7 +145,7 @@ fun UpdateRecallRequest.toSentencingInfo(
     existingRecall.sentencingInfo
   }
 
-fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? =
+private fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): ProbationInfo? =
   if (
     probationOfficerName != null &&
     probationOfficerPhoneNumber != null &&

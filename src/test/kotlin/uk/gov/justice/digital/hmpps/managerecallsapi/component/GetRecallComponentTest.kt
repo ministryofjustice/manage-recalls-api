@@ -56,7 +56,7 @@ class GetRecallComponentTest : ComponentTestBase() {
           nomsNumber,
           createdByUserId,
           now,
-          now,
+          fixedClockTime,
           FirstName("Barrie"),
           null,
           LastName("Badger"),
