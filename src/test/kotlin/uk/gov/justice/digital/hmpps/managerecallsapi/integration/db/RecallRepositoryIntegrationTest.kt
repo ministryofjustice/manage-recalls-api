@@ -25,7 +25,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.Clock
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import javax.transaction.Transactional
 
 @ExtendWith(SpringExtension::class)
@@ -35,7 +38,9 @@ class RecallRepositoryIntegrationTest(
   @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository,
   @Qualifier("jpaDocumentRepository") @Autowired private val jpaDocumentRepository: JpaDocumentRepository,
 ) : IntegrationTestBase() {
-  private val repository = RecallRepository(jpaRepository)
+  private val fixedClock = Clock.fixed(Instant.parse("2022-02-04T11:14:20.00Z"), ZoneId.of("UTC"))
+
+  private val repository = RecallRepository(jpaRepository, fixedClock)
   private val documentRepository = DocumentRepository(jpaDocumentRepository)
 
   private val details = "Some string"
@@ -47,7 +52,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.getByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
+    assertThat(retrieved, equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))))
   }
 
   @Test
@@ -55,7 +60,7 @@ class RecallRepositoryIntegrationTest(
   fun `can update an existing recall`() {
     repository.save(recall, currentUserId)
 
-    assertThat(repository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
+    assertThat(repository.getByRecallId(recallId), equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))))
 
     val recallToUpdate = fullyPopulatedRecall(recallId)
     val nextCurrentUserId = ::UserId.random()
@@ -64,7 +69,7 @@ class RecallRepositoryIntegrationTest(
 
     val updatedRecall = repository.getByRecallId(recallId)
 
-    assertThat(updatedRecall, equalTo(recallToUpdate.copy(lastUpdatedByUserId = nextCurrentUserId.value)))
+    assertThat(updatedRecall, equalTo(recallToUpdate.copy(lastUpdatedByUserId = nextCurrentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))))
   }
 
   @Test
@@ -81,7 +86,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.findByRecallId(recallId)
 
-    assertThat(retrieved, equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value)))
+    assertThat(retrieved, equalTo(recall.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))))
   }
 
   @Test
@@ -96,7 +101,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.findAllByNomsNumber(nomsNumber)
 
-    assertThat(retrieved, equalTo(listOf(recall.copy(lastUpdatedByUserId = currentUserId.value))))
+    assertThat(retrieved, equalTo(listOf(recall.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock)))))
   }
 
   @Test
@@ -114,7 +119,7 @@ class RecallRepositoryIntegrationTest(
 
     val retrieved = repository.search(RecallSearchRequest(nomsNumber))
 
-    assertThat(retrieved, equalTo(listOf(recall.copy(lastUpdatedByUserId = currentUserId.value))))
+    assertThat(retrieved, equalTo(listOf(recall.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock)))))
   }
 
   @Test
@@ -151,6 +156,6 @@ class RecallRepositoryIntegrationTest(
 
     val createdRecall = repository.getByRecallId(recallId)
 
-    assertThat(createdRecall, equalTo(recallToUpdate.copy(lastUpdatedByUserId = currentUserId.value)))
+    assertThat(createdRecall, equalTo(recallToUpdate.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(fixedClock))))
   }
 }

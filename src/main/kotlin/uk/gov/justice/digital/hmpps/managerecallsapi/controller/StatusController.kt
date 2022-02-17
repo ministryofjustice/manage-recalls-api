@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.BankHolidayService
 import java.time.Clock
 import java.time.OffsetDateTime
+import javax.transaction.Transactional
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -29,6 +30,7 @@ class StatusController(
 ) {
 
   @PostMapping("/recalls/{recallId}/returned-to-custody")
+  @Transactional // FIXME - PUD-1499
   fun returnedToCustody(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody request: ReturnedToCustodyRequest,
@@ -44,7 +46,7 @@ class StatusController(
             currentUserId,
             OffsetDateTime.now(clock)
           ),
-          dossierTargetDate = bankHolidayService.nextWorkingDate(request.returnedToCustodyNotificationDateTime.toLocalDate())
+          dossierTargetDate = bankHolidayService.nextWorkingDate(request.returnedToCustodyNotificationDateTime.toLocalDate()),
         ),
         currentUserId
       ).let {

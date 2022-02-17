@@ -306,7 +306,11 @@ data class Recall(
     }
   }
 
-  fun inCustodyRecallOrBeingUpdatedToBeElseNull(updateRecallRequest: UpdateRecallRequest): Boolean? = inCustodyAtAssessment ?: inCustodyAtBooking ?: updateRecallRequest.inCustodyAtBooking ?: updateRecallRequest.inCustodyAtAssessment
+  fun inCustodyRecallOrBeingUpdatedToBeElseNull(updateRecallRequest: UpdateRecallRequest): Boolean? =
+    inCustodyAtAssessment
+      ?: inCustodyAtBooking
+      ?: updateRecallRequest.inCustodyAtBooking
+      ?: updateRecallRequest.inCustodyAtAssessment
 
   fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking!!
 
@@ -415,5 +419,4 @@ data class ReturnedToCustodyRecord(
       recordedByUserId.value,
       recordedDateTime
     )
-  fun recordedByUserId() = recordedByUserId?.let(::UserId)
 }

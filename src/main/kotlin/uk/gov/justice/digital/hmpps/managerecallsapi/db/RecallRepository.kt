@@ -11,6 +11,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallNotFoundException
+import java.time.Clock
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Repository("jpaRecallRepository")
@@ -39,7 +41,8 @@ class RawRecallRepository(@Qualifier("jpaRecallRepository") @Autowired private v
 
 @Component
 class RecallRepository(
-  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository
+  @Qualifier("jpaRecallRepository") @Autowired private val jpaRepository: JpaRecallRepository,
+  @Autowired private val clock: Clock
 ) : RawRecallRepository(jpaRepository) {
 
   @Deprecated(message = "Must be saved with lastUpdatedByUserId", replaceWith = ReplaceWith("save(entity, currentUserId)"), level = DeprecationLevel.ERROR)
@@ -48,5 +51,5 @@ class RecallRepository(
   }
 
   fun save(entity: Recall, currentUserId: UserId): Recall =
-    super.save(entity.copy(lastUpdatedByUserId = currentUserId.value))
+    super.save(entity.copy(lastUpdatedByUserId = currentUserId.value, lastUpdatedDateTime = OffsetDateTime.now(clock)))
 }

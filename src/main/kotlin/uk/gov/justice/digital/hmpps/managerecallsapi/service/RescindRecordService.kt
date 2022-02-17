@@ -67,7 +67,7 @@ class RescindRecordService(
     }
   }
 
-  fun createRequest(
+  fun createRecord(
     recallId: RecallId,
     currentUserId: UserId,
     request: RescindRequestRequest

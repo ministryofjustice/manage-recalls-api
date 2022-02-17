@@ -79,7 +79,7 @@ class RescindRecordServiceTest {
       documentBytes.encodeToBase64String(), fileName
     )
 
-    val response = underTest.createRequest(recallId, userId, request)
+    val response = underTest.createRecord(recallId, userId, request)
 
     assertThat(savedRecordSlot.captured.version, equalTo(1))
     assertThat(savedRecordSlot.captured.createdDateTime, equalTo(savedRecordSlot.captured.lastUpdatedDateTime))
@@ -191,7 +191,7 @@ class RescindRecordServiceTest {
     )
 
     assertThrows<UndecidedRescindRecordAlreadyExistsException> {
-      underTest.createRequest(recallId, userId, request)
+      underTest.createRecord(recallId, userId, request)
     }
 
     verify { documentService wasNot Called }
@@ -236,7 +236,7 @@ class RescindRecordServiceTest {
     )
 
     assertThrows<RecallNotFoundException> {
-      underTest.createRequest(recallId, userId, request)
+      underTest.createRecord(recallId, userId, request)
     }
   }
 
@@ -293,7 +293,7 @@ class RescindRecordServiceTest {
       fileName
     )
 
-    val response = underTest.createRequest(recallId, userId, request)
+    val response = underTest.createRecord(recallId, userId, request)
 
     assertThat(savedRescindRecord.captured.version, equalTo(2))
     assertThat(response.get(), equalTo(rescindRecordId))

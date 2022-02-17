@@ -36,7 +36,7 @@ class RescindRecordController(
     @RequestHeader("Authorization") bearerToken: String
   ): ResponseEntity<RescindRecordId> =
     tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
-      rescindRecordService.createRequest(recallId, currentUserId, request).map {
+      rescindRecordService.createRecord(recallId, currentUserId, request).map {
         ResponseEntity(it, HttpStatus.CREATED)
       }.onFailure {
         throw VirusFoundException()
