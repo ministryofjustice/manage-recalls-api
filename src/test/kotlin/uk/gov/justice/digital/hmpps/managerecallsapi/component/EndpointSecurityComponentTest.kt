@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
@@ -70,6 +71,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val rescindRequestRequest = RescindRequestRequest("details", LocalDate.now(), "some content", "filename")
   private val rescindDecisionRequest = RescindDecisionRequest(true, "details", LocalDate.now(), "some content", "filename")
   private val returnedToCustodyRequest = ReturnedToCustodyRequest(OffsetDateTime.now().minusDays(1), OffsetDateTime.now().minusMinutes(1))
+  private val createNoteRequest = CreateNoteRequest("subject", "details", "filename", "some content")
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
@@ -97,6 +99,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/users/").bodyValue(userDetailsRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/rescind-records").bodyValue(rescindRequestRequest),
+      webTestClient.post().uri("/recalls/${UUID.randomUUID()}/notes").bodyValue(createNoteRequest),
       webTestClient.post().uri("/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
       webTestClient.post().uri("/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/last-known-addresses").bodyValue(createLastKnownAddressRequest),

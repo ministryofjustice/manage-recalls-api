@@ -67,6 +67,7 @@ class RescindRecordService(
     }
   }
 
+  @Transactional
   fun createRecord(
     recallId: RecallId,
     currentUserId: UserId,

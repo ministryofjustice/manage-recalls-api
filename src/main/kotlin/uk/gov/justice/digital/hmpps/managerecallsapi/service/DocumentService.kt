@@ -56,6 +56,7 @@ class DocumentService(
       }
     }
 
+  @Transactional
   fun storeDocument(
     recallId: RecallId,
     currentUserId: UserId,

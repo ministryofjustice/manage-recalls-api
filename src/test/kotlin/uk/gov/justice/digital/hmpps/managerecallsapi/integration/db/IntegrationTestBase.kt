@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddressRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.NoteRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
@@ -55,6 +56,9 @@ abstract class IntegrationTestBase {
 
   @Autowired
   protected lateinit var lastKnownAddressRepository: LastKnownAddressRepository
+
+  @Autowired
+  protected lateinit var noteRepository: NoteRepository
 
   @BeforeEach
   fun `setup createdBy user`() {

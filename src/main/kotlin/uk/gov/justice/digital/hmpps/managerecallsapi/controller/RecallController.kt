@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
@@ -37,6 +38,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -173,6 +175,7 @@ class RecallController(
     missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse(documents) },
     lastKnownAddresses = lastKnownAddresses.map { address -> address.toResponse() },
     rescindRecords = rescindRecords.map { record -> record.toResponse(documents) },
+    notes = notes.map { note -> note.toResponse(documents) },
     recallLength = recallLength,
     lastReleasePrison = lastReleasePrison,
     lastReleaseDate = lastReleaseDate,
@@ -287,6 +290,17 @@ class RecallController(
     decisionEmailSentDate
   )
 
+  fun Note.toResponse(documents: Set<Document>) = Api.Note(
+    id(),
+    subject,
+    details,
+    index,
+    documentId(),
+    documents.firstOrNull { it.id == documentId }?.fileName,
+    userDetailsService.get(createdByUserId()).fullName(),
+    createdDateTime,
+  )
+
   fun LastKnownAddress.toResponse() = Api.LastKnownAddress(
     id(),
     line1,
@@ -360,6 +374,7 @@ data class RecallResponse(
   val missingDocumentsRecords: List<Api.MissingDocumentsRecord> = emptyList(),
   val lastKnownAddresses: List<Api.LastKnownAddress> = emptyList(),
   val rescindRecords: List<Api.RescindRecord> = emptyList(),
+  val notes: List<Api.Note> = emptyList(),
   val recallLength: RecallLength? = null,
   val lastReleasePrison: PrisonId? = null,
   val lastReleaseDate: LocalDate? = null,
@@ -446,6 +461,17 @@ class Api {
     val version: Int,
     val createdByUserName: FullName,
     val createdDateTime: OffsetDateTime
+  )
+
+  data class Note(
+    val noteId: NoteId,
+    val subject: String,
+    val details: String,
+    val index: Int,
+    val documentId: DocumentId? = null,
+    val fileName: String? = null,
+    val createdByUserName: FullName,
+    val createdDateTime: OffsetDateTime,
   )
 
   data class RescindRecord(

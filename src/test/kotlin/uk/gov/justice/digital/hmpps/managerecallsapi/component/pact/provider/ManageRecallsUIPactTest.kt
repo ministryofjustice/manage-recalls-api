@@ -25,11 +25,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.NOTE_DOCUMENT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RESCIND_REQUEST_EMAIL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
@@ -41,14 +43,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecallWithoutDocuments
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
@@ -61,11 +63,12 @@ import java.util.UUID
 @Suppress("unused")
 @PactFilter(value = ["^((?!unauthorized).)*\$"])
 class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
-  private val nomsNumber = NomsNumber("A1234AA")
+  private val matchedNomsNumber = NomsNumber("A1234AA")
   private val matchedRecallId = ::RecallId.zeroes()
   private val matchedDocumentId = DocumentId(UUID.fromString("11111111-0000-0000-0000-000000000000"))
   private val matchedLastKnownAddressId = LastKnownAddressId(UUID.fromString("22222222-0000-0000-0000-000000000000"))
   private val matchedRescindRecordId = RescindRecordId(UUID.fromString("33333333-0000-0000-0000-000000000000"))
+  private val matchedNoteId = NoteId(UUID.fromString("44444444-0000-0000-0000-000000000000"))
   private val userIdOnes = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
   private val revocationOrderBytes = ClassPathResource("/document/revocation-order.pdf").file.readBytes()
   private val details = "Random details"
@@ -93,13 +96,14 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     rescindRecordRepository.deleteAll()
     documentRepository.deleteAll()
     recallRepository.deleteAll()
+    noteRepository.deleteAll()
 
     every { virusScanner.scan(any()) } returns VirusScanResult.NoVirusFound
   }
 
   @State("a prisoner exists for NOMS number")
   fun `a prisoner exists for NOMS number`() {
-    mockPrisonerResponses(nomsNumber)
+    mockPrisonerResponses(matchedNomsNumber)
   }
 
   private fun mockPrisonerResponses(nomsNum: NomsNumber) {
@@ -160,18 +164,13 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user and a fully populated recall without documents exists"
   )
   fun `a user and a fully populated recall without documents exists`() {
-    val recall = fullyPopulatedRecall(matchedRecallId, userIdOnes).let {
+    val recall = fullyPopulatedRecallWithoutDocuments(matchedRecallId, userIdOnes).let {
       it.copy(
         currentPrison = PrisonId("BMI"),
         lastReleasePrison = PrisonId("CFI"),
         sentencingInfo = it.sentencingInfo?.copy(sentencingCourt = CourtId("BANBCT")),
         localPoliceForceId = PoliceForceId("avon-and-somerset"),
         licenceNameCategory = NameFormatCategory.FIRST_LAST,
-        documents = emptySet(),
-        missingDocumentsRecords = emptySet(),
-        lastKnownAddresses = emptySet(),
-        rescindRecords = emptySet(),
-        assignee = userIdOnes.value
       )
     }
     mockPrisonerResponses(recall.nomsNumber)
@@ -187,10 +186,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a user and an unassigned fully populated recall exists without documents"
   )
   fun `a user and an unassigned fully populated recall exists without documents`() {
-    val recall = fullyPopulatedRecall(matchedRecallId, userIdOnes).copy(
-      documents = emptySet(),
-      missingDocumentsRecords = emptySet(),
-      rescindRecords = emptySet(),
+    val recall = fullyPopulatedRecallWithoutDocuments(matchedRecallId, userIdOnes).copy(
       assignee = null
     )
     setupUserDetailsFor(userIdOnes)
@@ -201,29 +197,12 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     "a list of recalls exists"
   )
   fun `a list of recalls exists`() {
+
     recallRepository.saveAll(
       listOf(
-        fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
-          nomsNumber = nomsNumber,
-          documents = emptySet(),
-          missingDocumentsRecords = emptySet(),
-          rescindRecords = emptySet(),
-          assignee = null
-        ),
-        fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
-          nomsNumber = randomNoms(),
-          documents = emptySet(),
-          missingDocumentsRecords = emptySet(),
-          rescindRecords = emptySet(),
-          assignee = null
-        ),
-        fullyPopulatedRecall(::RecallId.random(), userIdOnes).copy(
-          nomsNumber = randomNoms(),
-          documents = emptySet(),
-          missingDocumentsRecords = emptySet(),
-          rescindRecords = emptySet(),
-          assignee = null
-        )
+        fullyPopulatedRecallWithoutDocuments(::RecallId.random(), userIdOnes).copy(nomsNumber = matchedNomsNumber),
+        fullyPopulatedRecallWithoutDocuments(::RecallId.random(), userIdOnes),
+        fullyPopulatedRecallWithoutDocuments(::RecallId.random(), userIdOnes),
       )
     )
   }
@@ -266,6 +245,15 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
+    "a recall with notes exists",
+  )
+  fun `a recall with notes exists`() {
+    `a user and a fully populated recall without documents exists`()
+    `a note exists`(1, matchedNoteId, matchedDocumentId)
+    `a note exists`(2)
+  }
+
+  @State(
     "a recall with open rescind record exists",
   )
   fun `a recall with open rescind record exists`() {
@@ -282,7 +270,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     recallRepository.save(
       Recall(
         matchedRecallId,
-        nomsNumber,
+        matchedNomsNumber,
         createdByUserId,
         OffsetDateTime.now(),
         FirstName("Barrie"),
@@ -344,6 +332,26 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         version,
         userIdOnes,
         OffsetDateTime.now()
+      )
+    )
+  }
+
+  fun `a note exists`(
+    index: Int,
+    noteId: NoteId = ::NoteId.random(),
+    documentId: DocumentId? = null
+  ) {
+    `a document exists`(matchedDocumentId, NOTE_DOCUMENT, "recall-note.doc", null, null)
+    noteRepository.save(
+      Note(
+        noteId,
+        matchedRecallId,
+        "Some note subject",
+        "Some note detail text",
+        index,
+        documentId,
+        userIdOnes,
+        OffsetDateTime.now(),
       )
     )
   }
