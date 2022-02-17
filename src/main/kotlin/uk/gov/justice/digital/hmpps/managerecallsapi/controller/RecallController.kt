@@ -235,7 +235,9 @@ class RecallController(
     warrantReferenceNumber = warrantReferenceNumber,
     stoppedReason = stopRecord?.stoppedReason,
     stoppedDateTime = stopRecord?.stoppedDateTime,
-    stoppedByUserName = stopRecord?.let { userDetailsService.get(it.stoppedByUserId()).fullName() }
+    stoppedByUserName = stopRecord?.let { userDetailsService.get(it.stoppedByUserId()).fullName() },
+    returnedToCustodyDateTime = returnedToCustody?.returnedToCustodyDateTime,
+    returnedToCustodyNotificationDateTime = returnedToCustody?.notificationDateTime,
   )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
@@ -415,6 +417,9 @@ data class RecallResponse(
   val stoppedReason: StoppedReason? = null,
   val stoppedByUserName: FullName? = null,
   val stoppedDateTime: OffsetDateTime? = null,
+  val returnedToCustodyDateTime: OffsetDateTime? = null,
+  val returnedToCustodyNotificationDateTime: OffsetDateTime? = null,
+
 )
 
 class Api {
