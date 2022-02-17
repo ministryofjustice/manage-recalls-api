@@ -32,7 +32,7 @@ class RecallSummaryService(
     pdfDocumentGenerationService.generatePdf(
       recallSummaryGenerator.generateHtml(recallSummaryContext, recallNotificationTotalNumberOfPages),
       1.0,
-      1.0,
+      0.8,
       recallImage(HmppsLogo)
     )
 }

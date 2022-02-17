@@ -58,7 +58,9 @@ fun isPdfWithWithTotalPageCount(expectedNumberOfPages: Int): Matcher<ByteArray> 
       PdfReader(actual).use { pdfReader ->
         val recallSummaryText = PdfTextExtractor(pdfReader).getTextFromPage(1)
         return when {
-          recallSummaryText.contains("of pages $expectedNumberOfPages (includes this one)") -> Match
+          // NOTE: Since the upgrade to gotenberg 7.5+ the spacing of text when read in (below) is a bit janky...
+          //       The resulting PDF is absolutely fine, so this is just a test artefact/issue.
+          recallSummaryText.contains("of pages  $expectedNumberOfPages  ( i n cl ud e s this one)") -> Match
           else -> Mismatch("page content '$recallSummaryText' does not contain expected page count $expectedNumberOfPages")
         }
       }

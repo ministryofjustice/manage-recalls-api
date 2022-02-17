@@ -23,10 +23,13 @@ class PdfDocumentGenerationService(@Autowired private val gotenbergApi: Gotenber
         html,
         images,
         mapOf(
+          "paperWidth" to 8.27,
+          "paperHeight" to 11.7,
           "marginTop" to marginTop,
           "marginBottom" to marginBottom,
           "marginLeft" to 0,
-          "marginRight" to 0
+          "marginRight" to 0,
+          "scale" to 1.0,
         )
       )
     )

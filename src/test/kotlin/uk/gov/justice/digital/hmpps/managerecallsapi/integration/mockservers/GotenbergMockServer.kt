@@ -17,7 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.Hmpps
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 
 @Component
-class GotenbergMockServer : HealthServer(9093, "/ping") {
+class GotenbergMockServer : HealthServer(9093, "/health") {
   fun stubGenerateRevocationOrder(generatedPdfContents: ByteArray, expectedTextInHtml: String) {
     stubPdfGeneration(generatedPdfContents, expectedTextInHtml, RevocationOrderLogo)
   }
@@ -52,7 +52,7 @@ class GotenbergMockServer : HealthServer(9093, "/ping") {
     vararg recallImage: RecallImage
   ) {
     stubFor(
-      post(urlEqualTo("/convert/html")).apply {
+      post(urlEqualTo("/forms/chromium/convert/html")).apply {
         withMultipartHeader()
         withMultipartFor("index.html", containing(expectedTextInHtml))
         recallImage.forEach { image ->
@@ -68,7 +68,7 @@ class GotenbergMockServer : HealthServer(9093, "/ping") {
     vararg fileContentsToMerge: String
   ) {
     stubFor(
-      post(urlEqualTo("/merge"))
+      post(urlEqualTo("/forms/pdfengines/merge"))
         .apply {
           withMultipartHeader()
           fileContentsToMerge.forEachIndexed { index, fileContents ->

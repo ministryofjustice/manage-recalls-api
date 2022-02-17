@@ -58,7 +58,7 @@ class ReasonsForRecallServiceTest {
       LocalDate.of(1999, 12, 1)
     )
     every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
-    every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0) } returns Mono.just(expectedPdfBytes)
+    every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 0.8) } returns Mono.just(expectedPdfBytes)
     every { pdfDecorator.centralHeader(expectedPdfBytes, "OFFICIAL") } returns expectedPdfWithHeaderBytes
     every {
       documentService.storeDocument(
@@ -119,7 +119,7 @@ class ReasonsForRecallServiceTest {
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
     every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
     every { reasonsForRecallGenerator.generateHtml(reasonsForRecallContext) } returns generatedHtml
-    every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 1.0) } returns Mono.just(expectedPdfBytes)
+    every { pdfDocumentGenerationService.generatePdf(generatedHtml, 1.0, 0.8) } returns Mono.just(expectedPdfBytes)
     every { pdfDecorator.centralHeader(expectedPdfBytes, "OFFICIAL") } returns expectedPdfWithHeaderBytes
     every {
       documentService.storeDocument(

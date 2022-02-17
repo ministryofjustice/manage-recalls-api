@@ -9,4 +9,4 @@ class GotenbergHealth(
   webClient: WebClient,
   @Value("gotenberg") componentName: String,
   @Value("\${gotenberg.endpoint.url}") gotenbergEndpointUrl: String
-) : PingHealthCheck(webClient, componentName, "$gotenbergEndpointUrl/ping")
+) : PingHealthCheck(webClient, componentName, "$gotenbergEndpointUrl/health")

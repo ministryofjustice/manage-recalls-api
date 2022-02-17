@@ -69,12 +69,12 @@ class LetterToPrisonService(
   private fun generateLetterToPrisonGovernor(context: LetterToPrisonContext): () -> Mono<ByteArray> =
     {
       val letterToPrisonGovernorHtml = letterToPrisonGovernorGenerator.generateHtml(context)
-      pdfDocumentGenerationService.generatePdf(letterToPrisonGovernorHtml, 1.0, 1.0, recallImage(HmppsLogo))
+      pdfDocumentGenerationService.generatePdf(letterToPrisonGovernorHtml, 1.0, 0.8, recallImage(HmppsLogo))
     }
 
   private fun generateLetterToPrisonCustodyOffice(context: LetterToPrisonContext): () -> Mono<ByteArray> =
     {
       val letterToPrisonCustodyOfficeHtml = letterToPrisonCustodyOfficeGenerator.generateHtml(context)
-      pdfDocumentGenerationService.generatePdf(letterToPrisonCustodyOfficeHtml, 1.0, 1.0, recallImage(HmppsLogo))
+      pdfDocumentGenerationService.generatePdf(letterToPrisonCustodyOfficeHtml, 1.0, 0.8, recallImage(HmppsLogo))
     }
 }

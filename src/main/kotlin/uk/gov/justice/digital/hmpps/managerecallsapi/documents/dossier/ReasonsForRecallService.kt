@@ -33,7 +33,7 @@ class ReasonsForRecallService(
   private fun generateAndStorePdf(recallId: RecallId, reasonsForRecallContext: ReasonsForRecallContext, currentUserId: UserId, documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> =
     pdfDocumentGenerationService.generatePdf(
       reasonsForRecallGenerator.generateHtml(reasonsForRecallContext),
-      1.0, 1.0
+      1.0, 0.8
     ).map { reasonsForRecallBytes ->
       pdfDecorator.centralHeader(reasonsForRecallBytes, "OFFICIAL")
     }.map { documentBytes ->
