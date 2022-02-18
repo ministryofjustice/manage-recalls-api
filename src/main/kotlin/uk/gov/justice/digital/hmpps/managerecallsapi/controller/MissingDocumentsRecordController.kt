@@ -58,7 +58,7 @@ class MissingDocumentsRecordController(
     @RequestHeader("Authorization") bearerToken: String
   ): ResponseEntity<MissingDocumentsRecordId> {
     val recallId = pathRecallId ?: missingDocumentsRecordRequest.recallId!!
-    return recallRepository.getByRecallId(recallId).let {
+    return recallRepository.getByRecallId(recallId).let { // TODO: PUD-1500: should be moved into a service class and annotated @Transactional
       val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       documentService.scanAndStoreDocument(
         recallId,

@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -37,6 +38,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -78,6 +80,14 @@ class AuthenticatedClient(
 
   fun requestRescind(recallId: RecallId, request: RescindRequestRequest): RescindRecordId =
     requestRescind(recallId, request, CREATED).expectBody(RescindRecordId::class.java)
+      .returnResult()
+      .responseBody!!
+
+  fun createNote(recallId: RecallId, request: CreateNoteRequest, status: HttpStatus) =
+    sendPostRequest("/recalls/$recallId/notes", request).expectStatus().isEqualTo(status)
+
+  fun createNote(recallId: RecallId, request: CreateNoteRequest): NoteId =
+    createNote(recallId, request, CREATED).expectBody(NoteId::class.java)
       .returnResult()
       .responseBody!!
 

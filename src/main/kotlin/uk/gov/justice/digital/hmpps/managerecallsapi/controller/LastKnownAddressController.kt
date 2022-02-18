@@ -49,7 +49,7 @@ class LastKnownAddressController(
     "/recalls/{recallId}/last-known-addresses",
     "/last-known-addresses" // FIXME PUD-1364
   )
-  fun createLastKnownAddress(
+  fun createLastKnownAddress( // TODO: PUD-1500: should be moved into a service class and annotated @Transactional
     @PathVariable("recallId") pathRecallId: RecallId?,
     @RequestBody request: CreateLastKnownAddressRequest,
     @RequestHeader("Authorization") bearerToken: String

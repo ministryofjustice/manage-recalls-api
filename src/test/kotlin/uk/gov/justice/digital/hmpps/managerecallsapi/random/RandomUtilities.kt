@@ -22,6 +22,14 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
+internal fun fullyPopulatedRecallWithoutDocuments(recallId: RecallId = ::RecallId.random(), userId: UserId? = null): Recall =
+  fullyPopulatedRecall(recallId, userId).copy(
+    documents = emptySet(),
+    missingDocumentsRecords = emptySet(),
+    rescindRecords = emptySet(),
+    notes = emptySet(),
+  )
+
 internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), knownUserId: UserId? = null): Recall =
   fullyPopulatedInstance<Recall>().let { recall ->
     recall.copy(
@@ -63,6 +71,14 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
           requestEmailId = recall.documents.random().id,
           decisionEmailId = recall.documents.random().id,
           version = randomVersion(),
+          createdByUserId = (knownUserId ?: ::UserId.random()).value
+        )
+      }.toSet(),
+      notes = recall.notes.map { note ->
+        note.copy(
+          recallId = recallId.value,
+          documentId = recall.documents.random().id,
+          index = randomIndex(),
           createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
       }.toSet(),

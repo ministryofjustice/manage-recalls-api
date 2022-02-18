@@ -30,6 +30,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
@@ -94,6 +95,7 @@ private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply 
   text(StringBiDiMappings.uuid().map(::DocumentId, DocumentId::value))
   text(StringBiDiMappings.uuid().map(::UserId, UserId::value))
   text(StringBiDiMappings.uuid().map(::RescindRecordId, RescindRecordId::value))
+  text(StringBiDiMappings.uuid().map(::NoteId, NoteId::value))
 }
 
 inline fun <reified T : Validated<*>> AutoMappingConfiguration<ObjectMapper>.text(

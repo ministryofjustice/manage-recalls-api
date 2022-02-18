@@ -39,7 +39,7 @@ class ReferenceDataController(
   fun policeForces(): List<Api.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!
 }
 
-// TODO: migrate name, label to id, name to be closer to e.g. courts and prisons responses
+// TODO: PUD-1118 Make reference data responses consistent: migrate name, label to id, name to be closer to e.g. courts and prisons responses
 data class LocalDeliveryUnitResponse(val name: String, val label: String)
 data class MappaLevelResponse(val id: String, val name: String)
 data class RecallReasonResponse(val id: String, val name: String)

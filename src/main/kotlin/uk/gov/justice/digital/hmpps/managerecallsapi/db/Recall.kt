@@ -98,6 +98,9 @@ data class Recall(
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val rescindRecords: Set<RescindRecord> = emptySet(),
+  @OneToMany(cascade = [ALL])
+  @JoinColumn(name = "recall_id")
+  val notes: Set<Note> = emptySet(),
 
 // NULLABLE FIELDS
   val additionalLicenceConditions: Boolean? = null,
@@ -173,6 +176,7 @@ data class Recall(
     missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
     lastKnownAddresses: Set<LastKnownAddress> = emptySet(),
     rescindRecords: Set<RescindRecord> = emptySet(),
+    notes: Set<Note> = emptySet(),
     recallType: RecallType? = null,
     recallLength: RecallLength? = null,
     lastReleasePrison: PrisonId? = null,
@@ -234,6 +238,7 @@ data class Recall(
       missingDocumentsRecords,
       reasonsForRecall,
       rescindRecords,
+      notes,
       additionalLicenceConditions,
       additionalLicenceConditionsDetail,
       agreeWithRecall,
