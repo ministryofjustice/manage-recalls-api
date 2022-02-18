@@ -29,6 +29,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordCon
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -162,6 +164,10 @@ class AuthenticatedClient(
 
   fun returnedToCustody(recallId: RecallId, returnedToCustodyDateTime: OffsetDateTime, notificationDateTime: OffsetDateTime) =
     sendPostRequest("/recalls/$recallId/returned-to-custody", ReturnedToCustodyRequest(returnedToCustodyDateTime, notificationDateTime))
+      .expectStatus().isEqualTo(OK)
+
+  fun stopRecall(recallId: RecallId, stopReason: StopReason) =
+    sendPostRequest("/recalls/$recallId/stop", StopRecallRequest(stopReason))
       .expectStatus().isEqualTo(OK)
 
   fun <T> missingDocumentsRecord(

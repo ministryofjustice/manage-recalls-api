@@ -190,9 +190,9 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.arrestIssues").isEqualTo(fullyPopulatedRecall.arrestIssues!!)
       .jsonPath("$.arrestIssuesDetail").isEqualTo(fullyPopulatedRecall.arrestIssuesDetail!!)
       .jsonPath("$.warrantReferenceNumber").isEqualTo(fullyPopulatedRecall.warrantReferenceNumber!!.value)
-      .jsonPath("$.stoppedReason").isEqualTo(fullyPopulatedRecall.stopRecord!!.stoppedReason.toString())
-      .jsonPath("$.stoppedByUserName").isEqualTo("Bertie Badger")
-      .jsonPath("$.stoppedDateTime").value(endsWith("Z"))
+      .jsonPath("$.stopReason").isEqualTo(fullyPopulatedRecall.stopRecord!!.stopReason.toString())
+      .jsonPath("$.stopByUserName").isEqualTo("Bertie Badger")
+      .jsonPath("$.stopDateTime").value(endsWith("Z"))
       .jsonPath("$.returnedToCustodyDateTime").value(endsWith("Z"))
       .jsonPath("$.returnedToCustodyNotificationDateTime").value(endsWith("Z"))
   }

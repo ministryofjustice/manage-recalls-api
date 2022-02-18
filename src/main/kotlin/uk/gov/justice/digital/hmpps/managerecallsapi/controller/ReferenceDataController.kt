@@ -29,6 +29,10 @@ class ReferenceDataController(
   fun reasonsForRecalls(): List<RecallReasonResponse> = ReasonForRecall.values()
     .map { ldu -> RecallReasonResponse(ldu.name, ldu.label) }.toList()
 
+  @GetMapping("/stop-reasons")
+  fun stopReasons(): List<StopReasonResponse> = StopReason.values()
+    .map { sr -> StopReasonResponse(sr.name, sr.label, sr.validForStopCall) }.toList()
+
   @GetMapping("/courts")
   fun courts(): List<CourtRegisterClient.Court> = courtRegisterClient.getAllCourts().block()!!
 
@@ -43,6 +47,7 @@ class ReferenceDataController(
 data class LocalDeliveryUnitResponse(val name: String, val label: String)
 data class MappaLevelResponse(val id: String, val name: String)
 data class RecallReasonResponse(val id: String, val name: String)
+data class StopReasonResponse(val id: String, val name: String, val validForStopCall: Boolean)
 
 @Suppress("unused")
 enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) {

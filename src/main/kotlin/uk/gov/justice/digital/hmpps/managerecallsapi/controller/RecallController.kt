@@ -236,9 +236,9 @@ class RecallController(
     arrestIssues = arrestIssues,
     arrestIssuesDetail = arrestIssuesDetail,
     warrantReferenceNumber = warrantReferenceNumber,
-    stoppedReason = stopRecord?.stoppedReason,
-    stoppedDateTime = stopRecord?.stoppedDateTime,
-    stoppedByUserName = stopRecord?.let { userDetailsService.get(it.stoppedByUserId()).fullName() },
+    stopReason = stopRecord?.stopReason,
+    stopDateTime = stopRecord?.stopDateTime,
+    stopByUserName = stopRecord?.let { userDetailsService.get(it.stopByUserId()).fullName() },
     returnedToCustodyDateTime = returnedToCustody?.returnedToCustodyDateTime,
     returnedToCustodyNotificationDateTime = returnedToCustody?.notificationDateTime,
   )
@@ -429,9 +429,9 @@ data class RecallResponse(
   val sentenceExpiryDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,
   val sentencingCourt: CourtId? = null,
-  val stoppedByUserName: FullName? = null,
-  val stoppedDateTime: OffsetDateTime? = null,
-  val stoppedReason: StoppedReason? = null,
+  val stopByUserName: FullName? = null,
+  val stopDateTime: OffsetDateTime? = null,
+  val stopReason: StopReason? = null,
   val vulnerabilityDiversity: Boolean? = null,
   val vulnerabilityDiversityDetail: String? = null,
   val warrantReferenceNumber: WarrantReferenceNumber? = null,
@@ -529,8 +529,25 @@ enum class Status(val visibilityBands: Set<CaseworkerBand>) {
   STOPPED(ALL_BANDINGS);
 }
 
-enum class StoppedReason {
-  RESCINDED
+enum class StopReason(val label: String, val validForStopCall: Boolean = true) {
+  ALTERNATIVE_INTERVENTION("Alternative intervention"),
+  DECEASED("Deceased"),
+  HDC_WARNING_LETTER("HDC warning letter"),
+  INCORRECT_LICENCE("Incorrect licence"),
+  LEGAL_REASON("Legal reason"),
+  NO_ACTION("No action"),
+  NOT_APPLICABLE("Not applicable"),
+  NOT_SPECIFIED("Not specified"),
+  RAISED_IN_ERROR("Raise in error"),
+  SOS_WARNING_LETTER("SoS warning letter"),
+  UO_28DAY_AND_DEEMED_NOTIFIED("UO 28 day & deemed notified"),
+  WITHDRAWAL_BY_ACO("Withdrawal by ACO"),
+  RESCINDED("Rescinded", false),
+  POOR_BEHAVIOUR_DRUGS("Poor behaviour - Drugs"),
+  POOR_BEHAVIOUR_NON_COMPLIANCE("Poor behaviour - Non-compliance"),
+  POOR_BEHAVIOUR_RELATIONSHIPS("Poor behaviour - Relationships"),
+  TRAVELLING_OUTSIDE_UK("Travelling outside the UK"),
+  OTHER("Other")
 }
 
 data class UpdateRecallRequest(
