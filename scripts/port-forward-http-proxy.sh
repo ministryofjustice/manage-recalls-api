@@ -20,7 +20,7 @@ function check_dep {
 
 # Check dependencies
 check_dep "aws" "brew install awscli"
-check_dep "kubectl" "asdf install kubectl 1.19.15"
+check_dep "kubectl" "asdf install kubectl 1.21.9"
 
 # get cli options
 while getopts :e:h opt; do

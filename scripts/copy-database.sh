@@ -21,7 +21,7 @@ function check_dep {
 
 # Check dependencies
 check_dep "jq" "brew install jq"
-check_dep "kubectl" "asdf install kubectl 1.19.15"
+check_dep "kubectl" "asdf install kubectl 1.21.9"
 check_dep "pg_dump" "brew install postgresql"
 check_dep "pg_restore" "brew install postgresql"
 check_dep "pg_isready" "brew install postgresql"

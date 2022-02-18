@@ -6,7 +6,7 @@ services:
     networks:
       - manage-recalls-api
     container_name: manage-recalls-api
-    depends_on: [ postgres, fake-prisoner-offender-search-api, fake-prison-api, gotenberg, minio ]
+    depends_on: [ postgres, fake-prisoner-offender-search-api, fake-prison-api, gotenberg, minio, redis ]
     ports:
       - "8080:8080"
     healthcheck:
@@ -23,6 +23,9 @@ services:
       - POSTGRES_USERNAME=ppud_user
       - POSTGRES_PASSWORD=secret
       - RETURNTOCUSTODY_UPDATETHRESHOLDMINUTES=5
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=secret
 
   postgres:
     image: postgres:13-alpine
@@ -115,6 +118,29 @@ services:
       resources:
         limits:
           memory: 1G
+
+  redis:
+    image: bitnami/redis:6.2
+    container_name: redis-manage-recalls-api
+    networks:
+      - manage-recalls-api
+    environment:
+      - REDIS_PASSWORD=secret
+    ports:
+      - 6379:6379
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander-manage-recalls-api
+    depends_on: [redis]
+    networks:
+      - manage-recalls-api
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=secret
+    ports:
+      - 9999:8081
 
 networks:
   manage-recalls-api:

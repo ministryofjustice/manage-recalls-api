@@ -18,17 +18,6 @@ generic-service:
     RETURNTOCUSTODY_UPDATETHRESHOLDMINUTES: 5
     SENTRY_ENVIRONMENT: DEV
 
-  namespace_secrets:
-    manage-recalls-api-database:
-      POSTGRES_HOST: "host"
-      POSTGRES_DBNAME: "name"
-      POSTGRES_USERNAME: "username"
-      POSTGRES_PASSWORD: "password"
-    manage-recalls-api-s3-bucket:
-      S3_ACCESS_KEY: "access_key_id"
-      S3_SECRET_KEY: "secret_access_key"
-      S3_BUCKET_NAME: "bucket_name"
-
 generic-prometheus-alerts:
   alertSeverity: ppud-replacement-alerts
   extraDashboardTags:

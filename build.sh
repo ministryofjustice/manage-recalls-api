@@ -9,7 +9,7 @@ fi
 
 ./scripts/stop-gotenburg.sh
 
-docker compose up -d postgres minio
+docker compose up -d postgres minio redis
 
 ./gradlew ktlintFormat
 ./gradlew clean check
