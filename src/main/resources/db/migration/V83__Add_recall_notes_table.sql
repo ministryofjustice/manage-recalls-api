@@ -5,7 +5,7 @@ CREATE TABLE note (
                                 details TEXT NOT NULL,
                                 index INTEGER NOT NULL,
                                 document_id UUID REFERENCES document (id),
-                                created_by_user_id UUID NOT NULL,
+                                created_by_user_id UUID NOT NULL references user_details(id),
                                 created_date_time TIMESTAMPTZ NOT NULL,
                                 UNIQUE (recall_id, index),
                                 CONSTRAINT index_positive_integer CHECK (index >= 1)

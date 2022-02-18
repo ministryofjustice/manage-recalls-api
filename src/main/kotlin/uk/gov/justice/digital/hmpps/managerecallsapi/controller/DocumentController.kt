@@ -161,7 +161,7 @@ class DocumentController(
     if (generateDocumentRequest.category.uploaded)
       throw WrongDocumentTypeException(generateDocumentRequest.category)
 
-    return when (generateDocumentRequest.category) { // TODO: all the below service calls should be annotated @Transactional - in their respective service classes of course
+    return when (generateDocumentRequest.category) { // TODO: PUD-1500: all the below service calls should be annotated @Transactional - in their respective service classes of course
       RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
       REVOCATION_ORDER -> revocationOrderService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
       REASONS_FOR_RECALL -> reasonsForRecallService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
