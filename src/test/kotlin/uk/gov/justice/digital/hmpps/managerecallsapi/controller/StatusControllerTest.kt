@@ -59,12 +59,17 @@ class StatusControllerTest {
     val returnedToCustodyRecord = ReturnedToCustodyRecord(returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, userUuid, OffsetDateTime.now(fixedClock))
     val updatedRecall = recall.copy(returnedToCustody = returnedToCustodyRecord, dossierTargetDate = LocalDate.now().plusDays(1))
 
-    every { recallRepository.getByRecallId(any()) } returns recall
+    every { recallRepository.getByRecallId(recallId) } returns recall
     every { recallRepository.save(updatedRecall, userUuid) } returns updatedRecall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
     every { bankHolidayService.nextWorkingDate(returnedToCustodyDateTime.toLocalDate()) } returns LocalDate.now().plusDays(1)
 
-    val response = underTest.returnedToCustody(recallId, returnedToCustodyRequest, bearerToken)
+    underTest.returnedToCustody(recallId, returnedToCustodyRequest, bearerToken)
+
+    verify { recallRepository.getByRecallId(recallId) }
+    verify { recallRepository.save(updatedRecall, userUuid) }
+    verify { tokenExtractor.getTokenFromHeader(bearerToken) }
+    verify { bankHolidayService.nextWorkingDate(returnedToCustodyDateTime.toLocalDate()) }
   }
 
   @Test
@@ -76,11 +81,15 @@ class StatusControllerTest {
       )
     )
 
-    every { recallRepository.getByRecallId(any()) } returns recall
+    every { recallRepository.getByRecallId(recallId) } returns recall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
     every { recallRepository.save(updatedRecall, userUuid) } returns updatedRecall
 
     underTest.stopRecall(recallId, StopRecallRequest(stopReason), bearerToken)
+
+    verify { recallRepository.getByRecallId(recallId) }
+    verify { tokenExtractor.getTokenFromHeader(bearerToken) }
+    verify { recallRepository.save(updatedRecall, userUuid) }
   }
 
   @Test
