@@ -18,6 +18,7 @@ enum class DocumentCategory(val uploaded: Boolean, val versioned: Boolean) {
   RECALL_NOTIFICATION(false, true),
   RECALL_NOTIFICATION_EMAIL(true, true),
   RECALL_REQUEST_EMAIL(true, true),
+  NSY_REMOVE_WARRANT_EMAIL(true, true),
   REVOCATION_ORDER(false, true),
   // UNVERSIONED document categories
   RESCIND_REQUEST_EMAIL(true, false),
