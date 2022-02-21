@@ -76,9 +76,9 @@ if [ "${PFP_COUNT}" -eq "0" ]; then
   kubectl -n "${K8S_NAMESPACE}" run \
     "${PFP_NAME}" \
     --image=ministryofjustice/port-forward \
-    --port="${LOCAL_DB_PORT}" \
+    --port="${REMOTE_DB_PORT}" \
     --env="REMOTE_HOST=${DB_HOST}" \
-    --env="LOCAL_PORT=${LOCAL_DB_PORT}" \
+    --env="LOCAL_PORT=${REMOTE_DB_PORT}" \
     --env="REMOTE_PORT=${REMOTE_DB_PORT}"
 
   sleep 5
