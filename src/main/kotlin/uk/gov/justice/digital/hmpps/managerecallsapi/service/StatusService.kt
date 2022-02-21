@@ -2,7 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StoppedReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -18,9 +18,9 @@ class StatusService(
 ) {
 
   @Transactional
-  fun stopRecall(recallId: RecallId, stoppedReason: StoppedReason, currentUserId: UserId) {
+  fun stopRecall(recallId: RecallId, stopReason: StopReason, currentUserId: UserId) {
     recallRepository.getByRecallId(recallId).let { recall ->
-      val stopRecord = StopRecord(stoppedReason, currentUserId, OffsetDateTime.now(clock))
+      val stopRecord = StopRecord(stopReason, currentUserId, OffsetDateTime.now(clock))
       recallRepository.save(recall.copy(stopRecord = stopRecord), currentUserId)
     }
   }

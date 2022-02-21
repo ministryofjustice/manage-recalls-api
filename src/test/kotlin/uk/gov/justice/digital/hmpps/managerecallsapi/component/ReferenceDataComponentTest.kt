@@ -12,6 +12,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevelResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallReasonResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReasonResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -41,6 +43,17 @@ class ReferenceDataComponentTest : ComponentTestBase() {
       .responseBody!!
 
     val expectedResponse = ReasonForRecall.values().map { RecallReasonResponse(it.name, it.label) }
+    assertThat(response, equalTo(expectedResponse))
+  }
+
+  @Test
+  fun `can get stop reasons`() {
+    val response = unauthenticatedGetResponse("/reference-data/stop-reasons")
+      .expectBody(object : ParameterizedTypeReference<List<StopReasonResponse>>() {})
+      .returnResult()
+      .responseBody!!
+
+    val expectedResponse = StopReason.values().map { StopReasonResponse(it.name, it.label, it.validForStopCall) }
     assertThat(response, equalTo(expectedResponse))
   }
 

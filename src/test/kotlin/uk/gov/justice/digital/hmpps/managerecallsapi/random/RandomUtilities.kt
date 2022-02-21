@@ -84,9 +84,12 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
       }.toSet(),
       stopRecord = recall.stopRecord?.let { sr ->
         sr.copy(
-          sr.stoppedReason,
-          (knownUserId ?: sr.stoppedByUserId()).value,
-          sr.stoppedDateTime
+          stopByUserId = (knownUserId ?: sr.stopByUserId()).value,
+        )
+      },
+      returnedToCustody = recall.returnedToCustody?.let { rtc ->
+        rtc.copy(
+          recordedByUserId = (knownUserId ?: rtc.recordedByUserId())?.value
         )
       }
     )

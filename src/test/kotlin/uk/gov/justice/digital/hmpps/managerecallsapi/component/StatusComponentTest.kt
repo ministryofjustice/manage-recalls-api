@@ -5,9 +5,11 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
@@ -48,5 +50,31 @@ class StatusComponentTest : ComponentTestBase() {
     assertThat(rtcRecall.status, equalTo(Status.AWAITING_DOSSIER_CREATION))
     assertThat(rtcRecall.dossierTargetDate, equalTo(LocalDate.of(2022, 2, 15)))
     assertOffsetDateTimesEqual(rtcRecall.lastUpdatedDateTime, OffsetDateTime.now(fixedClock))
+  }
+
+  @Test
+  fun `stop a recall`() {
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger"),
+        CroNumber("ABC/1234A"),
+        LocalDate.of(1999, 12, 1),
+      )
+    )
+    val stopReason = StopReason.values().filter { it.validForStopCall }.random()
+    authenticatedClient.stopRecall(
+      recall.recallId,
+      stopReason
+    )
+
+    val stoppedRecall = authenticatedClient.getRecall(recall.recallId)
+    assertThat(stoppedRecall.status, equalTo(Status.STOPPED))
+    assertThat(stoppedRecall.stopReason, equalTo(stopReason))
+    assertThat(stoppedRecall.stopByUserName, equalTo(FullName("Bertie Badger")))
+    assertOffsetDateTimesEqual(stoppedRecall.stopDateTime!!, OffsetDateTime.now(fixedClock))
+    assertOffsetDateTimesEqual(stoppedRecall.lastUpdatedDateTime, OffsetDateTime.now(fixedClock))
   }
 }

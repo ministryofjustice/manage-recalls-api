@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
@@ -190,6 +191,7 @@ data class LastKnownAddressNotFoundException(val recallId: RecallId, val lastKno
 data class RescindRecordNotFoundException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : NotFoundException()
 data class RescindRecordAlreadyDecidedException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : IllegalStateException()
 data class UndecidedRescindRecordAlreadyExistsException(val recallId: RecallId) : IllegalStateException()
+data class InvalidStopReasonException(val recallId: RecallId, val stopReason: StopReason) : IllegalStateException()
 data class RecallDocumentWithCategoryNotFoundException(
   val recallId: RecallId,
   val documentCategory: DocumentCategory

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StoppedReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
@@ -110,7 +110,7 @@ class RescindRecordServiceTest {
       )
     } returns Success(emailId)
     every { rescindRecordRepository.save(capture(savedRecordSlot)) } returns rescindRecord
-    every { statusService.stopRecall(recallId, StoppedReason.RESCINDED, userId) } just Runs
+    every { statusService.stopRecall(recallId, StopReason.RESCINDED, userId) } just Runs
 
     val decisionRequest = RescindDecisionRequest(
       true,

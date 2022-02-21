@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StoppedReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -75,17 +75,17 @@ class RescindRecordComponentTest : ComponentTestBase() {
     assertThat(recallWithRequestedRescindRecord.rescindRecords.first().decisionEmailFileName, absent())
     assertThat(recallWithRequestedRescindRecord.rescindRecords.first().decisionEmailId, absent())
     assertThat(recallWithRequestedRescindRecord.rescindRecords.first().decisionEmailSentDate, absent())
-    assertThat(recallWithRequestedRescindRecord.stoppedReason, absent())
-    assertThat(recallWithRequestedRescindRecord.stoppedByUserName, absent())
-    assertThat(recallWithRequestedRescindRecord.stoppedDateTime, absent())
+    assertThat(recallWithRequestedRescindRecord.stopReason, absent())
+    assertThat(recallWithRequestedRescindRecord.stopByUserName, absent())
+    assertThat(recallWithRequestedRescindRecord.stopDateTime, absent())
 
     authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
     val recallWithApprovedRescindRecord = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithApprovedRescindRecord.status, equalTo(Status.STOPPED))
-    assertThat(recallWithApprovedRescindRecord.stoppedReason, equalTo(StoppedReason.RESCINDED))
-    assertThat(recallWithApprovedRescindRecord.stoppedByUserName, equalTo(FullName("Bertie Badger")))
-    assertThat(recallWithApprovedRescindRecord.stoppedDateTime, present())
+    assertThat(recallWithApprovedRescindRecord.stopReason, equalTo(StopReason.RESCINDED))
+    assertThat(recallWithApprovedRescindRecord.stopByUserName, equalTo(FullName("Bertie Badger")))
+    assertThat(recallWithApprovedRescindRecord.stopDateTime, present())
     assertThat(recallWithApprovedRescindRecord.rescindRecords.size, equalTo(1))
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().rescindRecordId, equalTo(rescindRecordId))
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().version, equalTo(1))
@@ -127,17 +127,17 @@ class RescindRecordComponentTest : ComponentTestBase() {
 
     assertThat(recallWithRequestedRescindRecord.rescindRecords.size, equalTo(1))
     assertThat(recallWithRequestedRescindRecord.status, equalTo(Status.BEING_BOOKED_ON))
-    assertThat(recallWithRequestedRescindRecord.stoppedReason, absent())
-    assertThat(recallWithRequestedRescindRecord.stoppedByUserName, absent())
-    assertThat(recallWithRequestedRescindRecord.stoppedDateTime, absent())
+    assertThat(recallWithRequestedRescindRecord.stopReason, absent())
+    assertThat(recallWithRequestedRescindRecord.stopByUserName, absent())
+    assertThat(recallWithRequestedRescindRecord.stopDateTime, absent())
 
     authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
     val recallWithApprovedRescindRecord = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithApprovedRescindRecord.status, equalTo(Status.BEING_BOOKED_ON))
-    assertThat(recallWithApprovedRescindRecord.stoppedReason, absent())
-    assertThat(recallWithApprovedRescindRecord.stoppedByUserName, absent())
-    assertThat(recallWithApprovedRescindRecord.stoppedDateTime, absent())
+    assertThat(recallWithApprovedRescindRecord.stopReason, absent())
+    assertThat(recallWithApprovedRescindRecord.stopByUserName, absent())
+    assertThat(recallWithApprovedRescindRecord.stopDateTime, absent())
     assertThat(recallWithApprovedRescindRecord.rescindRecords.size, equalTo(1))
     assertThat(recallWithApprovedRescindRecord.rescindRecords.first().approved, equalTo(false))
   }

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StoppedReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
@@ -60,7 +60,7 @@ class RescindRecordService(
           )
         )
         if (request.approved) {
-          statusService.stopRecall(recallId, StoppedReason.RESCINDED, currentUserId)
+          statusService.stopRecall(recallId, StopReason.RESCINDED, currentUserId)
         }
         record.id()
       }
