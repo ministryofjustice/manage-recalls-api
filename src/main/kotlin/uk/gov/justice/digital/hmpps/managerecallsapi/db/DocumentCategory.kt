@@ -9,6 +9,7 @@ enum class DocumentCategory(val uploaded: Boolean, val versioned: Boolean) {
   LETTER_TO_PRISON(false, true),
   LICENCE(true, true),
   MISSING_DOCUMENTS_EMAIL(true, true),
+  NSY_REMOVE_WARRANT_EMAIL(true, true),
   OASYS_RISK_ASSESSMENT(true, true),
   PART_A_RECALL_REPORT(true, true),
   POLICE_REPORT(true, true),
