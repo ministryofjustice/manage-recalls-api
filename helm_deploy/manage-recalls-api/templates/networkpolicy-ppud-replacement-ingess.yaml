@@ -1,0 +1,21 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-ppud-replacement-ingress
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+      release: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            component: ppud-replacement-dev
