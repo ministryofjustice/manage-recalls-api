@@ -14,6 +14,14 @@ class HealthController() {
   @ResponseStatus(HttpStatus.OK)
   fun getHealth(): Map<String, String> =
     hashMapOf(
-      "status" to "UP"
+      "status" to "UP",
+      "version" to version(),
+      "buildUrl" to buildUrl()
     )
+
+  private
+
+  fun version(): String = System.getenv("BUILD_NUMBER") ?: "app_version"
+
+  fun buildUrl(): String = System.getenv("BUILD_URL") ?: "https://example.com"
 }

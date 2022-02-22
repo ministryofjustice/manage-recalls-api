@@ -11,7 +11,9 @@ class HealthControllerTest {
   fun `getHealth returns OK`() {
     val result = underTest.getHealth()
     val expected = hashMapOf(
-      "status" to "UP"
+      "status" to "UP",
+      "version" to "app_version",
+      "buildUrl" to "https://example.com"
     )
 
     assertThat(result, equalTo(expected))
