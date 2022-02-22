@@ -9,9 +9,11 @@ class HealthControllerTest {
 
   @Test
   fun `getHealth returns OK`() {
-    val results = underTest.getHealth()
+    val result = underTest.getHealth()
+    val expected = hashMapOf(
+      "Status" to "UP"
+    )
 
-    assertThat(results.statusCodeValue, equalTo(200))
-    assertThat(results.body, equalTo("OK"))
+    assertThat(result, equalTo(expected))
   }
 }
