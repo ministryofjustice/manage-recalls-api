@@ -27,6 +27,7 @@ class HealthCheckComponentTest : ComponentTestBase() {
   @Test
   fun `healthy service returns status of each health check and version details`() {
     prisonerOffenderSearchMockServer.isHealthy()
+    prisonApiMockServer.isHealthy()
     gotenbergMockServer.isHealthy()
     prisonRegisterMockServer.isHealthy()
     courtRegisterMockServer.isHealthy()
@@ -37,6 +38,8 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "status" to "UP",
       "components.prisonerOffenderSearch.status" to "UP",
       "components.prisonerOffenderSearch.details.status" to OK.name,
+      "components.prisonApi.status" to "UP",
+      "components.prisonApi.details.status" to OK.name,
       "components.gotenberg.status" to "UP",
       "components.gotenberg.details.status" to OK.name,
       "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
@@ -53,11 +56,12 @@ class HealthCheckComponentTest : ComponentTestBase() {
 
   @Test
   fun `timeout is handled gracefully as down`() {
-    prisonerOffenderSearchMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
-    gotenbergMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
-    prisonRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
-    courtRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
-    hmppsAuthMockServer.isSlow(INTERNAL_SERVER_ERROR, 3000)
+    prisonerOffenderSearchMockServer.isSlow(INTERNAL_SERVER_ERROR, 1200)
+    prisonApiMockServer.isSlow(INTERNAL_SERVER_ERROR, 1200)
+    gotenbergMockServer.isSlow(INTERNAL_SERVER_ERROR, 1200)
+    prisonRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 1200)
+    courtRegisterMockServer.isSlow(INTERNAL_SERVER_ERROR, 1200)
+    hmppsAuthMockServer.isSlow(INTERNAL_SERVER_ERROR, 1200)
 
     healthCheckIsUpWith(
       "/health",
@@ -67,21 +71,23 @@ class HealthCheckComponentTest : ComponentTestBase() {
       "components.clamAV.status" to "UP",
       "components.healthInfo.details.version" to LocalDateTime.now().format(ISO_DATE),
       "components.prisonerOffenderSearch.status" to "UNKNOWN",
-      "components.prisonerOffenderSearch.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.prisonerOffenderSearch.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
+      "components.prisonApi.status" to "UNKNOWN",
+      "components.prisonApi.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
       "components.gotenberg.status" to "UNKNOWN",
-      "components.gotenberg.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.gotenberg.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
       "components.prisonRegister.status" to "UNKNOWN",
-      "components.prisonRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.prisonRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
       "components.bankHoliday.status" to "UNKNOWN",
-      "components.bankHoliday.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.bankHoliday.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
       "components.policeUkApi.status" to "UNKNOWN",
-      "components.policeUkApi.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.policeUkApi.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
       "components.courtRegister.status" to "UNKNOWN",
-      "components.courtRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.courtRegister.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
       "components.hmppsAuth.status" to "UNKNOWN",
-      "components.hmppsAuth.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS",
+      "components.hmppsAuth.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS",
       "components.bankHoliday.status" to "UNKNOWN",
-      "components.bankHoliday.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 2000000000 NANOSECONDS"
+      "components.bankHoliday.details.body" to "java.lang.IllegalStateException: Timeout on blocking read for 1000000000 NANOSECONDS"
     )
   }
 
@@ -102,6 +108,7 @@ class HealthCheckComponentTest : ComponentTestBase() {
   private fun parameterArrays(): Stream<Arguments>? {
     return Stream.of(
       Arguments.of("prisonerOffenderSearch", prisonerOffenderSearchMockServer),
+      Arguments.of("prisonApi", prisonApiMockServer),
       Arguments.of("courtRegister", courtRegisterMockServer),
       Arguments.of("prisonRegister", prisonRegisterMockServer),
       Arguments.of("bankHoliday", prisonRegisterMockServer), // using prisonRegisterMock as mock per profile config

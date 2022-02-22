@@ -26,10 +26,9 @@ class SearchComponentTest : ComponentTestBase() {
 
   @Test
   fun `returns 500 if prisoner search api returns unauthorized`() {
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(prisonerSearchRequest, UNAUTHORIZED)
+    prisonerOffenderSearchMockServer.getPrisonerByNomsNumberReturnsWith(nomsNumber, UNAUTHORIZED)
 
-    val result = authenticatedClient.post("/search", "{\"nomsNumber\":\"123456\"}")
-      .expectStatus().isEqualTo(INTERNAL_SERVER_ERROR)
+    val result = authenticatedClient.get("/prisoner/$nomsNumber", INTERNAL_SERVER_ERROR)
       .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
 
     assertThat(
@@ -37,7 +36,7 @@ class SearchComponentTest : ComponentTestBase() {
       equalTo(
         ErrorResponse(
           INTERNAL_SERVER_ERROR,
-          "ClientException: PrisonerOffenderSearchClient: [401 Unauthorized from POST http://localhost:9092/prisoner-search/match-prisoners]"
+          "ClientException: PrisonerOffenderSearchClient: [401 Unauthorized from GET http://localhost:9092/prisoner/123456]"
         )
       )
     )
@@ -82,11 +81,21 @@ class SearchComponentTest : ComponentTestBase() {
   }
 
   @Test
+  fun `can send get request to prisoner search api and get response`() {
+    val prisoner1 = testPrisoner(nomsNumber)
+    prisonerOffenderSearchMockServer.getPrisonerByNomsNumberRespondsWith(nomsNumber, prisoner1)
+
+    val response = authenticatedClient.prisonerByNomsNumber(nomsNumber)
+
+    assertThat(response, equalTo(prisoner1.apiPrisoner()))
+  }
+
+  @Test
   fun `prisoner offender timeout is handled gracefully`() {
     val nomsNumber = randomNoms()
-    prisonerOffenderSearchMockServer.delaySearch(PrisonerSearchRequest(nomsNumber), 3000)
+    prisonerOffenderSearchMockServer.delayGetPrisoner(nomsNumber, 1500)
 
-    val result = authenticatedClient.search(SearchRequest(nomsNumber), GATEWAY_TIMEOUT)
+    val result = authenticatedClient.prisonerByNomsNumber(nomsNumber, GATEWAY_TIMEOUT)
       .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
 
     assertThat(

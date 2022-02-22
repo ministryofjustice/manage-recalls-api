@@ -1,18 +1,26 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonApiClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import java.time.Clock
 import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.transaction.Transactional
 
@@ -20,7 +28,15 @@ import javax.transaction.Transactional
 class RecallService(
   @Autowired private val recallRepository: RecallRepository,
   @Autowired private val bankHolidayService: BankHolidayService,
+  @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
+  @Autowired private val prisonApiClient: PrisonApiClient,
+  @Autowired private val clock: Clock,
+  @Value("\${returnToCustody.updateThresholdMinutes}") val returnToCustodyUpdateThresholdMinutes: Long,
 ) {
+
+  companion object {
+    val SYSTEM_USER_ID = UserId(UUID.fromString("99999999-9999-9999-9999-999999999999"))
+  }
 
   @Transactional
   fun assignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
@@ -119,6 +135,44 @@ class RecallService(
       }
     }
   }
+
+  fun updateCustodyStatus(currentUserId: UserId) {
+    val rtcRecalls = recallRepository.findAll()
+      .filter { it.status() == Status.AWAITING_RETURN_TO_CUSTODY }
+      .filter { (0L == returnToCustodyUpdateThresholdMinutes) || it.lastUpdatedDateTime.isBefore(OffsetDateTime.now(clock).minusMinutes(returnToCustodyUpdateThresholdMinutes)) }
+      .filter { prisonerOffenderSearchClient.prisonerByNomsNumber(it.nomsNumber).block()!!.isInCustody() }
+
+    if (rtcRecalls.isNotEmpty()) {
+      val movements =
+        prisonApiClient.latestInboundMovements(rtcRecalls.map { it.nomsNumber }.toSet()).associateBy { it.nomsNumber() }
+
+      rtcRecalls.forEach {
+        returnedToCustody(it, movements[it.nomsNumber]!!.movementDateTime(), OffsetDateTime.now(clock), SYSTEM_USER_ID)
+      }
+    }
+  }
+
+  @Transactional
+  fun manuallyReturnedToCustody(recallId: RecallId, returnedToCustodyDateTime: OffsetDateTime, returnedToCustodyNotificationDateTime: OffsetDateTime, currentUserId: UserId): Recall =
+    returnedToCustody(recallRepository.getByRecallId(recallId), returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, currentUserId)
+
+  private fun returnedToCustody(recall: Recall, returnedToCustodyDateTime: OffsetDateTime, returnedToCustodyNotificationDateTime: OffsetDateTime, recordedUserId: UserId): Recall =
+    recallRepository.save(
+      recall.copy(
+        returnedToCustody = ReturnedToCustodyRecord(
+          returnedToCustodyDateTime,
+          returnedToCustodyNotificationDateTime,
+          OffsetDateTime.now(clock),
+          recordedUserId
+        ),
+        dossierTargetDate = bankHolidayService.nextWorkingDate(returnedToCustodyNotificationDateTime.toLocalDate()),
+      ),
+      recordedUserId
+    )
+}
+
+private fun Prisoner.isInCustody(): Boolean {
+  return status?.startsWith("ACTIVE") ?: false
 }
 
 private fun UpdateRecallRequest.toSentencingInfo(

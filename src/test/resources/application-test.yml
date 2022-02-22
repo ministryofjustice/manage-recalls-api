@@ -31,7 +31,7 @@ oauth:
     url: http://localhost:9090/auth
 
 prisonerSearch:
-  timeout: 2
+  timeout: 1
 
 clientApi:
-  timeout: 2
+  timeout: 1

@@ -40,11 +40,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.OffsetDateTime
 
 class AuthenticatedClient(
@@ -65,8 +67,8 @@ class AuthenticatedClient(
   fun patch(path: String, json: String): WebTestClient.ResponseSpec =
     sendPatchRequest(path, json)
 
-  fun get(path: String): WebTestClient.ResponseSpec =
-    sendGetRequest(path)
+  fun get(path: String, status: HttpStatus = OK): WebTestClient.ResponseSpec =
+    sendGetRequest(path, status)
 
   fun delete(path: String, expectedStatus: HttpStatus): WebTestClient.ResponseSpec =
     deleteRequest(path, expectedStatus)
@@ -208,8 +210,17 @@ class AuthenticatedClient(
     sendPostRequest("/search", searchRequest, expectedStatus)
 
   fun search(searchRequest: SearchRequest) =
-    sendPostRequest("/search", searchRequest, OK)
+    search(searchRequest, OK)
       .expectBody(object : ParameterizedTypeReference<List<SearchController.Api.Prisoner>>() {})
+      .returnResult()
+      .responseBody!!
+
+  fun prisonerByNomsNumber(nomsNumber: NomsNumber, expectedStatus: HttpStatus) =
+    sendGetRequest("/prisoner/$nomsNumber", expectedStatus)
+
+  fun prisonerByNomsNumber(nomsNumber: NomsNumber) =
+    prisonerByNomsNumber(nomsNumber, OK)
+      .expectBody(object : ParameterizedTypeReference<SearchController.Api.Prisoner>() {})
       .returnResult()
       .responseBody!!
 

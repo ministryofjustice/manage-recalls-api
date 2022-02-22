@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.InvalidPrisonOrCourtException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
@@ -52,6 +53,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
+import java.time.Clock
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
@@ -64,28 +66,28 @@ class RecallController(
   @Autowired private val recallService: RecallService,
   @Autowired private val prisonValidationService: PrisonValidationService,
   @Autowired private val courtValidationService: CourtValidationService,
-  @Autowired private val tokenExtractor: TokenExtractor
+  @Autowired private val tokenExtractor: TokenExtractor,
+  @Autowired private val clock: Clock,
 ) {
 
   @PostMapping("/recalls")
+  @ResponseStatus(HttpStatus.CREATED)
   fun bookRecall(
     @RequestBody bookRecallRequest: BookRecallRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): ResponseEntity<RecallResponse> {
-    val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
-
-    return ResponseEntity(
-      recallRepository.save(bookRecallRequest.toRecall(currentUserId), currentUserId).toResponse(),
-      HttpStatus.CREATED
-    )
-  }
+  ): RecallResponse =
+    tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
+      recallRepository.save(bookRecallRequest.toRecall(currentUserId, clock), currentUserId).toResponse()
+    }
 
   @GetMapping("/recalls")
   fun findAll(@RequestHeader("Authorization") bearerToken: String): List<RecallResponseLite> {
     // Fetching all users to prevent repeated requests to database
     val users = userDetailsService.getAll()
-    val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    val band = users[token.userUuid()]!!.caseworkerBand
+    val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
+    val band = users[currentUserId]!!.caseworkerBand
+
+    recallService.updateCustodyStatus(currentUserId)
 
     return recallRepository.findAll().filter { it.status().visibilityBands.contains(band) }
       .map { it.toResponseLite(users) }
@@ -100,22 +102,25 @@ class RecallController(
     recallRepository.getByRecallId(recallId).toResponse()
 
   @PatchMapping("/recalls/{recallId}")
+  @ResponseStatus(HttpStatus.OK)
   fun updateRecall(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody updateRecallRequest: UpdateRecallRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): ResponseEntity<RecallResponse> =
-    if (prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) &&
-      prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) &&
-      courtValidationService.isValid(updateRecallRequest.sentencingCourt)
+  ): RecallResponse {
+    val validAndActiveCurrentPrison = prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison)
+    val validLastReleasePrison = prisonValidationService.isValid(updateRecallRequest.lastReleasePrison)
+    val validSentencingCourt = courtValidationService.isValid(updateRecallRequest.sentencingCourt)
+    return if (validAndActiveCurrentPrison &&
+      validLastReleasePrison &&
+      validSentencingCourt
     ) {
       val token = tokenExtractor.getTokenFromHeader(bearerToken)
-      ResponseEntity.ok(
-        recallService.updateRecall(recallId, updateRecallRequest, token.userUuid()).toResponse()
-      )
+      recallService.updateRecall(recallId, updateRecallRequest, token.userUuid()).toResponse()
     } else {
-      ResponseEntity.badRequest().build()
+      throw InvalidPrisonOrCourtException(validAndActiveCurrentPrison, validLastReleasePrison, validSentencingCourt)
     }
+  }
 
   @PostMapping("/recalls/{recallId}/assignee/{assignee}")
   fun assignRecall(
@@ -314,8 +319,8 @@ class RecallController(
   )
 }
 
-fun BookRecallRequest.toRecall(userUuid: UserId): Recall {
-  val now = OffsetDateTime.now()
+fun BookRecallRequest.toRecall(userUuid: UserId, clock: Clock): Recall {
+  val now = OffsetDateTime.now(clock)
   return Recall(
     ::RecallId.random(),
     nomsNumber,

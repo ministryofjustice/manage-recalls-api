@@ -422,11 +422,16 @@ data class ReturnedToCustodyRecord(
   @Column(name = "returned_to_custody_recorded_date_time")
   val recordedDateTime: OffsetDateTime
 ) {
-  constructor(returnedToCustodyDateTime: OffsetDateTime, returnedToCustodyNotificationDateTime: OffsetDateTime, recordedByUserId: UserId, recordedDateTime: OffsetDateTime) :
+  constructor(
+    returnedToCustodyDateTime: OffsetDateTime,
+    returnedToCustodyNotificationDateTime: OffsetDateTime,
+    recordedDateTime: OffsetDateTime,
+    recordedByUserId: UserId? = null
+  ) :
     this(
       returnedToCustodyDateTime,
       returnedToCustodyNotificationDateTime,
-      recordedByUserId.value,
+      recordedByUserId?.value,
       recordedDateTime
     )
   fun recordedByUserId() = recordedByUserId?.let(::UserId)

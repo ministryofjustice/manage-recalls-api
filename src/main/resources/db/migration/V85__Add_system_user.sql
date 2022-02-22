@@ -1,0 +1,1 @@
+INSERT INTO user_details values ('99999999-9999-9999-9999-999999999999', 'System', 'User', '', 'system.user', 'systemuser', now(), 'FOUR_PLUS')

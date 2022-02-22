@@ -189,10 +189,10 @@ class RecallAuditComponentTest : ComponentTestBase() {
         )
     )
 
-    assertThat(updatedAuditList[0].fieldName, equalTo(FieldName("contraband")))
-    assertThat(updatedAuditList[0].updatedByUserName, equalTo(FullName("Bertie Badger")))
-    assertThat(updatedAuditList[0].auditCount, equalTo(1))
-    assertOffsetDateTimesEqual(updatedAuditList[0].updatedDateTime, updatedRecall.lastUpdatedDateTime)
+    val contrabandAudit = updatedAuditList.first { it.fieldName.value == "contraband" }
+    assertThat(contrabandAudit.updatedByUserName, equalTo(FullName("Bertie Badger")))
+    assertThat(contrabandAudit.auditCount, equalTo(1))
+    assertOffsetDateTimesEqual(contrabandAudit.updatedDateTime, updatedRecall.lastUpdatedDateTime)
 
     val lastUpdatedTimeUpdatedAudit = updatedAuditList.first { it.fieldName.value == "lastUpdatedDateTime" }
     assertThat(lastUpdatedTimeUpdatedAudit.updatedByUserName, equalTo(FullName("Bertie Badger")))

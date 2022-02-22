@@ -6,7 +6,7 @@ services:
     networks:
       - manage-recalls-api
     container_name: manage-recalls-api
-    depends_on: [ postgres, fake-prisoner-offender-search-api, gotenberg, minio ]
+    depends_on: [ postgres, fake-prisoner-offender-search-api, fake-prison-api, gotenberg, minio ]
     ports:
       - "8080:8080"
     healthcheck:
@@ -15,12 +15,14 @@ services:
       - SERVER_PORT=8080
       - SPRING_PROFILES_ACTIVE=dev
       - PRISONERSEARCH_ENDPOINT_URL=http://fake-prisoner-offender-search-api:8080
+      - PRISONAPI_ENDPOINT_URL=http://fake-prison-api:8080
       - PRISONREGISTER_ENDPOINT_URL=http://fake-prison-register-api:8080
       - GOTENBERG_ENDPOINT_URL=http://gotenberg:3000
       - POSTGRES_HOST=postgres:5432
       - POSTGRES_DBNAME=manage_recalls
       - POSTGRES_USERNAME=ppud_user
       - POSTGRES_PASSWORD=secret
+      - RETURNTOCUSTODY_UPDATETHRESHOLDMINUTES=5
 
   postgres:
     image: postgres:13-alpine
@@ -41,6 +43,17 @@ services:
     container_name: fake-prisoner-offender-search-api_manage-recalls-api
     ports:
       - "9092:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
+    command: --verbose
+
+  fake-prison-api:
+    build: ./fake-prison-api
+    networks:
+      - manage-recalls-api
+    container_name: fake-prison-api_manage-recalls-api
+    ports:
+      - "9097:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
     command: --verbose

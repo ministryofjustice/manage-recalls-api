@@ -133,7 +133,12 @@ class RecallTest {
       bookedByUserId = ::UserId.random().value,
       assessedByUserId = ::UserId.random().value,
       warrantReferenceNumber = WarrantReferenceNumber(randomString()),
-      returnedToCustody = ReturnedToCustodyRecord(OffsetDateTime.now(), OffsetDateTime.now(), ::UserId.random(), OffsetDateTime.now())
+      returnedToCustody = ReturnedToCustodyRecord(
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
+        ::UserId.random()
+      )
     )
 
     assertThat(recall.status(), equalTo(Status.AWAITING_DOSSIER_CREATION))

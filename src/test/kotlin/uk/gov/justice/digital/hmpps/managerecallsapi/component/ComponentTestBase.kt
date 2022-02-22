@@ -42,6 +42,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.CourtRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.GotenbergMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.HmppsAuthMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonApiMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonerOffenderSearchMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -104,6 +105,9 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   protected lateinit var prisonerOffenderSearchMockServer: PrisonerOffenderSearchMockServer
 
   @Autowired
+  protected lateinit var prisonApiMockServer: PrisonApiMockServer
+
+  @Autowired
   protected lateinit var prisonRegisterMockServer: PrisonRegisterMockServer
 
   @Autowired
@@ -131,6 +135,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   fun startMocks() {
     hmppsAuthMockServer.start()
     prisonerOffenderSearchMockServer.start()
+    prisonApiMockServer.start()
     prisonRegisterMockServer.start()
     courtRegisterMockServer.start()
     if (!useRealGotenbergServer) gotenbergMockServer.start()
@@ -141,6 +146,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
   fun stopMocks() {
     hmppsAuthMockServer.stop()
     prisonerOffenderSearchMockServer.stop()
+    prisonApiMockServer.stop()
     prisonRegisterMockServer.stop()
     courtRegisterMockServer.stop()
     if (!useRealGotenbergServer) gotenbergMockServer.stop()
@@ -151,6 +157,7 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     hmppsAuthMockServer.resetAll()
     hmppsAuthMockServer.stubClientToken()
     prisonerOffenderSearchMockServer.resetAll()
+    prisonApiMockServer.resetAll()
     prisonRegisterMockServer.resetAll()
     prisonRegisterMockServer.stubPrisons()
     courtRegisterMockServer.stubCourts()

@@ -18,8 +18,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.BankHolidayService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.InvalidStopReasonException
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -27,8 +27,8 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 
 class StatusControllerTest {
+  private val recallService = mockk<RecallService>()
   private val recallRepository = mockk<RecallRepository>()
-  private val bankHolidayService = mockk<BankHolidayService>()
   private val tokenExtractor = mockk<TokenExtractor>()
 
   private val fixedClock = Clock.fixed(Instant.parse("2022-02-04T11:14:20.00Z"), ZoneId.of("UTC"))
@@ -48,28 +48,28 @@ class StatusControllerTest {
     croNumber, LocalDate.of(1999, 12, 1)
   )
 
-  private val underTest = StatusController(recallRepository, bankHolidayService, tokenExtractor, fixedClock)
+  private val underTest = StatusController(recallService, recallRepository, tokenExtractor, fixedClock)
 
   @Test
   fun `update returned to custody`() {
-
     val returnedToCustodyDateTime = OffsetDateTime.now().minusHours(3)
     val returnedToCustodyNotificationDateTime = OffsetDateTime.now().minusMinutes(10)
     val returnedToCustodyRequest = ReturnedToCustodyRequest(returnedToCustodyDateTime, returnedToCustodyNotificationDateTime)
-    val returnedToCustodyRecord = ReturnedToCustodyRecord(returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, userUuid, OffsetDateTime.now(fixedClock))
+    val returnedToCustodyRecord = ReturnedToCustodyRecord(
+      returnedToCustodyDateTime,
+      returnedToCustodyNotificationDateTime,
+      OffsetDateTime.now(fixedClock),
+      userUuid
+    )
     val updatedRecall = recall.copy(returnedToCustody = returnedToCustodyRecord, dossierTargetDate = LocalDate.now().plusDays(1))
 
-    every { recallRepository.getByRecallId(recallId) } returns recall
-    every { recallRepository.save(updatedRecall, userUuid) } returns updatedRecall
+    every { recallService.manuallyReturnedToCustody(recallId, returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, userUuid) } returns updatedRecall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
-    every { bankHolidayService.nextWorkingDate(returnedToCustodyDateTime.toLocalDate()) } returns LocalDate.now().plusDays(1)
 
     underTest.returnedToCustody(recallId, returnedToCustodyRequest, bearerToken)
 
-    verify { recallRepository.getByRecallId(recallId) }
-    verify { recallRepository.save(updatedRecall, userUuid) }
     verify { tokenExtractor.getTokenFromHeader(bearerToken) }
-    verify { bankHolidayService.nextWorkingDate(returnedToCustodyDateTime.toLocalDate()) }
+    verify { recallService.manuallyReturnedToCustody(recallId, returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, userUuid) }
   }
 
   @Test
