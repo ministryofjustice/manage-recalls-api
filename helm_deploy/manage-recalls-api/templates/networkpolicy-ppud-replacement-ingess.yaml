@@ -18,4 +18,4 @@ spec:
     - from:
       - namespaceSelector:
           matchLabels:
-            component: ppud-replacement-dev
+            cloud-platform.justice.gov.uk/namespace-name: ppud-replacement-dev
