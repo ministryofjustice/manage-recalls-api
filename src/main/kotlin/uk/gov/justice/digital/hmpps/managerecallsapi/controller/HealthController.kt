@@ -14,6 +14,6 @@ class HealthController() {
   @ResponseStatus(HttpStatus.OK)
   fun getHealth(): Map<String, String> =
     hashMapOf(
-      "Status" to "UP"
+      "status" to "UP"
     )
 }
