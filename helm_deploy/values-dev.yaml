@@ -2,7 +2,7 @@
 # Per environment values which override defaults in manage-recalls-api/values.yaml
 
 generic-service:
-  replicaCount: 2
+  replicaCount: 4
 
   ingress:
     host: manage-recalls-api-dev.hmpps.service.justice.gov.uk
