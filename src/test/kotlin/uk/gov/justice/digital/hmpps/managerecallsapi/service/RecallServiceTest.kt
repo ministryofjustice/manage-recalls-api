@@ -4,20 +4,24 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
+import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall.NO_STOP
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
@@ -27,10 +31,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Movement
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonApiClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -43,8 +52,12 @@ import java.util.stream.Stream
 class RecallServiceTest {
   private val recallRepository = mockk<RecallRepository>()
   private val bankHolidayService = mockk<BankHolidayService>()
+  private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
+  private val prisonApiClient = mockk<PrisonApiClient>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
-  private val underTest = RecallService(recallRepository, bankHolidayService)
+  private val returnToCustodyUpdateThresholdMinutes = 60L
+  private val underTest =
+    RecallService(recallRepository, bankHolidayService, prisonerOffenderSearchClient, prisonApiClient, fixedClock, returnToCustodyUpdateThresholdMinutes)
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(
@@ -63,7 +76,11 @@ class RecallServiceTest {
 
   private val nextWorkingDate = LocalDate.of(2021, 10, 5)
 
-  private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest = fullyPopulatedInstance<UpdateRecallRequest>().copy(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock))
+  private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest =
+    fullyPopulatedInstance<UpdateRecallRequest>().copy(
+      inCustodyAtBooking = true,
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock)
+    )
 
   private val fullyPopulatedRecallSentencingInfo = SentencingInfo(
     fullyPopulatedUpdateRecallRequest.sentenceDate!!,
@@ -132,7 +149,10 @@ class RecallServiceTest {
   fun `can update recall with all UpdateRecallRequest fields populated`() {
     every { bankHolidayService.nextWorkingDate(LocalDate.of(2021, 10, 4)) } returns nextWorkingDate
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock), returnedToCustody = null)
+    val updatedRecallWithoutDocs = fullyPopulatedRecallWithoutDocuments.copy(
+      recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock),
+      returnedToCustody = null
+    )
     every { recallRepository.save(updatedRecallWithoutDocs, currentUserId) } returns updatedRecallWithoutDocs
 
     val response = underTest.updateRecall(recallId, fullyPopulatedUpdateRecallRequest, currentUserId)
@@ -169,7 +189,10 @@ class RecallServiceTest {
   fun `dossierTargetDate set when in custody`() {
     every { bankHolidayService.nextWorkingDate(LocalDate.of(2021, 10, 6)) } returns LocalDate.of(2021, 10, 7)
     val dossierTargetDate = underTest.calculateDossierTargetDate(
-      UpdateRecallRequest(inCustodyAtBooking = true, recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-06T12:00Z")),
+      UpdateRecallRequest(
+        inCustodyAtBooking = true,
+        recallNotificationEmailSentDateTime = OffsetDateTime.parse("2021-10-06T12:00Z")
+      ),
       existingRecall
     )
 
@@ -226,7 +249,17 @@ class RecallServiceTest {
     val now = OffsetDateTime.now()
     val createdByUserId = ::UserId.random()
 
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1))
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      createdByUserId,
+      now,
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1)
+    )
     val assignee = ::UserId.random()
     val expected = Recall(
       recallId,
@@ -285,7 +318,6 @@ class RecallServiceTest {
   }
 
   @Test
-  @Throws(NotFoundException::class)
   fun `can't unassign a recall when assignee doesnt match`() {
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
@@ -306,6 +338,91 @@ class RecallServiceTest {
     )
 
     assertThrows<NotFoundException> { underTest.unassignRecall(recallId, otherAssignee, currentUserId) }
+  }
+
+  @Test
+  fun `manually update returned to custody`() {
+    val returnedToCustodyDateTime = OffsetDateTime.now().minusHours(3)
+    val returnedToCustodyNotificationDateTime = OffsetDateTime.now().minusMinutes(10)
+    val returnedToCustodyRecord = ReturnedToCustodyRecord(
+      returnedToCustodyDateTime,
+      returnedToCustodyNotificationDateTime,
+      OffsetDateTime.now(fixedClock),
+      currentUserId
+    )
+    val updatedRecall = existingRecall.copy(returnedToCustody = returnedToCustodyRecord, dossierTargetDate = LocalDate.now().plusDays(1))
+
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+    every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
+    every { bankHolidayService.nextWorkingDate(returnedToCustodyDateTime.toLocalDate()) } returns LocalDate.now().plusDays(1)
+
+    underTest.manuallyReturnedToCustody(recallId, returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, currentUserId)
+
+    verify { recallRepository.getByRecallId(recallId) }
+    verify { recallRepository.save(updatedRecall, currentUserId) }
+    verify { bankHolidayService.nextWorkingDate(returnedToCustodyDateTime.toLocalDate()) }
+  }
+
+  @Test
+  fun `automatically update Awaiting RTC recalls for offenders that are now in custody and last updated before the threshold`() {
+    val inCustodyRecall = mockk<Recall>()
+    every { inCustodyRecall.status() } returns Status.AWAITING_DOSSIER_CREATION
+
+    val nicStillUalRecentlyUpdatedNoms = NomsNumber("ZYX9876W")
+    val nicStillUalRecentlyUpdatedRecall = mockk<Recall>()
+    every { nicStillUalRecentlyUpdatedRecall.status() } returns Status.AWAITING_RETURN_TO_CUSTODY
+    every { nicStillUalRecentlyUpdatedRecall.nomsNumber } returns nicStillUalRecentlyUpdatedNoms
+    every { nicStillUalRecentlyUpdatedRecall.lastUpdatedDateTime } returns OffsetDateTime.now(fixedClock).minusMinutes(10)
+
+    val nicStillUalPreviouslyUpdatedNoms = NomsNumber("ZYX9876W")
+    val nicStillUalPreviouslyUpdatedRecall = mockk<Recall>()
+    every { nicStillUalPreviouslyUpdatedRecall.status() } returns Status.AWAITING_RETURN_TO_CUSTODY
+    every { nicStillUalPreviouslyUpdatedRecall.nomsNumber } returns nicStillUalPreviouslyUpdatedNoms
+    every { nicStillUalPreviouslyUpdatedRecall.lastUpdatedDateTime } returns OffsetDateTime.now(fixedClock).minusMinutes(returnToCustodyUpdateThresholdMinutes - 10)
+
+    val nicStillUalRecentlyUpdatedPrisoner = mockk<Prisoner>()
+    every { nicStillUalRecentlyUpdatedPrisoner.status } returns "NOT ACTIVE"
+
+    val nicRtcRecall = existingRecall.copy(
+      lastUpdatedDateTime = OffsetDateTime.now(fixedClock).minusMinutes(returnToCustodyUpdateThresholdMinutes + 10),
+      assessedByUserId = UUID.randomUUID(),
+      inCustodyAtAssessment = false,
+      warrantReferenceNumber = WarrantReferenceNumber("ABC12345/AB")
+    )
+    val rtcNoms = nicRtcRecall.nomsNumber
+    val nicRtcPrisoner = mockk<Prisoner>()
+    every { nicRtcPrisoner.status } returns "ACTIVE IN"
+
+    val recallList = listOf(nicRtcRecall, nicStillUalRecentlyUpdatedRecall, nicStillUalPreviouslyUpdatedRecall, inCustodyRecall)
+
+    val returnedToCustodyDateTime = OffsetDateTime.now().minusHours(15)
+    val movementDate = returnedToCustodyDateTime.toLocalDate()
+    val movementTime = returnedToCustodyDateTime.toLocalTime()
+    val dossierTargetDate = OffsetDateTime.now(fixedClock).plusDays(1).toLocalDate()
+    val expectedRecall = nicRtcRecall.copy(
+      returnedToCustody = ReturnedToCustodyRecord(
+        returnedToCustodyDateTime,
+        OffsetDateTime.now(fixedClock),
+        OffsetDateTime.now(fixedClock),
+        RecallService.SYSTEM_USER_ID
+      ),
+      dossierTargetDate = dossierTargetDate
+    )
+
+    every { recallRepository.findAll() } returns recallList
+    every { prisonerOffenderSearchClient.prisonerByNomsNumber(rtcNoms) } returns Mono.just(nicRtcPrisoner)
+
+    every { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) } returns listOf(Movement(rtcNoms.value, movementDate, movementTime))
+    every { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) } returns dossierTargetDate
+    every { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) } returns expectedRecall
+
+    underTest.updateCustodyStatus(currentUserId)
+
+    verify { recallRepository.findAll() }
+    verify { prisonerOffenderSearchClient.prisonerByNomsNumber(rtcNoms) }
+    verify { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) }
+    verify { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) }
+    verify { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) }
   }
 
   private fun recallRequestWithMandatorySentencingInfo(

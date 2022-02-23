@@ -28,13 +28,11 @@ class PrisonerOffenderSearchMockServer(
   @Autowired private val objectMapper: ObjectMapper
 ) : HealthServer(9092, "/health/ping") {
 
-  fun prisonerSearchRespondsWith(
-    request: PrisonerSearchRequest,
-    status: HttpStatus
-  ) {
+  fun getPrisonerByNomsNumberReturnsWith(nomsNumber: NomsNumber, status: HttpStatus) {
     stubFor(
-      post(urlEqualTo("/prisoner-search/match-prisoners"))
-        .withRequestBody(equalToJson(objectMapper.writeValueAsString(request)))
+      get(urlEqualTo("/prisoner/$nomsNumber"))
+        .withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
+        .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
         .willReturn(
           aResponse()
             .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
@@ -77,6 +75,20 @@ class PrisonerOffenderSearchMockServer(
     stubFor(
       post(urlEqualTo("/prisoner-search/match-prisoners"))
         .withRequestBody(equalToJson(objectMapper.writeValueAsString(request)))
+        .willReturn(
+          aResponse()
+            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
+            .withFixedDelay(timeoutMillis)
+            .withStatus(OK.value())
+        )
+    )
+  }
+
+  fun delayGetPrisoner(nomsNumber: NomsNumber, timeoutMillis: Int) {
+    stubFor(
+      get(urlEqualTo("/prisoner/$nomsNumber"))
+        .withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
+        .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
         .willReturn(
           aResponse()
             .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))

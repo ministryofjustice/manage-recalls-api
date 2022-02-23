@@ -5,7 +5,6 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
@@ -149,7 +148,6 @@ class AssignRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  @Throws(MethodArgumentTypeMismatchException::class)
   fun `must pass a valid uuid as assignee`() {
     val recallId = ::RecallId.random()
 

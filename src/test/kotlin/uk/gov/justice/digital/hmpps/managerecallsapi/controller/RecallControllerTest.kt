@@ -2,10 +2,13 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.springframework.http.ResponseEntity
+import org.junit.jupiter.api.assertThrows
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.InvalidPrisonOrCourtException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor.Token
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
@@ -33,8 +36,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
+import java.time.Clock
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.UUID
 
 class RecallControllerTest {
@@ -44,6 +49,8 @@ class RecallControllerTest {
   private val prisonValidationService = mockk<PrisonValidationService>()
   private val courtValidationService = mockk<CourtValidationService>()
   private val tokenExtractor = mockk<TokenExtractor>()
+  private val now = OffsetDateTime.now()
+  private val fixedClock = Clock.fixed(now.toInstant(), ZoneId.of("UTC"))
 
   private val underTest =
     RecallController(
@@ -52,7 +59,8 @@ class RecallControllerTest {
       recallService,
       prisonValidationService,
       courtValidationService,
-      tokenExtractor
+      tokenExtractor,
+      fixedClock
     )
 
   private val recallId = ::RecallId.random()
@@ -71,7 +79,6 @@ class RecallControllerTest {
     LocalDate.of(1999, 12, 1)
   )
   private val fileName = "fileName"
-  private val now = OffsetDateTime.now()
   private val assessedByUserId = ::UserId.random()
   private val bookedByUserId = ::UserId.random()
   private val assignee = ::UserId.random()
@@ -96,14 +103,14 @@ class RecallControllerTest {
   fun `book recall returns request with id`() {
     val bearerToken = "Bearer header.payload"
     val userUuid = ::UserId.random()
-    val recall = recallRequest.toRecall(userUuid).copy(createdDateTime = now, lastUpdatedDateTime = now)
+    val recall = recallRequest.toRecall(userUuid, fixedClock).copy(createdDateTime = now, lastUpdatedDateTime = now)
 
     every { recallRepository.save(any(), userUuid) } returns recall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
-    assertThat(results.body, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid)))
+    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid)))
   }
 
   private fun newRecall() =
@@ -171,6 +178,7 @@ class RecallControllerTest {
     every { userDetailsService.getAll() } returns mapOf(userId to currentUserDetails, assignee to assigneeUserDetails)
     every { currentUserDetails.caseworkerBand } returns CaseworkerBand.FOUR_PLUS
     every { assigneeUserDetails.fullName() } returns FullName("Mickey Mouse")
+    every { recallService.updateCustodyStatus(userId) } just Runs
 
     val results = underTest.findAll(bearerToken)
 
@@ -221,6 +229,7 @@ class RecallControllerTest {
     every { userDetailsService.getAll() } returns mapOf(userId to currentUserDetails, assignee to assigneeUserDetails)
     every { currentUserDetails.caseworkerBand } returns CaseworkerBand.THREE
     every { assigneeUserDetails.fullName() } returns FullName("Mickey Mouse")
+    every { recallService.updateCustodyStatus(userId) } just Runs
 
     val results = underTest.findAll(bearerToken)
 
@@ -422,7 +431,7 @@ class RecallControllerTest {
 
     val response = underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
 
-    assertThat(response, equalTo(ResponseEntity.ok(recallResponse)))
+    assertThat(response, equalTo(recallResponse))
   }
 
   @Test
@@ -430,43 +439,47 @@ class RecallControllerTest {
     val bearerToken = "BEARER"
     val currentUserId = ::UserId.random()
     every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns false
+    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns true
+    every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(currentUserId.toString())
     every { recallService.updateRecall(recallId, updateRecallRequest, currentUserId) } returns recall
-    every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
 
-    val response = underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
-
-    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
+    val thrown = assertThrows<InvalidPrisonOrCourtException> {
+      underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
+    }
+    assertThat(thrown.message, equalTo("validAndActiveCurrentPrison=[false], validLastReleasePrison=[true], validSentencingCourt=[true]"))
   }
 
   @Test
   fun `can't update recall when last release prison is not valid`() {
     val bearerToken = "BEARER"
     val currentUserId = ::UserId.random()
-    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns false
     every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
+    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns false
     every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns true
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(currentUserId.toString())
     every { recallService.updateRecall(recallId, updateRecallRequest, currentUserId) } returns recall
 
-    val response = underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
-
-    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
+    val thrown = assertThrows<InvalidPrisonOrCourtException> {
+      underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
+    }
+    assertThat(thrown.message, equalTo("validAndActiveCurrentPrison=[true], validLastReleasePrison=[false], validSentencingCourt=[true]"))
   }
 
   @Test
   fun `can't update recall when sentencing court is not valid`() {
     val bearerToken = "BEARER"
     val currentUserId = ::UserId.random()
-    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns true
     every { prisonValidationService.isValidAndActive(updateRecallRequest.currentPrison) } returns true
+    every { prisonValidationService.isValid(updateRecallRequest.lastReleasePrison) } returns true
     every { courtValidationService.isValid(updateRecallRequest.sentencingCourt) } returns false
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(currentUserId.toString())
     every { recallService.updateRecall(recallId, updateRecallRequest, currentUserId) } returns recall
 
-    val response = underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
-
-    assertThat(response, equalTo(ResponseEntity.badRequest().build()))
+    val thrown = assertThrows<InvalidPrisonOrCourtException> {
+      underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
+    }
+    assertThat(thrown.message, equalTo("validAndActiveCurrentPrison=[true], validLastReleasePrison=[true], validSentencingCourt=[false]"))
   }
 
   @Test

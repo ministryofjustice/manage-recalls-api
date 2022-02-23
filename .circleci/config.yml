@@ -240,6 +240,18 @@ workflows:
               only:
                 - main
 
+  fake-prison-api-build:
+    unless: << pipeline.parameters.only_run_pact_workflow >>
+    jobs:
+      - hmpps/build_docker:
+          name: build_fake_prison_api
+          image_name: quay.io/hmpps/ppud-fake-prison-api
+          dockerfile_dir: fake-prison-api
+          filters:
+            branches:
+              only:
+                - main
+
   build-test-and-deploy:
     unless: << pipeline.parameters.only_run_pact_workflow >>
     jobs:

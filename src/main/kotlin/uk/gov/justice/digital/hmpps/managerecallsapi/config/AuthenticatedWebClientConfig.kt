@@ -41,6 +41,19 @@ class AuthenticatedWebClientConfig {
       "offender-search-client"
     )
 
+  @Value("\${prisonApi.endpoint.url}")
+  private lateinit var prisonApiBaseUrl: String
+
+  @Bean
+  fun prisonApiWebClient(
+    authorizedClientManager: OAuth2AuthorizedClientManager,
+    objectMapper: ObjectMapper
+  ): AuthenticatingRestClient =
+    AuthenticatingRestClient(
+      webClientFactory(prisonApiBaseUrl, authorizedClientManager, MAX_VALUE, objectMapper),
+      "prison-api-client"
+    )
+
   private fun webClientFactory(
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,

@@ -44,7 +44,7 @@ will apply ktlint styles to intellij and also add a pre-commit hook to format al
 Requires the following:
 
 ```
-docker compose up -d postgres minio fake-prisoner-offender-search-api fake-prison-register-api fake-court-register-api gotenberg clamav
+docker compose up -d postgres minio fake-prisoner-offender-search-api fake-prison-api fake-prison-register-api fake-court-register-api gotenberg clamav
 ```
 
 Start with dev profile:

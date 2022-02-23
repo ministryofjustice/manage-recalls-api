@@ -17,7 +17,7 @@ abstract class PingHealthCheck(
   private val webClient: WebClient,
   private val componentName: String,
   private val healthUrl: String,
-  private val timeout: Duration = Duration.ofSeconds(2)
+  private val timeout: Duration = Duration.ofSeconds(1)
 ) : HealthIndicator {
 
   @Autowired
