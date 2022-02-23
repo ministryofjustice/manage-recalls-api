@@ -30,7 +30,8 @@ class RevocationOrderHtmlGenerationTest(
         LocalDate.of(2021, 9, 1),
         LocalDate.of(2020, 9, 30),
         "userDetailsSignature",
-        ::UserId.random()
+        ::UserId.random(),
+        "PrisonerLastName PrisonerFirstName"
       )
     )
 

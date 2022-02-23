@@ -58,8 +58,11 @@ internal class RevocationOrderServiceTest {
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
         userSignature,
-        createdByUserId
+        createdByUserId,
+        "Badger Bertie"
       )
+
+    val fileName = FileName("Badger Bertie bookNumber REVOCATION ORDER.pdf")
 
     val generatedHtml = "Some html, honest"
 
@@ -108,7 +111,8 @@ internal class RevocationOrderServiceTest {
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
         userSignature,
-        createdByUserId
+        createdByUserId,
+        "Badger Bertie"
       )
 
     val generatedHtml = "Some html, honest"
@@ -164,7 +168,8 @@ internal class RevocationOrderServiceTest {
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
         userSignature,
-        createdByUserId
+        createdByUserId,
+        "Badger Bertie"
       )
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REVOCATION_ORDER) } returns expectedBytes

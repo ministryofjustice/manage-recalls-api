@@ -44,9 +44,11 @@ class ReasonsForRecallServiceTest {
     val expectedPdfBytes = "some bytes".toByteArray()
     val recallId = ::RecallId.random()
     val createdByUserId = ::UserId.random()
+    val fileName = FileName("REASONS_FOR_RECALL.pdf")
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(any(), REASONS_FOR_RECALL) } returns null
     every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
+    every { reasonsForRecallContext.fileName() } returns fileName
     every { dossierContext.recall } returns Recall(
       recallId,
       randomNoms(),
@@ -67,7 +69,7 @@ class ReasonsForRecallServiceTest {
         createdByUserId,
         expectedPdfWithHeaderBytes,
         REASONS_FOR_RECALL,
-        FileName("REASONS_FOR_RECALL.pdf")
+        fileName
       )
     } returns ::DocumentId.random()
 

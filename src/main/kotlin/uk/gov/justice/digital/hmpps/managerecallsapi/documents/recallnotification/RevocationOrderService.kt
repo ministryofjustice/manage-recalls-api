@@ -27,7 +27,7 @@ class RevocationOrderService(
       generateAndStorePdf(ctx, fileName, details).map { it.first }
     }
 
-  private fun generateAndStorePdf(revocationOrderContext: RevocationOrderContext, fileName: FileName = FileName("REVOCATION_ORDER.pdf"), documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> =
+  private fun generateAndStorePdf(revocationOrderContext: RevocationOrderContext, fileName: FileName = revocationOrderContext.fileName(), documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> =
     revocationOrderContext.let { context ->
       pdfDocumentGenerationService.generatePdf(
         revocationOrderGenerator.generateHtml(context),

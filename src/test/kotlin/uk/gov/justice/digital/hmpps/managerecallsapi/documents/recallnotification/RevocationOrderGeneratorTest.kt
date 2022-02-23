@@ -40,7 +40,8 @@ class RevocationOrderGeneratorTest {
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
         "userDetailsSignature",
-        ::UserId.random()
+        ::UserId.random(),
+        "Badger Bertie"
       )
     )
 

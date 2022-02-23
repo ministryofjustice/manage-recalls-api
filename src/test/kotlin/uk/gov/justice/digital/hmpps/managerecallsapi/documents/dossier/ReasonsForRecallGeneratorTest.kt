@@ -30,7 +30,8 @@ class ReasonsForRecallGeneratorTest {
         FullName("Bertie Badger"),
         "B1234",
         NomsNumber("A1234AA"),
-        "(i) breach one\n(ii) breach two"
+        "(i) breach one\n(ii) breach two",
+        "Badger Bertie"
       )
     )
 

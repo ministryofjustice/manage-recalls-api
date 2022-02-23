@@ -24,7 +24,9 @@ class ReasonsForRecallService(
   fun getOrGeneratePdf(dossierContext: DossierContext, currentUserId: UserId): Mono<ByteArray> =
     documentService.getLatestVersionedDocumentContentWithCategoryIfExists(dossierContext.recall.recallId(), REASONS_FOR_RECALL)
       ?.let { Mono.just(it) }
-      ?: generateAndStorePdf(dossierContext.recall.recallId(), dossierContext.getReasonsForRecallContext(), currentUserId, FileName("REASONS_FOR_RECALL.pdf")).map { it.second }
+      ?: dossierContext.getReasonsForRecallContext().let { ctx ->
+        generateAndStorePdf(dossierContext.recall.recallId(), ctx, currentUserId, ctx.fileName()).map { it.second }
+      }
 
   fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, fileName: FileName, details: String?): Mono<DocumentId> =
     dossierContextFactory.createContext(recallId).getReasonsForRecallContext().let { ctx ->

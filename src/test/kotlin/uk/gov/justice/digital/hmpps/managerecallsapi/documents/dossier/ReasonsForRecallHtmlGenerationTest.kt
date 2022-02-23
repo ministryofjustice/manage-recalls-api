@@ -20,7 +20,8 @@ class ReasonsForRecallHtmlGenerationTest(
         FullName("Bertie Badger"),
         "B1234",
         NomsNumber("G4995VC"),
-        "(i) breach one\n(ii) breach two"
+        "(i) breach one\n(ii) breach two",
+        "Badger Bertie"
       )
     )
     approver.assertApproved(html)

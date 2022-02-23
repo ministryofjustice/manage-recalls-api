@@ -162,6 +162,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     val latestRevocationOrder =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
     assertThat(latestRevocationOrder.version, equalTo(1))
+    assertThat(latestRevocationOrder.fileName, equalTo(FileName("Badger Natalia B1234 REVOCATION ORDER.pdf")))
   }
 
   private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId, inCustody: Boolean) {
