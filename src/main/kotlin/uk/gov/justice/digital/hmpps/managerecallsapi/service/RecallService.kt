@@ -69,8 +69,7 @@ class RecallService(
       licenceNameCategory = updateRecallRequest.licenceNameCategory ?: licenceNameCategory,
       recallType = FIXED,
       recallLength = sentencingInfo?.calculateRecallLength() ?: recallLength,
-      recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime
-        ?: recallEmailReceivedDateTime,
+      recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recallEmailReceivedDateTime,
       lastReleasePrison = updateRecallRequest.lastReleasePrison ?: lastReleasePrison,
       lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,
       localPoliceForceId = updateRecallRequest.localPoliceForceId ?: localPoliceForceId,
@@ -78,10 +77,8 @@ class RecallService(
       inCustodyAtAssessment = updateRecallRequest.inCustodyAtAssessment ?: inCustodyAtAssessment,
       contraband = updateRecallRequest.contraband ?: contraband,
       contrabandDetail = updateRecallRequest.contrabandDetail ?: contrabandDetail,
-      vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity
-        ?: vulnerabilityDiversity,
-      vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail
-        ?: vulnerabilityDiversityDetail,
+      vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity ?: vulnerabilityDiversity,
+      vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: vulnerabilityDiversityDetail,
       mappaLevel = updateRecallRequest.mappaLevel ?: mappaLevel,
       sentencingInfo = sentencingInfo,
       probationInfo = updateRecallRequest.toProbationInfo(this),
