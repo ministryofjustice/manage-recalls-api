@@ -360,7 +360,7 @@ internal class DocumentServiceTest {
   fun `update a document category to a versioned category also sets version to 1`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, UNCATEGORISED, FileName("parta.pdf"), null, null, now, createdByUserId)
+    val document = Document(documentId, recallId, UNCATEGORISED, FileName("license.pdf"), null, null, now, createdByUserId)
     val updatedCategory = LICENCE
     val updatedVersionDocument = document.copy(category = updatedCategory, version = 1)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
@@ -431,7 +431,7 @@ internal class DocumentServiceTest {
   fun `fails to delete an uploaded document for a Recall with status BOOKED_ON`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, PART_A_RECALL_REPORT, FileName("license.pdf"), 1, null, now, createdByUserId)
+    val document = Document(documentId, recallId, PART_A_RECALL_REPORT, FileName("part_a.pdf"), 1, null, now, createdByUserId)
     val recallWithDoc =
       aRecallWithoutDocuments.copy(documents = setOf(document), bookedByUserId = ::UserId.random().value)
 
