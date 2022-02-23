@@ -17,6 +17,7 @@ generic-service:
     PRISONREGISTER_ENDPOINT_URL:  https://prison-register.hmpps.service.justice.gov.uk
     COURTREGISTER_ENDPOINT_URL:  https://court-register.hmpps.service.justice.gov.uk
     SENTRY_DSN: https://ea6c4e03abe840319aee1bc1b2a6a58a@o345774.ingest.sentry.io/5940644
+    RETURNTOCUSTODY_UPDATETHRESHOLDMINUTES: 0
     SENTRY_ENVIRONMENT: PROD
 
   namespace_secrets:
