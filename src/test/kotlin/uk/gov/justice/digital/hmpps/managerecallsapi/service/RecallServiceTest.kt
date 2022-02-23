@@ -318,7 +318,6 @@ class RecallServiceTest {
   }
 
   @Test
-  @Throws(NotFoundException::class)
   fun `can't unassign a recall when assignee doesnt match`() {
     val assignee = ::UserId.random()
     val otherAssignee = ::UserId.random()
