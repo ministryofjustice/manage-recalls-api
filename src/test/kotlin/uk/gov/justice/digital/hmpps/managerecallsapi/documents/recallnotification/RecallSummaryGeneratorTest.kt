@@ -84,7 +84,7 @@ class RecallSummaryGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName)),
+        has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName.value)),
         has("createdDate", { it.variable("createdDate") }, equalTo("01 Sep 2021")),
         has("createdTime", { it.variable("createdTime") }, equalTo("19:32")),
         has("recallNotificationTotalNumberOfPages", { it.variable("recallNotificationTotalNumberOfPages") }, equalTo("3")),
@@ -169,7 +169,7 @@ class RecallSummaryGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName)),
+        has("logoFileName", { it.variable("logoFileName") }, equalTo(HmppsLogo.fileName.value)),
         has("createdDate", { it.variable("createdDate") }, equalTo("01 Sep 2021")),
         has("createdTime", { it.variable("createdTime") }, equalTo("19:32")),
         has("recallNotificationTotalNumberOfPages", { it.variable("recallNotificationTotalNumberOfPages") }, equalTo("3")),

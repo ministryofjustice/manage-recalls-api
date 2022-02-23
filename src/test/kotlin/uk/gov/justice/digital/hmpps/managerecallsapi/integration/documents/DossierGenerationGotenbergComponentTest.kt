@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -56,12 +57,12 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
       localDeliveryUnit = localDeliveryUnit,
       currentPrisonId = currentPrisonId
     )
-    authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
     expectNoVirusesWillBeFound()
     uploadLicenceFor(recall)
     uploadPartAFor(recall)
 
-    val generateResponse = authenticatedClient.generateDocument(recall.recallId, DOSSIER)
+    val generateResponse = authenticatedClient.generateDocument(recall.recallId, DOSSIER, FileName("DOSSIER.pdf"))
     val dossier = authenticatedClient.getDocument(recall.recallId, generateResponse.documentId)
     // writeBase64EncodedStringToFile("dossier-$expectedPageCount-pages.pdf", dossier.content)
     assertThat(Pdf(dossier.content), hasNumberOfPages(equalTo(expectedPageCount)))

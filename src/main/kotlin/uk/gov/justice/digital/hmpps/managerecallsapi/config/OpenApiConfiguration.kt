@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
@@ -41,32 +42,32 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
   companion object {
     init {
       SpringDocUtils.getConfig()
-        .replaceWithClass(NomsNumber::class.java, String::class.java)
-        .replaceWithClass(NomsNumber::class.java, String::class.java)
-        .replaceWithClass(CroNumber::class.java, String::class.java)
-        .replaceWithClass(FirstName::class.java, String::class.java)
-        .replaceWithClass(MiddleNames::class.java, String::class.java)
-        .replaceWithClass(LastName::class.java, String::class.java)
-        .replaceWithClass(FullName::class.java, String::class.java)
-        .replaceWithClass(Email::class.java, String::class.java)
-        .replaceWithClass(PhoneNumber::class.java, String::class.java)
-        .replaceWithClass(WarrantReferenceNumber::class.java, String::class.java)
-        .replaceWithClass(RecallId::class.java, UUID::class.java)
-        .replaceWithClass(DocumentId::class.java, UUID::class.java)
-        .replaceWithClass(MissingDocumentsRecordId::class.java, UUID::class.java)
-        .replaceWithClass(RescindRecordId::class.java, UUID::class.java)
-        .replaceWithClass(NoteId::class.java, UUID::class.java)
-        .replaceWithClass(LastKnownAddressId::class.java, UUID::class.java)
-        .replaceWithClass(UserId::class.java, UUID::class.java)
-        .replaceWithClass(PrisonId::class.java, String::class.java)
-        .replaceWithClass(PrisonName::class.java, String::class.java)
+        .replaceWithClass(ColumnName::class.java, String::class.java)
         .replaceWithClass(CourtId::class.java, String::class.java)
         .replaceWithClass(CourtName::class.java, String::class.java)
-        .replaceWithClass(PoliceForceId::class.java, String::class.java)
-        .replaceWithClass(PoliceForceName::class.java, String::class.java)
+        .replaceWithClass(CroNumber::class.java, String::class.java)
+        .replaceWithClass(DocumentId::class.java, UUID::class.java)
+        .replaceWithClass(Email::class.java, String::class.java)
         .replaceWithClass(FieldName::class.java, String::class.java)
         .replaceWithClass(FieldPath::class.java, String::class.java)
-        .replaceWithClass(ColumnName::class.java, String::class.java)
+        .replaceWithClass(FileName::class.java, String::class.java)
+        .replaceWithClass(FirstName::class.java, String::class.java)
+        .replaceWithClass(FullName::class.java, String::class.java)
+        .replaceWithClass(LastKnownAddressId::class.java, UUID::class.java)
+        .replaceWithClass(LastName::class.java, String::class.java)
+        .replaceWithClass(MiddleNames::class.java, String::class.java)
+        .replaceWithClass(MissingDocumentsRecordId::class.java, UUID::class.java)
+        .replaceWithClass(NomsNumber::class.java, String::class.java)
+        .replaceWithClass(NoteId::class.java, UUID::class.java)
+        .replaceWithClass(PhoneNumber::class.java, String::class.java)
+        .replaceWithClass(PoliceForceId::class.java, String::class.java)
+        .replaceWithClass(PoliceForceName::class.java, String::class.java)
+        .replaceWithClass(PrisonId::class.java, String::class.java)
+        .replaceWithClass(PrisonName::class.java, String::class.java)
+        .replaceWithClass(RecallId::class.java, UUID::class.java)
+        .replaceWithClass(RescindRecordId::class.java, UUID::class.java)
+        .replaceWithClass(UserId::class.java, UUID::class.java)
+        .replaceWithClass(WarrantReferenceNumber::class.java, String::class.java)
     }
   }
 

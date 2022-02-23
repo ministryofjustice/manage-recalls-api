@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecordRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomVersionedDocumentCategory
@@ -44,7 +45,7 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
         documentId,
         recallId,
         versionedCategory,
-        "blah",
+        FileName("blah"),
         1,
         null,
         OffsetDateTime.now(),
@@ -75,7 +76,7 @@ class MissingDocumentsRecordRepositoryIntegrationTest(
         documentId,
         recallId,
         versionedCategory,
-        "blah",
+        FileName("blah"),
         1,
         null,
         OffsetDateTime.now(),

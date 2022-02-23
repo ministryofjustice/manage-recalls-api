@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -27,7 +28,12 @@ class LetterToPrisonService(
   @Autowired private val pdfDecorator: PdfDecorator,
 ) {
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String?): Mono<DocumentId> {
+  fun generateAndStorePdf(
+    recallId: RecallId,
+    currentUserId: UserId,
+    documentDetails1: FileName,
+    documentDetails: String?
+  ): Mono<DocumentId> {
     val context = letterToPrisonContextFactory.createContext(recallId, currentUserId)
     var letterToPrisonCustodyOfficePageCount = 0
 
@@ -56,7 +62,7 @@ class LetterToPrisonService(
           footerText = "OFFICIAL"
         )
       }.map { letterToPrisonBytes ->
-        documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, "$LETTER_TO_PRISON.pdf", documentDetails)
+        documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, FileName("$LETTER_TO_PRISON.pdf"), documentDetails)
       }
   }
 

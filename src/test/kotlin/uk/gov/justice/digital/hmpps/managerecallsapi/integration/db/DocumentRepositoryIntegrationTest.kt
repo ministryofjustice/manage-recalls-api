@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomUnVersionedDocumentCategory
@@ -294,7 +295,7 @@ class DocumentRepositoryIntegrationTest(
       id,
       recallId,
       category,
-      "file_name",
+      FileName("file_name"),
       version,
       details,
       OffsetDateTime.now(),

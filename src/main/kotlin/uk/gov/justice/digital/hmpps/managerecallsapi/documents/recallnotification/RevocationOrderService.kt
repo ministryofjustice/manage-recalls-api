@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Compani
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -21,19 +22,19 @@ class RevocationOrderService(
   @Autowired private val revocationOrderGenerator: RevocationOrderGenerator,
 ) {
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> =
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, fileName: FileName, details: String?): Mono<DocumentId> =
     recallNotificationContextFactory.createContext(recallId, currentUserId).getRevocationOrderContext().let { ctx ->
-      generateAndStorePdf(ctx, details).map { it.first }
+      generateAndStorePdf(ctx, fileName, details).map { it.first }
     }
 
-  private fun generateAndStorePdf(revocationOrderContext: RevocationOrderContext, documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> =
+  private fun generateAndStorePdf(revocationOrderContext: RevocationOrderContext, fileName: FileName = FileName("REVOCATION_ORDER.pdf"), documentDetails: String? = null): Mono<Pair<DocumentId, ByteArray>> =
     revocationOrderContext.let { context ->
       pdfDocumentGenerationService.generatePdf(
         revocationOrderGenerator.generateHtml(context),
         recallImage(RevocationOrderLogo),
         signature(context.currentUserSignature)
       ).map { bytes ->
-        val documentId = documentService.storeDocument(context.recallId, context.currentUserId, bytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf", documentDetails)
+        val documentId = documentService.storeDocument(context.recallId, context.currentUserId, bytes, REVOCATION_ORDER, fileName, documentDetails)
         Pair(documentId, bytes)
       }
     }

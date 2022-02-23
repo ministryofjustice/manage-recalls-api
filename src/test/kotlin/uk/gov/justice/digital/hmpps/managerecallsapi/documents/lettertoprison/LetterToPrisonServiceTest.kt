@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -53,6 +54,7 @@ internal class LetterToPrisonServiceTest {
     val letterBytes = "letter bytes".toByteArray()
     val documentId = ::DocumentId.random()
     val custodyOfficeBytes = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
+    val fileName = FileName("LETTER_TO_PRISON.pdf")
 
     every { letterToPrisonContextFactory.createContext(recallId, currentUserId) } returns context
     every { letterToPrisonConfirmationGenerator.generateHtml(context) } returns ltpConfirmationHtml
@@ -66,9 +68,9 @@ internal class LetterToPrisonServiceTest {
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
     every { context.recallLengthDescription } returns RecallLengthDescription(RecallLength.FOURTEEN_DAYS)
     every { pdfDecorator.numberPagesOnRightWithHeaderAndFooter(mergedBytes, any(), any(), any(), any(), "OFFICIAL", any()) } returns letterBytes
-    every { documentService.storeDocument(recallId, currentUserId, letterBytes, LETTER_TO_PRISON, "LETTER_TO_PRISON.pdf", "New Version") } returns documentId
+    every { documentService.storeDocument(recallId, currentUserId, letterBytes, LETTER_TO_PRISON, fileName, "New Version") } returns documentId
 
-    val result = underTest.generateAndStorePdf(recallId, currentUserId, "New Version")
+    val result = underTest.generateAndStorePdf(recallId, currentUserId, fileName, "New Version")
 
     StepVerifier
       .create(result)

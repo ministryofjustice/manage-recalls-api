@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -78,7 +79,7 @@ internal class DocumentServiceTest {
       LocalDate.of(1999, 12, 1)
     )
   private val documentCategory = PART_A_RECALL_REPORT
-  private val fileName = randomString()
+  private val fileName = FileName(randomString())
 
   // TODO - parameterise tests for versioned and unversioned category
 
@@ -150,7 +151,7 @@ internal class DocumentServiceTest {
     val aRecallWithDocument = aRecallWithoutDocuments.copy(
       documents = setOf(existingDocument)
     )
-    val newFileName = randomString()
+    val newFileName = FileName(randomString())
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithDocument
     every {
@@ -191,7 +192,7 @@ internal class DocumentServiceTest {
       aDocumentId,
       recallId,
       PART_A_RECALL_REPORT,
-      randomString(),
+      FileName(randomString()),
       1,
       null,
       OffsetDateTime.now(),
@@ -218,7 +219,7 @@ internal class DocumentServiceTest {
       documentId,
       recallId,
       aDocumentCategory,
-      randomString(),
+      FileName(randomString()),
       1,
       null,
       OffsetDateTime.now(),
@@ -282,7 +283,7 @@ internal class DocumentServiceTest {
       UUID.randomUUID(),
       recallId.value,
       theDocumentCategory,
-      randomString(),
+      FileName(randomString()),
       1,
       null,
       OffsetDateTime.now(),
@@ -292,7 +293,7 @@ internal class DocumentServiceTest {
       UUID.randomUUID(),
       recallId.value,
       theDocumentCategory,
-      randomString(),
+      FileName(randomString()),
       2,
       null,
       OffsetDateTime.now(),
@@ -317,6 +318,7 @@ internal class DocumentServiceTest {
     val documentBytes = randomString().toByteArray()
     val documentId = ::DocumentId.random()
     val savedDocumentSlot = slot<Document>()
+    val fileName = FileName("filename.txt")
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every { s3Service.uploadFile(any(), documentBytes) } just runs
@@ -324,14 +326,14 @@ internal class DocumentServiceTest {
       documentId,
       recallId,
       OTHER,
-      "filename.txt",
+      fileName,
       null,
       null,
       OffsetDateTime.now(),
       createdByUserId
     )
 
-    val result = underTest.storeDocument(recallId, createdByUserId, documentBytes, OTHER, "filename.txt")
+    val result = underTest.storeDocument(recallId, createdByUserId, documentBytes, OTHER, fileName)
 
     verify(exactly = 1) { documentRepository.save(any()) }
 
@@ -358,7 +360,7 @@ internal class DocumentServiceTest {
   fun `update a document category to a versioned category also sets version to 1`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, UNCATEGORISED, "parta.pdf", null, null, now, createdByUserId)
+    val document = Document(documentId, recallId, UNCATEGORISED, FileName("parta.pdf"), null, null, now, createdByUserId)
     val updatedCategory = LICENCE
     val updatedVersionDocument = document.copy(category = updatedCategory, version = 1)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
@@ -378,7 +380,7 @@ internal class DocumentServiceTest {
   fun `update a document category to an unversioned category`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, UNCATEGORISED, "my-document.pdf", null, null, now, createdByUserId)
+    val document = Document(documentId, recallId, UNCATEGORISED, FileName("my-document.pdf"), null, null, now, createdByUserId)
     val updatedCategory = OTHER
     val updatedDocument = document.copy(category = updatedCategory)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
@@ -398,7 +400,7 @@ internal class DocumentServiceTest {
   fun `update a document category for a document that isn't UNCATEGORISED throws an exception`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, OTHER, "my-document.pdf", null, null, now, createdByUserId)
+    val document = Document(documentId, recallId, OTHER, FileName("my-document.pdf"), null, null, now, createdByUserId)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
@@ -413,7 +415,7 @@ internal class DocumentServiceTest {
   fun `can delete an uploaded document for a Recall with status null`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, UNCATEGORISED, "license.pdf", null, null, now, createdByUserId)
+    val document = Document(documentId, recallId, UNCATEGORISED, FileName("license.pdf"), null, null, now, createdByUserId)
     val recallWithDoc = aRecallWithoutDocuments.copy(documents = setOf(document))
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithDoc
@@ -429,7 +431,7 @@ internal class DocumentServiceTest {
   fun `fails to delete an uploaded document for a Recall with status BOOKED_ON`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, PART_A_RECALL_REPORT, "license.pdf", 1, null, now, createdByUserId)
+    val document = Document(documentId, recallId, PART_A_RECALL_REPORT, FileName("license.pdf"), 1, null, now, createdByUserId)
     val recallWithDoc =
       aRecallWithoutDocuments.copy(documents = setOf(document), bookedByUserId = ::UserId.random().value)
 
@@ -447,7 +449,7 @@ internal class DocumentServiceTest {
   fun `fails to delete a generated document for a Recall with status null`() {
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, REVOCATION_ORDER, "revo.pdf", 1, null, now, createdByUserId)
+    val document = Document(documentId, recallId, REVOCATION_ORDER, FileName("revo.pdf"), 1, null, now, createdByUserId)
     val recallWithDoc =
       aRecallWithoutDocuments.copy(documents = setOf(document), bookedByUserId = ::UserId.random().value)
 

@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -41,7 +42,7 @@ class MissingDocumentsRecordControllerTest {
   fun `store first record as version 1`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val emailId = ::DocumentId.random()
     val savedMissingDocumentsRecord = slot<MissingDocumentsRecord>()
     val record = mockk<MissingDocumentsRecord>()
@@ -88,7 +89,7 @@ class MissingDocumentsRecordControllerTest {
   fun `store record as version 2 if recall already has a record with version 1`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val emailId = ::DocumentId.random()
     val savedMissingDocumentsRecord = slot<MissingDocumentsRecord>()
     val record = mockk<MissingDocumentsRecord>()

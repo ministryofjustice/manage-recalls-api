@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -66,7 +67,7 @@ class ReasonsForRecallServiceTest {
         createdByUserId,
         expectedPdfWithHeaderBytes,
         REASONS_FOR_RECALL,
-        "REASONS_FOR_RECALL.pdf"
+        FileName("REASONS_FOR_RECALL.pdf")
       )
     } returns ::DocumentId.random()
 
@@ -115,6 +116,7 @@ class ReasonsForRecallServiceTest {
     val createdByUserId = ::UserId.random()
     val details = "Blah blah blah"
     val documentId = ::DocumentId.random()
+    val fileName = FileName("REASONS_FOR_RECALL.pdf")
 
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
     every { dossierContext.getReasonsForRecallContext() } returns reasonsForRecallContext
@@ -127,12 +129,12 @@ class ReasonsForRecallServiceTest {
         createdByUserId,
         expectedPdfWithHeaderBytes,
         REASONS_FOR_RECALL,
-        "REASONS_FOR_RECALL.pdf",
+        fileName,
         details
       )
     } returns documentId
 
-    val result = underTest.generateAndStorePdf(recallId, createdByUserId, details).block()!!
+    val result = underTest.generateAndStorePdf(recallId, createdByUserId, fileName, details).block()!!
 
     assertThat(result, equalTo(documentId))
     verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REASONS_FOR_RECALL) }

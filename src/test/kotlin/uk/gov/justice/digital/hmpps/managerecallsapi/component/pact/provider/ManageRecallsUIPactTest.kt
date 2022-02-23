@@ -38,6 +38,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedBy
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -212,7 +213,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   )
   fun `a recall and uncategorised document exist`() {
     `a user and a fully populated recall without documents exists`()
-    `a document exists`(matchedDocumentId, UNCATEGORISED, "filename.pdf", null, null)
+    `a document exists`(matchedDocumentId, UNCATEGORISED, FileName("filename.pdf"), null, null)
   }
 
   @State(
@@ -221,9 +222,9 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a recall and document history exist`() {
     `a user and a fully populated recall without documents exists`()
     val randomPartAdocumentId = ::DocumentId.random()
-    `a document exists`(randomPartAdocumentId, PART_A_RECALL_REPORT, "filename.pdf", 1, null)
-    `a document exists`(matchedDocumentId, LICENCE, "license.pdf", 1, null)
-    `a document exists`(randomPartAdocumentId, PART_A_RECALL_REPORT, "filename.pdf", 2, "New updated part A")
+    `a document exists`(randomPartAdocumentId, PART_A_RECALL_REPORT, FileName("filename.pdf"), 1, null)
+    `a document exists`(matchedDocumentId, LICENCE, FileName("license.pdf"), 1, null)
+    `a document exists`(randomPartAdocumentId, PART_A_RECALL_REPORT, FileName("filename.pdf"), 2, "New updated part A")
   }
 
   @State(
@@ -281,13 +282,13 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       ),
       createdByUserId
     )
-    `a document exists`(matchedDocumentId, UNCATEGORISED, "uncategorised.pdf", null, null)
+    `a document exists`(matchedDocumentId, UNCATEGORISED, FileName("uncategorised.pdf"), null, null)
   }
 
   fun `a document exists`(
     documentId: DocumentId,
     documentCategory: DocumentCategory,
-    fileName: String,
+    fileName: FileName,
     version: Int?,
     details: String?
   ) {
@@ -319,7 +320,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     val emailId = DocumentId(UUID.randomUUID())
 
     documentCategories.forEach {
-      `a document exists`(emailId, it, "MDR email.msg", version, details)
+      `a document exists`(emailId, it, FileName("MDR email.msg"), version, details)
     }
 
     missingDocumentsRecordRepository.save(
@@ -341,7 +342,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     noteId: NoteId = ::NoteId.random(),
     documentId: DocumentId? = null
   ) {
-    `a document exists`(matchedDocumentId, NOTE_DOCUMENT, "recall-note.doc", null, null)
+    `a document exists`(matchedDocumentId, NOTE_DOCUMENT, FileName("recall-note.doc"), null, null)
     noteRepository.save(
       Note(
         noteId,
@@ -379,7 +380,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   fun `an open rescind record exists`() {
-    `a document exists`(matchedDocumentId, RESCIND_REQUEST_EMAIL, "email.msg", null, null)
+    `a document exists`(matchedDocumentId, RESCIND_REQUEST_EMAIL, FileName("email.msg"), null, null)
     rescindRecordRepository.save(
       RescindRecord(
         matchedRescindRecordId,

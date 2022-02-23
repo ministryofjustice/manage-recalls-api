@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocuments
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
@@ -31,7 +32,7 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
   )
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
-  private val fileName = "fileName"
+  private val fileName = FileName("fileName")
 
   @Test
   fun `create a MissingDocumentsRecord`() {

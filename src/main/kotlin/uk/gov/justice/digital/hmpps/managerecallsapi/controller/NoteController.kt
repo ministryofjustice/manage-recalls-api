@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NoteService
@@ -38,7 +39,7 @@ class NoteController(
   data class CreateNoteRequest(
     val subject: String,
     val details: String,
-    val fileName: String?,
+    val fileName: FileName?,
     val fileContent: String?,
   )
 }

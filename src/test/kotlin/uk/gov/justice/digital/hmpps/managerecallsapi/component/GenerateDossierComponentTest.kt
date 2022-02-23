@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallCla
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -89,16 +90,16 @@ class GenerateDossierComponentTest : ComponentTestBase() {
 
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"), "filename.pdf")
+      UploadDocumentRequest(LICENCE, base64EncodedFileContents("/document/licence.pdf"), FileName("filename.pdf"))
     )
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "part_a.pdf")
+      UploadDocumentRequest(PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), FileName("part_a.pdf"))
     )
 
-    authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER)
+    authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER, FileName("REVOCATION_ORDER.pdf"))
 
-    val dossierId = authenticatedClient.generateDocument(recall.recallId, DOSSIER)
+    val dossierId = authenticatedClient.generateDocument(recall.recallId, DOSSIER, FileName("DOSSIER.pdf"))
     val dossier = authenticatedClient.getDocument(recall.recallId, dossierId.documentId)
 
     assertThat(Pdf(dossier.content), hasNumberOfPages(equalTo(3)))

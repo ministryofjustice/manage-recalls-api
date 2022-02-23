@@ -42,6 +42,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotificatio
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RevocationOrderService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -162,11 +163,11 @@ class DocumentController(
       throw WrongDocumentTypeException(generateDocumentRequest.category)
 
     return when (generateDocumentRequest.category) { // TODO: PUD-1500: all the below service calls should be annotated @Transactional - in their respective service classes of course
-      RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
-      REVOCATION_ORDER -> revocationOrderService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
-      REASONS_FOR_RECALL -> reasonsForRecallService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
-      DOSSIER -> dossierService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
-      LETTER_TO_PRISON -> letterToPrisonService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.details)
+      RECALL_NOTIFICATION -> recallNotificationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
+      REVOCATION_ORDER -> revocationOrderService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
+      REASONS_FOR_RECALL -> reasonsForRecallService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
+      DOSSIER -> dossierService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
+      LETTER_TO_PRISON -> letterToPrisonService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
       else -> throw WrongDocumentTypeException(generateDocumentRequest.category)
     }
   }
@@ -225,19 +226,20 @@ data class UpdateDocumentResponse(
   val documentId: DocumentId,
   val recallId: RecallId,
   val category: DocumentCategory,
-  val fileName: String,
+  val fileName: FileName,
   val details: String? = null,
 )
 
 data class UploadDocumentRequest(
   val category: DocumentCategory,
   val fileContent: String,
-  val fileName: String,
+  val fileName: FileName,
   val details: String? = null
 )
 
 data class GenerateDocumentRequest(
   val category: DocumentCategory,
+  val fileName: FileName,
   val details: String?
 )
 
@@ -247,7 +249,7 @@ data class GetDocumentResponse(
   val documentId: DocumentId,
   val category: DocumentCategory,
   val content: String,
-  val fileName: String,
+  val fileName: FileName,
   val version: Int?,
   val details: String?,
   val createdByUserName: FullName,

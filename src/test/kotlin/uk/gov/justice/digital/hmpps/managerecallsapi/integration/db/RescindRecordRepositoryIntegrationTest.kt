@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecordRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
@@ -43,7 +44,7 @@ class RescindRecordRepositoryIntegrationTest(
         documentId,
         recallId,
         requestCategory,
-        "blah",
+        FileName("blah"),
         null,
         null,
         OffsetDateTime.now(),
@@ -72,7 +73,7 @@ class RescindRecordRepositoryIntegrationTest(
         documentId,
         recallId,
         requestCategory,
-        "blah",
+        FileName("blah"),
         null,
         null,
         OffsetDateTime.now(),

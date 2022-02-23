@@ -35,6 +35,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetailsRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -195,8 +196,8 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
       .exchange()
       .expectStatus().isEqualTo(expectedStatus)
 
-  protected fun writeBase64EncodedStringToFile(fileName: String, content: String) {
-    File(fileName).writeBytes(content.toBase64DecodedByteArray())
+  protected fun writeBase64EncodedStringToFile(fileName: FileName, content: String) {
+    File(fileName.value).writeBytes(content.toBase64DecodedByteArray())
   }
 
   protected fun setupUserDetailsFor(userId: UserId) {

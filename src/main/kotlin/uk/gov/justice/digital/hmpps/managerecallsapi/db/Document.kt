@@ -2,11 +2,13 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import java.time.OffsetDateTime
 import java.util.UUID
 import javax.persistence.Column
+import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -27,7 +29,8 @@ data class Document(
   val category: DocumentCategory,
 
   @Column(nullable = false)
-  val fileName: String,
+  @Convert(converter = FileNameJpaConverter::class)
+  val fileName: FileName,
 
   @Column(nullable = true)
   val version: Int?,
@@ -45,7 +48,7 @@ data class Document(
     id: DocumentId,
     recallId: RecallId,
     category: DocumentCategory,
-    fileName: String,
+    fileName: FileName,
     version: Int?,
     details: String?,
     createdDateTime: OffsetDateTime,

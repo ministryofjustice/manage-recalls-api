@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -32,7 +33,7 @@ class NoteServiceTest {
   private val subject = "note subject"
   private val details = "note details"
   private val documentBytes = "a document".toByteArray()
-  private val fileName = "file.doc"
+  private val fileName = FileName("file.doc")
   private val documentId = ::DocumentId.random()
 
   private val underTest = NoteService(
@@ -160,7 +161,7 @@ class NoteServiceTest {
   fun `NotFoundException thrown if recall does not exist on note creation`() {
     every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException(recallId)
 
-    val request = CreateNoteRequest(randomString(), randomString(), randomString(), randomString().toByteArray().encodeToBase64String())
+    val request = CreateNoteRequest(randomString(), randomString(), FileName(randomString()), randomString().toByteArray().encodeToBase64String())
 
     assertThrows<RecallNotFoundException> { underTest.createNote(recallId, userId, request) }
   }
@@ -170,17 +171,17 @@ class NoteServiceTest {
     val recall = mockk<Recall>()
     every { recallRepository.getByRecallId(recallId) } returns recall
 
-    val request = CreateNoteRequest(randomString(), randomString(), randomString(), "".toByteArray().encodeToBase64String())
+    val request = CreateNoteRequest(randomString(), randomString(), FileName(randomString()), "".toByteArray().encodeToBase64String())
 
     assertThrows<IllegalArgumentException> { underTest.createNote(recallId, userId, request) }
   }
 
   @Test
-  fun `IllegalArgumentException thrown if note has fileContent but empty fileName`() {
+  fun `IllegalArgumentException thrown if note has fileContent but null fileName`() {
     val recall = mockk<Recall>()
     every { recallRepository.getByRecallId(recallId) } returns recall
 
-    val request = CreateNoteRequest(randomString(), randomString(), "", randomString().toByteArray().encodeToBase64String())
+    val request = CreateNoteRequest(randomString(), randomString(), null, randomString().toByteArray().encodeToBase64String())
 
     assertThrows<IllegalArgumentException> { underTest.createNote(recallId, userId, request) }
   }

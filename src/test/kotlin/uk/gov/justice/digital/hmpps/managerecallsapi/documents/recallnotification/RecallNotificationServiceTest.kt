@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ByteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -61,6 +62,7 @@ internal class RecallNotificationServiceTest {
     val revocationOrderContext = mockk<RevocationOrderContext>()
     val details = "Changed a value so recreating"
     val recall = mockk<Recall>()
+    val fileName = FileName("RECALL_NOTIFICATION.pdf")
 
     every { recallNotificationContext.getRevocationOrderContext() } returns revocationOrderContext
     every { recallNotificationContext.getLetterToProbationContext() } returns letterToProbationContext
@@ -79,12 +81,17 @@ internal class RecallNotificationServiceTest {
         createdByUserId,
         mergedBytes,
         RECALL_NOTIFICATION,
-        "RECALL_NOTIFICATION.pdf",
+        fileName,
         details
       )
     } returns documentId
 
-    val createdDocumentId = underTest.generateAndStorePdf(recallId, createdByUserId, details).block()!!
+    val createdDocumentId = underTest.generateAndStorePdf(
+      recallId,
+      createdByUserId,
+      fileName,
+      details
+    ).block()!!
 
     verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) }
     verify(exactly = 0) { recallNotificationContext.getOffenderNotificationContext() }
@@ -122,6 +129,7 @@ internal class RecallNotificationServiceTest {
     val offenderNotificationContext = mockk<OffenderNotificationContext>()
     val details = "Changed a value so recreating"
     val recall = mockk<Recall>()
+    val fileName = FileName("RECALL_NOTIFICATION.pdf")
 
     every { recallNotificationContext.getRevocationOrderContext() } returns revocationOrderContext
     every { recallNotificationContext.getLetterToProbationContext() } returns letterToProbationContext
@@ -142,12 +150,17 @@ internal class RecallNotificationServiceTest {
         createdByUserId,
         mergedBytes,
         RECALL_NOTIFICATION,
-        "RECALL_NOTIFICATION.pdf",
+        fileName,
         details
       )
     } returns documentId
 
-    val createdDocumentId = underTest.generateAndStorePdf(recallId, createdByUserId, details).block()!!
+    val createdDocumentId = underTest.generateAndStorePdf(
+      recallId,
+      createdByUserId,
+      fileName,
+      details
+    ).block()!!
 
     verify(exactly = 0) { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, RECALL_NOTIFICATION) }
 

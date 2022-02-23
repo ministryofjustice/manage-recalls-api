@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenera
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletEnglish
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletWelsh
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -30,7 +31,12 @@ class DossierService(
   @Autowired private val dossierContextFactory: DossierContextFactory
 ) {
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, documentDetails: String?): Mono<DocumentId> {
+  fun generateAndStorePdf(
+    recallId: RecallId,
+    currentUserId: UserId,
+    fileName: FileName,
+    documentDetails: String?
+  ): Mono<DocumentId> {
     val dossierContext = dossierContextFactory.createContext(recallId)
 
     return reasonsForRecallService.getOrGeneratePdf(dossierContext, currentUserId).map { reasonsForRecallPdfBytes ->
@@ -46,7 +52,7 @@ class DossierService(
     }.map { mergedPdfContentBytes ->
       pdfDecorator.numberPages(mergedPdfContentBytes, numberOfPagesToSkip = 1)
     }.map { mergedBytes ->
-      documentService.storeDocument(recallId, currentUserId, mergedBytes, DOSSIER, "$DOSSIER.pdf", documentDetails)
+      documentService.storeDocument(recallId, currentUserId, mergedBytes, DOSSIER, fileName, documentDetails)
     }
   }
 

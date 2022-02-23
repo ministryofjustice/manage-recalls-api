@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaDocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -138,7 +139,7 @@ class RecallRepositoryIntegrationTest(
       documentId,
       recallId,
       PART_A_RECALL_REPORT,
-      "PART_A.pdf",
+      FileName("PART_A.pdf"),
       1,
       details,
       OffsetDateTime.now(),

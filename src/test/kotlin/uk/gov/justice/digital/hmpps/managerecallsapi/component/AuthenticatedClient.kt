@@ -39,6 +39,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
@@ -46,7 +47,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import java.time.OffsetDateTime
 
 class AuthenticatedClient(
@@ -149,8 +149,8 @@ class AuthenticatedClient(
   fun deleteDocument(recallId: RecallId, documentId: DocumentId, expectedStatus: HttpStatus = NO_CONTENT) =
     deleteRequest("/recalls/$recallId/documents/$documentId", expectedStatus)
 
-  fun generateDocument(recallId: RecallId, category: DocumentCategory, detail: String? = null) =
-    postRequest("/recalls/$recallId/documents/generated", GenerateDocumentRequest(category, detail), NewDocumentResponse::class.java)
+  fun generateDocument(recallId: RecallId, category: DocumentCategory, fileName: FileName, detail: String? = null) =
+    postRequest("/recalls/$recallId/documents/generated", GenerateDocumentRequest(category, fileName, detail), NewDocumentResponse::class.java)
 
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
     patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)
