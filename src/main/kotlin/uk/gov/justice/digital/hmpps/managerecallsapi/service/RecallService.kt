@@ -136,6 +136,7 @@ class RecallService(
     }
   }
 
+  @Transactional
   fun updateCustodyStatus(currentUserId: UserId) {
     val rtcRecalls = recallRepository.findAll()
       .filter { it.status() == Status.AWAITING_RETURN_TO_CUSTODY }

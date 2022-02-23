@@ -409,16 +409,19 @@ class RecallServiceTest {
       dossierTargetDate = dossierTargetDate
     )
 
-    every { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) } returns dossierTargetDate
     every { recallRepository.findAll() } returns recallList
-    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nicStillUalPreviouslyUpdatedNoms) } returns Mono.just(nicStillUalRecentlyUpdatedPrisoner)
     every { prisonerOffenderSearchClient.prisonerByNomsNumber(rtcNoms) } returns Mono.just(nicRtcPrisoner)
 
     every { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) } returns listOf(Movement(rtcNoms.value, movementDate, movementTime))
+    every { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) } returns dossierTargetDate
     every { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) } returns expectedRecall
 
     underTest.updateCustodyStatus(currentUserId)
 
+    verify { recallRepository.findAll() }
+    verify { prisonerOffenderSearchClient.prisonerByNomsNumber(rtcNoms) }
+    verify { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) }
+    verify { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) }
     verify { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) }
   }
 

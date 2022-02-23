@@ -145,7 +145,7 @@ aws:
 manage-recalls-api:
   base-uri: http://localhost:8080
 
-# Should be kept as 0 to ensure recalls are updated correctly in production, this is a
+# Should be kept as 0 to ensure recalls are updated immediately in production, this is a
 # workaround to allow E2E tests to run and manually update RTC
 returnToCustody:
   updateThresholdMinutes: 0

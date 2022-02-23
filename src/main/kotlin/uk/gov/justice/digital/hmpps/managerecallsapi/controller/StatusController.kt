@@ -32,7 +32,6 @@ class StatusController(
 ) {
 
   @PostMapping("/recalls/{recallId}/returned-to-custody")
-  @Transactional // FIXME - PUD-1499
   @ResponseStatus(HttpStatus.OK)
   fun returnedToCustody(
     @PathVariable("recallId") recallId: RecallId,

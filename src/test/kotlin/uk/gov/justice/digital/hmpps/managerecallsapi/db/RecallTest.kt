@@ -186,7 +186,7 @@ class RecallTest {
       bookedByUserId = ::UserId.random().value,
       assessedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value,
-      returnedToCustody = ReturnedToCustodyRecord(OffsetDateTime.now(), OffsetDateTime.now(), ::UserId.random(), OffsetDateTime.now()),
+      returnedToCustody = ReturnedToCustodyRecord(OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now(), ::UserId.random()),
     )
 
     assertThat(recall.status(), equalTo(Status.DOSSIER_IN_PROGRESS))
