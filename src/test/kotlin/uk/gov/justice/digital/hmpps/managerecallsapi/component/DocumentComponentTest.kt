@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64Str
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -48,7 +49,7 @@ class DocumentComponentTest : ComponentTestBase() {
   private val versionedDocumentCategory = PART_A_RECALL_REPORT
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
-  private val fileName = "fileName"
+  private val fileName = FileName("fileName")
   private val details = "Document details"
   private val addVersionedDocumentRequest = UploadDocumentRequest(versionedDocumentCategory, base64EncodedDocumentContents, fileName, details)
 
@@ -337,7 +338,7 @@ class DocumentComponentTest : ComponentTestBase() {
         inCustodyAtBooking = true,
       )
     )
-    val document = authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER)
+    val document = authenticatedClient.generateDocument(recall.recallId, REVOCATION_ORDER, FileName("REVOCATION_ORDER.pdf"))
 
     val response = authenticatedClient.deleteDocument(recall.recallId, document.documentId, BAD_REQUEST)
       .expectBody(ErrorResponse::class.java)

@@ -1,8 +1,10 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents
 
-enum class RecallImage(val fileName: String) {
-  RevocationOrderLogo("revocation-order-logo.png"),
-  HmppsLogo("hmpps-logo.png");
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
+
+enum class RecallImage(val fileName: FileName) {
+  RevocationOrderLogo(FileName("revocation-order-logo.png")),
+  HmppsLogo(FileName("hmpps-logo.png"));
 
   val path: String = "/templates/images/$fileName"
 }

@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -42,7 +43,7 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
       sentenceYears = 10
     )
 
-    val letterToPrisonId = authenticatedClient.generateDocument(recall.recallId, LETTER_TO_PRISON)
+    val letterToPrisonId = authenticatedClient.generateDocument(recall.recallId, LETTER_TO_PRISON, FileName("LETTER_TO_PRISON.pdf"))
     val letterToPrison = authenticatedClient.getDocument(recall.recallId, letterToPrisonId.documentId)
     // writeBase64EncodedStringToFile("letter-to-prison-14-day-FTR-example.pdf", letterToPrison.content)  // i.e. sentence duration < 1 year
     // writeBase64EncodedStringToFile("letter-to-prison-28-day-FTR-example.pdf", letterToPrison.content)  // i.e. sentence duration >= 1 year

@@ -26,6 +26,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescr
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -117,6 +118,7 @@ internal class LetterToPrisonServiceParameterizedTest {
     val mergedBytes = randomString().toByteArray()
     val mergedNumberedBytes = randomString().toByteArray()
     val createdByUserId = ::UserId.random()
+    val fileName = FileName("LETTER_TO_PRISON.pdf")
 
     every { letterToPrisonContextFactory.createContext(recallId, createdByUserId) } returns context
     every { recallRepository.getByRecallId(recallId) } returns aRecall
@@ -145,11 +147,11 @@ internal class LetterToPrisonServiceParameterizedTest {
         createdByUserId,
         mergedNumberedBytes,
         LETTER_TO_PRISON,
-        "LETTER_TO_PRISON.pdf"
+        fileName
       )
     } returns documentId
 
-    val result = underTest.generateAndStorePdf(recallId, createdByUserId, null)
+    val result = underTest.generateAndStorePdf(recallId, createdByUserId, fileName, null)
 
     StepVerifier
       .create(result)
@@ -161,7 +163,7 @@ internal class LetterToPrisonServiceParameterizedTest {
             createdByUserId,
             mergedNumberedBytes,
             LETTER_TO_PRISON,
-            "LETTER_TO_PRISON.pdf"
+            fileName
           )
         }
       }.verifyComplete()

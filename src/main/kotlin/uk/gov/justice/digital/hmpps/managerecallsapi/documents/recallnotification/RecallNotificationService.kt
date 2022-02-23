@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.Data.Companion.documentData
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
@@ -24,7 +25,7 @@ class RecallNotificationService(
   @Autowired private val documentService: DocumentService,
 ) {
 
-  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, details: String?): Mono<DocumentId> {
+  fun generateAndStorePdf(recallId: RecallId, currentUserId: UserId, fileName: FileName, details: String?): Mono<DocumentId> {
     val recallNotificationContext = recallNotificationContextFactory.createContext(recallId, currentUserId)
 
     val documentGeneratorList: Array<() -> Mono<ByteArray>> = listOf(
@@ -41,7 +42,7 @@ class RecallNotificationService(
       .collectList()
       .flatMap { pdfDocumentGenerationService.mergePdfs(it) }
       .map { mergedBytes ->
-        documentService.storeDocument(recallId, currentUserId, mergedBytes, RECALL_NOTIFICATION, "$RECALL_NOTIFICATION.pdf", details)
+        documentService.storeDocument(recallId, currentUserId, mergedBytes, RECALL_NOTIFICATION, fileName, details)
       }
   }
 

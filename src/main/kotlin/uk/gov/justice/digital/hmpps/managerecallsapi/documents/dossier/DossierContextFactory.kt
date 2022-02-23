@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -40,7 +41,8 @@ data class DossierContext(
       recall.prisonerNameOnLicense(),
       recall.bookingNumber!!,
       recall.nomsNumber,
-      recall.licenceConditionsBreached!!
+      recall.licenceConditionsBreached!!,
+      recall.lastThenFirstName()
     )
   }
 
@@ -71,5 +73,9 @@ data class ReasonsForRecallContext(
   val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
   val nomsNumber: NomsNumber,
-  val licenceConditionsBreached: String
-)
+  val licenceConditionsBreached: String,
+  val lastThenFirstName: String
+) {
+  fun fileName(): FileName =
+    FileName("$lastThenFirstName $bookingNumber REASONS FOR RECALL.pdf")
+}

@@ -32,7 +32,7 @@ class NoteService(
     recallRepository.getByRecallId(recallId).let { recall ->
       val fileName = request.fileName
       val fileContent = request.fileContent
-      if ((fileName.isNullOrBlank() && !fileContent.isNullOrBlank()) || (fileContent.isNullOrBlank() && !fileName.isNullOrBlank())) {
+      if ((fileName == null && !fileContent.isNullOrBlank()) || (fileContent.isNullOrBlank() && fileName != null)) {
         throw IllegalArgumentException("Both fileName and fileContent must be supplied as non-blank or neither")
       }
       val documentId = fileName?.let {

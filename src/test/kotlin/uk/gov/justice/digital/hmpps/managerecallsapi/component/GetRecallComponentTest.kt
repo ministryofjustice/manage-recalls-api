@@ -99,7 +99,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.documents.length()").isEqualTo(1)
       .jsonPath("$.documents[0].documentId").isEqualTo(document.id.toString())
       .jsonPath("$.documents[0].category").isEqualTo(document.category.name)
-      .jsonPath("$.documents[0].fileName").isEqualTo(document.fileName)
+      .jsonPath("$.documents[0].fileName").isEqualTo(document.fileName.value)
       .jsonPath("$.documents[0].details").isEqualTo(document.details!!)
       .jsonPath("$.documents[0].createdByUserName").isEqualTo("Bertie Badger")
       .jsonPath("$.documents[0].createdDateTime").value(endsWith("Z"))

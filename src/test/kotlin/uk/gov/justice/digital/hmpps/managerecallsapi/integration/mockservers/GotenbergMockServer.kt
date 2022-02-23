@@ -56,7 +56,7 @@ class GotenbergMockServer : HealthServer(9093, "/health") {
         withMultipartHeader()
         withMultipartFor("index.html", containing(expectedTextInHtml))
         recallImage.forEach { image ->
-          withMultipartFor(image.fileName, equalTo(ClassPathResource(image.path).file.readText()))
+          withMultipartFor(image.fileName.value, equalTo(ClassPathResource(image.path).file.readText()))
         }
       }
         .willReturn(aResponse().withBody(generatedPdfContents))

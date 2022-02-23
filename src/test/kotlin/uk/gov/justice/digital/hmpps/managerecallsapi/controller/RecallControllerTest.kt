@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -78,7 +79,7 @@ class RecallControllerTest {
     croNumber,
     LocalDate.of(1999, 12, 1)
   )
-  private val fileName = "fileName"
+  private val fileName = FileName("fileName")
   private val assessedByUserId = ::UserId.random()
   private val bookedByUserId = ::UserId.random()
   private val assignee = ::UserId.random()
@@ -489,7 +490,7 @@ class RecallControllerTest {
         ::DocumentId.random(),
         recallId,
         PART_A_RECALL_REPORT,
-        "part_a.pdf",
+        FileName("part_a.pdf"),
         1,
         null,
         OffsetDateTime.now(),
@@ -499,14 +500,14 @@ class RecallControllerTest {
       ::DocumentId.random(),
       recallId,
       PART_A_RECALL_REPORT,
-      "part_a.pdf",
+      FileName("part_a.pdf"),
       2,
       null,
       now,
       createdByUserId
     )
-    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, null, now, createdByUserId)
-    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, "mydoc.pdf", null, null, now, createdByUserId)
+    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, FileName("mydoc.pdf"), null, null, now, createdByUserId)
+    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, FileName("mydoc.pdf"), null, null, now, createdByUserId)
     val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, otherDoc1, otherDoc2))
     val userDetails = mockk<UserDetails>()
     val fullName = FullName("Bertie Badger")

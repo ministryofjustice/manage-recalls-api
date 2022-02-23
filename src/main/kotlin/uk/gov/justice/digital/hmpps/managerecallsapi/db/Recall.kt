@@ -301,6 +301,8 @@ data class Recall(
       }
     }
 
+  fun lastThenFirstName() = "$lastName $firstName"
+
   private fun prisonerName() = PersonName(firstName, middleNames, lastName)
 
   fun previousConvictionMainName(): String {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RescindRecordService
@@ -62,7 +63,7 @@ class RescindRecordController(
     val details: String,
     val emailReceivedDate: LocalDate,
     val emailFileContent: String,
-    val emailFileName: String,
+    val emailFileName: FileName,
   )
 
   data class RescindDecisionRequest(
@@ -70,6 +71,6 @@ class RescindRecordController(
     val details: String,
     val emailSentDate: LocalDate,
     val emailFileContent: String,
-    val emailFileName: String,
+    val emailFileName: FileName,
   )
 }

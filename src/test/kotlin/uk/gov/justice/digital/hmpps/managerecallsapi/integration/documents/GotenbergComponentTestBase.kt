@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRe
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -120,14 +121,14 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
   protected fun uploadPartAFor(recall: RecallResponse) {
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(DocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), "PART_A.pdf")
+      UploadDocumentRequest(DocumentCategory.PART_A_RECALL_REPORT, base64EncodedFileContents("/document/part_a.pdf"), FileName("PART_A.pdf"))
     )
   }
 
   protected fun uploadLicenceFor(recall: RecallResponse) {
     authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(DocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), "PART_A.pdf")
+      UploadDocumentRequest(DocumentCategory.LICENCE, base64EncodedFileContents("/document/licence.pdf"), FileName("PART_A.pdf"))
     )
   }
 }

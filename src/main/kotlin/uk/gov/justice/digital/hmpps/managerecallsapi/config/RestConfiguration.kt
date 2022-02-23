@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
@@ -72,30 +73,31 @@ object ManageRecallsApiJackson : ConfigurableJackson(
 )
 
 private fun AutoMappingConfiguration<ObjectMapper>.withCustomMappings() = apply {
-  text(::NomsNumber)
-  text(::CroNumber)
-  text(::FirstName)
-  text(::MiddleNames)
-  text(::LastName)
-  text(::FullName)
-  text(::Email)
-  text(::PhoneNumber)
-  text(::WarrantReferenceNumber)
-  text(::PrisonName)
-  text(::PrisonId)
   text(::CourtId)
   text(::CourtName)
-  text(::PoliceForceId)
-  text(::PoliceForceName)
+  text(::CroNumber)
+  text(::Email)
   text(::FieldName)
   text(::FieldPath)
-  text(StringBiDiMappings.uuid().map(::RecallId, RecallId::value))
-  text(StringBiDiMappings.uuid().map(::MissingDocumentsRecordId, MissingDocumentsRecordId::value))
-  text(StringBiDiMappings.uuid().map(::LastKnownAddressId, LastKnownAddressId::value))
+  text(::FileName)
+  text(::FirstName)
+  text(::FullName)
+  text(::LastName)
+  text(::MiddleNames)
+  text(::NomsNumber)
+  text(::PhoneNumber)
+  text(::PoliceForceId)
+  text(::PoliceForceName)
+  text(::PrisonId)
+  text(::PrisonName)
+  text(::WarrantReferenceNumber)
   text(StringBiDiMappings.uuid().map(::DocumentId, DocumentId::value))
-  text(StringBiDiMappings.uuid().map(::UserId, UserId::value))
-  text(StringBiDiMappings.uuid().map(::RescindRecordId, RescindRecordId::value))
+  text(StringBiDiMappings.uuid().map(::LastKnownAddressId, LastKnownAddressId::value))
+  text(StringBiDiMappings.uuid().map(::MissingDocumentsRecordId, MissingDocumentsRecordId::value))
   text(StringBiDiMappings.uuid().map(::NoteId, NoteId::value))
+  text(StringBiDiMappings.uuid().map(::RecallId, RecallId::value))
+  text(StringBiDiMappings.uuid().map(::RescindRecordId, RescindRecordId::value))
+  text(StringBiDiMappings.uuid().map(::UserId, UserId::value))
 }
 
 inline fun <reified T : Validated<*>> AutoMappingConfiguration<ObjectMapper>.text(

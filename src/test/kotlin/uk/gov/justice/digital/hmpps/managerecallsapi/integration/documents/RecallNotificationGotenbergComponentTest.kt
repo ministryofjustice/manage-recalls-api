@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -44,7 +45,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       currentPrisonId = PrisonId("MWI")
     )
 
-    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
     val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
     // writeBase64EncodedStringToFile("recall-notification.pdf", recallNotification.content)
@@ -75,7 +76,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       HttpStatus.CREATED, LastKnownAddressId::class.java
     )
 
-    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
     val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
     // writeBase64EncodedStringToFile("recall-notification-nic.pdf", recallNotification.content)
@@ -105,7 +106,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       PrisonId("MWI"),
     )
 
-    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION)
+    val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
     val recallNotification = authenticatedClient.getDocument(recall.recallId, recallNotificationId.documentId)
 
     // writeBase64EncodedStringToFile("recall-notification-with-long-recall-summary.pdf", recallNotification.content)

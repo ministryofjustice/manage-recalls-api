@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletEnglish
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletWelsh
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -65,6 +66,7 @@ internal class DossierServiceTest {
     val tableOfContentBytes = randomString().toByteArray()
     val numberedMergedBytes = randomString().toByteArray()
     val documentsToMergeSlot = slot<List<ByteArrayDocumentData>>()
+    val fileName = FileName("DOSSIER.pdf")
 
     every { dossierContext.includeWelsh() } returns includeWelshLeaflet
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
@@ -75,9 +77,9 @@ internal class DossierServiceTest {
     every { tableOfContentsService.generatePdf(dossierContext, any()) } returns Mono.just(tableOfContentBytes) // assert on documents
     every { pdfDocumentGenerationService.mergePdfs(capture(documentsToMergeSlot)) } returns Mono.just(mergedBytes)
     every { pdfDecorator.numberPages(mergedBytes, 1) } returns numberedMergedBytes
-    every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, "DOSSIER.pdf") } returns ::DocumentId.random()
+    every { documentService.storeDocument(recallId, createdByUserId, numberedMergedBytes, DOSSIER, fileName) } returns ::DocumentId.random()
 
-    underTest.generateAndStorePdf(recallId, createdByUserId, null).block()!!
+    underTest.generateAndStorePdf(recallId, createdByUserId, fileName, null).block()!!
 
     val expectedDocumentsToMerge = mutableListOf(
       byteArrayDocumentDataFor(tableOfContentBytes),

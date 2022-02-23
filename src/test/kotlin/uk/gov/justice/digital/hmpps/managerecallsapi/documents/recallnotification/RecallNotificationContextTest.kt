@@ -134,7 +134,8 @@ class RecallNotificationContextTest {
       LocalDate.of(2021, 10, 4),
       lastReleaseDate,
       userSignature,
-      currentUserDetails.userId()
+      currentUserDetails.userId(),
+      "Badger Barrie"
     )
 
     val result = underTest.getRevocationOrderContext()

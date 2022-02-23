@@ -8,6 +8,7 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
@@ -45,7 +46,7 @@ class PdfDocumentGenerationService(@Autowired private val gotenbergApi: Gotenber
     MultipartBodyBuilder().apply {
       addMultipart("index.html", html)
       images.forEach { image ->
-        addMultipart(image.fileName, image.data())
+        addMultipart(image.fileName.value, image.data())
       }
       additionalProperties.forEach {
         this.part(it.key, it.value)
@@ -80,25 +81,25 @@ interface Data {
 }
 
 interface ImageData : Data {
-  val fileName: String
+  val fileName: FileName
 
   companion object {
     fun recallImage(recallImage: RecallImage): ImageData =
       ClassPathImageData(recallImage)
 
     fun signature(base64EncodedSignature: String): ImageData =
-      Base64EncodedImageData("signature.jpg", base64EncodedSignature)
+      Base64EncodedImageData(FileName("signature.jpg"), base64EncodedSignature)
   }
 }
 
 private data class ClassPathImageData(
   val recallImage: RecallImage,
-  override val fileName: String = recallImage.fileName
+  override val fileName: FileName = recallImage.fileName
 ) : ImageData {
   override fun data() = MultipartInputStreamFileResource(ClassPathResource(recallImage.path).inputStream, fileName)
 }
 
-private data class Base64EncodedImageData(override val fileName: String, val base64EncodedContent: String) :
+private data class Base64EncodedImageData(override val fileName: FileName, val base64EncodedContent: String) :
   ImageData {
   override fun data() = MultipartInputStreamFileResource(
     ByteArrayInputStream(base64EncodedContent.toBase64DecodedByteArray()),
@@ -106,14 +107,14 @@ private data class Base64EncodedImageData(override val fileName: String, val bas
   )
 }
 
-data class ByteArrayDocumentData(val byteArray: ByteArray, private val filename: String? = null) : Data {
+data class ByteArrayDocumentData(val byteArray: ByteArray, private val fileName: FileName? = null) : Data {
   override fun data(): InputStreamResource = MultipartInputStreamFileResource(byteArray.inputStream())
 }
 
-internal class MultipartInputStreamFileResource(inputStream: InputStream, private val filename: String? = null) :
+internal class MultipartInputStreamFileResource(inputStream: InputStream, private val filename: FileName? = null) :
   InputStreamResource(inputStream) {
   override fun getFilename(): String? {
-    return filename
+    return filename?.value
   }
 
   @Throws(IOException::class)

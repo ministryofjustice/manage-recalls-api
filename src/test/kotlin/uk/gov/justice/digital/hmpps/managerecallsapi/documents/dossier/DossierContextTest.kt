@@ -57,7 +57,8 @@ class DossierContextTest {
           PersonName(firstName, lastName = lastName).firstAndLastName(),
           bookingNumber,
           nomsNumber,
-          licenceConditionsBreached
+          licenceConditionsBreached,
+          "$lastName $firstName"
         )
       )
     )

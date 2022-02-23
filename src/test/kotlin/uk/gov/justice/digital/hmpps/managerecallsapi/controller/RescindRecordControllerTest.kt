@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordCon
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -35,7 +36,7 @@ class RescindRecordControllerTest {
   @Test
   fun `create record `() {
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val requestDetails = "blah blah"
     val rescindRecordId = ::RescindRecordId.random()
 
@@ -53,7 +54,7 @@ class RescindRecordControllerTest {
   @Test
   fun `decide undecided rescind request`() {
     val documentBytes = "a document".toByteArray()
-    val fileName = "file.msg"
+    val fileName = FileName("file.msg")
     val decisionDetails = "blah blah again"
     val rescindRecordId = ::RescindRecordId.random()
 

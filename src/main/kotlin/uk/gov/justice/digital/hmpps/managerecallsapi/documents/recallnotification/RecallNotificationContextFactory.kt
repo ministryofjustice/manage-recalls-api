@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescr
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
@@ -90,7 +91,8 @@ data class RecallNotificationContext(
       originalRecallNotificationCreatedDateTime.toLocalDate(),
       recall.lastReleaseDate!!,
       currentUserDetails.signature,
-      currentUserDetails.userId()
+      currentUserDetails.userId(),
+      recall.lastThenFirstName()
     )
   }
 
@@ -241,5 +243,8 @@ data class RevocationOrderContext(
   val licenseRevocationDate: LocalDate,
   val lastReleaseDate: LocalDate,
   val currentUserSignature: String,
-  val currentUserId: UserId
-)
+  val currentUserId: UserId,
+  val lastThenFirstName: String,
+) {
+  fun fileName(): FileName = FileName("$lastThenFirstName $bookingNumber REVOCATION ORDER.pdf")
+}

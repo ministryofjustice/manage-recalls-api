@@ -32,6 +32,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
@@ -451,7 +452,7 @@ class Api {
   data class RecallDocument(
     val documentId: DocumentId,
     val category: DocumentCategory,
-    val fileName: String,
+    val fileName: FileName,
     val version: Int?,
     val details: String?,
     val createdDateTime: OffsetDateTime,
@@ -462,7 +463,7 @@ class Api {
     val missingDocumentsRecordId: MissingDocumentsRecordId,
     val categories: List<DocumentCategory>,
     val emailId: DocumentId,
-    val emailFileName: String,
+    val emailFileName: FileName,
     val details: String,
     val version: Int,
     val createdByUserName: FullName,
@@ -475,7 +476,7 @@ class Api {
     val details: String,
     val index: Int,
     val documentId: DocumentId? = null,
-    val fileName: String? = null,
+    val fileName: FileName? = null,
     val createdByUserName: FullName,
     val createdDateTime: OffsetDateTime,
   )
@@ -488,12 +489,12 @@ class Api {
     val lastUpdatedDateTime: OffsetDateTime,
     val requestDetails: String,
     val requestEmailId: DocumentId,
-    val requestEmailFileName: String,
+    val requestEmailFileName: FileName,
     val requestEmailReceivedDate: LocalDate,
     val approved: Boolean? = null,
     val decisionDetails: String? = null,
     val decisionEmailId: DocumentId? = null,
-    val decisionEmailFileName: String? = null,
+    val decisionEmailFileName: FileName? = null,
     val decisionEmailSentDate: LocalDate? = null,
   )
 

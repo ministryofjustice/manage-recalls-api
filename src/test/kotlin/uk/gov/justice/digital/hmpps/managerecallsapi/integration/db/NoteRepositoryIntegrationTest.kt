@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.NOTE_DO
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
@@ -55,7 +56,7 @@ class NoteRepositoryIntegrationTest(
         documentId,
         recallId,
         NOTE_DOCUMENT,
-        randomString(),
+        FileName(randomString()),
         null,
         null,
         OffsetDateTime.now(),

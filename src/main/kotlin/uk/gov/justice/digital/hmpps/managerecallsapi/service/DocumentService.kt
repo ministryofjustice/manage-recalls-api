@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
@@ -44,7 +45,7 @@ class DocumentService(
     currentUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
-    fileName: String,
+    fileName: FileName,
     details: String? = null
   ): Result<DocumentId, VirusScanResult> =
     forExistingRecall(recallId) {
@@ -63,7 +64,7 @@ class DocumentService(
     currentUserId: UserId,
     documentBytes: ByteArray,
     documentCategory: DocumentCategory,
-    fileName: String,
+    fileName: FileName,
     details: String? = null
   ): DocumentId =
     forExistingRecall(recallId) {
@@ -75,7 +76,7 @@ class DocumentService(
     currentUserId: UserId,
     category: DocumentCategory,
     documentBytes: ByteArray,
-    fileName: String,
+    fileName: FileName,
     details: String? = null
   ): DocumentId {
     val version = if (category.versioned) {

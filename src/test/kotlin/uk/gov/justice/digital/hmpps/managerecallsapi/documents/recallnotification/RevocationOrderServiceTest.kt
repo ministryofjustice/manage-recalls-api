@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenera
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.RevocationOrderLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -41,6 +42,7 @@ internal class RevocationOrderServiceTest {
 
   private val recallId = ::RecallId.random()
   private val expectedBytes = randomString().toByteArray()
+  private val fileName = FileName("REVOCATION_ORDER.pdf")
 
   @Test
   fun `getOrGeneratePdf generates a revocation order for a recall if one does not exist`() {
@@ -56,10 +58,14 @@ internal class RevocationOrderServiceTest {
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
         userSignature,
-        createdByUserId
+        createdByUserId,
+        "Badger Bertie"
       )
 
+    val fileName = FileName("Badger Bertie bookNumber REVOCATION ORDER.pdf")
+
     val generatedHtml = "Some html, honest"
+
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REVOCATION_ORDER) } returns null
     every { revocationOrderGenerator.generateHtml(revocationOrderContext) } returns generatedHtml
     every {
@@ -70,7 +76,7 @@ internal class RevocationOrderServiceTest {
       )
     } returns Mono.just(expectedBytes)
     every {
-      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "REVOCATION_ORDER.pdf")
+      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, fileName)
     } returns ::DocumentId.random()
 
     val result = underTest.getOrGeneratePdf(revocationOrderContext)
@@ -85,7 +91,7 @@ internal class RevocationOrderServiceTest {
             createdByUserId,
             expectedBytes,
             REVOCATION_ORDER,
-            "$REVOCATION_ORDER.pdf"
+            fileName
           )
         }
       }.verifyComplete()
@@ -105,7 +111,8 @@ internal class RevocationOrderServiceTest {
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
         userSignature,
-        createdByUserId
+        createdByUserId,
+        "Badger Bertie"
       )
 
     val generatedHtml = "Some html, honest"
@@ -123,10 +130,10 @@ internal class RevocationOrderServiceTest {
     } returns Mono.just(expectedBytes)
     val documentId = ::DocumentId.random()
     every {
-      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, "$REVOCATION_ORDER.pdf", details)
+      documentService.storeDocument(recallId, createdByUserId, expectedBytes, REVOCATION_ORDER, fileName, details)
     } returns documentId
 
-    val result = underTest.generateAndStorePdf(recallId, createdByUserId, details)
+    val result = underTest.generateAndStorePdf(recallId, createdByUserId, fileName, details)
 
     StepVerifier
       .create(result)
@@ -138,7 +145,7 @@ internal class RevocationOrderServiceTest {
             createdByUserId,
             expectedBytes,
             REVOCATION_ORDER,
-            "REVOCATION_ORDER.pdf",
+            fileName,
             details
           )
         }
@@ -161,7 +168,8 @@ internal class RevocationOrderServiceTest {
         LocalDate.of(2017, 8, 29),
         LocalDate.of(2020, 9, 1),
         userSignature,
-        createdByUserId
+        createdByUserId,
+        "Badger Bertie"
       )
 
     every { documentService.getLatestVersionedDocumentContentWithCategoryIfExists(recallId, REVOCATION_ORDER) } returns expectedBytes

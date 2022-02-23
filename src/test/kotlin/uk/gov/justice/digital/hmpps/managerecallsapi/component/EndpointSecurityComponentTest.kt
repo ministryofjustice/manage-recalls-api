@@ -27,6 +27,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64Str
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -54,7 +55,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   )
   private val fileBytes = "content".toByteArray()
   private val category = DocumentCategory.values().random()
-  private val uploadDocumentRequest = UploadDocumentRequest(category, fileBytes.encodeToBase64String(), "part_a.pdf", details)
+  private val uploadDocumentRequest = UploadDocumentRequest(category, fileBytes.encodeToBase64String(), FileName("part_a.pdf"), details)
   private val updateRecallRequest = UpdateRecallRequest()
   private val recallSearchRequest = RecallSearchRequest(nomsNumber)
   private val apiSearchRequest = SearchRequest(nomsNumber)
@@ -67,13 +68,13 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
     CaseworkerBand.FOUR_PLUS
   )
   private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.values().random())
-  private val generateDocumentRequest = GenerateDocumentRequest(DocumentCategory.RECALL_NOTIFICATION, "some more detail")
-  private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", "email.msg")
+  private val generateDocumentRequest = GenerateDocumentRequest(DocumentCategory.RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"), "some more detail")
+  private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", FileName("email.msg"))
   private val createLastKnownAddressRequest = CreateLastKnownAddressRequest(::RecallId.random(), "address line 1", "address line 2", "some town", "some postcode", AddressSource.LOOKUP)
-  private val rescindRequestRequest = RescindRequestRequest("details", LocalDate.now(), "some content", "filename")
-  private val rescindDecisionRequest = RescindDecisionRequest(true, "details", LocalDate.now(), "some content", "filename")
+  private val rescindRequestRequest = RescindRequestRequest("details", LocalDate.now(), "some content", FileName("filename"))
+  private val rescindDecisionRequest = RescindDecisionRequest(true, "details", LocalDate.now(), "some content", FileName("filename"))
   private val returnedToCustodyRequest = ReturnedToCustodyRequest(OffsetDateTime.now().minusDays(1), OffsetDateTime.now().minusMinutes(1))
-  private val createNoteRequest = CreateNoteRequest("subject", "details", "filename", "some content")
+  private val createNoteRequest = CreateNoteRequest("subject", "details", FileName("filename"), "some content")
   private val stopRecallRequest = StopRecallRequest(StopReason.values().random())
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)

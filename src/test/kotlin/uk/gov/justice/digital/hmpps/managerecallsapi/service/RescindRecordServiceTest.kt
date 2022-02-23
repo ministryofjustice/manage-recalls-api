@@ -24,6 +24,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecordRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -52,7 +53,7 @@ class RescindRecordServiceTest {
   fun `store first record as version 1`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val emailId = ::DocumentId.random()
     val savedRecordSlot = slot<RescindRecord>()
     val mockRecord = mockk<RescindRecord>()
@@ -91,7 +92,7 @@ class RescindRecordServiceTest {
   fun `approve undecided rescind request`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "file.msg"
+    val fileName = FileName("file.msg")
     val decisionDetails = "blah blah again"
     val rescindRecordId = ::RescindRecordId.random()
     val emailId = ::DocumentId.random()
@@ -132,7 +133,7 @@ class RescindRecordServiceTest {
   fun `reject undecided rescind request doesnt update stop status`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "file.msg"
+    val fileName = FileName("file.msg")
     val decisionDetails = "blah blah again"
     val rescindRecordId = ::RescindRecordId.random()
     val emailId = ::DocumentId.random()
@@ -174,7 +175,7 @@ class RescindRecordServiceTest {
   fun `403 error thrown when requesting a new rescind if one is already in progress`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val mockRecord = mockk<RescindRecord>()
     val rescindRecordId = ::RescindRecordId.random()
     val details = "blah blah"
@@ -203,7 +204,7 @@ class RescindRecordServiceTest {
     val recall = mockk<Recall>()
     val mockRecord = mockk<RescindRecord>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val decisionDetails = "blah blah again"
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -223,7 +224,7 @@ class RescindRecordServiceTest {
   @Test
   fun `NotFoundException thrown if recall does not exist on rescind request creation`() {
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val details = "blah blah again"
 
     every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException(recallId)
@@ -243,7 +244,7 @@ class RescindRecordServiceTest {
   @Test
   fun `NotFoundException thrown if recall does not exist on rescind decision`() {
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val decisionDetails = "blah blah again"
 
     every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException(recallId)
@@ -263,7 +264,7 @@ class RescindRecordServiceTest {
   fun `store record as version 2 if recall already has a decided record with version 1`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val emailId = ::DocumentId.random()
     val savedRescindRecord = slot<RescindRecord>()
     val rescindRecordId = ::RescindRecordId.random()
@@ -303,7 +304,7 @@ class RescindRecordServiceTest {
   fun `cant update a record which has already been decided`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
-    val fileName = "email.msg"
+    val fileName = FileName("email.msg")
     val existingRecord = mockk<RescindRecord>()
     val rescindRecordId = ::RescindRecordId.random()
     val decisionDetails = "blah blah again"

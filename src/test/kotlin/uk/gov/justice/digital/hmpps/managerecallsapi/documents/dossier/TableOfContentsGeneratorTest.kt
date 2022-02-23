@@ -62,7 +62,7 @@ class TableOfContentsGeneratorTest {
     assertThat(
       contextSlot.captured,
       allOf(
-        has("logoFileName", { it.variableAsString("logoFileName") }, equalTo(HmppsLogo.fileName)),
+        has("logoFileName", { it.variableAsString("logoFileName") }, equalTo(HmppsLogo.fileName.value)),
         has(
           "recallLengthAndSentenceHeading",
           { it.variableAsString("recallLengthAndSentenceHeading") },
