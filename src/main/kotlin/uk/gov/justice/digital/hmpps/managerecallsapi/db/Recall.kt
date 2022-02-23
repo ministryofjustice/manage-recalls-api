@@ -334,7 +334,11 @@ data class Recall(
         }
       } else {
         if (returnedToCustody != null) {
-          Status.AWAITING_DOSSIER_CREATION
+          if (assignee != null) {
+            Status.DOSSIER_IN_PROGRESS
+          } else {
+            Status.AWAITING_DOSSIER_CREATION
+          }
         } else if (warrantReferenceNumber != null) {
           Status.AWAITING_RETURN_TO_CUSTODY
         } else {

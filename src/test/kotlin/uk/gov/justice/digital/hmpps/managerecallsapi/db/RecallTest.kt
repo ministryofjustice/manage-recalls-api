@@ -175,6 +175,19 @@ class RecallTest {
   }
 
   @Test
+  fun `NOT In Custody Recall with bookedByUserId, assessedByUserId, returnedToCustody & assignee set returns status DOSSIER_IN_PROGRESS`() {
+    val recall = recall.copy(
+      inCustodyAtAssessment = false,
+      bookedByUserId = ::UserId.random().value,
+      assessedByUserId = ::UserId.random().value,
+      assignee = ::UserId.random().value,
+      returnedToCustody = ReturnedToCustodyRecord(OffsetDateTime.now(), OffsetDateTime.now(), ::UserId.random(), OffsetDateTime.now()),
+    )
+
+    assertThat(recall.status(), equalTo(Status.DOSSIER_IN_PROGRESS))
+  }
+
+  @Test
   fun `Recall with dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
     val recall = recall.copy(
       dossierCreatedByUserId = ::UserId.random().value
