@@ -46,12 +46,12 @@ class DocumentComponentTest : ComponentTestBase() {
     CroNumber("1234/56A"),
     LocalDate.now()
   )
-  private val versionWithDetailsDocumentCategory = PART_A_RECALL_REPORT
+  private val versionedWithDetailsDocumentCategory = PART_A_RECALL_REPORT
   private val documentContents = "Expected Generated PDF".toByteArray()
   private val base64EncodedDocumentContents = documentContents.encodeToBase64String()
   private val fileName = FileName("fileName")
   private val details = "Document details"
-  private val addVersionedDocumentRequest = UploadDocumentRequest(versionWithDetailsDocumentCategory, base64EncodedDocumentContents, fileName, null)
+  private val addVersionedDocumentRequest = UploadDocumentRequest(versionedWithDetailsDocumentCategory, base64EncodedDocumentContents, fileName, null)
 
   @Test
   fun `add a document uploads the file to S3 and returns the documentId`() {
@@ -94,18 +94,18 @@ class DocumentComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `can upload 2 versions of version without details document with null details`() {
+  fun `can upload 2 versions of versioned without details document with null details`() {
     expectNoVirusesWillBeFound()
 
-    val addVersionWithoutDetailsDocumentRequest = UploadDocumentRequest(MISSING_DOCUMENTS_EMAIL, base64EncodedDocumentContents, fileName, null)
+    val addVersionedWithoutDetailsDocumentRequest = UploadDocumentRequest(MISSING_DOCUMENTS_EMAIL, base64EncodedDocumentContents, fileName, null)
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val response1 = authenticatedClient.uploadDocument(recall.recallId, addVersionWithoutDetailsDocumentRequest)
+    val response1 = authenticatedClient.uploadDocument(recall.recallId, addVersionedWithoutDetailsDocumentRequest)
 
     assertThat(response1.documentId, present())
 
-    val response2 = authenticatedClient.uploadDocument(recall.recallId, addVersionWithoutDetailsDocumentRequest)
+    val response2 = authenticatedClient.uploadDocument(recall.recallId, addVersionedWithoutDetailsDocumentRequest)
     assertThat(response2.documentId, present())
     assertThat(response1.documentId, !equalTo(response2.documentId))
   }
@@ -127,7 +127,7 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         GetDocumentResponse(
           secondDocumentId,
-          versionWithDetailsDocumentCategory,
+          versionedWithDetailsDocumentCategory,
           base64EncodedDocumentContents,
           fileName,
           2,
@@ -148,7 +148,7 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         GetDocumentResponse(
           thirdDocumentId,
-          versionWithDetailsDocumentCategory,
+          versionedWithDetailsDocumentCategory,
           base64EncodedDocumentContents,
           fileName,
           3,
@@ -192,7 +192,7 @@ class DocumentComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val document = authenticatedClient.uploadDocument(
       recall.recallId,
-      UploadDocumentRequest(versionWithDetailsDocumentCategory, base64EncodedDocumentContents, fileName, details)
+      UploadDocumentRequest(versionedWithDetailsDocumentCategory, base64EncodedDocumentContents, fileName, details)
     )
 
     val response = authenticatedClient.getDocument(recall.recallId, document.documentId)
@@ -202,7 +202,7 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         GetDocumentResponse(
           document.documentId,
-          versionWithDetailsDocumentCategory,
+          versionedWithDetailsDocumentCategory,
           base64EncodedDocumentContents,
           fileName,
           1,
@@ -381,7 +381,7 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         GetDocumentResponse(
           secondDocumentId,
-          versionWithDetailsDocumentCategory,
+          versionedWithDetailsDocumentCategory,
           base64EncodedDocumentContents,
           fileName,
           2,
@@ -393,7 +393,7 @@ class DocumentComponentTest : ComponentTestBase() {
     )
 
     authenticatedClient.deleteDocument(recall.recallId, secondDocumentId)
-    val docs = authenticatedClient.getRecallDocuments(recall.recallId, versionWithDetailsDocumentCategory)
+    val docs = authenticatedClient.getRecallDocuments(recall.recallId, versionedWithDetailsDocumentCategory)
     assertThat(docs.size, equalTo(1))
 
     val documents = authenticatedClient.getRecall(recall.recallId).documents
@@ -405,7 +405,7 @@ class DocumentComponentTest : ComponentTestBase() {
       equalTo(
         RecallDocument(
           firstDocumentId,
-          versionWithDetailsDocumentCategory,
+          versionedWithDetailsDocumentCategory,
           fileName,
           1,
           null,

@@ -54,7 +54,7 @@ class DocumentTest {
         DocumentCategory.NSY_REMOVE_WARRANT_EMAIL,
         FileName("file.txt"),
         null,
-        null,
+        "Some details",
         OffsetDateTime.now(),
         ::UserId.random()
       )
@@ -62,7 +62,7 @@ class DocumentTest {
   }
 
   @Test
-  fun `document throws exception with versioned without details category, version greater than 2 and null details `() {
+  fun `document throws exception with versioned without details category, version greater than 1 and null details `() {
     assertThrows<MissingDetailsException> {
       Document(
         ::DocumentId.random(),
@@ -78,7 +78,7 @@ class DocumentTest {
   }
 
   @Test
-  fun `document throws exception with versioned without details category, version greater than 2 and blank details `() {
+  fun `document throws exception with versioned without details category, version greater than 1 and blank details `() {
     assertThrows<MissingDetailsException> {
       Document(
         ::DocumentId.random(),
@@ -94,19 +94,17 @@ class DocumentTest {
   }
 
   @Test
-  fun `document accepts versioned without details category null details and version greater than 1`() {
-    assertThrows<WrongDocumentTypeException> {
-      Document(
-        ::DocumentId.random(),
-        ::RecallId.random(),
-        DocumentCategory.NSY_REMOVE_WARRANT_EMAIL,
-        FileName("file.txt"),
-        null,
-        null,
-        OffsetDateTime.now(),
-        ::UserId.random()
-      )
-    }
+  fun `document accepts versioned without details category with null details and version greater than 1`() {
+    Document(
+      ::DocumentId.random(),
+      ::RecallId.random(),
+      DocumentCategory.NSY_REMOVE_WARRANT_EMAIL,
+      FileName("file.txt"),
+      2,
+      null,
+      OffsetDateTime.now(),
+      ::UserId.random()
+    )
   }
 
   @Test

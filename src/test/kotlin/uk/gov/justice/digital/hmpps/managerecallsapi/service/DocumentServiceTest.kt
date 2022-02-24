@@ -78,7 +78,7 @@ internal class DocumentServiceTest {
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1)
     )
-  private val documentCategory = PART_A_RECALL_REPORT
+  private val versionedWithDetailsDocumentCategory = PART_A_RECALL_REPORT
   private val fileName = FileName(randomString())
 
   // TODO - parameterise tests for versioned and unversioned category
@@ -95,7 +95,7 @@ internal class DocumentServiceTest {
     every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } just runs
     every { documentRepository.save(capture(savedDocumentSlot)) } returns document
 
-    val result = underTest.scanAndStoreDocument(recallId, createdByUserId, documentBytes, documentCategory, fileName)
+    val result = underTest.scanAndStoreDocument(recallId, createdByUserId, documentBytes, versionedWithDetailsDocumentCategory, fileName)
 
     assertThat(result.get(), equalTo(uploadedToS3DocumentIdSlot.captured))
     assertThat(
@@ -104,7 +104,7 @@ internal class DocumentServiceTest {
         Document(
           uploadedToS3DocumentIdSlot.captured,
           recallId,
-          documentCategory,
+          versionedWithDetailsDocumentCategory,
           fileName,
           1,
           null,
@@ -123,7 +123,7 @@ internal class DocumentServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every { virusScanner.scan(documentBytes) } returns expectedVirusScanResult
 
-    val result = underTest.scanAndStoreDocument(recallId, createdByUserId, documentBytes, documentCategory, fileName)
+    val result = underTest.scanAndStoreDocument(recallId, createdByUserId, documentBytes, versionedWithDetailsDocumentCategory, fileName)
 
     assertThat(result, equalTo(Failure(expectedVirusScanResult)))
 
@@ -141,7 +141,7 @@ internal class DocumentServiceTest {
     val existingDocument = Document(
       existingDocumentId,
       recallId,
-      documentCategory,
+      versionedWithDetailsDocumentCategory,
       fileName,
       1,
       null,
@@ -157,7 +157,7 @@ internal class DocumentServiceTest {
     every {
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(
         recallId,
-        documentCategory
+        versionedWithDetailsDocumentCategory
       )
     } returns existingDocument
     every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } just runs
@@ -165,7 +165,7 @@ internal class DocumentServiceTest {
 
     val details = "Some details"
     val actualDocumentId =
-      underTest.storeDocument(recallId, createdByUserId, documentBytes, documentCategory, newFileName, details)
+      underTest.storeDocument(recallId, createdByUserId, documentBytes, versionedWithDetailsDocumentCategory, newFileName, details)
 
     assertThat(uploadedToS3DocumentIdSlot.captured, !equalTo(existingDocumentId))
     assertThat(actualDocumentId, !equalTo(existingDocumentId))
@@ -175,7 +175,7 @@ internal class DocumentServiceTest {
         Document(
           uploadedToS3DocumentIdSlot.captured,
           recallId,
-          documentCategory,
+          versionedWithDetailsDocumentCategory,
           newFileName,
           2,
           details,
@@ -469,13 +469,13 @@ internal class DocumentServiceTest {
     val uploadedToS3DocumentIdSlot = slot<DocumentId>()
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, documentCategory, fileName, 1, null, now, createdByUserId)
+    val document = Document(documentId, recallId, versionedWithDetailsDocumentCategory, fileName, 1, null, now, createdByUserId)
 
     every { recallRepository.getByRecallId(recallId) } returns aRecallWithoutDocuments
     every {
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(
         recallId,
-        documentCategory
+        versionedWithDetailsDocumentCategory
       )
     } returns null
     every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } throws S3Exception.builder()
@@ -484,7 +484,7 @@ internal class DocumentServiceTest {
     every { documentRepository.deleteByDocumentId(any()) } just Runs
 
     assertThrows<S3Exception> {
-      underTest.storeDocument(recallId, createdByUserId, documentBytes, documentCategory, fileName)
+      underTest.storeDocument(recallId, createdByUserId, documentBytes, versionedWithDetailsDocumentCategory, fileName)
     }
 
     verify { documentRepository.deleteByDocumentId(uploadedToS3DocumentIdSlot.captured) }
@@ -495,11 +495,11 @@ internal class DocumentServiceTest {
     val recallId = ::RecallId.random()
     val documentId = ::DocumentId.random()
     val now = OffsetDateTime.now()
-    val document = Document(documentId, recallId, documentCategory, fileName, 1, null, now, createdByUserId)
+    val document = Document(documentId, recallId, versionedWithDetailsDocumentCategory, fileName, 1, null, now, createdByUserId)
 
-    every { documentRepository.getAllByRecallIdAndCategory(recallId, documentCategory) } returns listOf(document)
+    every { documentRepository.getAllByRecallIdAndCategory(recallId, versionedWithDetailsDocumentCategory) } returns listOf(document)
 
-    val result = underTest.getAllDocumentsByCategory(recallId, documentCategory)
+    val result = underTest.getAllDocumentsByCategory(recallId, versionedWithDetailsDocumentCategory)
 
     assertThat(result, equalTo(listOf(document)))
   }
