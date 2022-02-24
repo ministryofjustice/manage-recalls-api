@@ -163,8 +163,9 @@ internal class DocumentServiceTest {
     every { s3Service.uploadFile(capture(uploadedToS3DocumentIdSlot), documentBytes) } just runs
     every { documentRepository.save(capture(savedDocumentSlot)) } returns document
 
+    val details = "Some details"
     val actualDocumentId =
-      underTest.storeDocument(recallId, createdByUserId, documentBytes, documentCategory, newFileName)
+      underTest.storeDocument(recallId, createdByUserId, documentBytes, documentCategory, newFileName, details)
 
     assertThat(uploadedToS3DocumentIdSlot.captured, !equalTo(existingDocumentId))
     assertThat(actualDocumentId, !equalTo(existingDocumentId))
@@ -177,7 +178,7 @@ internal class DocumentServiceTest {
           documentCategory,
           newFileName,
           2,
-          null,
+          details,
           OffsetDateTime.now(fixedClock),
           createdByUserId
         )

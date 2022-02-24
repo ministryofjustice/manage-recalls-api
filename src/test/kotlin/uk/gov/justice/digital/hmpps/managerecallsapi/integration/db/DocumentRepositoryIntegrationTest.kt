@@ -213,20 +213,6 @@ class DocumentRepositoryIntegrationTest(
 
   @Test
   @Transactional
-  fun `cannot save and flush version 2 of a versioned document with blank details for an existing recall throws DataIntegrityViolationException`() {
-    recallRepository.save(recall, currentUserId)
-
-    val id = ::DocumentId.random()
-    val documentWithBlankDetails = versionedDocument(id, recallId, versionedCategory, 2, " ")
-
-    val thrown = assertThrows<DataIntegrityViolationException> {
-      documentRepository.saveAndFlush(documentWithBlankDetails)
-    }
-    assertThat(thrown.message!!, startsWith("could not execute statement"))
-  }
-
-  @Test
-  @Transactional
   fun `cannot save and flush an un-versioned document with non-null version for an existing recall throws DataIntegrityViolationException`() {
     recallRepository.save(recall, currentUserId)
 

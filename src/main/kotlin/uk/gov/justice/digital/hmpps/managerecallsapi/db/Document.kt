@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.MissingDetailsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -57,7 +58,8 @@ data class Document(
     this(
       id.value, recallId.value, category, fileName, version, details, createdDateTime, createdByUserId.value
     ) {
-      if ((category.versioned && version == null) || (!category.versioned && version != null)) throw WrongDocumentTypeException(category)
+      if ((category.versioned() && version == null) || (!category.versioned() && version != null)) throw WrongDocumentTypeException(category)
+      if (category.versioned == Versioned.YES_WITH_DETAILS && version != null && version > 1 && details.isNullOrBlank()) throw MissingDetailsException(category, version)
     }
 
   fun id() = DocumentId(id)

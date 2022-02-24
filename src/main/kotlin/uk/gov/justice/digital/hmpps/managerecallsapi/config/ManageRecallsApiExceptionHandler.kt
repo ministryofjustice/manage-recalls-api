@@ -114,6 +114,7 @@ class ClientTimeoutException(clientName: String, errorType: String) : ManageReca
 class ClientException(clientName: String, exception: Exception) : ManageRecallsException("$clientName: [${exception.message}]", exception)
 
 class WrongDocumentTypeException(val category: DocumentCategory) : ManageRecallsException(category.name)
+class MissingDetailsException(val category: DocumentCategory, val version: Int) : ManageRecallsException("$category version: [$version]")
 
 class InvalidPrisonOrCourtException(validAndActiveCurrentPrison: Boolean, validLastReleasePrison: Boolean, validSentencingCourt: Boolean) :
   ManageRecallsException("validAndActiveCurrentPrison=[$validAndActiveCurrentPrison], validLastReleasePrison=[$validLastReleasePrison], validSentencingCourt=[$validSentencingCourt]")

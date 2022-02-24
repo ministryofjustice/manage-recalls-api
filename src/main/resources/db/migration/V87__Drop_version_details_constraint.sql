@@ -1,0 +1,1 @@
+ALTER TABLE document DROP CONSTRAINT details_not_blank_constraint_for_version_gt_1;

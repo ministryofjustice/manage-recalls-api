@@ -502,7 +502,7 @@ class RecallControllerTest {
       PART_A_RECALL_REPORT,
       FileName("part_a.pdf"),
       2,
-      null,
+      details,
       now,
       createdByUserId
     )
@@ -523,7 +523,7 @@ class RecallControllerTest {
       equalTo(
         recallResponse.copy(
           documents = listOf(
-            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, null, now, fullName),
+            Api.RecallDocument(partADoc2.id(), partADoc2.category, partADoc2.fileName, 2, details, now, fullName),
             Api.RecallDocument(otherDoc1.id(), otherDoc1.category, otherDoc1.fileName, null, null, now, fullName),
             Api.RecallDocument(otherDoc2.id(), otherDoc2.category, otherDoc2.fileName, null, null, now, fullName),
           )
