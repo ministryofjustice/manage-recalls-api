@@ -1,29 +1,46 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
-enum class DocumentCategory(val uploaded: Boolean, val versioned: Boolean) {
-  CHARGE_SHEET(true, true),
-  CPS_PAPERS(true, true),
-  DOSSIER(false, true),
-  DOSSIER_EMAIL(true, true),
-  EXCLUSION_ZONE_MAP(true, true),
-  LETTER_TO_PRISON(false, true),
-  LICENCE(true, true),
-  MISSING_DOCUMENTS_EMAIL(true, true),
-  NSY_REMOVE_WARRANT_EMAIL(true, true),
-  OASYS_RISK_ASSESSMENT(true, true),
-  PART_A_RECALL_REPORT(true, true),
-  POLICE_REPORT(true, true),
-  PREVIOUS_CONVICTIONS_SHEET(true, true),
-  PRE_SENTENCING_REPORT(true, true),
-  REASONS_FOR_RECALL(false, true),
-  RECALL_NOTIFICATION(false, true),
-  RECALL_NOTIFICATION_EMAIL(true, true),
-  RECALL_REQUEST_EMAIL(true, true),
-  REVOCATION_ORDER(false, true),
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Versioned.NO
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Versioned.YES_WITHOUT_DETAILS
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.Versioned.YES_WITH_DETAILS
+
+enum class DocumentCategory(val uploaded: Boolean, val versioned: Versioned) {
+  // VERSIONED WITH DETAILS
+  CHARGE_SHEET(true, YES_WITH_DETAILS),
+  CPS_PAPERS(true, YES_WITH_DETAILS),
+  DOSSIER(false, YES_WITH_DETAILS),
+  EXCLUSION_ZONE_MAP(true, YES_WITH_DETAILS),
+  LETTER_TO_PRISON(false, YES_WITH_DETAILS),
+  LICENCE(true, YES_WITH_DETAILS),
+  OASYS_RISK_ASSESSMENT(true, YES_WITH_DETAILS),
+  PART_A_RECALL_REPORT(true, YES_WITH_DETAILS),
+  POLICE_REPORT(true, YES_WITH_DETAILS),
+  PREVIOUS_CONVICTIONS_SHEET(true, YES_WITH_DETAILS),
+  PRE_SENTENCING_REPORT(true, YES_WITH_DETAILS),
+  REASONS_FOR_RECALL(false, YES_WITH_DETAILS),
+  RECALL_NOTIFICATION(false, YES_WITH_DETAILS),
+  REVOCATION_ORDER(false, YES_WITH_DETAILS),
+
+  // VERSIONED WITHOUT DETAILS - linked to recall
+  DOSSIER_EMAIL(true, YES_WITHOUT_DETAILS),
+  MISSING_DOCUMENTS_EMAIL(true, YES_WITHOUT_DETAILS), // linked to missing doc record (make UNVERSIONED)
+  NSY_REMOVE_WARRANT_EMAIL(true, YES_WITHOUT_DETAILS),
+  RECALL_NOTIFICATION_EMAIL(true, YES_WITHOUT_DETAILS),
+  RECALL_REQUEST_EMAIL(true, YES_WITHOUT_DETAILS),
+
   // UNVERSIONED document categories
-  RESCIND_REQUEST_EMAIL(true, false),
-  RESCIND_DECISION_EMAIL(true, false),
-  NOTE_DOCUMENT(true, false),
-  OTHER(true, false),
-  UNCATEGORISED(true, false)
+  RESCIND_REQUEST_EMAIL(true, NO), // linked to rescind record
+  RESCIND_DECISION_EMAIL(true, NO), // linked to rescind record
+  NOTE_DOCUMENT(true, NO), // linked to note record
+  OTHER(true, NO),
+  UNCATEGORISED(true, NO);
+
+  fun versioned() =
+    versioned == YES_WITH_DETAILS || versioned == YES_WITHOUT_DETAILS
+}
+
+enum class Versioned {
+  NO,
+  YES_WITH_DETAILS, // These categories require `details` for every version except version 1
+  YES_WITHOUT_DETAILS // These categories do not require `details` for any version
 }

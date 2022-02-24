@@ -250,7 +250,7 @@ class RecallController(
   )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
-    val partitionedDocs = documents.partition { it.category.versioned }
+    val partitionedDocs = documents.partition { it.category.versioned() }
     val versionedDocs = partitionedDocs.first
     val unversionedDocs = partitionedDocs.second
     val latestDocuments =

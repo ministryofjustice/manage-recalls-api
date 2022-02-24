@@ -57,7 +57,7 @@ class DocumentRepository(
   override fun deleteByDocumentId(documentId: DocumentId) = deleteById(documentId.value)
 
   fun findLatestVersionedDocumentByRecallIdAndCategory(recallId: RecallId, category: DocumentCategory): Document? {
-    if (!category.versioned) {
+    if (!category.versioned()) {
       throw WrongDocumentTypeException(category)
     }
     return findFirstByRecallIdAndCategoryOrderByVersionDesc(recallId.value, category)

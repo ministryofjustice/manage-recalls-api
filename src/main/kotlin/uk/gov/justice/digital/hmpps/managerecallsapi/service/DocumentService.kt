@@ -79,7 +79,7 @@ class DocumentService(
     fileName: FileName,
     details: String? = null
   ): DocumentId {
-    val version = if (category.versioned) {
+    val version = if (category.versioned()) {
       (documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, category)?.version ?: 0) + 1
     } else {
       null
@@ -161,7 +161,7 @@ class DocumentService(
       }
       documentRepository.save(
         existingDocument
-          .copy(category = newCategory, version = if (newCategory.versioned) 1 else null)
+          .copy(category = newCategory, version = if (newCategory.versioned()) 1 else null)
       )
     }
   }
