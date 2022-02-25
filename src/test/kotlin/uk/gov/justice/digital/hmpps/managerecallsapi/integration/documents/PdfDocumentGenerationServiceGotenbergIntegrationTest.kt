@@ -12,10 +12,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.isPdfWithNumberOfP
 
 class PdfDocumentGenerationServiceGotenbergIntegrationTest {
 
-  private val gotenbergApi = GotenbergApi(
-    WebClient.builder().build(),
-    System.getenv("GOTENBERG_ENDPOINT_URL") ?: "http://localhost:9093"
-  )
+  private val gotenbergEndpointUrl = System.getenv("GOTENBERG_ENDPOINT_URL") ?: "http://localhost:9093"
+
+  private val gotenbergApi = GotenbergApi(WebClient.builder().baseUrl(gotenbergEndpointUrl).build())
+
   private val pdfDocumentGenerationService = PdfDocumentGenerationService(gotenbergApi)
 
   @Test

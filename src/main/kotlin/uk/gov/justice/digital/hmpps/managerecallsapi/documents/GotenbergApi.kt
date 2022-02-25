@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.documents
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA
 import org.springframework.stereotype.Component
@@ -12,8 +11,7 @@ import java.time.Duration.ofSeconds
 
 @Component
 class GotenbergApi(
-  private val webClient: WebClient,
-  @Value("\${gotenberg.endpoint.url}") private val gotenbergEndpointUrl: String
+  val gotenbergWebClient: WebClient,
 ) {
   fun merge(mergeRequest: MultiValueMap<String, HttpEntity<*>>): Mono<ByteArray> =
     gotenbergResponse("/forms/pdfengines/merge", mergeRequest)
@@ -24,9 +22,9 @@ class GotenbergApi(
   private fun gotenbergResponse(
     path: String,
     documentBody: MultiValueMap<String, HttpEntity<*>>
-  ) = webClient
+  ) = gotenbergWebClient
     .post()
-    .uri("$gotenbergEndpointUrl$path")
+    .uri(path)
     .httpRequest { it.getNativeRequest<HttpClientRequest>().responseTimeout(ofSeconds(10)) }
     .contentType(MULTIPART_FORM_DATA)
     .bodyValue(documentBody)

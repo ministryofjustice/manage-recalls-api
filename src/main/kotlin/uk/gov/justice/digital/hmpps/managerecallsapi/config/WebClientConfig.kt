@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.config
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -12,10 +14,12 @@ import reactor.netty.http.client.HttpClient
 import java.time.Duration.ofSeconds
 
 @Configuration
-class WebClientConfig {
+class WebClientConfig(
+  @Autowired private val metricsCustomizer: MetricsWebClientCustomizer
+) {
 
-  @Bean
-  fun webClient(): WebClient =
+  @Bean("webClientNoAuthNoMetrics") // health check only, not logging metrics
+  fun webClientNoAuthNoMetrics(): WebClient =
     WebClient.builder()
       .codecs { it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024) }
       .clientConnector(
@@ -47,12 +51,22 @@ class WebClientConfig {
   @Bean("policeUkApiWebClient")
   fun policeUkApiWebClient(): WebClient = webClient(policeUkApiEndpointUrl)
 
-  private fun webClient(endpointUrl: String) = WebClient.builder()
-    .baseUrl(endpointUrl)
-    .codecs {
-      it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024)
-      it.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
-      it.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
-    }
-    .build()
+  @Value("\${gotenberg.endpoint.url}")
+  private lateinit var gotenbergEndpointUrl: String
+
+  @Bean("gotenbergWebClient")
+  fun gotenbergWebClient(): WebClient = webClient(gotenbergEndpointUrl)
+
+  private fun webClient(endpointUrl: String): WebClient {
+    val builder = WebClient.builder()
+    metricsCustomizer.customize(builder)
+    return builder
+      .baseUrl(endpointUrl)
+      .codecs {
+        it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024)
+        it.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
+        it.defaultCodecs().jackson2JsonDecoder(Jackson2JsonDecoder(ManageRecallsApiJackson.mapper, APPLICATION_JSON))
+      }
+      .build()
+  }
 }

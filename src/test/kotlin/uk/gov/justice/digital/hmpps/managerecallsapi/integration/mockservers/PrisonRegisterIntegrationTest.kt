@@ -20,19 +20,18 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.WebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
-import java.lang.RuntimeException
 
 @ExtendWith(SpringExtension::class)
 @TestInstance(PER_CLASS)
 @ActiveProfiles("test")
 @SpringBootTest(
   properties = ["prisonRegister.endpoint.url=http://localhost:9094"],
-  classes = [WebClientConfig::class, PrisonRegisterClient::class]
+  classes = [TestWebClientConfig::class, PrisonRegisterClient::class]
 )
 class PrisonRegisterIntegrationTest(
   @Autowired private val prisonRegisterClient: PrisonRegisterClient

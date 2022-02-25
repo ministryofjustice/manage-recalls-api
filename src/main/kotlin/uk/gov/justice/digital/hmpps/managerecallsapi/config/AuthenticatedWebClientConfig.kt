@@ -5,6 +5,7 @@ import io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
@@ -34,10 +35,17 @@ class AuthenticatedWebClientConfig {
   @Bean
   fun prisonerOffenderSearchWebClient(
     authorizedClientManager: OAuth2AuthorizedClientManager,
-    objectMapper: ObjectMapper
+    objectMapper: ObjectMapper,
+    metricsCustomizer: MetricsWebClientCustomizer
   ): AuthenticatingRestClient =
     AuthenticatingRestClient(
-      webClientFactory(prisonerOffenderSearchBaseUrl, authorizedClientManager, MAX_VALUE, objectMapper),
+      webClientFactory(
+        prisonerOffenderSearchBaseUrl,
+        authorizedClientManager,
+        MAX_VALUE,
+        objectMapper,
+        metricsCustomizer
+      ),
       "offender-search-client"
     )
 
@@ -47,10 +55,11 @@ class AuthenticatedWebClientConfig {
   @Bean
   fun prisonApiWebClient(
     authorizedClientManager: OAuth2AuthorizedClientManager,
-    objectMapper: ObjectMapper
+    objectMapper: ObjectMapper,
+    metricsCustomizer: MetricsWebClientCustomizer
   ): AuthenticatingRestClient =
     AuthenticatingRestClient(
-      webClientFactory(prisonApiBaseUrl, authorizedClientManager, MAX_VALUE, objectMapper),
+      webClientFactory(prisonApiBaseUrl, authorizedClientManager, MAX_VALUE, objectMapper, metricsCustomizer),
       "prison-api-client"
     )
 
@@ -58,7 +67,8 @@ class AuthenticatedWebClientConfig {
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,
     bufferByteCount: Int,
-    objectMapper: ObjectMapper
+    objectMapper: ObjectMapper,
+    metricsCustomizer: MetricsWebClientCustomizer
   ): WebClient {
     val oauth2Client = ServletOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager)
 
@@ -69,8 +79,9 @@ class AuthenticatedWebClientConfig {
           .addHandlerLast(WriteTimeoutHandler(0, MILLISECONDS))
       }
 
-    return WebClient
-      .builder()
+    val builder = WebClient.builder()
+    metricsCustomizer.customize(builder)
+    return builder
       .clientConnector(ReactorClientHttpConnector(httpClient))
       .codecs {
         it.defaultCodecs().jackson2JsonEncoder(Jackson2JsonEncoder(objectMapper, APPLICATION_JSON))

@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Component("courtRegister")
 class CourtRegisterHealth(
-  webClient: WebClient,
+  webClientNoAuthNoMetrics: WebClient,
   @Value("courtRegister") componentName: String,
   @Value("\${courtRegister.endpoint.url}") prisonRegisterEndpointUrl: String
-) : PingHealthCheck(webClient, componentName, "$prisonRegisterEndpointUrl/health/ping")
+) : PingHealthCheck(webClientNoAuthNoMetrics, componentName, "$prisonRegisterEndpointUrl/health/ping")
