@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Component("policeUkApi")
 class PoliceUkApiHealth(
-  webClient: WebClient,
+  webClientNoAuthNoMetrics: WebClient,
   @Value("policeUkApi") componentName: String,
   @Value("\${policeUkApi.endpoint.url}") endpointUrl: String
-) : PingHealthCheck(webClient, componentName, endpointUrl)
+) : PingHealthCheck(webClientNoAuthNoMetrics, componentName, endpointUrl)

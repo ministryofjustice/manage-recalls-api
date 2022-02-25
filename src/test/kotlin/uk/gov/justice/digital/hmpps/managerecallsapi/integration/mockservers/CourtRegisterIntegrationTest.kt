@@ -22,9 +22,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.WebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
 import java.lang.RuntimeException
@@ -34,7 +34,7 @@ import java.lang.RuntimeException
 @ActiveProfiles("test")
 @SpringBootTest(
   properties = ["courtRegister.endpoint.url=http://localhost:9095"],
-  classes = [WebClientConfig::class, CourtRegisterClient::class]
+  classes = [TestWebClientConfig::class, CourtRegisterClient::class]
 )
 class CourtRegisterIntegrationTest(
   @Autowired private val courtRegisterClient: CourtRegisterClient

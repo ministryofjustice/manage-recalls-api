@@ -12,12 +12,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClamAVConfig
 @Component("clamAV")
 class ClamAVHealth(
   @Value("\${clamav.virus.scan.enabled:true}") val clamavEnabled: Boolean,
-  @Autowired val clamAVConfig: ClamAVConfig
+  @Autowired private val clamAVConfig: ClamAVConfig,
+  @Autowired private val meterRegistry: MeterRegistry
 ) : HealthIndicator {
-
-  @Autowired
-  private val meterRegistry: MeterRegistry? = null
-
   private val componentName = "clamAV"
 
   override fun health(): Health {
@@ -25,10 +22,10 @@ class ClamAVHealth(
       if (clamavEnabled) {
         clamAVConfig.clamavClient().ping()
       }
-      meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), 1)
+      meterRegistry.gauge("upstream_healthcheck", Tags.of("service", componentName), 1)
       Health.up().withDetail("active", clamavEnabled).build()
     } catch (e: Exception) {
-      meterRegistry?.gauge("upstream_healthcheck", Tags.of("service", componentName), 0)
+      meterRegistry.gauge("upstream_healthcheck", Tags.of("service", componentName), 0)
       Health.down(e).build()
     }
   }
