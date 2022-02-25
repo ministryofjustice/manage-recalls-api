@@ -417,24 +417,21 @@ data class StopRecord(
 @Embeddable
 data class ReturnedToCustodyRecord(
   val returnedToCustodyDateTime: OffsetDateTime,
-  @Column(name = "returned_to_custody_notification_date_time")
-  val notificationDateTime: OffsetDateTime,
-  @Column(name = "returned_to_custody_recorded_by_user_id")
-  val recordedByUserId: UUID?,
-  @Column(name = "returned_to_custody_recorded_date_time")
-  val recordedDateTime: OffsetDateTime
+  val returnedToCustodyNotificationDateTime: OffsetDateTime,
+  val returnedToCustodyRecordedByUserId: UUID?,
+  val returnedToCustodyRecordedDateTime: OffsetDateTime
 ) {
   constructor(
     returnedToCustodyDateTime: OffsetDateTime,
     returnedToCustodyNotificationDateTime: OffsetDateTime,
-    recordedDateTime: OffsetDateTime,
-    recordedByUserId: UserId? = null
+    returnedToCustodyRecordedDateTime: OffsetDateTime,
+    returnedToCustodyRecordedByUserId: UserId? = null
   ) :
     this(
       returnedToCustodyDateTime,
       returnedToCustodyNotificationDateTime,
-      recordedByUserId?.value,
-      recordedDateTime
+      returnedToCustodyRecordedByUserId?.value,
+      returnedToCustodyRecordedDateTime
     )
-  fun recordedByUserId() = recordedByUserId?.let(::UserId)
+  fun recordedByUserId() = returnedToCustodyRecordedByUserId?.let(::UserId)
 }
