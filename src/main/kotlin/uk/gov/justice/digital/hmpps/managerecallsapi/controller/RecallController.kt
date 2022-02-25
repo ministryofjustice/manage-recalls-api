@@ -246,7 +246,7 @@ class RecallController(
     stopDateTime = stopRecord?.stopDateTime,
     stopByUserName = stopRecord?.let { userDetailsService.get(it.stopByUserId()).fullName() },
     returnedToCustodyDateTime = returnedToCustody?.returnedToCustodyDateTime,
-    returnedToCustodyNotificationDateTime = returnedToCustody?.notificationDateTime,
+    returnedToCustodyNotificationDateTime = returnedToCustody?.returnedToCustodyNotificationDateTime,
   )
 
   private fun latestDocuments(documents: Set<Document>): List<Api.RecallDocument> {
