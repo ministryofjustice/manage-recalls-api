@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import io.micrometer.core.instrument.MeterRegistry
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -31,12 +33,15 @@ class RecallService(
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
   @Autowired private val prisonApiClient: PrisonApiClient,
   @Autowired private val clock: Clock,
+  @Autowired private val meterRegistry: MeterRegistry,
   @Value("\${returnToCustody.updateThresholdMinutes}") val returnToCustodyUpdateThresholdMinutes: Long,
 ) {
 
   companion object {
     val SYSTEM_USER_ID = UserId(UUID.fromString("99999999-9999-9999-9999-999999999999"))
   }
+
+  private val log = LoggerFactory.getLogger(this::class.java)
 
   @Transactional
   fun assignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
@@ -145,7 +150,10 @@ class RecallService(
         prisonApiClient.latestInboundMovements(rtcRecalls.map { it.nomsNumber }.toSet()).associateBy { it.nomsNumber() }
 
       rtcRecalls.forEach {
-        returnedToCustody(it, movements[it.nomsNumber]!!.movementDateTime(), OffsetDateTime.now(clock), SYSTEM_USER_ID)
+        val returnedToCustodyDateTime = movements[it.nomsNumber]!!.movementDateTime()
+        log.info("Returning ${it.recallId()} to custody as of $returnedToCustodyDateTime")
+        returnedToCustody(it, returnedToCustodyDateTime, OffsetDateTime.now(clock), SYSTEM_USER_ID)
+        meterRegistry.counter("autoReturnedToCustody").increment()
       }
     }
   }

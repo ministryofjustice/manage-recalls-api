@@ -105,10 +105,10 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/rescind-records").bodyValue(rescindRequestRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/notes").bodyValue(createNoteRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/stop").bodyValue(stopRecallRequest),
-      webTestClient.post().uri("/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
-      webTestClient.post().uri("/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/returned-to-custody").bodyValue(returnedToCustodyRequest),
+      webTestClient.post().uri("/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
+      webTestClient.post().uri("/last-known-addresses").bodyValue(createLastKnownAddressRequest),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}"),
       webTestClient.delete().uri("/recalls/${UUID.randomUUID()}/last-known-addresses/${::LastKnownAddressId.random()}")
