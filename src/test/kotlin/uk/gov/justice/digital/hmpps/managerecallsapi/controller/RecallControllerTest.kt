@@ -6,6 +6,7 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.InvalidPrisonOrCourtException
@@ -530,5 +531,19 @@ class RecallControllerTest {
         )
       )
     )
+  }
+
+  @Test
+  fun `can set recallType`() {
+    val bearerToken = "BEARER"
+    val currentUserId = ::UserId.random()
+    val recallType = RecallType.values().random()
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(currentUserId.toString())
+    every { recallService.updateRecommendedRecallType(recallId, recallType, currentUserId) } returns recall
+
+    underTest.updateRecommendedRecallType(recallId, RecommendedRecallTypeRequest(recallType), bearerToken)
+
+    verify { recallService.updateRecommendedRecallType(recallId, recallType, currentUserId) }
   }
 }

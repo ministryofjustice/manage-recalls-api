@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
@@ -166,6 +167,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   }
 
   private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId, inCustody: Boolean) {
+    authenticatedClient.updateRecallType(recallId, RecallType.FIXED)
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(

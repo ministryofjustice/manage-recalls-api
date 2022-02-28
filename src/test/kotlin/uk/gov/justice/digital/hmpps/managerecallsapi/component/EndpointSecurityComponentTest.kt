@@ -11,6 +11,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecommendedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
@@ -76,6 +78,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val returnedToCustodyRequest = ReturnedToCustodyRequest(OffsetDateTime.now().minusDays(1), OffsetDateTime.now().minusMinutes(1))
   private val createNoteRequest = CreateNoteRequest("subject", "details", FileName("filename"), "some content")
   private val stopRecallRequest = StopRecallRequest(StopReason.values().random())
+  private val recommendedRecallTypeRequest = RecommendedRecallTypeRequest(RecallType.values().random())
 
   // TODO:  MD get all the secured endpoints and make sure they are all included here (or get them all and automagically create the requests?)
   // Can this be a more lightweight test?  i.e. something other than a SpringBootTest. WebMVC test?
@@ -95,6 +98,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}").bodyValue(updateRecallRequest),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/documents/${::DocumentId.random()}").bodyValue(updateDocumentRequest),
       webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/rescind-records/${UUID.randomUUID()}").bodyValue(rescindDecisionRequest),
+      webTestClient.patch().uri("/recalls/${UUID.randomUUID()}/recommended-recall-type").bodyValue(recommendedRecallTypeRequest),
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents/uploaded").bodyValue(uploadDocumentRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents/generated").bodyValue(generateDocumentRequest),

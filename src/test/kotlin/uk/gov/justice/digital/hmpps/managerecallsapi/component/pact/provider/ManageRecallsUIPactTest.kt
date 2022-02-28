@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
@@ -162,10 +163,11 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a user and a fully populated recall without documents exists"
+    "a user and a fully populated recall without documents exists",
+    "a user and a fully populated FIXED recall without documents exists"
   )
-  fun `a user and a fully populated recall without documents exists`() {
-    val recall = fullyPopulatedRecallWithoutDocuments(matchedRecallId, userIdOnes).let {
+  fun `a user and a fully populated FIXED recall without documents exists`() {
+    val recall = fullyPopulatedRecallWithoutDocuments(matchedRecallId, userIdOnes, FIXED).let {
       it.copy(
         currentPrison = PrisonId("BMI"),
         lastReleasePrison = PrisonId("CFI"),
@@ -184,10 +186,11 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a user and an unassigned fully populated recall exists without documents"
+    "a user and an unassigned fully populated recall exists without documents",
+    "a user and an unassigned fully populated FIXED recall exists without documents"
   )
-  fun `a user and an unassigned fully populated recall exists without documents`() {
-    val recall = fullyPopulatedRecallWithoutDocuments(matchedRecallId, userIdOnes).copy(
+  fun `a user and an unassigned fully populated FIXED recall exists without documents`() {
+    val recall = fullyPopulatedRecallWithoutDocuments(matchedRecallId, userIdOnes, FIXED).copy(
       assignee = null
     )
     setupUserDetailsFor(userIdOnes)
@@ -209,18 +212,19 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
-    "a recall and uncategorised document exist"
+    "a recall and uncategorised document exist",
+    "a FIXED recall and uncategorised document exist"
   )
-  fun `a recall and uncategorised document exist`() {
-    `a user and a fully populated recall without documents exists`()
+  fun `a FIXED recall and uncategorised document exist`() {
+    `a user and a fully populated FIXED recall without documents exists`()
     `a document exists`(matchedDocumentId, UNCATEGORISED, FileName("filename.pdf"), null, null)
   }
 
   @State(
     "a recall and document history exist",
   )
-  fun `a recall and document history exist`() {
-    `a user and a fully populated recall without documents exists`()
+  fun `a FIXED recall and document history exist`() {
+    `a user and a fully populated FIXED recall without documents exists`()
     val randomPartAdocumentId = ::DocumentId.random()
     `a document exists`(randomPartAdocumentId, PART_A_RECALL_REPORT, FileName("filename.pdf"), 1, null)
     `a document exists`(matchedDocumentId, LICENCE, FileName("license.pdf"), 1, null)
@@ -229,36 +233,40 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State(
     "a recall with missing document records exists",
+    "a FIXED recall with missing document records exists",
   )
-  fun `a recall with missing document records exist`() {
-    `a user and a fully populated recall without documents exists`()
+  fun `a FIXED recall with missing document records exist`() {
+    `a user and a fully populated FIXED recall without documents exists`()
     `a missing document record and email document exist`(setOf(PART_A_RECALL_REPORT, LICENCE), 1, "missing")
     `a missing document record and email document exist`(setOf(LICENCE), 2, "still missing")
   }
 
   @State(
     "a recall with last known addresses exists",
+    "a FIXED recall with last known addresses exists",
   )
-  fun `a recall with last known addresses exists`() {
-    `a user and a fully populated recall without documents exists`()
+  fun `a FIXED recall with last known addresses exists`() {
+    `a user and a fully populated FIXED recall without documents exists`()
     `a last known address exists`(1, AddressSource.LOOKUP, matchedLastKnownAddressId)
     `a last known address exists`(2, AddressSource.MANUAL)
   }
 
   @State(
     "a recall with notes exists",
+    "a FIXED recall with notes exists",
   )
-  fun `a recall with notes exists`() {
-    `a user and a fully populated recall without documents exists`()
+  fun `a FIXED recall with notes exists`() {
+    `a user and a fully populated FIXED recall without documents exists`()
     `a note exists`(1, matchedNoteId, matchedDocumentId)
     `a note exists`(2)
   }
 
   @State(
     "a recall with open rescind record exists",
+    "a FIXED recall with open rescind record exists",
   )
-  fun `a recall with open rescind record exists`() {
-    `a user and a fully populated recall without documents exists`()
+  fun `a FIXED recall with open rescind record exists`() {
+    `a user and a fully populated FIXED recall without documents exists`()
     `an open rescind record exists`()
   }
 
