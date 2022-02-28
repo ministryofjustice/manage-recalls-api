@@ -77,5 +77,5 @@ data class ReasonsForRecallContext(
   val lastThenFirstName: String
 ) {
   fun fileName(): FileName =
-    FileName("$lastThenFirstName $bookingNumber REASONS FOR RECALL.pdf")
+    FileName("${lastThenFirstName.uppercase()} ${bookingNumber.uppercase()} REASONS FOR RECALL.pdf")
 }
