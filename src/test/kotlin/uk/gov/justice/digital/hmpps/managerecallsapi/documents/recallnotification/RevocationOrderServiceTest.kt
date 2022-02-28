@@ -62,7 +62,7 @@ internal class RevocationOrderServiceTest {
         "Badger Bertie"
       )
 
-    val fileName = FileName("Badger Bertie bookNumber REVOCATION ORDER.pdf")
+    val fileName = FileName("BADGER BERTIE BOOKNUMBER REVOCATION ORDER.pdf")
 
     val generatedHtml = "Some html, honest"
 

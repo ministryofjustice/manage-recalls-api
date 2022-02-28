@@ -246,5 +246,5 @@ data class RevocationOrderContext(
   val currentUserId: UserId,
   val lastThenFirstName: String,
 ) {
-  fun fileName(): FileName = FileName("$lastThenFirstName $bookingNumber REVOCATION ORDER.pdf")
+  fun fileName(): FileName = FileName("${lastThenFirstName.uppercase()} ${bookingNumber.uppercase()} REVOCATION ORDER.pdf")
 }
