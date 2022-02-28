@@ -128,21 +128,20 @@ class RecallController(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("assignee") assignee: UserId,
     @RequestHeader("Authorization") bearerToken: String
-  ): RecallResponse {
-    val token = tokenExtractor.getTokenFromHeader(bearerToken)
-    return recallService.assignRecall(recallId, assignee, token.userUuid()).toResponse()
-  }
+  ): RecallResponse =
+    tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
+      recallService.assignRecall(recallId, assignee, currentUserId).toResponse()
+    }
 
   @DeleteMapping("/recalls/{recallId}/assignee/{assignee}")
   fun unassignRecall(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("assignee") assignee: UserId,
     @RequestHeader("Authorization") bearerToken: String
-  ): RecallResponse {
-    val token = tokenExtractor.getTokenFromHeader(bearerToken)
-
-    return recallService.unassignRecall(recallId, assignee, token.userUuid()).toResponse()
-  }
+  ): RecallResponse =
+    tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
+      return recallService.unassignRecall(recallId, assignee, currentUserId).toResponse()
+    }
 
   fun Recall.toResponseLite(users: Map<UserId, UserDetails>) =
     RecallResponseLite(

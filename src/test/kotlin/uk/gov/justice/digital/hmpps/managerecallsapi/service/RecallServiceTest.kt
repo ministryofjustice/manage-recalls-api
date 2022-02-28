@@ -2,7 +2,11 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
@@ -54,10 +58,11 @@ class RecallServiceTest {
   private val bankHolidayService = mockk<BankHolidayService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val prisonApiClient = mockk<PrisonApiClient>()
+  private val meterRegistry = mockk<MeterRegistry>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val returnToCustodyUpdateThresholdMinutes = 60L
   private val underTest =
-    RecallService(recallRepository, bankHolidayService, prisonerOffenderSearchClient, prisonApiClient, fixedClock, returnToCustodyUpdateThresholdMinutes)
+    RecallService(recallRepository, bankHolidayService, prisonerOffenderSearchClient, prisonApiClient, fixedClock, meterRegistry, returnToCustodyUpdateThresholdMinutes)
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(
@@ -408,6 +413,7 @@ class RecallServiceTest {
       ),
       dossierTargetDate = dossierTargetDate
     )
+    val counter = mockk<Counter>()
 
     every { recallRepository.findAll() } returns recallList
     every { prisonerOffenderSearchClient.prisonerByNomsNumber(rtcNoms) } returns Mono.just(nicRtcPrisoner)
@@ -415,6 +421,8 @@ class RecallServiceTest {
     every { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) } returns listOf(Movement(rtcNoms.value, movementDate, movementTime))
     every { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) } returns dossierTargetDate
     every { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) } returns expectedRecall
+    every { meterRegistry.counter("autoReturnedToCustody") } returns counter
+    every { counter.increment() } just Runs
 
     underTest.updateCustodyStatus(currentUserId)
 
@@ -423,6 +431,8 @@ class RecallServiceTest {
     verify { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) }
     verify { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) }
     verify { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) }
+    verify { meterRegistry.counter("autoReturnedToCustody") }
+    verify { counter.increment() }
   }
 
   private fun recallRequestWithMandatorySentencingInfo(
