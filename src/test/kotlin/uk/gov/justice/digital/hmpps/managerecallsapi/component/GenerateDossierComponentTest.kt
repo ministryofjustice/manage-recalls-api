@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
@@ -63,6 +64,7 @@ class GenerateDossierComponentTest : ComponentTestBase() {
         LocalDate.now()
       )
     )
+    authenticatedClient.updateRecallType(recall.recallId, FIXED)
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(

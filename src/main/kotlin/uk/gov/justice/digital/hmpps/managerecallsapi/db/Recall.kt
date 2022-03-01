@@ -147,7 +147,7 @@ data class Recall(
   val recallLength: RecallLength? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   @Enumerated(STRING)
-  val recallType: RecallType? = null,
+  val recommendedRecallType: RecallType? = null,
   @Embedded
   val returnedToCustody: ReturnedToCustodyRecord? = null,
   @Embedded
@@ -213,7 +213,7 @@ data class Recall(
     recallEmailReceivedDateTime: OffsetDateTime? = null,
     recallLength: RecallLength? = null,
     recallNotificationEmailSentDateTime: OffsetDateTime? = null,
-    recallType: RecallType? = null,
+    recommendedRecallType: RecallType? = null,
     returnedToCustodyRecord: ReturnedToCustodyRecord? = null,
     sentencingInfo: SentencingInfo? = null,
     stopRecord: StopRecord? = null,
@@ -274,7 +274,7 @@ data class Recall(
       recallEmailReceivedDateTime,
       recallLength,
       recallNotificationEmailSentDateTime,
-      recallType,
+      recommendedRecallType,
       returnedToCustodyRecord,
       sentencingInfo,
       stopRecord,
@@ -372,11 +372,15 @@ data class SentencingInfo(
   val sentenceLength: SentenceLength,
   val conditionalReleaseDate: LocalDate? = null
 ) {
-  fun calculateRecallLength(): RecallLength {
-    return if (sentenceLength.sentenceDays >= 366 || sentenceLength.sentenceMonths >= 12 || sentenceLength.sentenceYears >= 1) {
-      RecallLength.TWENTY_EIGHT_DAYS
-    } else
-      RecallLength.FOURTEEN_DAYS
+  fun calculateRecallLength(recallType: RecallType?): RecallLength? {
+    return if (recallType == null || recallType == RecallType.STANDARD) {
+      null
+    } else {
+      if (sentenceLength.sentenceDays >= 366 || sentenceLength.sentenceMonths >= 12 || sentenceLength.sentenceYears >= 1) {
+        RecallLength.TWENTY_EIGHT_DAYS
+      } else
+        RecallLength.FOURTEEN_DAYS
+    }
   }
 }
 

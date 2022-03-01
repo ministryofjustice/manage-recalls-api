@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -42,7 +43,8 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
-      currentPrisonId = PrisonId("MWI")
+      currentPrisonId = PrisonId("MWI"),
+      recallType = RecallType.FIXED
     )
 
     val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
@@ -70,6 +72,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
       currentPrisonId = PrisonId("MWI"),
       inCustody = false,
+      recallType = RecallType.FIXED,
     )
     authenticatedClient.addLastKnownAddress(
       recall.recallId, CreateLastKnownAddressRequest(null, "1 The Road", null, "A Town", "AB12 3CD", AddressSource.MANUAL),
@@ -104,6 +107,7 @@ class RecallNotificationGotenbergComponentTest : GotenbergComponentTestBase() {
       vulnerabilityDiversityDetail = loremIpsum,
       LocalDeliveryUnit.ISLE_OF_MAN,
       PrisonId("MWI"),
+      recallType = RecallType.FIXED,
     )
 
     val recallNotificationId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))

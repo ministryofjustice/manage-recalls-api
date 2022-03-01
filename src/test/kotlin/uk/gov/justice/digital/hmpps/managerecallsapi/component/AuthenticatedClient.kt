@@ -24,6 +24,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.C
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecommendedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
@@ -154,6 +156,9 @@ class AuthenticatedClient(
 
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
     patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)
+
+  fun updateRecallType(recallId: RecallId, recallType: RecallType): RecallResponse =
+    patchRequest("/recalls/$recallId/recommended-recall-type", RecommendedRecallTypeRequest(recallType), RecallResponse::class.java)
 
   fun assignRecall(recallId: RecallId, assignee: UserId): RecallResponse =
     postWithoutBody("/recalls/$recallId/assignee/$assignee", responseClass = RecallResponse::class.java)

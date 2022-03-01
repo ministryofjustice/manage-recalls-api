@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import java.time.LocalDate
@@ -35,7 +36,7 @@ class SentenceLengthTest {
           CourtId("HIGHCT"),
           "offence",
           sentenceLength
-        ).calculateRecallLength()
+        ).calculateRecallLength(RecallType.FIXED)
       )
     )
     assertThat(sentenceLength.toString(), equalTo(prettyPrint))

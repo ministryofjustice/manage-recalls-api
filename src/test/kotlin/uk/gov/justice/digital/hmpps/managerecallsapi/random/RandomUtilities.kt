@@ -1,6 +1,7 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.random
 
 import org.apache.commons.lang3.RandomStringUtils
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
@@ -22,20 +23,21 @@ import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 
-internal fun fullyPopulatedRecallWithoutDocuments(recallId: RecallId = ::RecallId.random(), userId: UserId? = null): Recall =
-  fullyPopulatedRecall(recallId, userId).copy(
+internal fun fullyPopulatedRecallWithoutDocuments(recallId: RecallId = ::RecallId.random(), userId: UserId? = null, recallType: RecallType = RecallType.values().random()): Recall =
+  fullyPopulatedRecall(recallId, userId, recallType).copy(
     documents = emptySet(),
     missingDocumentsRecords = emptySet(),
     rescindRecords = emptySet(),
     notes = emptySet(),
   )
 
-internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), knownUserId: UserId? = null): Recall =
+internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), knownUserId: UserId? = null, recallType: RecallType = RecallType.values().random()): Recall =
   fullyPopulatedInstance<Recall>().let { recall ->
     recall.copy(
       id = recallId.value,
+      recommendedRecallType = recallType,
       // ensure recall length is valid for the random sentencing info as it is calculated on the fly
-      recallLength = recall.sentencingInfo?.calculateRecallLength(),
+      recallLength = recall.sentencingInfo?.calculateRecallLength(recallType),
       assignee = (knownUserId ?: ::UserId.random()).value,
       assessedByUserId = (knownUserId ?: ::UserId.random()).value,
       bookedByUserId = (knownUserId ?: ::UserId.random()).value,

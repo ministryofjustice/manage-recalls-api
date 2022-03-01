@@ -29,6 +29,8 @@ class RandomUtilitiesTest {
         has(Recall::firstName, present()),
         has(Recall::middleNames, present()),
         has(Recall::lastName, present()),
+        has(Recall::croNumber, present()),
+        has(Recall::dateOfBirth, present()),
         has(Recall::licenceNameCategory, present()),
         has(
           Recall::documents,
@@ -63,8 +65,7 @@ class RandomUtilitiesTest {
             )
           )
         ),
-        has(Recall::recallType, present()),
-        has(Recall::recallLength, present()),
+        has(Recall::recommendedRecallType, present()),
         has(Recall::lastReleasePrison, present()),
         has(Recall::lastReleaseDate, present()),
         has(Recall::recallEmailReceivedDateTime, present()),

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.NOT_FOUND
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -70,10 +71,10 @@ class GetRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `get a fully populated recall`() {
+  fun `get a fully populated FIXED term recall`() {
     val recallId = ::RecallId.random()
     val createdByUserId = authenticatedClient.userId
-    val fullyPopulatedRecall = fullyPopulatedRecall(recallId, createdByUserId)
+    val fullyPopulatedRecall = fullyPopulatedRecall(recallId, createdByUserId, RecallType.FIXED)
     recallRepository.save(fullyPopulatedRecall, createdByUserId)
 
     val document = fullyPopulatedRecall.documents.first()
