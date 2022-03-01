@@ -344,7 +344,8 @@ fun BookRecallRequest.toRecall(userUuid: UserId, clock: Clock): Recall {
     middleNames,
     lastName,
     croNumber,
-    dateOfBirth
+    dateOfBirth,
+    recommendedRecallType = RecallType.FIXED
   )
 }
 
