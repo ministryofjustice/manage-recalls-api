@@ -29,9 +29,9 @@ data:
       },
       "editable": true,
       "gnetId": null,
-      "graphTooltip": 1,
+      "graphTooltip": 2,
       "id": 209,
-      "iteration": 1646127914575,
+      "iteration": 1646133476107,
       "links": [],
       "panels": [
         {
@@ -183,7 +183,7 @@ data:
             "x": 6,
             "y": 1
           },
-          "id": 67,
+          "id": 79,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -202,7 +202,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -272,7 +272,7 @@ data:
             "x": 12,
             "y": 1
           },
-          "id": 68,
+          "id": 80,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -291,7 +291,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -361,7 +361,7 @@ data:
             "x": 18,
             "y": 1
           },
-          "id": 69,
+          "id": 81,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -380,7 +380,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -450,7 +450,7 @@ data:
             "x": 0,
             "y": 5
           },
-          "id": 70,
+          "id": 82,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -469,7 +469,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -539,7 +539,7 @@ data:
             "x": 6,
             "y": 5
           },
-          "id": 71,
+          "id": 83,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -558,7 +558,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -628,7 +628,7 @@ data:
             "x": 12,
             "y": 5
           },
-          "id": 72,
+          "id": 84,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -647,7 +647,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -717,7 +717,7 @@ data:
             "x": 18,
             "y": 5
           },
-          "id": 73,
+          "id": 85,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -736,7 +736,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -806,7 +806,7 @@ data:
             "x": 0,
             "y": 9
           },
-          "id": 74,
+          "id": 86,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -825,7 +825,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -895,7 +895,7 @@ data:
             "x": 6,
             "y": 9
           },
-          "id": 75,
+          "id": 87,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -914,7 +914,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -984,7 +984,7 @@ data:
             "x": 12,
             "y": 9
           },
-          "id": 76,
+          "id": 88,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -1003,7 +1003,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1073,7 +1073,7 @@ data:
             "x": 18,
             "y": 9
           },
-          "id": 77,
+          "id": 89,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -1092,7 +1092,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1132,7 +1132,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "Thanos",
-              "description": "This shows how long requests to $upstream took.",
+              "description": "",
               "fieldConfig": {
                 "defaults": {},
                 "overrides": []
@@ -1159,7 +1159,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -1182,9 +1182,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "legendFormat": "Avg. Request Latency",
                   "refId": "A"
                 }
               ],
@@ -1192,7 +1192,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Avg. Request Duration",
+              "title": "Avg. Request Latency",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -1210,7 +1210,7 @@ data:
                 {
                   "$$hashKey": "object:232",
                   "format": "s",
-                  "label": "Duration",
+                  "label": "Latency",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -1263,7 +1263,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -1286,9 +1286,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])) by (method, uri)",
+                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}" }}",
+                  "legendFormat": "Reqs / Minute",
                   "refId": "A"
                 }
               ],
@@ -1314,7 +1314,7 @@ data:
                 {
                   "$$hashKey": "object:179",
                   "format": "short",
-                  "label": "Reqs / minute",
+                  "label": "Reqs / Minute",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -1361,7 +1361,7 @@ data:
                 "current": false,
                 "max": true,
                 "min": true,
-                "show": false,
+                "show": true,
                 "total": false,
                 "values": true
               },
@@ -1390,9 +1390,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]))\n* 100",
+                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
                   "interval": "",
-                  "legendFormat": "",
+                  "legendFormat": "Error Rate",
                   "refId": "A"
                 }
               ],
@@ -1427,6 +1427,111 @@ data:
                 },
                 {
                   "$$hashKey": "object:180",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 24
+              },
+              "hiddenSeries": false,
+              "id": 78,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "interval": "",
+                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency by Path",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
                   "format": "short",
                   "label": null,
                   "logBase": 1,
@@ -1461,7 +1566,7 @@ data:
             "x": 0,
             "y": 14
           },
-          "id": 47,
+          "id": 90,
           "panels": [
             {
               "aliasColors": {},
@@ -1469,7 +1574,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "Thanos",
-              "description": "This shows how long requests to $upstream took.",
+              "description": "",
               "fieldConfig": {
                 "defaults": {},
                 "overrides": []
@@ -1483,7 +1588,7 @@ data:
                 "y": 15
               },
               "hiddenSeries": false,
-              "id": 48,
+              "id": 91,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1496,7 +1601,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -1505,7 +1610,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1522,9 +1627,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "legendFormat": "Avg. Request Latency",
                   "refId": "A"
                 }
               ],
@@ -1532,7 +1637,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Avg. Request Duration",
+              "title": "Avg. Request Latency",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -1550,7 +1655,7 @@ data:
                 {
                   "$$hashKey": "object:232",
                   "format": "s",
-                  "label": "Duration",
+                  "label": "Latency",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -1590,7 +1695,7 @@ data:
                 "y": 15
               },
               "hiddenSeries": false,
-              "id": 49,
+              "id": 92,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1603,7 +1708,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -1612,7 +1717,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1629,9 +1734,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])) by (method, uri)",
+                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}" }}",
+                  "legendFormat": "Reqs / Minute",
                   "refId": "A"
                 }
               ],
@@ -1657,7 +1762,7 @@ data:
                 {
                   "$$hashKey": "object:179",
                   "format": "short",
-                  "label": "Reqs / minute",
+                  "label": "Reqs / Minute",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -1697,14 +1802,14 @@ data:
                 "y": 25
               },
               "hiddenSeries": false,
-              "id": 50,
+              "id": 93,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
                 "current": false,
                 "max": true,
                 "min": true,
-                "show": false,
+                "show": true,
                 "total": false,
                 "values": true
               },
@@ -1719,7 +1824,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1736,9 +1841,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]))\n* 100",
+                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
                   "interval": "",
-                  "legendFormat": "",
+                  "legendFormat": "Error Rate",
                   "refId": "A"
                 }
               ],
@@ -1785,9 +1890,117 @@ data:
                 "align": false,
                 "alignLevel": null
               }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 25
+              },
+              "hiddenSeries": false,
+              "id": 94,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646133476107,
+              "repeatPanelId": 78,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "data.police.uk",
+                  "value": "data.police.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "interval": "",
+                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency by Path",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
             }
           ],
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -1808,7 +2021,7 @@ data:
             "x": 0,
             "y": 15
           },
-          "id": 51,
+          "id": 95,
           "panels": [
             {
               "aliasColors": {},
@@ -1816,7 +2029,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "Thanos",
-              "description": "This shows how long requests to $upstream took.",
+              "description": "",
               "fieldConfig": {
                 "defaults": {},
                 "overrides": []
@@ -1824,13 +2037,13 @@ data:
               "fill": 1,
               "fillGradient": 0,
               "gridPos": {
-                "h": 9,
+                "h": 10,
                 "w": 12,
                 "x": 0,
                 "y": 16
               },
               "hiddenSeries": false,
-              "id": 52,
+              "id": 96,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1843,7 +2056,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -1852,7 +2065,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1869,9 +2082,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "legendFormat": "Avg. Request Latency",
                   "refId": "A"
                 }
               ],
@@ -1879,7 +2092,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Avg. Request Duration",
+              "title": "Avg. Request Latency",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -1897,7 +2110,7 @@ data:
                 {
                   "$$hashKey": "object:232",
                   "format": "s",
-                  "label": "Duration",
+                  "label": "Latency",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -1931,13 +2144,13 @@ data:
               "fill": 1,
               "fillGradient": 0,
               "gridPos": {
-                "h": 9,
+                "h": 10,
                 "w": 12,
                 "x": 12,
                 "y": 16
               },
               "hiddenSeries": false,
-              "id": 53,
+              "id": 97,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1950,7 +2163,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -1959,7 +2172,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1976,9 +2189,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])) by (method, uri)",
+                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}" }}",
+                  "legendFormat": "Reqs / Minute",
                   "refId": "A"
                 }
               ],
@@ -2004,7 +2217,7 @@ data:
                 {
                   "$$hashKey": "object:179",
                   "format": "short",
-                  "label": "Reqs / minute",
+                  "label": "Reqs / Minute",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -2038,20 +2251,20 @@ data:
               "fill": 1,
               "fillGradient": 0,
               "gridPos": {
-                "h": 9,
+                "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 25
+                "y": 26
               },
               "hiddenSeries": false,
-              "id": 54,
+              "id": 98,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
                 "current": false,
                 "max": true,
                 "min": true,
-                "show": false,
+                "show": true,
                 "total": false,
                 "values": true
               },
@@ -2066,7 +2279,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2083,9 +2296,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]))\n* 100",
+                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
                   "interval": "",
-                  "legendFormat": "",
+                  "legendFormat": "Error Rate",
                   "refId": "A"
                 }
               ],
@@ -2132,9 +2345,117 @@ data:
                 "align": false,
                 "alignLevel": null
               }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 26
+              },
+              "hiddenSeries": false,
+              "id": 99,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646133476107,
+              "repeatPanelId": 78,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "manage-recalls-api-gotenberg",
+                  "value": "manage-recalls-api-gotenberg"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "interval": "",
+                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency by Path",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
             }
           ],
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -2155,7 +2476,7 @@ data:
             "x": 0,
             "y": 16
           },
-          "id": 55,
+          "id": 100,
           "panels": [
             {
               "aliasColors": {},
@@ -2163,7 +2484,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "Thanos",
-              "description": "This shows how long requests to $upstream took.",
+              "description": "",
               "fieldConfig": {
                 "defaults": {},
                 "overrides": []
@@ -2177,7 +2498,7 @@ data:
                 "y": 17
               },
               "hiddenSeries": false,
-              "id": 56,
+              "id": 101,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2190,7 +2511,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -2199,7 +2520,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2216,9 +2537,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "legendFormat": "Avg. Request Latency",
                   "refId": "A"
                 }
               ],
@@ -2226,7 +2547,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Avg. Request Duration",
+              "title": "Avg. Request Latency",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -2244,7 +2565,7 @@ data:
                 {
                   "$$hashKey": "object:232",
                   "format": "s",
-                  "label": "Duration",
+                  "label": "Latency",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -2284,7 +2605,7 @@ data:
                 "y": 17
               },
               "hiddenSeries": false,
-              "id": 57,
+              "id": 102,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2297,7 +2618,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -2306,7 +2627,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2323,9 +2644,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])) by (method, uri)",
+                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}" }}",
+                  "legendFormat": "Reqs / Minute",
                   "refId": "A"
                 }
               ],
@@ -2351,7 +2672,7 @@ data:
                 {
                   "$$hashKey": "object:179",
                   "format": "short",
-                  "label": "Reqs / minute",
+                  "label": "Reqs / Minute",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -2391,14 +2712,14 @@ data:
                 "y": 27
               },
               "hiddenSeries": false,
-              "id": 58,
+              "id": 103,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
                 "current": false,
                 "max": true,
                 "min": true,
-                "show": false,
+                "show": true,
                 "total": false,
                 "values": true
               },
@@ -2413,7 +2734,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2430,9 +2751,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]))\n* 100",
+                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
                   "interval": "",
-                  "legendFormat": "",
+                  "legendFormat": "Error Rate",
                   "refId": "A"
                 }
               ],
@@ -2479,9 +2800,117 @@ data:
                 "align": false,
                 "alignLevel": null
               }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 27
+              },
+              "hiddenSeries": false,
+              "id": 104,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646133476107,
+              "repeatPanelId": 78,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "interval": "",
+                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency by Path",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
             }
           ],
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -2502,7 +2931,7 @@ data:
             "x": 0,
             "y": 17
           },
-          "id": 59,
+          "id": 105,
           "panels": [
             {
               "aliasColors": {},
@@ -2510,7 +2939,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "Thanos",
-              "description": "This shows how long requests to $upstream took.",
+              "description": "",
               "fieldConfig": {
                 "defaults": {},
                 "overrides": []
@@ -2524,7 +2953,7 @@ data:
                 "y": 18
               },
               "hiddenSeries": false,
-              "id": 60,
+              "id": 106,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2537,7 +2966,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -2546,7 +2975,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2563,9 +2992,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "legendFormat": "Avg. Request Latency",
                   "refId": "A"
                 }
               ],
@@ -2573,7 +3002,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Avg. Request Duration",
+              "title": "Avg. Request Latency",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -2591,7 +3020,7 @@ data:
                 {
                   "$$hashKey": "object:232",
                   "format": "s",
-                  "label": "Duration",
+                  "label": "Latency",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -2631,7 +3060,7 @@ data:
                 "y": 18
               },
               "hiddenSeries": false,
-              "id": 61,
+              "id": 107,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2644,7 +3073,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -2653,7 +3082,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2670,9 +3099,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])) by (method, uri)",
+                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}" }}",
+                  "legendFormat": "Reqs / Minute",
                   "refId": "A"
                 }
               ],
@@ -2698,7 +3127,7 @@ data:
                 {
                   "$$hashKey": "object:179",
                   "format": "short",
-                  "label": "Reqs / minute",
+                  "label": "Reqs / Minute",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -2738,14 +3167,14 @@ data:
                 "y": 28
               },
               "hiddenSeries": false,
-              "id": 62,
+              "id": 108,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
                 "current": false,
                 "max": true,
                 "min": true,
-                "show": false,
+                "show": true,
                 "total": false,
                 "values": true
               },
@@ -2760,7 +3189,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2777,9 +3206,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]))\n* 100",
+                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
                   "interval": "",
-                  "legendFormat": "",
+                  "legendFormat": "Error Rate",
                   "refId": "A"
                 }
               ],
@@ -2826,9 +3255,117 @@ data:
                 "align": false,
                 "alignLevel": null
               }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 28
+              },
+              "hiddenSeries": false,
+              "id": 109,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646133476107,
+              "repeatPanelId": 78,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
+                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "interval": "",
+                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency by Path",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
             }
           ],
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -2849,7 +3386,7 @@ data:
             "x": 0,
             "y": 18
           },
-          "id": 63,
+          "id": 110,
           "panels": [
             {
               "aliasColors": {},
@@ -2857,7 +3394,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "Thanos",
-              "description": "This shows how long requests to $upstream took.",
+              "description": "",
               "fieldConfig": {
                 "defaults": {},
                 "overrides": []
@@ -2871,7 +3408,7 @@ data:
                 "y": 19
               },
               "hiddenSeries": false,
-              "id": 64,
+              "id": 111,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2884,7 +3421,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -2893,7 +3430,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2910,9 +3447,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "legendFormat": "Avg. Request Latency",
                   "refId": "A"
                 }
               ],
@@ -2920,7 +3457,7 @@ data:
               "timeFrom": null,
               "timeRegions": [],
               "timeShift": null,
-              "title": "Avg. Request Duration",
+              "title": "Avg. Request Latency",
               "tooltip": {
                 "shared": true,
                 "sort": 0,
@@ -2938,7 +3475,7 @@ data:
                 {
                   "$$hashKey": "object:232",
                   "format": "s",
-                  "label": "Duration",
+                  "label": "Latency",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -2978,7 +3515,7 @@ data:
                 "y": 19
               },
               "hiddenSeries": false,
-              "id": 65,
+              "id": 112,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2991,7 +3528,7 @@ data:
               },
               "lines": true,
               "linewidth": 2,
-              "nullPointMode": "null",
+              "nullPointMode": "null as zero",
               "options": {
                 "alertThreshold": true
               },
@@ -3000,7 +3537,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3017,9 +3554,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m])) by (method, uri)",
+                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
                   "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}" }}",
+                  "legendFormat": "Reqs / Minute",
                   "refId": "A"
                 }
               ],
@@ -3045,7 +3582,7 @@ data:
                 {
                   "$$hashKey": "object:179",
                   "format": "short",
-                  "label": "Reqs / minute",
+                  "label": "Reqs / Minute",
                   "logBase": 1,
                   "max": null,
                   "min": null,
@@ -3085,14 +3622,14 @@ data:
                 "y": 29
               },
               "hiddenSeries": false,
-              "id": 66,
+              "id": 113,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
                 "current": false,
                 "max": true,
                 "min": true,
-                "show": false,
+                "show": true,
                 "total": false,
                 "values": true
               },
@@ -3107,7 +3644,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646127914575,
+              "repeatIteration": 1646133476107,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3124,9 +3661,9 @@ data:
               "targets": [
                 {
                   "exemplar": false,
-                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=\"$upstream\"}[1m]))\n* 100",
+                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
                   "interval": "",
-                  "legendFormat": "",
+                  "legendFormat": "Error Rate",
                   "refId": "A"
                 }
               ],
@@ -3173,9 +3710,117 @@ data:
                 "align": false,
                 "alignLevel": null
               }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 29
+              },
+              "hiddenSeries": false,
+              "id": 114,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646133476107,
+              "repeatPanelId": 78,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "www.gov.uk",
+                  "value": "www.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "interval": "",
+                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency by Path",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
             }
           ],
-          "repeatIteration": 1646127914575,
+          "repeatIteration": 1646133476107,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -3399,7 +4044,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-24h",
+        "from": "now-6h",
         "to": "now"
       },
       "timepicker": {
@@ -3430,6 +4075,6 @@ data:
       "timezone": "browser",
       "title": "manage-recalls-api / Upstream HTTP Requests",
       "uid": "manage-recalls-api-upstream-reqs",
-      "version": 1
+      "version": 2
     }
 {{- end -}}
