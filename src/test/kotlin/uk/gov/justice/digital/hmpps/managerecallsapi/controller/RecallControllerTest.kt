@@ -112,7 +112,7 @@ class RecallControllerTest {
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
-    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid)))
+    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid, recommendedRecallType = RecallType.FIXED)))
   }
 
   private fun newRecall() =
