@@ -89,16 +89,16 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   @BeforeEach
   fun `delete all recalls`() {
     // Due to DB constraints, need to clear out the reasons before deleting the audit else the recallRepository delete
-    // triggers the audit and you cant delete the recalls as they are referenced in the recall_reason_audit
+    // triggers the audit and you can not delete the recalls as they are referenced in the recall_reason_audit
     recallRepository.findAll().map { it.copy(reasonsForRecall = emptySet()) }.map { recallRepository.save(it, authenticatedClient.userId) }
     recallReasonAuditRepository.deleteAll()
     recallAuditRepository.deleteAll()
     missingDocumentsRecordRepository.deleteAll()
     lastKnownAddressRepository.deleteAll()
     rescindRecordRepository.deleteAll()
+    noteRepository.deleteAll()
     documentRepository.deleteAll()
     recallRepository.deleteAll()
-    noteRepository.deleteAll()
 
     every { virusScanner.scan(any()) } returns VirusScanResult.NoVirusFound
   }
@@ -348,9 +348,14 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `a note exists`(
     index: Int,
     noteId: NoteId = ::NoteId.random(),
-    documentId: DocumentId? = null
+    documentId: DocumentId = ::DocumentId.random()
   ) {
-    `a document exists`(matchedDocumentId, NOTE_DOCUMENT, FileName("recall-note.doc"), null, null)
+
+    `a document exists`(documentId, NOTE_DOCUMENT, FileName("recall-note.doc"), null, null)
+
+    // Always filling the optional `documentId` here as PACTs such as "Given a recall with notes exists ... a get recall
+    // request ... returns a response which ... has a matching body" become fragile when optional fields are missing.
+    // See e.g. https://docs.pact.io/faq/#:~:text=Why%20is%20there%20no%20support,best%20tool%20for%20your%20situation.
     noteRepository.save(
       Note(
         noteId,
