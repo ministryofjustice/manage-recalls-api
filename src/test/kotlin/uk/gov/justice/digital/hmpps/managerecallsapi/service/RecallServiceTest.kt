@@ -19,6 +19,8 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall.NO_STOP
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -102,9 +104,7 @@ class RecallServiceTest {
   )
 
   private val fullyPopulatedRecallWithoutDocuments = existingRecall.copy(
-    recallType = FIXED,
     licenceNameCategory = fullyPopulatedUpdateRecallRequest.licenceNameCategory!!,
-    recallLength = fullyPopulatedRecallSentencingInfo.calculateRecallLength(),
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
@@ -180,7 +180,7 @@ class RecallServiceTest {
   @Test
   fun `assignee cleared when recall is stopped`() {
     val recall = existingRecall.copy(assignee = UUID.randomUUID())
-    val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP, recallType = FIXED)
+    val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP)
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
 
@@ -239,13 +239,11 @@ class RecallServiceTest {
 
   private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    // TODO: don't set the recallType unless we need to
-    val updatedRecallWithType = existingRecall.copy(recallType = FIXED)
-    every { recallRepository.save(updatedRecallWithType, currentUserId) } returns updatedRecallWithType
+    every { recallRepository.save(existingRecall, currentUserId) } returns existingRecall
 
     val response = underTest.updateRecall(recallId, request, currentUserId)
 
-    assertThat(response, equalTo(updatedRecallWithType))
+    assertThat(response, equalTo(existingRecall))
   }
 
   @Test
@@ -433,6 +431,59 @@ class RecallServiceTest {
     verify { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) }
     verify { meterRegistry.counter("autoReturnedToCustody") }
     verify { counter.increment() }
+  }
+
+  @Test
+  fun `setting recallType on a new recall doesnt set the recall length`() {
+    val recallType = RecallType.values().random()
+    val updatedRecall = existingRecall.copy(recommendedRecallType = recallType)
+
+    every { recallRepository.getByRecallId(recallId) } returns existingRecall
+    every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
+
+    val response = underTest.updateRecommendedRecallType(recallId, recallType, currentUserId)
+
+    assertThat(response.recommendedRecallType, equalTo(recallType))
+    assertThat(response.recallLength, equalTo(null))
+
+    verify { recallRepository.getByRecallId(recallId) }
+    verify { recallRepository.save(updatedRecall, currentUserId) }
+  }
+
+  @Test
+  fun `updating recallType to FIXED also updates the recallLength when sentencing info is set`() {
+    val recallType = FIXED
+    val recallWithSentencingInfo = existingRecall.copy(recommendedRecallType = RecallType.STANDARD, sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), CourtId("ABC"), "Some offence", SentenceLength(1, 0, 0)))
+    val updatedRecall = recallWithSentencingInfo.copy(recommendedRecallType = recallType, recallLength = TWENTY_EIGHT_DAYS)
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithSentencingInfo
+    every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
+
+    val response = underTest.updateRecommendedRecallType(recallId, recallType, currentUserId)
+
+    assertThat(response.recommendedRecallType, equalTo(recallType))
+    assertThat(response.recallLength, equalTo(TWENTY_EIGHT_DAYS))
+
+    verify { recallRepository.getByRecallId(recallId) }
+    verify { recallRepository.save(updatedRecall, currentUserId) }
+  }
+
+  @Test
+  fun `updating recallType to STANDARD also clears the recallLength when sentencing info is set`() {
+    val recallType = RecallType.STANDARD
+    val recallWithSentencingInfo = existingRecall.copy(recommendedRecallType = FIXED, recallLength = TWENTY_EIGHT_DAYS, sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), CourtId("ABC"), "Some offence", SentenceLength(1, 0, 0)))
+    val updatedRecall = recallWithSentencingInfo.copy(recommendedRecallType = recallType, recallLength = null)
+
+    every { recallRepository.getByRecallId(recallId) } returns recallWithSentencingInfo
+    every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
+
+    val response = underTest.updateRecommendedRecallType(recallId, recallType, currentUserId)
+
+    assertThat(response.recommendedRecallType, equalTo(recallType))
+    assertThat(response.recallLength, equalTo(null))
+
+    verify { recallRepository.getByRecallId(recallId) }
+    verify { recallRepository.save(updatedRecall, currentUserId) }
   }
 
   private fun recallRequestWithMandatorySentencingInfo(

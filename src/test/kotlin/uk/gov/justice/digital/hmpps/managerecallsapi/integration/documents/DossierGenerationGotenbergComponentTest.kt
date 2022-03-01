@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -55,7 +56,8 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
     updateRecallWithRequiredInformationForTheDossier(
       recall.recallId,
       localDeliveryUnit = localDeliveryUnit,
-      currentPrisonId = currentPrisonId
+      currentPrisonId = currentPrisonId,
+      recallType = RecallType.FIXED
     )
     authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
     expectNoVirusesWillBeFound()

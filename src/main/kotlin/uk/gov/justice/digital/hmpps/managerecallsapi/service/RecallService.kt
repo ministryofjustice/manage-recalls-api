@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
@@ -63,6 +63,19 @@ class RecallService(
   }
 
   @Transactional
+  fun updateRecommendedRecallType(recallId: RecallId, recallType: RecallType, currentUserId: UserId): Recall =
+    recallRepository.getByRecallId(recallId)
+      .updateRecommendedRecallType(recallType)
+      .let { recallRepository.save(it, currentUserId) }
+
+  private fun Recall.updateRecommendedRecallType(recallType: RecallType): Recall {
+    return copy(
+      recommendedRecallType = recallType,
+      recallLength = sentencingInfo?.calculateRecallLength(recallType)
+    )
+  }
+
+  @Transactional
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest, currentUserId: UserId): Recall =
     recallRepository.getByRecallId(recallId)
       .updateWithRequestDetails(updateRecallRequest)
@@ -72,8 +85,7 @@ class RecallService(
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
       licenceNameCategory = updateRecallRequest.licenceNameCategory ?: licenceNameCategory,
-      recallType = FIXED,
-      recallLength = sentencingInfo?.calculateRecallLength() ?: recallLength,
+      recallLength = sentencingInfo?.calculateRecallLength(recommendedRecallType),
       recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recallEmailReceivedDateTime,
       lastReleasePrison = updateRecallRequest.lastReleasePrison ?: lastReleasePrison,
       lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,

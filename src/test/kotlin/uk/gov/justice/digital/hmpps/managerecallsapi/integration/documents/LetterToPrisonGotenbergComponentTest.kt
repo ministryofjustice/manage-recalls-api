@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -37,10 +38,11 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
     )
     updateRecallWithRequiredInformationForTheLetterToPrison(
       recall.recallId,
-      assessedByUserId = assessedByUserId,
-      vulnerabilityDiversityDetail = "Diversity 1\nDiversity 2",
       contrabandDetail = "Contraband 1\nContraband 2",
-      sentenceYears = 10
+      vulnerabilityDiversityDetail = "Diversity 1\nDiversity 2",
+      assessedByUserId = assessedByUserId,
+      sentenceYears = 10,
+      recallType = RecallType.FIXED
     )
 
     val letterToPrisonId = authenticatedClient.generateDocument(recall.recallId, LETTER_TO_PRISON, FileName("LETTER_TO_PRISON.pdf"))

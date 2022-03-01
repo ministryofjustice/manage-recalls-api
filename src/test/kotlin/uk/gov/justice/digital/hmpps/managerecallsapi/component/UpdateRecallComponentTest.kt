@@ -13,6 +13,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCatego
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -125,7 +127,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `update a recall with sentence information will update recall length`() {
+  fun `update a recall with FIXED recallType and then sentence information will update recall length`() {
     val sentencingInfo = SentencingInfo(
       LocalDate.now(),
       LocalDate.now(),
@@ -134,6 +136,11 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       "index offence",
       SentenceLength(2, 5, 31)
     )
+
+    val recallTypeResponse = authenticatedClient.updateRecallType(recallId, FIXED)
+
+    assertThat(recallTypeResponse.recommendedRecallType, equalTo(FIXED))
+    assertThat(recallTypeResponse.recallLength, equalTo(null))
 
     val response = authenticatedClient.updateRecall(
       recallId,
@@ -165,7 +172,67 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           LocalDate.of(1999, 12, 1),
           NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
+          recommendedRecallType = FIXED,
           recallLength = TWENTY_EIGHT_DAYS,
+          sentenceDate = sentencingInfo.sentenceDate,
+          licenceExpiryDate = sentencingInfo.licenceExpiryDate,
+          sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
+          sentencingCourt = sentencingInfo.sentencingCourt,
+          indexOffence = sentencingInfo.indexOffence,
+          sentenceLength = Api.SentenceLength(2, 5, 31)
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `update a recall with STANDARD recallType and then sentence information will not set recall length`() {
+    val sentencingInfo = SentencingInfo(
+      LocalDate.now(),
+      LocalDate.now(),
+      LocalDate.now(),
+      CourtId("ACCRYC"),
+      "index offence",
+      SentenceLength(2, 5, 31)
+    )
+
+    val recallTypeResponse = authenticatedClient.updateRecallType(recallId, STANDARD)
+
+    assertThat(recallTypeResponse.recommendedRecallType, equalTo(STANDARD))
+    assertThat(recallTypeResponse.recallLength, equalTo(null))
+
+    val response = authenticatedClient.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        sentenceDate = sentencingInfo.sentenceDate,
+        licenceExpiryDate = sentencingInfo.licenceExpiryDate,
+        sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
+        sentencingCourt = sentencingInfo.sentencingCourt,
+        indexOffence = sentencingInfo.indexOffence,
+        conditionalReleaseDate = sentencingInfo.conditionalReleaseDate,
+        sentenceLength = Api.SentenceLength(
+          sentencingInfo.sentenceLength.sentenceYears,
+          sentencingInfo.sentenceLength.sentenceMonths,
+          sentencingInfo.sentenceLength.sentenceDays
+        )
+      )
+    )
+
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          createdByUserId,
+          now,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
+          NameFormatCategory.FIRST_LAST,
+          Status.BEING_BOOKED_ON,
+          recommendedRecallType = STANDARD,
+          recallLength = null,
           sentenceDate = sentencingInfo.sentenceDate,
           licenceExpiryDate = sentencingInfo.licenceExpiryDate,
           sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,

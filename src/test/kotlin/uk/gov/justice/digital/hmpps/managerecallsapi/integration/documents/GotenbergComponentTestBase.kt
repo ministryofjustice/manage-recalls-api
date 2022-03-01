@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
@@ -32,8 +33,10 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     vulnerabilityDiversityDetail: String = "Very diverse\n with a line break",
     localDeliveryUnit: LocalDeliveryUnit,
     currentPrisonId: PrisonId,
-    inCustody: Boolean = true
+    inCustody: Boolean = true,
+    recallType: RecallType
   ) {
+    authenticatedClient.updateRecallType(recallId, recallType)
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
@@ -79,8 +82,10 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     vulnerabilityDiversity: Boolean = true,
     vulnerabilityDiversityDetail: String = "Very diverse",
     assessedByUserId: UserId? = null,
-    sentenceYears: Int = 10
+    sentenceYears: Int = 10,
+    recallType: RecallType
   ) {
+    authenticatedClient.updateRecallType(recallId, recallType)
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
