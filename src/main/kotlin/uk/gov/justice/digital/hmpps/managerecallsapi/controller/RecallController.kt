@@ -562,12 +562,7 @@ enum class StopReason(val label: String, val validForStopCall: Boolean = true) {
   SOS_WARNING_LETTER("SoS warning letter"),
   UO_28DAY_AND_DEEMED_NOTIFIED("UO 28 day & deemed notified"),
   WITHDRAWAL_BY_ACO("Withdrawal by ACO"),
-  RESCINDED("Rescinded", false),
-  POOR_BEHAVIOUR_DRUGS("Poor behaviour - Drugs"),
-  POOR_BEHAVIOUR_NON_COMPLIANCE("Poor behaviour - Non-compliance"),
-  POOR_BEHAVIOUR_RELATIONSHIPS("Poor behaviour - Relationships"),
-  TRAVELLING_OUTSIDE_UK("Travelling outside the UK"),
-  OTHER("Other")
+  RESCINDED("Rescinded", false)
 }
 
 data class UpdateRecallRequest(
