@@ -10,7 +10,7 @@ metadata:
     release: {{ .Release.Name }}
     grafana_dashboard: ""
 data:
-  upstream-http-requests.json: |
+  dashboard.json: |
     {
       "annotations": {
         "list": [
@@ -31,9 +31,306 @@ data:
       "gnetId": null,
       "graphTooltip": 2,
       "id": 209,
-      "iteration": 1646133476107,
+      "iteration": 1646218744181,
       "links": [],
       "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Thanos",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 8,
+            "x": 0,
+            "y": 0
+          },
+          "hiddenSeries": false,
+          "id": 172,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.5.9",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "repeatDirection": "v",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(kube_pod_container_info{namespace=\"manage-recalls-dev\", pod=~\"manage-recalls-api.*\", pod!~\".*proxy.*\", container!=\"manage-recalls-api-clamav-refresh\"}) by (container)",
+              "format": "time_series",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 2,
+              "legendFormat": "{{ "{{ container }}" }}",
+              "refId": "D"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Pods running",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:597",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:598",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": null,
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 12,
+            "w": 16,
+            "x": 8,
+            "y": 0
+          },
+          "hiddenSeries": false,
+          "id": 174,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": false,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": false
+          },
+          "percentage": false,
+          "pluginVersion": "7.5.9",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": true,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum(rate(http_server_requests_seconds_count{namespace=\"$namespace\", service=\"manage-recalls-api\"}[1m])) by (status)",
+              "interval": "",
+              "legendFormat": "{{ "{{ status }}" }}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "HTTP Request Rate (rpm)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:710",
+              "format": "short",
+              "label": "Requests / Second",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:711",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "Thanos",
+          "description": "The number of automated RTC (returned to custody) changes made, in a 1 hour window.",
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 8,
+            "x": 0,
+            "y": 6
+          },
+          "hiddenSeries": false,
+          "id": 118,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": false,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null as zero",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.5.9",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "increase(autoReturnedToCustody_total{namespace=\"$namespace\"}[1h])",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Auto RTC / Hour",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Automated RTC Changes",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:58",
+              "decimals": 0,
+              "format": "short",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "$$hashKey": "object:59",
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
         {
           "collapsed": false,
           "datasource": "Thanos",
@@ -41,7 +338,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 0
+            "y": 12
           },
           "id": 32,
           "panels": [],
@@ -93,7 +390,7 @@ data:
             "h": 4,
             "w": 6,
             "x": 0,
-            "y": 1
+            "y": 13
           },
           "id": 34,
           "maxPerRow": 4,
@@ -181,9 +478,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 6,
-            "y": 1
+            "y": 13
           },
-          "id": 79,
+          "id": 175,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -202,7 +499,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -270,9 +567,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 12,
-            "y": 1
+            "y": 13
           },
-          "id": 80,
+          "id": 176,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -291,7 +588,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -359,9 +656,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 18,
-            "y": 1
+            "y": 13
           },
-          "id": 81,
+          "id": 177,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -380,7 +677,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -448,9 +745,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 0,
-            "y": 5
+            "y": 17
           },
-          "id": 82,
+          "id": 178,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -469,7 +766,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -537,9 +834,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 6,
-            "y": 5
+            "y": 17
           },
-          "id": 83,
+          "id": 179,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -558,7 +855,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -626,9 +923,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 12,
-            "y": 5
+            "y": 17
           },
-          "id": 84,
+          "id": 180,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -647,7 +944,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -715,9 +1012,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 18,
-            "y": 5
+            "y": 17
           },
-          "id": 85,
+          "id": 181,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -736,7 +1033,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -804,9 +1101,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 0,
-            "y": 9
+            "y": 21
           },
-          "id": 86,
+          "id": 182,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -825,7 +1122,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -893,9 +1190,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 6,
-            "y": 9
+            "y": 21
           },
-          "id": 87,
+          "id": 183,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -914,7 +1211,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -982,9 +1279,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 12,
-            "y": 9
+            "y": 21
           },
-          "id": 88,
+          "id": 184,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -1003,7 +1300,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1071,9 +1368,9 @@ data:
             "h": 4,
             "w": 6,
             "x": 18,
-            "y": 9
+            "y": 21
           },
-          "id": 89,
+          "id": 185,
           "maxPerRow": 4,
           "options": {
             "colorMode": "value",
@@ -1092,7 +1389,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1122,7 +1419,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 13
+            "y": 25
           },
           "id": 12,
           "panels": [
@@ -1143,7 +1440,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 14
+                "y": 23
               },
               "hiddenSeries": false,
               "id": 2,
@@ -1171,8 +1468,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "api-dev.prison.service.justice.gov.uk",
+                  "value": "api-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1247,7 +1544,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 14
+                "y": 23
               },
               "hiddenSeries": false,
               "id": 15,
@@ -1275,8 +1572,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "api-dev.prison.service.justice.gov.uk",
+                  "value": "api-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1351,7 +1648,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 24
+                "y": 33
               },
               "hiddenSeries": false,
               "id": 46,
@@ -1379,8 +1676,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "api-dev.prison.service.justice.gov.uk",
+                  "value": "api-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1457,7 +1754,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 24
+                "y": 33
               },
               "hiddenSeries": false,
               "id": 78,
@@ -1485,8 +1782,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "api-dev.prison.service.justice.gov.uk",
+                  "value": "api-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1550,8 +1847,8 @@ data:
           "scopedVars": {
             "upstream": {
               "selected": false,
-              "text": "court-register-dev.hmpps.service.justice.gov.uk",
-              "value": "court-register-dev.hmpps.service.justice.gov.uk"
+              "text": "api-dev.prison.service.justice.gov.uk",
+              "value": "api-dev.prison.service.justice.gov.uk"
             }
           },
           "title": "$upstream",
@@ -1564,9 +1861,9 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 14
+            "y": 26
           },
-          "id": 90,
+          "id": 186,
           "panels": [
             {
               "aliasColors": {},
@@ -1585,10 +1882,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 15
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 91,
+              "id": 187,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1610,7 +1907,462 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
+              "repeatPanelId": 2,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
+                  "interval": "",
+                  "legendFormat": "Avg. Request Latency",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 23
+              },
+              "hiddenSeries": false,
+              "id": 188,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646218744181,
+              "repeatPanelId": 15,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
+                  "interval": "",
+                  "legendFormat": "Reqs / Minute",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Request Rate",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:179",
+                  "format": "short",
+                  "label": "Reqs / Minute",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:180",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 0,
+                "y": 33
+              },
+              "hiddenSeries": false,
+              "id": 189,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646218744181,
+              "repeatPanelId": 46,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
+                  "interval": "",
+                  "legendFormat": "Error Rate",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Error Rate",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:179",
+                  "decimals": 0,
+                  "format": "percent",
+                  "label": "Percentage",
+                  "logBase": 1,
+                  "max": "100",
+                  "min": "0",
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:180",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            },
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 12,
+                "y": 33
+              },
+              "hiddenSeries": false,
+              "id": 190,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646218744181,
+              "repeatPanelId": 78,
+              "repeatedByRow": true,
+              "scopedVars": {
+                "upstream": {
+                  "selected": false,
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                }
+              },
+              "seriesOverrides": [],
+              "spaceLength": 10,
+              "stack": false,
+              "steppedLine": false,
+              "targets": [
+                {
+                  "exemplar": false,
+                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
+                  "interval": "",
+                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
+                  "refId": "A"
+                }
+              ],
+              "thresholds": [],
+              "timeFrom": null,
+              "timeRegions": [],
+              "timeShift": null,
+              "title": "Avg. Request Latency by Path",
+              "tooltip": {
+                "shared": true,
+                "sort": 0,
+                "value_type": "individual"
+              },
+              "type": "graph",
+              "xaxis": {
+                "buckets": null,
+                "mode": "time",
+                "name": null,
+                "show": true,
+                "values": []
+              },
+              "yaxes": [
+                {
+                  "$$hashKey": "object:232",
+                  "format": "s",
+                  "label": "Latency",
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                },
+                {
+                  "$$hashKey": "object:233",
+                  "format": "short",
+                  "label": null,
+                  "logBase": 1,
+                  "max": null,
+                  "min": null,
+                  "show": true
+                }
+              ],
+              "yaxis": {
+                "align": false,
+                "alignLevel": null
+              }
+            }
+          ],
+          "repeatIteration": 1646218744181,
+          "repeatPanelId": 12,
+          "scopedVars": {
+            "upstream": {
+              "selected": false,
+              "text": "court-register-dev.hmpps.service.justice.gov.uk",
+              "value": "court-register-dev.hmpps.service.justice.gov.uk"
+            }
+          },
+          "title": "$upstream",
+          "type": "row"
+        },
+        {
+          "collapsed": true,
+          "datasource": "Thanos",
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 27
+          },
+          "id": 191,
+          "panels": [
+            {
+              "aliasColors": {},
+              "bars": false,
+              "dashLength": 10,
+              "dashes": false,
+              "datasource": "Thanos",
+              "description": "",
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              },
+              "fill": 1,
+              "fillGradient": 0,
+              "gridPos": {
+                "h": 10,
+                "w": 12,
+                "x": 0,
+                "y": 23
+              },
+              "hiddenSeries": false,
+              "id": 192,
+              "legend": {
+                "alignAsTable": true,
+                "avg": true,
+                "current": false,
+                "max": true,
+                "min": true,
+                "show": true,
+                "total": false,
+                "values": true
+              },
+              "lines": true,
+              "linewidth": 2,
+              "nullPointMode": "null as zero",
+              "options": {
+                "alertThreshold": true
+              },
+              "percentage": false,
+              "pluginVersion": "7.5.9",
+              "pointradius": 5,
+              "points": false,
+              "renderer": "flot",
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1692,10 +2444,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 15
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 92,
+              "id": 193,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1717,7 +2469,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1799,10 +2551,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 25
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 93,
+              "id": 194,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1824,7 +2576,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -1908,10 +2660,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 25
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 94,
+              "id": 195,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -1933,7 +2685,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2000,7 +2752,7 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -2019,9 +2771,9 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 15
+            "y": 28
           },
-          "id": 95,
+          "id": 196,
           "panels": [
             {
               "aliasColors": {},
@@ -2040,10 +2792,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 16
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 96,
+              "id": 197,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2065,7 +2817,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2147,10 +2899,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 16
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 97,
+              "id": 198,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2172,7 +2924,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2254,10 +3006,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 26
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 98,
+              "id": 199,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2279,7 +3031,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2363,10 +3115,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 26
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 99,
+              "id": 200,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2388,7 +3140,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2455,7 +3207,7 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -2474,9 +3226,9 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 16
+            "y": 29
           },
-          "id": 100,
+          "id": 201,
           "panels": [
             {
               "aliasColors": {},
@@ -2495,10 +3247,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 17
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 101,
+              "id": 202,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2520,7 +3272,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2602,10 +3354,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 17
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 102,
+              "id": 203,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2627,7 +3379,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2709,10 +3461,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 27
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 103,
+              "id": 204,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2734,7 +3486,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2818,10 +3570,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 27
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 104,
+              "id": 205,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2843,7 +3595,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
@@ -2910,7 +3662,7 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -2929,9 +3681,9 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 30
           },
-          "id": 105,
+          "id": 206,
           "panels": [
             {
               "aliasColors": {},
@@ -2950,10 +3702,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 18
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 106,
+              "id": 207,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -2975,7 +3727,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3057,10 +3809,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 18
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 107,
+              "id": 208,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -3082,7 +3834,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3164,10 +3916,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 28
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 108,
+              "id": 209,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -3189,7 +3941,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3273,10 +4025,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 28
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 109,
+              "id": 210,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -3298,7 +4050,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3365,7 +4117,7 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -3384,9 +4136,9 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 18
+            "y": 31
           },
-          "id": 110,
+          "id": 211,
           "panels": [
             {
               "aliasColors": {},
@@ -3405,10 +4157,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 19
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 111,
+              "id": 212,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -3430,7 +4182,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3512,10 +4264,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 19
+                "y": 23
               },
               "hiddenSeries": false,
-              "id": 112,
+              "id": 213,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -3537,7 +4289,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3619,10 +4371,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 29
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 113,
+              "id": 214,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -3644,7 +4396,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3728,10 +4480,10 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 29
+                "y": 33
               },
               "hiddenSeries": false,
-              "id": 114,
+              "id": 215,
               "legend": {
                 "alignAsTable": true,
                 "avg": true,
@@ -3753,7 +4505,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646133476107,
+              "repeatIteration": 1646218744181,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
@@ -3820,7 +4572,7 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646133476107,
+          "repeatIteration": 1646218744181,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -3898,6 +4650,11 @@ data:
                 "selected": true,
                 "text": "All",
                 "value": "$__all"
+              },
+              {
+                "selected": false,
+                "text": "api-dev.prison.service.justice.gov.uk",
+                "value": "api-dev.prison.service.justice.gov.uk"
               },
               {
                 "selected": false,
@@ -4044,7 +4801,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-6h",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {
@@ -4073,8 +4830,8 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "manage-recalls-api / Upstream HTTP Requests",
-      "uid": "manage-recalls-api-upstream-reqs",
-      "version": 2
+      "title": "manage-recalls-api / Dashboard",
+      "uid": "manage-recalls-api-dashboard",
+      "version": 3
     }
 {{- end -}}
