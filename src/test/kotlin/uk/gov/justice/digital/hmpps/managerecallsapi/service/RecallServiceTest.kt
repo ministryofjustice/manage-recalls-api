@@ -10,19 +10,14 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.MethodSource
 import reactor.core.publisher.Mono
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall.NO_STOP
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -30,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -52,9 +48,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.UUID
-import java.util.stream.Stream
 
-@TestInstance(PER_CLASS)
 class RecallServiceTest {
   private val recallRepository = mockk<RecallRepository>()
   private val bankHolidayService = mockk<BankHolidayService>()
@@ -180,14 +174,26 @@ class RecallServiceTest {
   @Test
   fun `assignee cleared when recall is stopped`() {
     val recall = existingRecall.copy(assignee = UUID.randomUUID())
-    val updatedRecall = existingRecall.copy(agreeWithRecall = NO_STOP)
+    val updatedRecall = existingRecall.copy(assignee = null, stopRecord = StopRecord(StopReason.ALTERNATIVE_INTERVENTION, currentUserId, OffsetDateTime.now(fixedClock)))
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
 
-    val updateRequest = UpdateRecallRequest(agreeWithRecall = NO_STOP)
-    val response = underTest.updateRecall(recallId, updateRequest, currentUserId)
+    val stopRequest = StopRecallRequest(StopReason.ALTERNATIVE_INTERVENTION)
+    val response = underTest.stopRecall(recallId, stopRequest, currentUserId)
 
     assertThat(response, equalTo(updatedRecall))
+    assertThat(response.assignee, equalTo(null))
+  }
+
+  @Test
+  fun `stop recall with RESCINDED throws InvalidStopReasonException`() {
+    every { recallRepository.getByRecallId(any()) } returns existingRecall
+
+    assertThrows<InvalidStopReasonException> {
+      underTest.stopRecall(recallId, StopRecallRequest(StopReason.RESCINDED), currentUserId)
+    }
+
+    verify(exactly = 0) { recallRepository.save(any(), any()) }
   }
 
   @Test
@@ -212,38 +218,6 @@ class RecallServiceTest {
     )
 
     assertThat(dossierTargetDate, equalTo(null))
-  }
-
-  @Suppress("unused")
-  private fun requestWithMissingMandatoryInfo(): Stream<UpdateRecallRequest>? {
-    return Stream.of(
-      recallRequestWithMandatorySentencingInfo(sentenceDate = null),
-      recallRequestWithMandatorySentencingInfo(licenceExpiryDate = null),
-      recallRequestWithMandatorySentencingInfo(sentenceExpiryDate = null),
-      recallRequestWithMandatorySentencingInfo(sentencingCourt = null),
-      recallRequestWithMandatorySentencingInfo(indexOffence = null),
-      recallRequestWithMandatorySentencingInfo(sentenceLength = null),
-      recallRequestWithProbationInfo(probationOfficerName = null),
-      recallRequestWithProbationInfo(probationOfficerPhoneNumber = null),
-      recallRequestWithProbationInfo(probationOfficerEmail = null),
-      recallRequestWithProbationInfo(localDeliveryUnit = null),
-      recallRequestWithProbationInfo(authorisingAssistantChiefOfficer = null)
-    )
-  }
-
-  @ParameterizedTest
-  @MethodSource("requestWithMissingMandatoryInfo")
-  fun `should not update recall if a mandatory field is not populated`(request: UpdateRecallRequest) {
-    assertUpdateRecallDoesNotUpdate(request)
-  }
-
-  private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
-    every { recallRepository.getByRecallId(recallId) } returns existingRecall
-    every { recallRepository.save(existingRecall, currentUserId) } returns existingRecall
-
-    val response = underTest.updateRecall(recallId, request, currentUserId)
-
-    assertThat(response, equalTo(existingRecall))
   }
 
   @Test
@@ -485,34 +459,4 @@ class RecallServiceTest {
     verify { recallRepository.getByRecallId(recallId) }
     verify { recallRepository.save(updatedRecall, currentUserId) }
   }
-
-  private fun recallRequestWithMandatorySentencingInfo(
-    sentenceDate: LocalDate? = today,
-    licenceExpiryDate: LocalDate? = today,
-    sentenceExpiryDate: LocalDate? = today,
-    sentencingCourt: CourtId? = CourtId("court"),
-    indexOffence: String? = "index offence",
-    sentenceLength: Api.SentenceLength? = Api.SentenceLength(10, 1, 1)
-  ) = UpdateRecallRequest(
-    sentenceDate = sentenceDate,
-    licenceExpiryDate = licenceExpiryDate,
-    sentenceExpiryDate = sentenceExpiryDate,
-    sentencingCourt = sentencingCourt,
-    indexOffence = indexOffence,
-    sentenceLength = sentenceLength
-  )
-
-  private fun recallRequestWithProbationInfo(
-    probationOfficerName: String? = "PON",
-    probationOfficerPhoneNumber: String? = "07111111111",
-    probationOfficerEmail: String? = "email@email.com",
-    localDeliveryUnit: LocalDeliveryUnit? = LocalDeliveryUnit.PS_DURHAM,
-    authorisingAssistantChiefOfficer: String? = "AACO"
-  ) = UpdateRecallRequest(
-    probationOfficerName = probationOfficerName,
-    probationOfficerPhoneNumber = probationOfficerPhoneNumber,
-    probationOfficerEmail = probationOfficerEmail,
-    localDeliveryUnit = localDeliveryUnit,
-    authorisingAssistantChiefOfficer = authorisingAssistantChiefOfficer
-  )
 }

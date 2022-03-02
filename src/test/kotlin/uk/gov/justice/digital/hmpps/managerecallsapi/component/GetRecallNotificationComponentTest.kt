@@ -167,7 +167,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
   }
 
   private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId, inCustody: Boolean) {
-    authenticatedClient.updateRecallType(recallId, RecallType.FIXED)
+    authenticatedClient.updateRecommendedRecallType(recallId, RecallType.FIXED)
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(

@@ -64,7 +64,7 @@ class GenerateDossierComponentTest : ComponentTestBase() {
         LocalDate.now()
       )
     )
-    authenticatedClient.updateRecallType(recall.recallId, FIXED)
+    authenticatedClient.updateRecommendedRecallType(recall.recallId, FIXED)
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(

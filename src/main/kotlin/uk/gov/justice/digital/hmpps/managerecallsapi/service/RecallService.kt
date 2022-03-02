@@ -1,13 +1,15 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ConfirmedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -15,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonApiClient
@@ -41,6 +44,7 @@ class RecallService(
     val SYSTEM_USER_ID = UserId(UUID.fromString("99999999-9999-9999-9999-999999999999"))
   }
 
+  private var rtcCounter: Counter? = null
   private val log = LoggerFactory.getLogger(this::class.java)
 
   @Transactional
@@ -63,16 +67,24 @@ class RecallService(
   }
 
   @Transactional
-  fun updateRecommendedRecallType(recallId: RecallId, recallType: RecallType, currentUserId: UserId): Recall =
-    recallRepository.getByRecallId(recallId)
-      .updateRecommendedRecallType(recallType)
-      .let { recallRepository.save(it, currentUserId) }
-
-  private fun Recall.updateRecommendedRecallType(recallType: RecallType): Recall {
-    return copy(
+  fun updateRecommendedRecallType(recallId: RecallId, recallType: RecallType, currentUserId: UserId): Recall {
+    val recall = recallRepository.getByRecallId(recallId)
+    return recall.copy(
       recommendedRecallType = recallType,
-      recallLength = sentencingInfo?.calculateRecallLength(recallType)
+      recallLength = recall.sentencingInfo?.calculateRecallLength(recallType)
     )
+      .let { recallRepository.save(it, currentUserId) }
+  }
+
+  @Transactional
+  fun confirmRecallType(recallId: RecallId, request: ConfirmedRecallTypeRequest, currentUserId: UserId): Recall {
+    val recall = recallRepository.getByRecallId(recallId)
+    return recall.copy(
+      confirmedRecallType = request.confirmedRecallType,
+      confirmedRecallTypeDetail = request.confirmedRecallTypeDetail,
+      recallLength = recall.sentencingInfo?.calculateRecallLength(request.confirmedRecallType)
+    )
+      .let { recallRepository.save(it, currentUserId) }
   }
 
   @Transactional
@@ -104,7 +116,6 @@ class RecallService(
       reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
       agreeWithRecall = updateRecallRequest.agreeWithRecall ?: agreeWithRecall,
-      assignee = clearAssigneeIfRecallStopped(updateRecallRequest.agreeWithRecall, assignee),
       agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail ?: agreeWithRecallDetail,
       currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
       additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
@@ -140,16 +151,6 @@ class RecallService(
       else -> null
     } ?: recall.dossierTargetDate
 
-  fun clearAssigneeIfRecallStopped(agreeWithRecall: AgreeWithRecall?, assignee: UUID?): UUID? {
-    return assignee?.let {
-      if (AgreeWithRecall.NO_STOP == agreeWithRecall) {
-        null
-      } else {
-        it
-      }
-    }
-  }
-
   @Transactional
   fun updateCustodyStatus(currentUserId: UserId) {
     val rtcRecalls = recallRepository.findAll()
@@ -165,9 +166,16 @@ class RecallService(
         val returnedToCustodyDateTime = movements[it.nomsNumber]!!.movementDateTime()
         log.info("Returning ${it.recallId()} to custody as of $returnedToCustodyDateTime")
         returnedToCustody(it, returnedToCustodyDateTime, OffsetDateTime.now(clock), SYSTEM_USER_ID)
-        meterRegistry.counter("autoReturnedToCustody").increment()
+        getCounter().increment()
       }
     }
+  }
+
+  private fun getCounter(): Counter {
+    if (rtcCounter == null) {
+      rtcCounter = meterRegistry.counter("autoReturnedToCustody")
+    }
+    return rtcCounter!!
   }
 
   @Transactional
@@ -187,6 +195,25 @@ class RecallService(
       ),
       recordedUserId
     )
+
+  @Transactional
+  fun stopRecall(recallId: RecallId, request: StopRecallRequest, currentUserId: UserId) =
+    recallRepository.getByRecallId(recallId).let { recall ->
+      if (!request.stopReason.validForStopCall) {
+        throw InvalidStopReasonException(recallId, request.stopReason)
+      }
+      recallRepository.save(
+        recall.copy(
+          stopRecord = StopRecord(
+            request.stopReason,
+            currentUserId,
+            OffsetDateTime.now(clock)
+          ),
+          assignee = null
+        ),
+        currentUserId
+      )
+    }
 }
 
 private fun Prisoner.isInCustody(): Boolean {

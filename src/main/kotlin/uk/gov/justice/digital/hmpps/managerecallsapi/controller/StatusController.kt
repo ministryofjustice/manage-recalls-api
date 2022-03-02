@@ -12,12 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.InvalidStopReasonException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
-import java.time.Clock
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
 
@@ -26,9 +22,7 @@ import javax.transaction.Transactional
 @PreAuthorize("hasRole('ROLE_MANAGE_RECALLS')")
 class StatusController(
   @Autowired private val recallService: RecallService,
-  @Autowired private val recallRepository: RecallRepository,
-  @Autowired private val tokenExtractor: TokenExtractor,
-  @Autowired private val clock: Clock
+  @Autowired private val tokenExtractor: TokenExtractor
 ) {
 
   @PostMapping("/recalls/{recallId}/returned-to-custody")
@@ -50,21 +44,8 @@ class StatusController(
     @RequestBody request: StopRecallRequest,
     @RequestHeader("Authorization") bearerToken: String
   ): Unit =
-    recallRepository.getByRecallId(recallId).let { recall ->
-      if (!request.stopReason.validForStopCall) {
-        throw InvalidStopReasonException(recallId, request.stopReason)
-      }
-      val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
-      recallRepository.save(
-        recall.copy(
-          stopRecord = StopRecord(
-            request.stopReason,
-            currentUserId,
-            OffsetDateTime.now(clock)
-          ),
-        ),
-        currentUserId
-      )
+    tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
+      recallService.stopRecall(recallId, request, currentUserId)
     }
 }
 

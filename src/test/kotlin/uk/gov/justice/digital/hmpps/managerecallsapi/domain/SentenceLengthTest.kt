@@ -18,7 +18,7 @@ class SentenceLengthTest {
 
   @ParameterizedTest(name = "recall length is {0} for sentence length y={1}, m={2}, d={3}")
   @MethodSource("parameterArrays")
-  fun `recall length is 14 days if sentence length less than one year`(
+  fun `recall length is 14 days if sentence length less than one year for FIXED recall`(
     recallLength: RecallLength,
     sentenceYears: Int,
     sentenceMonths: Int,
