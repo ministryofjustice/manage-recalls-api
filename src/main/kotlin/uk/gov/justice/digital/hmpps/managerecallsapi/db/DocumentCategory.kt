@@ -22,6 +22,7 @@ enum class DocumentCategory(val uploaded: Boolean, val versioned: Versioned) {
   REVOCATION_ORDER(false, YES_WITH_DETAILS),
 
   // VERSIONED WITHOUT DETAILS - linked to recall
+  CHANGE_RECALL_TYPE_EMAIL(true, YES_WITHOUT_DETAILS),
   DOSSIER_EMAIL(true, YES_WITHOUT_DETAILS),
   MISSING_DOCUMENTS_EMAIL(true, YES_WITHOUT_DETAILS), // linked to missing doc record (make UNVERSIONED)
   NSY_REMOVE_WARRANT_EMAIL(true, YES_WITHOUT_DETAILS),
