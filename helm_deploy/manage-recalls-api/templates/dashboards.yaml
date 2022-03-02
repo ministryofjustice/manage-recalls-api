@@ -30,13 +30,13 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 2,
-      "id": 209,
-      "iteration": 1646218744181,
+      "id": 215,
+      "iteration": 1646232814539,
       "links": [],
       "panels": [
         {
           "aliasColors": {},
-          "bars": false,
+          "bars": true,
           "dashLength": 10,
           "dashes": false,
           "datasource": "Thanos",
@@ -66,7 +66,7 @@ data:
           "lines": false,
           "linewidth": 1,
           "links": [],
-          "nullPointMode": "null",
+          "nullPointMode": "null as zero",
           "options": {
             "alertThreshold": true
           },
@@ -83,9 +83,9 @@ data:
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(kube_pod_container_info{namespace=\"manage-recalls-dev\", pod=~\"manage-recalls-api.*\", pod!~\".*proxy.*\", container!=\"manage-recalls-api-clamav-refresh\"}) by (container)",
+              "expr": "sum(kube_pod_container_info{namespace=\"$namespace\", pod=~\"manage-recalls-api.*\", pod!~\".*proxy.*\", container!=\"manage-recalls-api-clamav-refresh\"}) by (container)",
               "format": "time_series",
-              "instant": true,
+              "instant": false,
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{ "{{ container }}" }}",
@@ -99,7 +99,7 @@ data:
           "title": "Pods running",
           "tooltip": {
             "shared": true,
-            "sort": 2,
+            "sort": 0,
             "value_type": "individual"
           },
           "type": "graph",
@@ -140,7 +140,7 @@ data:
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "Thanos",
           "fieldConfig": {
             "defaults": {},
             "overrides": []
@@ -189,7 +189,9 @@ data:
             }
           ],
           "thresholds": [],
+          "timeFrom": null,
           "timeRegions": [],
+          "timeShift": null,
           "title": "HTTP Request Rate (rpm)",
           "tooltip": {
             "shared": true,
@@ -207,8 +209,9 @@ data:
           "yaxes": [
             {
               "$$hashKey": "object:710",
+              "decimals": 1,
               "format": "short",
-              "label": "Requests / Second",
+              "label": "",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -216,8 +219,9 @@ data:
             },
             {
               "$$hashKey": "object:711",
+              "decimals": null,
               "format": "short",
-              "label": null,
+              "label": "",
               "logBase": 1,
               "max": null,
               "min": null,
@@ -278,7 +282,7 @@ data:
           "targets": [
             {
               "exemplar": true,
-              "expr": "increase(autoReturnedToCustody_total{namespace=\"$namespace\"}[1h])",
+              "expr": "sum(increase(autoReturnedToCustody_total{namespace=\"$namespace\"}[1h]) or vector(0))",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -499,7 +503,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -588,7 +592,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -677,7 +681,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -766,7 +770,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -855,7 +859,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -944,7 +948,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1033,7 +1037,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1122,7 +1126,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1211,7 +1215,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1300,7 +1304,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1389,7 +1393,7 @@ data:
           },
           "pluginVersion": "7.5.9",
           "repeatDirection": "h",
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 34,
           "scopedVars": {
             "service": {
@@ -1440,7 +1444,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 2,
@@ -1468,8 +1472,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "api-dev.prison.service.justice.gov.uk",
-                  "value": "api-dev.prison.service.justice.gov.uk"
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1544,7 +1548,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 15,
@@ -1572,8 +1576,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "api-dev.prison.service.justice.gov.uk",
-                  "value": "api-dev.prison.service.justice.gov.uk"
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1648,7 +1652,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 46,
@@ -1676,8 +1680,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "api-dev.prison.service.justice.gov.uk",
-                  "value": "api-dev.prison.service.justice.gov.uk"
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1754,7 +1758,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 78,
@@ -1782,8 +1786,8 @@ data:
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "api-dev.prison.service.justice.gov.uk",
-                  "value": "api-dev.prison.service.justice.gov.uk"
+                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1847,8 +1851,8 @@ data:
           "scopedVars": {
             "upstream": {
               "selected": false,
-              "text": "api-dev.prison.service.justice.gov.uk",
-              "value": "api-dev.prison.service.justice.gov.uk"
+              "text": "court-register-dev.hmpps.service.justice.gov.uk",
+              "value": "court-register-dev.hmpps.service.justice.gov.uk"
             }
           },
           "title": "$upstream",
@@ -1882,7 +1886,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 187,
@@ -1907,14 +1911,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "data.police.uk",
+                  "value": "data.police.uk"
                 }
               },
               "seriesOverrides": [],
@@ -1989,7 +1993,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 188,
@@ -2014,14 +2018,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "data.police.uk",
+                  "value": "data.police.uk"
                 }
               },
               "seriesOverrides": [],
@@ -2096,7 +2100,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 189,
@@ -2121,14 +2125,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "data.police.uk",
+                  "value": "data.police.uk"
                 }
               },
               "seriesOverrides": [],
@@ -2205,7 +2209,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 190,
@@ -2230,14 +2234,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "court-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "court-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "data.police.uk",
+                  "value": "data.police.uk"
                 }
               },
               "seriesOverrides": [],
@@ -2297,13 +2301,13 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
               "selected": false,
-              "text": "court-register-dev.hmpps.service.justice.gov.uk",
-              "value": "court-register-dev.hmpps.service.justice.gov.uk"
+              "text": "data.police.uk",
+              "value": "data.police.uk"
             }
           },
           "title": "$upstream",
@@ -2337,7 +2341,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 192,
@@ -2362,14 +2366,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "data.police.uk",
-                  "value": "data.police.uk"
+                  "text": "manage-recalls-api-gotenberg",
+                  "value": "manage-recalls-api-gotenberg"
                 }
               },
               "seriesOverrides": [],
@@ -2444,7 +2448,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 193,
@@ -2469,14 +2473,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "data.police.uk",
-                  "value": "data.police.uk"
+                  "text": "manage-recalls-api-gotenberg",
+                  "value": "manage-recalls-api-gotenberg"
                 }
               },
               "seriesOverrides": [],
@@ -2551,7 +2555,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 194,
@@ -2576,14 +2580,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "data.police.uk",
-                  "value": "data.police.uk"
+                  "text": "manage-recalls-api-gotenberg",
+                  "value": "manage-recalls-api-gotenberg"
                 }
               },
               "seriesOverrides": [],
@@ -2660,7 +2664,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 195,
@@ -2685,14 +2689,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "data.police.uk",
-                  "value": "data.police.uk"
+                  "text": "manage-recalls-api-gotenberg",
+                  "value": "manage-recalls-api-gotenberg"
                 }
               },
               "seriesOverrides": [],
@@ -2752,13 +2756,13 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
               "selected": false,
-              "text": "data.police.uk",
-              "value": "data.police.uk"
+              "text": "manage-recalls-api-gotenberg",
+              "value": "manage-recalls-api-gotenberg"
             }
           },
           "title": "$upstream",
@@ -2792,7 +2796,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 197,
@@ -2817,14 +2821,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "manage-recalls-api-gotenberg",
-                  "value": "manage-recalls-api-gotenberg"
+                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -2899,7 +2903,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 198,
@@ -2924,14 +2928,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "manage-recalls-api-gotenberg",
-                  "value": "manage-recalls-api-gotenberg"
+                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3006,7 +3010,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 199,
@@ -3031,14 +3035,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "manage-recalls-api-gotenberg",
-                  "value": "manage-recalls-api-gotenberg"
+                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3115,7 +3119,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 200,
@@ -3140,14 +3144,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "manage-recalls-api-gotenberg",
-                  "value": "manage-recalls-api-gotenberg"
+                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
+                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3207,13 +3211,13 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
               "selected": false,
-              "text": "manage-recalls-api-gotenberg",
-              "value": "manage-recalls-api-gotenberg"
+              "text": "prison-register-dev.hmpps.service.justice.gov.uk",
+              "value": "prison-register-dev.hmpps.service.justice.gov.uk"
             }
           },
           "title": "$upstream",
@@ -3247,7 +3251,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 202,
@@ -3272,14 +3276,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
+                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3354,7 +3358,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 203,
@@ -3379,14 +3383,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
+                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3461,7 +3465,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 204,
@@ -3486,14 +3490,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
+                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3570,7 +3574,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 205,
@@ -3595,14 +3599,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "prison-register-dev.hmpps.service.justice.gov.uk",
-                  "value": "prison-register-dev.hmpps.service.justice.gov.uk"
+                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
+                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3662,13 +3666,13 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
               "selected": false,
-              "text": "prison-register-dev.hmpps.service.justice.gov.uk",
-              "value": "prison-register-dev.hmpps.service.justice.gov.uk"
+              "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
+              "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
             }
           },
           "title": "$upstream",
@@ -3702,7 +3706,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 207,
@@ -3727,14 +3731,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 2,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
-                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
+                  "text": "www.gov.uk",
+                  "value": "www.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3809,7 +3813,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 23
+                "y": 26
               },
               "hiddenSeries": false,
               "id": 208,
@@ -3834,14 +3838,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 15,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
-                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
+                  "text": "www.gov.uk",
+                  "value": "www.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -3916,7 +3920,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 0,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 209,
@@ -3941,14 +3945,14 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 46,
               "repeatedByRow": true,
               "scopedVars": {
                 "upstream": {
                   "selected": false,
-                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
-                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
+                  "text": "www.gov.uk",
+                  "value": "www.gov.uk"
                 }
               },
               "seriesOverrides": [],
@@ -4025,7 +4029,7 @@ data:
                 "h": 10,
                 "w": 12,
                 "x": 12,
-                "y": 33
+                "y": 36
               },
               "hiddenSeries": false,
               "id": 210,
@@ -4050,462 +4054,7 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "repeatIteration": 1646218744181,
-              "repeatPanelId": 78,
-              "repeatedByRow": true,
-              "scopedVars": {
-                "upstream": {
-                  "selected": false,
-                  "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
-                  "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
-                }
-              },
-              "seriesOverrides": [],
-              "spaceLength": 10,
-              "stack": false,
-              "steppedLine": false,
-              "targets": [
-                {
-                  "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n) by (outcome, status, method, uri)",
-                  "interval": "",
-                  "legendFormat": "{{ "{{ method }} {{ uri }}: {{ status }}" }}",
-                  "refId": "A"
-                }
-              ],
-              "thresholds": [],
-              "timeFrom": null,
-              "timeRegions": [],
-              "timeShift": null,
-              "title": "Avg. Request Latency by Path",
-              "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-              },
-              "type": "graph",
-              "xaxis": {
-                "buckets": null,
-                "mode": "time",
-                "name": null,
-                "show": true,
-                "values": []
-              },
-              "yaxes": [
-                {
-                  "$$hashKey": "object:232",
-                  "format": "s",
-                  "label": "Latency",
-                  "logBase": 1,
-                  "max": null,
-                  "min": null,
-                  "show": true
-                },
-                {
-                  "$$hashKey": "object:233",
-                  "format": "short",
-                  "label": null,
-                  "logBase": 1,
-                  "max": null,
-                  "min": null,
-                  "show": true
-                }
-              ],
-              "yaxis": {
-                "align": false,
-                "alignLevel": null
-              }
-            }
-          ],
-          "repeatIteration": 1646218744181,
-          "repeatPanelId": 12,
-          "scopedVars": {
-            "upstream": {
-              "selected": false,
-              "text": "prisoner-offender-search-dev.prison.service.justice.gov.uk",
-              "value": "prisoner-offender-search-dev.prison.service.justice.gov.uk"
-            }
-          },
-          "title": "$upstream",
-          "type": "row"
-        },
-        {
-          "collapsed": true,
-          "datasource": "Thanos",
-          "gridPos": {
-            "h": 1,
-            "w": 24,
-            "x": 0,
-            "y": 31
-          },
-          "id": 211,
-          "panels": [
-            {
-              "aliasColors": {},
-              "bars": false,
-              "dashLength": 10,
-              "dashes": false,
-              "datasource": "Thanos",
-              "description": "",
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
-              "fill": 1,
-              "fillGradient": 0,
-              "gridPos": {
-                "h": 10,
-                "w": 12,
-                "x": 0,
-                "y": 23
-              },
-              "hiddenSeries": false,
-              "id": 212,
-              "legend": {
-                "alignAsTable": true,
-                "avg": true,
-                "current": false,
-                "max": true,
-                "min": true,
-                "show": true,
-                "total": false,
-                "values": true
-              },
-              "lines": true,
-              "linewidth": 2,
-              "nullPointMode": "null as zero",
-              "options": {
-                "alertThreshold": true
-              },
-              "percentage": false,
-              "pluginVersion": "7.5.9",
-              "pointradius": 5,
-              "points": false,
-              "renderer": "flot",
-              "repeatIteration": 1646218744181,
-              "repeatPanelId": 2,
-              "repeatedByRow": true,
-              "scopedVars": {
-                "upstream": {
-                  "selected": false,
-                  "text": "www.gov.uk",
-                  "value": "www.gov.uk"
-                }
-              },
-              "seriesOverrides": [],
-              "spaceLength": 10,
-              "stack": false,
-              "steppedLine": false,
-              "targets": [
-                {
-                  "exemplar": false,
-                  "expr": "max(\n  irate(http_client_requests_seconds_sum{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]) \n  / \n  irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m])\n)",
-                  "interval": "",
-                  "legendFormat": "Avg. Request Latency",
-                  "refId": "A"
-                }
-              ],
-              "thresholds": [],
-              "timeFrom": null,
-              "timeRegions": [],
-              "timeShift": null,
-              "title": "Avg. Request Latency",
-              "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-              },
-              "type": "graph",
-              "xaxis": {
-                "buckets": null,
-                "mode": "time",
-                "name": null,
-                "show": true,
-                "values": []
-              },
-              "yaxes": [
-                {
-                  "$$hashKey": "object:232",
-                  "format": "s",
-                  "label": "Latency",
-                  "logBase": 1,
-                  "max": null,
-                  "min": null,
-                  "show": true
-                },
-                {
-                  "$$hashKey": "object:233",
-                  "format": "short",
-                  "label": null,
-                  "logBase": 1,
-                  "max": null,
-                  "min": null,
-                  "show": true
-                }
-              ],
-              "yaxis": {
-                "align": false,
-                "alignLevel": null
-              }
-            },
-            {
-              "aliasColors": {},
-              "bars": false,
-              "dashLength": 10,
-              "dashes": false,
-              "datasource": "Thanos",
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
-              "fill": 1,
-              "fillGradient": 0,
-              "gridPos": {
-                "h": 10,
-                "w": 12,
-                "x": 12,
-                "y": 23
-              },
-              "hiddenSeries": false,
-              "id": 213,
-              "legend": {
-                "alignAsTable": true,
-                "avg": true,
-                "current": false,
-                "max": true,
-                "min": true,
-                "show": true,
-                "total": false,
-                "values": true
-              },
-              "lines": true,
-              "linewidth": 2,
-              "nullPointMode": "null as zero",
-              "options": {
-                "alertThreshold": true
-              },
-              "percentage": false,
-              "pluginVersion": "7.5.9",
-              "pointradius": 5,
-              "points": false,
-              "renderer": "flot",
-              "repeatIteration": 1646218744181,
-              "repeatPanelId": 15,
-              "repeatedByRow": true,
-              "scopedVars": {
-                "upstream": {
-                  "selected": false,
-                  "text": "www.gov.uk",
-                  "value": "www.gov.uk"
-                }
-              },
-              "seriesOverrides": [],
-              "spaceLength": 10,
-              "stack": false,
-              "steppedLine": false,
-              "targets": [
-                {
-                  "exemplar": false,
-                  "expr": "max(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))",
-                  "interval": "",
-                  "legendFormat": "Reqs / Minute",
-                  "refId": "A"
-                }
-              ],
-              "thresholds": [],
-              "timeFrom": null,
-              "timeRegions": [],
-              "timeShift": null,
-              "title": "Request Rate",
-              "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-              },
-              "type": "graph",
-              "xaxis": {
-                "buckets": null,
-                "mode": "time",
-                "name": null,
-                "show": true,
-                "values": []
-              },
-              "yaxes": [
-                {
-                  "$$hashKey": "object:179",
-                  "format": "short",
-                  "label": "Reqs / Minute",
-                  "logBase": 1,
-                  "max": null,
-                  "min": null,
-                  "show": true
-                },
-                {
-                  "$$hashKey": "object:180",
-                  "format": "short",
-                  "label": null,
-                  "logBase": 1,
-                  "max": null,
-                  "min": null,
-                  "show": true
-                }
-              ],
-              "yaxis": {
-                "align": false,
-                "alignLevel": null
-              }
-            },
-            {
-              "aliasColors": {},
-              "bars": false,
-              "dashLength": 10,
-              "dashes": false,
-              "datasource": "Thanos",
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
-              "fill": 1,
-              "fillGradient": 0,
-              "gridPos": {
-                "h": 10,
-                "w": 12,
-                "x": 0,
-                "y": 33
-              },
-              "hiddenSeries": false,
-              "id": 214,
-              "legend": {
-                "alignAsTable": true,
-                "avg": true,
-                "current": false,
-                "max": true,
-                "min": true,
-                "show": true,
-                "total": false,
-                "values": true
-              },
-              "lines": true,
-              "linewidth": 2,
-              "nullPointMode": "null as zero",
-              "options": {
-                "alertThreshold": true
-              },
-              "percentage": false,
-              "pluginVersion": "7.5.9",
-              "pointradius": 5,
-              "points": false,
-              "renderer": "flot",
-              "repeatIteration": 1646218744181,
-              "repeatPanelId": 46,
-              "repeatedByRow": true,
-              "scopedVars": {
-                "upstream": {
-                  "selected": false,
-                  "text": "www.gov.uk",
-                  "value": "www.gov.uk"
-                }
-              },
-              "seriesOverrides": [],
-              "spaceLength": 10,
-              "stack": false,
-              "steppedLine": false,
-              "targets": [
-                {
-                  "exemplar": false,
-                  "expr": "sum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\", outcome!=\"SUCCESS\"}[1m]))\n/\nsum(irate(http_client_requests_seconds_count{namespace=\"$namespace\", clientName=~\"$upstream\"}[1m]))\n* 100\nor\nvector(0)",
-                  "interval": "",
-                  "legendFormat": "Error Rate",
-                  "refId": "A"
-                }
-              ],
-              "thresholds": [],
-              "timeFrom": null,
-              "timeRegions": [],
-              "timeShift": null,
-              "title": "Error Rate",
-              "tooltip": {
-                "shared": true,
-                "sort": 0,
-                "value_type": "individual"
-              },
-              "type": "graph",
-              "xaxis": {
-                "buckets": null,
-                "mode": "time",
-                "name": null,
-                "show": true,
-                "values": []
-              },
-              "yaxes": [
-                {
-                  "$$hashKey": "object:179",
-                  "decimals": 0,
-                  "format": "percent",
-                  "label": "Percentage",
-                  "logBase": 1,
-                  "max": "100",
-                  "min": "0",
-                  "show": true
-                },
-                {
-                  "$$hashKey": "object:180",
-                  "format": "short",
-                  "label": null,
-                  "logBase": 1,
-                  "max": null,
-                  "min": null,
-                  "show": true
-                }
-              ],
-              "yaxis": {
-                "align": false,
-                "alignLevel": null
-              }
-            },
-            {
-              "aliasColors": {},
-              "bars": false,
-              "dashLength": 10,
-              "dashes": false,
-              "datasource": "Thanos",
-              "description": "",
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              },
-              "fill": 1,
-              "fillGradient": 0,
-              "gridPos": {
-                "h": 10,
-                "w": 12,
-                "x": 12,
-                "y": 33
-              },
-              "hiddenSeries": false,
-              "id": 215,
-              "legend": {
-                "alignAsTable": true,
-                "avg": true,
-                "current": false,
-                "max": true,
-                "min": true,
-                "show": true,
-                "total": false,
-                "values": true
-              },
-              "lines": true,
-              "linewidth": 2,
-              "nullPointMode": "null as zero",
-              "options": {
-                "alertThreshold": true
-              },
-              "percentage": false,
-              "pluginVersion": "7.5.9",
-              "pointradius": 5,
-              "points": false,
-              "renderer": "flot",
-              "repeatIteration": 1646218744181,
+              "repeatIteration": 1646232814539,
               "repeatPanelId": 78,
               "repeatedByRow": true,
               "scopedVars": {
@@ -4572,7 +4121,7 @@ data:
               }
             }
           ],
-          "repeatIteration": 1646218744181,
+          "repeatIteration": 1646232814539,
           "repeatPanelId": 12,
           "scopedVars": {
             "upstream": {
@@ -4650,11 +4199,6 @@ data:
                 "selected": true,
                 "text": "All",
                 "value": "$__all"
-              },
-              {
-                "selected": false,
-                "text": "api-dev.prison.service.justice.gov.uk",
-                "value": "api-dev.prison.service.justice.gov.uk"
               },
               {
                 "selected": false,
@@ -4832,6 +4376,6 @@ data:
       "timezone": "browser",
       "title": "manage-recalls-api / Dashboard",
       "uid": "manage-recalls-api-dashboard",
-      "version": 3
+      "version": 1
     }
 {{- end -}}
