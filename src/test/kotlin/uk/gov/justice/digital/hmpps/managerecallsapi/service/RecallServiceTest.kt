@@ -9,6 +9,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import reactor.core.publisher.Mono
@@ -54,11 +55,12 @@ class RecallServiceTest {
   private val bankHolidayService = mockk<BankHolidayService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val prisonApiClient = mockk<PrisonApiClient>()
-  private val meterRegistry = mockk<MeterRegistry>()
+  private val meterRegistry = mockk<MeterRegistry>(relaxed = true)
+  private val autoReturnedToCustodyCounter = mockk<Counter>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val returnToCustodyUpdateThresholdMinutes = 60L
-  private val underTest =
-    RecallService(recallRepository, bankHolidayService, prisonerOffenderSearchClient, prisonApiClient, fixedClock, meterRegistry, returnToCustodyUpdateThresholdMinutes)
+
+  private var underTest = mockk<RecallService>()
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(
@@ -143,6 +145,22 @@ class RecallServiceTest {
     arrestIssuesDetail = fullyPopulatedUpdateRecallRequest.arrestIssuesDetail,
     warrantReferenceNumber = fullyPopulatedUpdateRecallRequest.warrantReferenceNumber,
   )
+
+  @BeforeEach
+  fun setUp() {
+    every { meterRegistry.counter("autoReturnedToCustody") } returns autoReturnedToCustodyCounter
+    every { autoReturnedToCustodyCounter.increment() } just Runs
+
+    underTest = RecallService(
+      recallRepository,
+      bankHolidayService,
+      prisonerOffenderSearchClient,
+      prisonApiClient,
+      fixedClock,
+      meterRegistry,
+      returnToCustodyUpdateThresholdMinutes
+    )
+  }
 
   @Test
   fun `can update recall with all UpdateRecallRequest fields populated`() {
@@ -385,7 +403,6 @@ class RecallServiceTest {
       ),
       dossierTargetDate = dossierTargetDate
     )
-    val counter = mockk<Counter>()
 
     every { recallRepository.findAll() } returns recallList
     every { prisonerOffenderSearchClient.prisonerByNomsNumber(rtcNoms) } returns Mono.just(nicRtcPrisoner)
@@ -393,8 +410,6 @@ class RecallServiceTest {
     every { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) } returns listOf(Movement(rtcNoms.value, movementDate, movementTime))
     every { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) } returns dossierTargetDate
     every { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) } returns expectedRecall
-    every { meterRegistry.counter("autoReturnedToCustody") } returns counter
-    every { counter.increment() } just Runs
 
     underTest.updateCustodyStatus(currentUserId)
 
@@ -403,8 +418,7 @@ class RecallServiceTest {
     verify { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) }
     verify { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) }
     verify { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) }
-    verify { meterRegistry.counter("autoReturnedToCustody") }
-    verify { counter.increment() }
+    verify { autoReturnedToCustodyCounter.increment() }
   }
 
   @Test
