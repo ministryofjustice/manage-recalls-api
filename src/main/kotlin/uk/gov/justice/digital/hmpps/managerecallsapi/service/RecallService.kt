@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
+import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,6 +44,7 @@ class RecallService(
     val SYSTEM_USER_ID = UserId(UUID.fromString("99999999-9999-9999-9999-999999999999"))
   }
 
+  private var rtcCounter: Counter? = null
   private val log = LoggerFactory.getLogger(this::class.java)
 
   @Transactional
@@ -164,9 +166,16 @@ class RecallService(
         val returnedToCustodyDateTime = movements[it.nomsNumber]!!.movementDateTime()
         log.info("Returning ${it.recallId()} to custody as of $returnedToCustodyDateTime")
         returnedToCustody(it, returnedToCustodyDateTime, OffsetDateTime.now(clock), SYSTEM_USER_ID)
-        meterRegistry.counter("autoReturnedToCustody").increment()
+        getCounter().increment()
       }
     }
+  }
+
+  private fun getCounter(): Counter {
+    if (rtcCounter == null) {
+      rtcCounter = meterRegistry.counter("autoReturnedToCustody")
+    }
+    return rtcCounter!!
   }
 
   @Transactional

@@ -41,7 +41,15 @@ class RecallServiceParameterisedTest {
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val returnToCustodyUpdateThresholdMinutes = 60L
   private val underTest =
-    RecallService(recallRepository, bankHolidayService, prisonerOffenderSearchClient, prisonApiClient, fixedClock, meterRegistry, returnToCustodyUpdateThresholdMinutes)
+    RecallService(
+      recallRepository,
+      bankHolidayService,
+      prisonerOffenderSearchClient,
+      prisonApiClient,
+      fixedClock,
+      meterRegistry,
+      returnToCustodyUpdateThresholdMinutes
+    )
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(
@@ -78,10 +86,6 @@ class RecallServiceParameterisedTest {
   @ParameterizedTest
   @MethodSource("requestWithMissingMandatoryInfo")
   fun `should not update recall if a mandatory field is not populated`(request: UpdateRecallRequest) {
-    assertUpdateRecallDoesNotUpdate(request)
-  }
-
-  private fun assertUpdateRecallDoesNotUpdate(request: UpdateRecallRequest) {
     every { recallRepository.getByRecallId(recallId) } returns existingRecall
     every { recallRepository.save(existingRecall, currentUserId) } returns existingRecall
 
