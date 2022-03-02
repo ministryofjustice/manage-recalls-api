@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ConfirmedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.BREACH_EXCLUSION_ZONE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
@@ -107,9 +107,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       """{"localDeliveryUnit":""}""",
       """{"localDeliveryUnit":"INVALID"}""",
       """{"reasonsForRecall": '"}""",
-      """{"reasonsForRecall":["INVALID"]}""",
-      """{"agreeWithRecall": '"}""",
-      """{"agreeWithRecall":["INVALID"]}"""
+      """{"reasonsForRecall":["INVALID"]}"""
     )
   }
 
@@ -127,7 +125,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `update a recall with FIXED recallType and then sentence information will update recall length`() {
+  fun `update a recall with FIXED recommendedRecallType and then sentence information will update recall length`() {
     val sentencingInfo = SentencingInfo(
       LocalDate.now(),
       LocalDate.now(),
@@ -137,7 +135,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       SentenceLength(2, 5, 31)
     )
 
-    val recallTypeResponse = authenticatedClient.updateRecallType(recallId, FIXED)
+    val recallTypeResponse = authenticatedClient.updateRecommendedRecallType(recallId, FIXED)
 
     assertThat(recallTypeResponse.recommendedRecallType, equalTo(FIXED))
     assertThat(recallTypeResponse.recallLength, equalTo(null))
@@ -186,7 +184,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `update a recall with STANDARD recallType and then sentence information will not set recall length`() {
+  fun `update a recall with STANDARD recommendedRecallType and then sentence information will not set recall length`() {
     val sentencingInfo = SentencingInfo(
       LocalDate.now(),
       LocalDate.now(),
@@ -196,7 +194,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       SentenceLength(2, 5, 31)
     )
 
-    val recallTypeResponse = authenticatedClient.updateRecallType(recallId, STANDARD)
+    val recallTypeResponse = authenticatedClient.updateRecommendedRecallType(recallId, STANDARD)
 
     assertThat(recallTypeResponse.recommendedRecallType, equalTo(STANDARD))
     assertThat(recallTypeResponse.recallLength, equalTo(null))
@@ -242,6 +240,62 @@ class UpdateRecallComponentTest : ComponentTestBase() {
         )
       )
     )
+  }
+
+  @Test
+  fun `set a recall to STANDARD confirmedRecallType that was FIXED recommendedRecallType and ensure recall length is changed to null`() {
+    val recallTypeResponse = authenticatedClient.updateRecommendedRecallType(recallId, FIXED)
+    assertThat(recallTypeResponse.recommendedRecallType, equalTo(FIXED))
+    assertThat(recallTypeResponse.recallLength, equalTo(null))
+
+    val response = authenticatedClient.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        sentenceDate = LocalDate.now(),
+        licenceExpiryDate = LocalDate.now(),
+        sentenceExpiryDate = LocalDate.now(),
+        sentencingCourt = CourtId("ACCRYC"),
+        indexOffence = "index offence",
+        conditionalReleaseDate = null,
+        sentenceLength = Api.SentenceLength(2, 5, 20)
+      )
+    )
+    assertThat(response.recommendedRecallType, equalTo(FIXED))
+    assertThat(response.recallLength, equalTo(TWENTY_EIGHT_DAYS))
+
+    val confirmedResponse = authenticatedClient.updateConfirmedRecallType(recallId, ConfirmedRecallTypeRequest(STANDARD, "Some detail"))
+    assertThat(confirmedResponse.recommendedRecallType, equalTo(FIXED))
+    assertThat(confirmedResponse.confirmedRecallType, equalTo(STANDARD))
+    assertThat(confirmedResponse.confirmedRecallTypeDetail, equalTo("Some detail"))
+    assertThat(confirmedResponse.recallLength, equalTo(null))
+  }
+
+  @Test
+  fun `set a recall to FIXED confirmedRecallType that was STANDARD recommendedRecallType and ensure recall length is set`() {
+    val recallTypeResponse = authenticatedClient.updateRecommendedRecallType(recallId, STANDARD)
+    assertThat(recallTypeResponse.recommendedRecallType, equalTo(STANDARD))
+    assertThat(recallTypeResponse.recallLength, equalTo(null))
+
+    val response = authenticatedClient.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        sentenceDate = LocalDate.now(),
+        licenceExpiryDate = LocalDate.now(),
+        sentenceExpiryDate = LocalDate.now(),
+        sentencingCourt = CourtId("ACCRYC"),
+        indexOffence = "index offence",
+        conditionalReleaseDate = null,
+        sentenceLength = Api.SentenceLength(2, 5, 20)
+      )
+    )
+    assertThat(response.recommendedRecallType, equalTo(STANDARD))
+    assertThat(response.recallLength, equalTo(null))
+
+    val confirmedResponse = authenticatedClient.updateConfirmedRecallType(recallId, ConfirmedRecallTypeRequest(FIXED, "Some detail"))
+    assertThat(confirmedResponse.recommendedRecallType, equalTo(STANDARD))
+    assertThat(confirmedResponse.confirmedRecallType, equalTo(FIXED))
+    assertThat(confirmedResponse.confirmedRecallTypeDetail, equalTo("Some detail"))
+    assertThat(confirmedResponse.recallLength, equalTo(TWENTY_EIGHT_DAYS))
   }
 
   @Test
@@ -325,36 +379,6 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           licenceConditionsBreached = "Breached",
           reasonsForRecall = listOf(BREACH_EXCLUSION_ZONE),
           reasonsForRecallOtherDetail = "Other reasons"
-        )
-      )
-    )
-  }
-
-  @Test
-  fun `update a recall with agreeWithRecall and detail`() {
-    val response = authenticatedClient.updateRecall(
-      recallId,
-      UpdateRecallRequest(
-        agreeWithRecall = AgreeWithRecall.YES,
-        agreeWithRecallDetail = "Other reasons"
-      )
-    )
-
-    assertThat(
-      response,
-      equalTo(
-        RecallResponse(
-          recallId,
-          nomsNumber,
-          createdByUserId,
-          now,
-          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
-          CroNumber("ABC/1234A"),
-          LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
-          Status.BEING_BOOKED_ON,
-          agreeWithRecall = AgreeWithRecall.YES,
-          agreeWithRecallDetail = "Other reasons"
         )
       )
     )

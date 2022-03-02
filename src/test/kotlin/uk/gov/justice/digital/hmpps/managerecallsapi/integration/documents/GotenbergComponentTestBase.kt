@@ -36,7 +36,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     inCustody: Boolean = true,
     recallType: RecallType
   ) {
-    authenticatedClient.updateRecallType(recallId, recallType)
+    authenticatedClient.updateRecommendedRecallType(recallId, recallType)
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
@@ -85,7 +85,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     sentenceYears: Int = 10,
     recallType: RecallType
   ) {
-    authenticatedClient.updateRecallType(recallId, recallType)
+    authenticatedClient.updateRecommendedRecallType(recallId, recallType)
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(

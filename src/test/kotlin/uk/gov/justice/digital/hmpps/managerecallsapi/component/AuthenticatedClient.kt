@@ -13,6 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AddUserDetailsRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ConfirmedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditEntry
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditSummary
@@ -157,8 +158,11 @@ class AuthenticatedClient(
   fun updateRecall(recallId: RecallId, updateRecallRequest: UpdateRecallRequest): RecallResponse =
     patchRequest("/recalls/$recallId", updateRecallRequest, RecallResponse::class.java)
 
-  fun updateRecallType(recallId: RecallId, recallType: RecallType): RecallResponse =
+  fun updateRecommendedRecallType(recallId: RecallId, recallType: RecallType): RecallResponse =
     patchRequest("/recalls/$recallId/recommended-recall-type", RecommendedRecallTypeRequest(recallType), RecallResponse::class.java)
+
+  fun updateConfirmedRecallType(recallId: RecallId, request: ConfirmedRecallTypeRequest): RecallResponse =
+    patchRequest("/recalls/$recallId/confirmed-recall-type", request, RecallResponse::class.java)
 
   fun assignRecall(recallId: RecallId, assignee: UserId): RecallResponse =
     postWithoutBody("/recalls/$recallId/assignee/$assignee", responseClass = RecallResponse::class.java)

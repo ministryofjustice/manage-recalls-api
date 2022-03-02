@@ -134,6 +134,17 @@ class RecallController(
       recallService.updateRecommendedRecallType(recallId, request.recommendedRecallType, currentUserId).toResponse()
     }
 
+  @PatchMapping("/recalls/{recallId}/confirmed-recall-type")
+  @ResponseStatus(HttpStatus.OK)
+  fun confirmedRecallType(
+    @PathVariable("recallId") recallId: RecallId,
+    @RequestBody request: ConfirmedRecallTypeRequest,
+    @RequestHeader("Authorization") bearerToken: String
+  ): RecallResponse =
+    tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
+      recallService.confirmRecallType(recallId, request, currentUserId).toResponse()
+    }
+
   @PostMapping("/recalls/{recallId}/assignee/{assignee}")
   fun assignRecall(
     @PathVariable("recallId") recallId: RecallId,
@@ -209,6 +220,8 @@ class RecallController(
     bookedByUserName = bookedByUserId()?.let { userDetailsService.get(it).fullName() },
     bookingNumber = bookingNumber,
     conditionalReleaseDate = sentencingInfo?.conditionalReleaseDate,
+    confirmedRecallType = confirmedRecallType,
+    confirmedRecallTypeDetail = confirmedRecallTypeDetail,
     contraband = contraband,
     contrabandDetail = contrabandDetail,
     currentPrison = currentPrison,
@@ -344,8 +357,7 @@ fun BookRecallRequest.toRecall(userUuid: UserId, clock: Clock): Recall {
     middleNames,
     lastName,
     croNumber,
-    dateOfBirth,
-    recommendedRecallType = RecallType.FIXED
+    dateOfBirth
   )
 }
 
@@ -411,6 +423,8 @@ data class RecallResponse(
   val bookedByUserId: UserId? = null,
   val bookedByUserName: FullName? = null,
   val bookingNumber: String? = null,
+  val confirmedRecallType: RecallType? = null,
+  val confirmedRecallTypeDetail: String? = null,
   val conditionalReleaseDate: LocalDate? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,
@@ -618,6 +632,11 @@ data class UpdateRecallRequest(
 
 data class RecommendedRecallTypeRequest(
   val recommendedRecallType: RecallType
+)
+
+data class ConfirmedRecallTypeRequest(
+  val confirmedRecallType: RecallType,
+  val confirmedRecallTypeDetail: String
 )
 
 enum class RecallLength {

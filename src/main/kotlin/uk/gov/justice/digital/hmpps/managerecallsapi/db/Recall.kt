@@ -114,6 +114,9 @@ data class Recall(
   val assignee: UUID? = null,
   val bookedByUserId: UUID? = null,
   val bookingNumber: String? = null,
+  @Enumerated(STRING)
+  val confirmedRecallType: RecallType? = null,
+  val confirmedRecallTypeDetail: String? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,
   @Convert(converter = PrisonIdJpaConverter::class)
@@ -189,6 +192,8 @@ data class Recall(
     assignee: UserId? = null,
     bookedByUserId: UserId? = null,
     bookingNumber: String? = null,
+    confirmedRecallType: RecallType? = null,
+    confirmedRecallTypeDetail: String? = null,
     contraband: Boolean? = null,
     contrabandDetail: String? = null,
     currentPrison: PrisonId? = null,
@@ -250,6 +255,8 @@ data class Recall(
       assignee?.value,
       bookedByUserId?.value,
       bookingNumber,
+      confirmedRecallType,
+      confirmedRecallTypeDetail,
       contraband,
       contrabandDetail,
       currentPrison,

@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -112,7 +113,7 @@ class RecallControllerTest {
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
-    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid, recommendedRecallType = RecallType.FIXED)))
+    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid)))
   }
 
   private fun newRecall() =
@@ -147,7 +148,7 @@ class RecallControllerTest {
   private val bookedOnRecall = newRecall().copy(bookedByUserId = bookedByUserId.value)
   private val inAssessmentRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, assignee = assignee.value)
   private val stoppedRecall =
-    newRecall().copy(bookedByUserId = bookedByUserId.value, agreeWithRecall = AgreeWithRecall.NO_STOP)
+    newRecall().copy(bookedByUserId = bookedByUserId.value, stopRecord = StopRecord(StopReason.LEGAL_REASON, createdByUserId, OffsetDateTime.now()))
   private val inCustodyAwaitingDossierCreationRecall =
     newRecall().copy(inCustodyAtBooking = true, assessedByUserId = assessedByUserId.value)
   private val notInCustodyAssessedRecall = newRecall().copy(
@@ -534,16 +535,39 @@ class RecallControllerTest {
   }
 
   @Test
-  fun `can set recallType`() {
+  fun `can set recommendedRecallType`() {
     val bearerToken = "BEARER"
     val currentUserId = ::UserId.random()
     val recallType = RecallType.values().random()
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(currentUserId.toString())
-    every { recallService.updateRecommendedRecallType(recallId, recallType, currentUserId) } returns recall
+    every { recallService.updateRecommendedRecallType(recallId, recallType, currentUserId) } returns recall.copy(
+      recommendedRecallType = recallType
+    )
 
-    underTest.updateRecommendedRecallType(recallId, RecommendedRecallTypeRequest(recallType), bearerToken)
+    val response = underTest.updateRecommendedRecallType(recallId, RecommendedRecallTypeRequest(recallType), bearerToken)
+    assertThat(response.recommendedRecallType, equalTo(recallType))
 
     verify { recallService.updateRecommendedRecallType(recallId, recallType, currentUserId) }
+  }
+
+  @Test
+  fun `can set confirmedRecallType and details`() {
+    val bearerToken = "BEARER"
+    val currentUserId = ::UserId.random()
+    val recallType = RecallType.values().random()
+    val confirmedRecallTypeDetail = "Some details"
+    val request = ConfirmedRecallTypeRequest(recallType, confirmedRecallTypeDetail)
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(currentUserId.toString())
+    every { recallService.confirmRecallType(recallId, request, currentUserId) } returns recall.copy(
+      confirmedRecallType = recallType, confirmedRecallTypeDetail = confirmedRecallTypeDetail
+    )
+
+    val response = underTest.confirmedRecallType(recallId, request, bearerToken)
+    assertThat(response.confirmedRecallType, equalTo(recallType))
+    assertThat(response.confirmedRecallTypeDetail, equalTo(confirmedRecallTypeDetail))
+
+    verify { recallService.confirmRecallType(recallId, request, currentUserId) }
   }
 }
