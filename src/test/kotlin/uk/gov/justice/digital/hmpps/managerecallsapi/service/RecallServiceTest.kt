@@ -74,7 +74,6 @@ class RecallServiceTest {
     CroNumber("ABC/1234A"),
     LocalDate.of(1999, 12, 1)
   )
-  private val today = LocalDate.now()
   private val currentUserId = ::UserId.random()
 
   private val nextWorkingDate = LocalDate.of(2021, 10, 5)
@@ -124,8 +123,6 @@ class RecallServiceTest {
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     reasonsForRecall = fullyPopulatedUpdateRecallRequest.reasonsForRecall!!.toSet(),
     reasonsForRecallOtherDetail = fullyPopulatedUpdateRecallRequest.reasonsForRecallOtherDetail,
-    agreeWithRecall = fullyPopulatedUpdateRecallRequest.agreeWithRecall,
-    agreeWithRecallDetail = fullyPopulatedUpdateRecallRequest.agreeWithRecallDetail,
     currentPrison = fullyPopulatedUpdateRecallRequest.currentPrison,
     additionalLicenceConditions = fullyPopulatedUpdateRecallRequest.additionalLicenceConditions,
     additionalLicenceConditionsDetail = fullyPopulatedUpdateRecallRequest.additionalLicenceConditionsDetail,
