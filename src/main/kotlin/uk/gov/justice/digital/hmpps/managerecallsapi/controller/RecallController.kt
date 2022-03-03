@@ -207,8 +207,6 @@ class RecallController(
 
     additionalLicenceConditions = additionalLicenceConditions,
     additionalLicenceConditionsDetail = additionalLicenceConditionsDetail,
-    agreeWithRecall = agreeWithRecall,
-    agreeWithRecallDetail = agreeWithRecallDetail,
     arrestIssues = arrestIssues,
     arrestIssuesDetail = arrestIssuesDetail,
     assessedByUserId = assessedByUserId(),
@@ -411,8 +409,6 @@ data class RecallResponse(
 
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
-  val agreeWithRecall: AgreeWithRecall? = null,
-  val agreeWithRecallDetail: String? = null,
   val arrestIssues: Boolean? = null,
   val arrestIssuesDetail: String? = null,
   val assessedByUserId: UserId? = null,
@@ -583,8 +579,6 @@ enum class StopReason(val label: String, val validForStopCall: Boolean = true) {
 data class UpdateRecallRequest(
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
-  val agreeWithRecall: AgreeWithRecall? = null,
-  val agreeWithRecallDetail: String? = null,
   val arrestIssues: Boolean? = null,
   val arrestIssuesDetail: String? = null,
   val assessedByUserId: UserId? = null,
@@ -676,11 +670,6 @@ enum class ReasonForRecall(val label: String) {
   POOR_BEHAVIOUR_RELATIONSHIPS("Poor behaviour - Relationships"),
   TRAVELLING_OUTSIDE_UK("Travelling outside the UK"),
   OTHER("Other")
-}
-
-enum class AgreeWithRecall {
-  YES,
-  NO_STOP
 }
 
 enum class NameFormatCategory {

@@ -4,7 +4,6 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
@@ -55,39 +54,6 @@ class RecallTest {
       bookedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value
     )
-    assertThat(recall.status(), equalTo(Status.IN_ASSESSMENT))
-  }
-
-  @Test
-  fun `Recall with bookedByUserId and assignee set and AgreeWithRecall=NO_STOP returns status STOPPED`() {
-    val recall = recall.copy(
-      bookedByUserId = ::UserId.random().value,
-      assignee = ::UserId.random().value,
-      agreeWithRecall = AgreeWithRecall.NO_STOP
-    )
-
-    assertThat(recall.status(), equalTo(Status.STOPPED))
-  }
-
-  @Test
-  fun `Recall with bookedByUserId set, assignee not set and AgreeWithRecall=NO_STOP returns status STOPPED`() {
-    val recall = recall.copy(
-      bookedByUserId = ::UserId.random().value,
-      assignee = ::UserId.random().value,
-      agreeWithRecall = AgreeWithRecall.NO_STOP
-    )
-
-    assertThat(recall.status(), equalTo(Status.STOPPED))
-  }
-
-  @Test
-  fun `Recall with bookedByUserId and assignee set, but with AgreeWithRecall=YES returns status IN_ASSESSMENT`() {
-    val recall = recall.copy(
-      bookedByUserId = ::UserId.random().value,
-      assignee = ::UserId.random().value,
-      agreeWithRecall = AgreeWithRecall.YES
-    )
-
     assertThat(recall.status(), equalTo(Status.IN_ASSESSMENT))
   }
 

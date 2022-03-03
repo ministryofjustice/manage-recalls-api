@@ -115,8 +115,6 @@ class RecallService(
       licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
       reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
-      agreeWithRecall = updateRecallRequest.agreeWithRecall ?: agreeWithRecall,
-      agreeWithRecallDetail = updateRecallRequest.agreeWithRecallDetail ?: agreeWithRecallDetail,
       currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
       additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
       additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail

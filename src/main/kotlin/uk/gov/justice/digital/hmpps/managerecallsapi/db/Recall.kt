@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.AgreeWithRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
@@ -105,9 +104,6 @@ data class Recall(
 // NULLABLE FIELDS
   val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
-  @Enumerated(STRING)
-  val agreeWithRecall: AgreeWithRecall? = null,
-  val agreeWithRecallDetail: String? = null,
   val arrestIssues: Boolean? = null,
   val arrestIssuesDetail: String? = null,
   val assessedByUserId: UUID? = null,
@@ -184,8 +180,6 @@ data class Recall(
 
     additionalLicenceConditions: Boolean? = null,
     additionalLicenceConditionsDetail: String? = null,
-    agreeWithRecall: AgreeWithRecall? = null,
-    agreeWithRecallDetail: String? = null,
     arrestIssues: Boolean? = null,
     arrestIssuesDetail: String? = null,
     assessedByUserId: UserId? = null,
@@ -247,8 +241,6 @@ data class Recall(
       rescindRecords,
       additionalLicenceConditions,
       additionalLicenceConditionsDetail,
-      agreeWithRecall,
-      agreeWithRecallDetail,
       arrestIssues,
       arrestIssuesDetail,
       assessedByUserId?.value,
@@ -355,9 +347,7 @@ data class Recall(
         }
       }
     } else if (bookedByUserId != null) {
-      if (agreeWithRecall == AgreeWithRecall.NO_STOP) {
-        Status.STOPPED
-      } else if (assignee != null) {
+      if (assignee != null) {
         Status.IN_ASSESSMENT
       } else {
         Status.BOOKED_ON
