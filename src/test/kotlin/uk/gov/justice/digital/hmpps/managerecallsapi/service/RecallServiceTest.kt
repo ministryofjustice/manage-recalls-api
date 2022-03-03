@@ -60,7 +60,7 @@ class RecallServiceTest {
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val returnToCustodyUpdateThresholdMinutes = 60L
 
-  private var underTest = mockk<RecallService>()
+  private lateinit var underTest: RecallService
 
   private val recallId = ::RecallId.random()
   private val existingRecall = Recall(
