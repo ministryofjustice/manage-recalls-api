@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -26,7 +27,8 @@ class DossierContextFactory(
     val currentPrisonName = prisonLookupService.getPrisonName(currentPrisonId)
     val currentPrisonIsWelsh = prisonLookupService.isWelsh(currentPrisonId)
     val version = (documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, DOSSIER)?.version ?: 0) + 1
-    return DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, version)
+    val recallType = recall.recallType()
+    return DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, version, recallType)
   }
 }
 
@@ -34,7 +36,8 @@ data class DossierContext(
   val recall: Recall,
   val currentPrisonName: PrisonName,
   val currentPrisonIsWelsh: Boolean,
-  val version: Int
+  val version: Int,
+  val recallType: RecallType
 ) {
   fun getReasonsForRecallContext(): ReasonsForRecallContext {
     return ReasonsForRecallContext(
@@ -52,7 +55,8 @@ data class DossierContext(
       RecallLengthDescription(recall.recallLength!!),
       currentPrisonName,
       recall.bookingNumber!!,
-      version
+      version,
+      recallType
     )
 
   fun includeWelsh(): Boolean {
@@ -66,7 +70,8 @@ data class TableOfContentsContext(
   val recallLengthDescription: RecallLengthDescription,
   val currentPrisonName: PrisonName,
   val bookingNumber: String,
-  val newVersion: Int
+  val newVersion: Int,
+  val recallType: RecallType
 )
 
 data class ReasonsForRecallContext(

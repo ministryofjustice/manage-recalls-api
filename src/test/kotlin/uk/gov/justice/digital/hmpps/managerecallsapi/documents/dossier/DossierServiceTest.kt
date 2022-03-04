@@ -4,8 +4,14 @@ import com.natpryce.hamkrest.assertion.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
@@ -16,6 +22,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenera
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.byteArrayDocumentDataFor
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletEnglish
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletWelsh
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.StandardTermRecallInformationLeafletEnglish
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.StandardTermRecallInformationLeafletWelsh
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -24,7 +32,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.onlyContainsInOrder
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
+import java.util.stream.Stream
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Suppress("ReactiveStreamsUnusedPublisher")
 internal class DossierServiceTest {
 
@@ -45,17 +55,17 @@ internal class DossierServiceTest {
     dossierContextFactory
   )
 
-  @Test
-  fun `generate dossier returns table of contents, English recall information leaflet, license, part A, revocation order and reasons for recall as dossier when all available for recall`() {
-    testDossierGetPdf(false)
-  }
+  private fun parameterArrays(): Stream<Arguments>? =
+    Stream.of(
+      Arguments.of(false, FIXED),
+      Arguments.of(true, FIXED),
+      Arguments.of(false, STANDARD),
+      Arguments.of(true, STANDARD)
+    )
 
-  @Test
-  fun `generate dossier to include Welsh returns table of contents, both recall information leaflets, license, part A, revocation order and reasons for recall as dossier when all available for recall`() {
-    testDossierGetPdf(true)
-  }
-
-  private fun testDossierGetPdf(includeWelshLeaflet: Boolean) {
+  @ParameterizedTest(name = "generate dossier with TOC, English {1} recall information leaflet, welsh leaflet ? {0}, license, part a, revocation order & reasons for recall ")
+  @MethodSource("parameterArrays")
+  fun testDossierGetPdf(includeWelshLeaflet: Boolean, recallType: RecallType) {
     val recallId = ::RecallId.random()
     val createdByUserId = ::UserId.random()
     val licenseContentBytes = randomString().toByteArray()
@@ -69,6 +79,7 @@ internal class DossierServiceTest {
     val fileName = FileName("DOSSIER.pdf")
 
     every { dossierContext.includeWelsh() } returns includeWelshLeaflet
+    every { dossierContext.recallType } returns recallType
     every { dossierContextFactory.createContext(recallId) } returns dossierContext
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, LICENCE) } returns licenseContentBytes
     every { documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT) } returns partARecallReportContentBytes
@@ -83,11 +94,17 @@ internal class DossierServiceTest {
 
     val expectedDocumentsToMerge = mutableListOf(
       byteArrayDocumentDataFor(tableOfContentBytes),
-      byteArrayDocumentDataFor(FixedTermRecallInformationLeafletEnglish.byteArray())
+      if (recallType == FIXED) {
+        byteArrayDocumentDataFor(FixedTermRecallInformationLeafletEnglish.byteArray())
+      } else
+        byteArrayDocumentDataFor(StandardTermRecallInformationLeafletEnglish.byteArray())
     )
 
     if (includeWelshLeaflet) {
-      expectedDocumentsToMerge.add(byteArrayDocumentDataFor(FixedTermRecallInformationLeafletWelsh.byteArray()))
+      if (recallType == FIXED) {
+        expectedDocumentsToMerge.add(byteArrayDocumentDataFor(FixedTermRecallInformationLeafletWelsh.byteArray()))
+      } else
+        expectedDocumentsToMerge.add(byteArrayDocumentDataFor(StandardTermRecallInformationLeafletWelsh.byteArray()))
     }
 
     expectedDocumentsToMerge.addAll(

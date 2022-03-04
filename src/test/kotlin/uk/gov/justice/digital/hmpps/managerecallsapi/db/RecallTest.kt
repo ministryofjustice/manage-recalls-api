@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.OTHER
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -225,5 +227,24 @@ class RecallTest {
     assertThrows<IllegalStateException> {
       recall.copy(licenceNameCategory = OTHER).prisonerNameOnLicense()
     }
+  }
+
+  @Test
+  fun `Recall with recommendedRecallType only returns recommendedRecallType as recallType`() {
+    val recall = recall.copy(
+      recommendedRecallType = STANDARD
+    )
+
+    assertThat(recall.recallType(), equalTo(STANDARD))
+  }
+
+  @Test
+  fun `Recall with recommendedRecallType and confirmedRecallType returns confirmedRecallType as recallType`() {
+    val recall = recall.copy(
+      recommendedRecallType = STANDARD,
+      confirmedRecallType = FIXED
+    )
+
+    assertThat(recall.recallType(), equalTo(FIXED))
   }
 }

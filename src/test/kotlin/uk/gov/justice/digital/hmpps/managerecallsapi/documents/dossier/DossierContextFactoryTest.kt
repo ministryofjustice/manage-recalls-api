@@ -5,6 +5,8 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
@@ -52,7 +54,8 @@ class DossierContextFactoryTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      currentPrison = currentPrison
+      currentPrison = currentPrison,
+      confirmedRecallType = FIXED
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -63,8 +66,9 @@ class DossierContextFactoryTest {
 
     val result = underTest.createContext(recallId)
 
-    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 3)))
+    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 3, FIXED)))
   }
+
   @Test
   fun `create DossierContextFactory with required details when no dossier exists`() {
     val recallId = ::RecallId.random()
@@ -83,7 +87,8 @@ class DossierContextFactoryTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      currentPrison = currentPrison
+      currentPrison = currentPrison,
+      recommendedRecallType = STANDARD
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -93,6 +98,6 @@ class DossierContextFactoryTest {
 
     val result = underTest.createContext(recallId)
 
-    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 1)))
+    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 1, STANDARD)))
   }
 }

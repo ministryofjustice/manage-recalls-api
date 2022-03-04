@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.POOR_BEHAVIOUR_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
@@ -52,7 +54,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         LocalDate.now()
       )
     )
-    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, true)
+    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, true, FIXED)
     authenticatedClient.addLastKnownAddress(
       recall.recallId, CreateLastKnownAddressRequest(null, "1 The Road", null, "A Town", "AB12 3CD", AddressSource.MANUAL),
       HttpStatus.CREATED, LastKnownAddressId::class.java
@@ -116,12 +118,49 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         LocalDate.now()
       )
     )
-    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, false)
+    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, false, FIXED)
 
     gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
     gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "RECALL NOTIFICATION")
     gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "IF AT ANY TIME THE PROBATION SERVICE RECEIVES INFORMATION THAT MAY AFFECT THE VALIDITY OF THE RECALL ACTION")
     gotenbergMockServer.stubGenerateOffenderNotification(expectedPdf)
+
+    gotenbergMockServer.stubMergePdfs(
+      expectedPdf,
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+      expectedPdf.decodeToString(),
+    )
+
+    val recallDocId = authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
+    val recallDoc = authenticatedClient.getDocument(recall.recallId, recallDocId.documentId)
+
+    assertThat(recallDoc.content, equalTo(expectedBase64Pdf))
+
+    val latestRevocationOrder =
+      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
+    assertThat(latestRevocationOrder.version, equalTo(1))
+    assertThat(latestRevocationOrder.fileName, equalTo(FileName("BADGER NATALIA B1234 REVOCATION ORDER.pdf")))
+  }
+
+  @Test
+  fun `get recall notification for STANDARD in custody recall includes correct letter to probation`() {
+    val userId = authenticatedClient.userId
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName(firstName),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
+    updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, true, STANDARD)
+
+    gotenbergMockServer.stubGenerateRevocationOrder(expectedPdf, firstName)
+    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "OFFENDER IS IN CUSTODY")
+    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "Standard Recall")
 
     gotenbergMockServer.stubMergePdfs(
       expectedPdf,
@@ -141,33 +180,15 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     val firstRevocationOrder =
       documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
     assertThat(firstRevocationOrder.version, equalTo(1))
-
-    // Reset mocks to reassure that revocation order is not regenerated
-    gotenbergMockServer.resetAll()
-    gotenbergMockServer.stubGenerateRecallSummary(expectedPdf, "RECALL NOTIFICATION")
-    gotenbergMockServer.stubGenerateLetterToProbation(expectedPdf, "IF AT ANY TIME THE PROBATION SERVICE RECEIVES INFORMATION THAT MAY AFFECT THE VALIDITY OF THE RECALL ACTION")
-    gotenbergMockServer.stubGenerateOffenderNotification(expectedPdf)
-
-    gotenbergMockServer.stubMergePdfs(
-      expectedPdf,
-      expectedPdf.decodeToString(),
-      expectedPdf.decodeToString(),
-      expectedPdf.decodeToString(),
-    )
-
-    authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"), "Some detail")
-
-    val latestRecallNotification =
-      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, RECALL_NOTIFICATION)!!
-    assertThat(latestRecallNotification.version, equalTo(2))
-    val latestRevocationOrder =
-      documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recall.recallId, REVOCATION_ORDER)!!
-    assertThat(latestRevocationOrder.version, equalTo(1))
-    assertThat(latestRevocationOrder.fileName, equalTo(FileName("BADGER NATALIA B1234 REVOCATION ORDER.pdf")))
   }
 
-  private fun updateRecallWithRequiredInformationForTheRecallNotification(recallId: RecallId, userId: UserId, inCustody: Boolean) {
-    authenticatedClient.updateRecommendedRecallType(recallId, RecallType.FIXED)
+  private fun updateRecallWithRequiredInformationForTheRecallNotification(
+    recallId: RecallId,
+    userId: UserId,
+    inCustody: Boolean,
+    recallType: RecallType
+  ) {
+    authenticatedClient.updateRecommendedRecallType(recallId, recallType)
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
