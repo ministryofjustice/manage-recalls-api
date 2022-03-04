@@ -62,7 +62,7 @@ class LetterToProbationHtmlGenerationTest(
     "Mr probation",
     FullName("Bertie Offender"),
     "bookingNumber",
-    if (!inCustody && recallType == FIXED) null else PrisonName("Current prison name"),
+    if (inCustody) PrisonName("Current prison name") else null,
     PersonName("Bobby", lastName = "Caseworker"),
     inCustody,
     recallType

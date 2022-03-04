@@ -71,10 +71,10 @@ class DossierService(
     val partARecallReport = documentService.getLatestVersionedDocumentContentWithCategory(recallId, PART_A_RECALL_REPORT)
     val revocationOrder = documentService.getLatestVersionedDocumentContentWithCategory(recallId, REVOCATION_ORDER)
     val documents = mutableMapOf(
-      "Recall Information Leaflet [Core Dossier]" to fixedTermRecallInformationLeafletEnglish(recallType)
+      "Recall Information Leaflet [Core Dossier]" to recallInformationLeafletEnglish(recallType)
     )
     if (includeWelsh) {
-      documents["Welsh Recall Information Leaflet"] = fixedTermRecallInformationLeafletWelsh(recallType)
+      documents["Welsh Recall Information Leaflet"] = recallInformationLeafletWelsh(recallType)
     }
     documents.putAll(
       mutableMapOf(
@@ -87,13 +87,13 @@ class DossierService(
     return documents
   }
 
-  private fun fixedTermRecallInformationLeafletWelsh(recallType: RecallType) =
+  private fun recallInformationLeafletWelsh(recallType: RecallType) =
     when (recallType) {
       FIXED -> documentData(FixedTermRecallInformationLeafletWelsh)
       STANDARD -> documentData(StandardTermRecallInformationLeafletWelsh)
     }
 
-  private fun fixedTermRecallInformationLeafletEnglish(recallType: RecallType) =
+  private fun recallInformationLeafletEnglish(recallType: RecallType) =
     when (recallType) {
       FIXED -> documentData(FixedTermRecallInformationLeafletEnglish)
       STANDARD -> documentData(StandardTermRecallInformationLeafletEnglish)
