@@ -6,13 +6,14 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -48,12 +49,13 @@ class LetterToPrisonContextFactoryTest {
       CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
       recallLength = recallLength,
       lastReleasePrison = PrisonId("BOB"),
-      currentPrison = PrisonId("WIM")
+      currentPrison = PrisonId("WIM"),
+      confirmedRecallType = FIXED,
     )
     val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
     val lastReleasePrisonName = PrisonName("Bobbins Prison")
-    val recallLengthDescription = RecallLengthDescription(recallLength)
+    val recallDescription = RecallDescription(FIXED, recallLength)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
@@ -71,7 +73,7 @@ class LetterToPrisonContextFactoryTest {
           FullName("Barrie Badger"),
           currentPrisonName,
           lastReleasePrisonName,
-          recallLengthDescription,
+          recallDescription,
           createdByUserDetails,
           LocalDate.now()
         )
@@ -90,12 +92,13 @@ class LetterToPrisonContextFactoryTest {
       CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
       recallLength = recallLength,
       lastReleasePrison = PrisonId("BOB"),
-      currentPrison = PrisonId("WIM")
+      currentPrison = PrisonId("WIM"),
+      confirmedRecallType = FIXED,
     )
     val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
     val lastReleasePrisonName = PrisonName("Bobbins Prison")
-    val recallLengthDescription = RecallLengthDescription(recallLength)
+    val recallDescription = RecallDescription(FIXED, recallLength)
     val document = mockk<Document>()
     val originalCreatedDateTime = OffsetDateTime.now().minusDays(4)
 
@@ -116,7 +119,7 @@ class LetterToPrisonContextFactoryTest {
           FullName("Barrie Badger"),
           currentPrisonName,
           lastReleasePrisonName,
-          recallLengthDescription,
+          recallDescription,
           createdByUserDetails,
           originalCreatedDateTime.toLocalDate()
         )

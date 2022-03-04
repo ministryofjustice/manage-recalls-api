@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
@@ -12,6 +13,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -66,7 +68,7 @@ class DossierContextFactoryTest {
 
     val result = underTest.createContext(recallId)
 
-    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 3, FIXED)))
+    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 3)))
   }
 
   @Test
@@ -98,6 +100,96 @@ class DossierContextFactoryTest {
 
     val result = underTest.createContext(recallId)
 
-    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 1, STANDARD)))
+    assertThat(result, equalTo(DossierContext(recall, currentPrisonName, currentPrisonIsWelsh, 1)))
+  }
+
+  @Test
+  fun `get TableOfContentsContext for standard recall doesnt calculate recall length`() {
+    val recallId = ::RecallId.random()
+    val nomsNumber = NomsNumber("nomsNumber")
+    val currentPrison = PrisonId("AAA")
+    val currentPrisonName = PrisonName("Current Prison Name")
+    val currentPrisonIsWelsh = Random.nextBoolean()
+
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
+      currentPrison = currentPrison,
+      recommendedRecallType = STANDARD,
+      bookingNumber = "A1234"
+    )
+
+    every { recallRepository.getByRecallId(recallId) } returns recall
+    every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
+    every { prisonLookupService.isWelsh(currentPrison) } returns currentPrisonIsWelsh
+    every { documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, DocumentCategory.DOSSIER) } returns null
+
+    val result = underTest.createContext(recallId).getTableOfContentsContext()
+
+    assertThat(
+      result,
+      equalTo(
+        TableOfContentsContext(
+          recall.prisonerNameOnLicense(),
+          RecallDescription(STANDARD, null),
+          currentPrisonName,
+          "A1234",
+          1
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `get TableOfContentsContext for Fixed recall calculates recall length`() {
+    val recallId = ::RecallId.random()
+    val nomsNumber = NomsNumber("nomsNumber")
+    val currentPrison = PrisonId("AAA")
+    val currentPrisonName = PrisonName("Current Prison Name")
+    val currentPrisonIsWelsh = Random.nextBoolean()
+
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      ::UserId.random(),
+      OffsetDateTime.now(),
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1),
+      currentPrison = currentPrison,
+      recommendedRecallType = FIXED,
+      bookingNumber = "A1234",
+      recallLength = TWENTY_EIGHT_DAYS
+    )
+
+    every { recallRepository.getByRecallId(recallId) } returns recall
+    every { prisonLookupService.getPrisonName(currentPrison) } returns currentPrisonName
+    every { prisonLookupService.isWelsh(currentPrison) } returns currentPrisonIsWelsh
+    every { documentRepository.findLatestVersionedDocumentByRecallIdAndCategory(recallId, DocumentCategory.DOSSIER) } returns null
+
+    val result = underTest.createContext(recallId).getTableOfContentsContext()
+
+    assertThat(
+      result,
+      equalTo(
+        TableOfContentsContext(
+          recall.prisonerNameOnLicense(),
+          RecallDescription(
+            FIXED,
+            TWENTY_EIGHT_DAYS
+          ),
+          currentPrisonName, "A1234", 1
+        )
+      )
+    )
   }
 }

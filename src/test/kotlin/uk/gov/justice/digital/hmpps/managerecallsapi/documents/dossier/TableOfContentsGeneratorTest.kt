@@ -16,9 +16,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.util.stream.Stream
@@ -31,14 +31,15 @@ class TableOfContentsGeneratorTest {
 
   private fun recallLengthOptions(): Stream<Arguments> {
     return Stream.of(
-      Arguments.of(FOURTEEN_DAYS, "14 Day FTR under 12 months"),
-      Arguments.of(TWENTY_EIGHT_DAYS, "28 Day FTR 12 months & over")
+      Arguments.of(RecallType.FIXED, FOURTEEN_DAYS, "14 Day FTR under 12 months"),
+      Arguments.of(RecallType.FIXED, TWENTY_EIGHT_DAYS, "28 Day FTR 12 months & over"),
+      Arguments.of(RecallType.STANDARD, null, "Standard 255c recall review")
     )
   }
 
   @ParameterizedTest(name = "generate TOC HTML with all values populated for {0}")
   @MethodSource("recallLengthOptions")
-  fun `generate TOC HTML with all values populated`(recallLength: RecallLength, expectedText: String) {
+  fun `generate TOC HTML with all values populated`(recallType: RecallType, recallLength: RecallLength?, expectedText: String) {
     val expectedHtml = "expected HTML"
     val contextSlot = slot<IContext>()
 
@@ -51,11 +52,10 @@ class TableOfContentsGeneratorTest {
     val result = underTest.generateHtml(
       TableOfContentsContext(
         FullName("Bertie Badger"),
-        RecallLengthDescription(recallLength),
+        RecallDescription(recallType, recallLength),
         currentPrisonName,
         bookingNumber,
-        2,
-        FIXED
+        2
       ),
       tableOfContentsItems
     )

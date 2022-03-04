@@ -10,11 +10,10 @@ import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -43,12 +42,13 @@ class DossierContextTest {
     nomsNumber, ::UserId.random(), OffsetDateTime.now(), firstName, null, lastName, CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
     recallLength = recallLength,
     bookingNumber = bookingNumber,
-    licenceConditionsBreached = licenceConditionsBreached
+    licenceConditionsBreached = licenceConditionsBreached,
+    confirmedRecallType = FIXED,
   )
 
   @Test
   fun `create ReasonsForRecallContext with all values correctly populated`() {
-    val underTest = DossierContext(recall, currentPrisonName, false, 3, STANDARD)
+    val underTest = DossierContext(recall, currentPrisonName, false, 3)
 
     val result = underTest.getReasonsForRecallContext()
 
@@ -68,7 +68,7 @@ class DossierContextTest {
 
   @Test
   fun `create TableOfContentsContext with all values correctly populated`() {
-    val underTest = DossierContext(recall, currentPrisonName, false, 3, FIXED)
+    val underTest = DossierContext(recall, currentPrisonName, false, 3)
 
     val result = underTest.getTableOfContentsContext()
 
@@ -77,11 +77,10 @@ class DossierContextTest {
       equalTo(
         TableOfContentsContext(
           PersonName(firstName, lastName = lastName).firstAndLastName(),
-          RecallLengthDescription(recallLength),
+          RecallDescription(FIXED, recallLength),
           currentPrisonName,
           bookingNumber,
-          3,
-          FIXED
+          3
         )
       )
     )
@@ -99,8 +98,7 @@ class DossierContextTest {
       recall.copy(probationInfo = probationInfo.copy(localDeliveryUnit = ldu)),
       currentPrisonName,
       currentPrisonIsWelsh,
-      2,
-      FIXED
+      2
     )
 
     assertThat(underTest.includeWelsh(), equalTo(expected))

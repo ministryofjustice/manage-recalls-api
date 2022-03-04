@@ -44,7 +44,7 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
   fun `can generate a dossier using gotenberg for a Standard Recall with a Welsh LDU and English current Prison`() {
-    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 15, PrisonId("MWI"), STANDARD)
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 16, PrisonId("MWI"), STANDARD)
   }
 
   private fun generateDossierUsingGotenberg(

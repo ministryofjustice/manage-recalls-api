@@ -7,7 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -28,9 +28,9 @@ class LetterToPrisonContextFactory(
     val currentPrisonName = prisonLookupService.getPrisonName(recall.currentPrison!!)
     val lastReleasePrisonName = prisonLookupService.getPrisonName(recall.lastReleasePrison!!)
     val currentUserDetails = userDetailsService.get(currentUserId)
-    val recallLengthDescription = RecallLengthDescription(recall.recallLength!!)
+    val recallDescription = RecallDescription(recall.recallType(), recall.recallLength)
     val originalCreatedDate = documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, LETTER_TO_PRISON, 1)?.createdDateTime?.toLocalDate() ?: LocalDate.now()
-    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallLengthDescription, currentUserDetails, originalCreatedDate)
+    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallDescription, currentUserDetails, originalCreatedDate)
   }
 }
 
@@ -39,7 +39,7 @@ data class LetterToPrisonContext(
   val prisonerNameOnLicense: FullName,
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
-  val recallLengthDescription: RecallLengthDescription,
+  val recallDescription: RecallDescription,
   val currentUser: UserDetails,
   val originalCreatedDate: LocalDate
 )

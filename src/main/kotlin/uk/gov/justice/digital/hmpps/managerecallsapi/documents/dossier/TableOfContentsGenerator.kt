@@ -19,7 +19,7 @@ class TableOfContentsGenerator(
       setVariable("logoFileName", HmppsLogo.fileName)
       setVariable(
         "recallLengthAndSentenceHeading",
-        tableOfContentsContext.recallLengthDescription.tableOfContentsFixedTermLengthDescription()
+        tableOfContentsContext.recallDescription.tableOfContentsDescription()
       )
       setVariable("fullName", tableOfContentsContext.prisonerNameOnLicense)
       setVariable("currentPrisonName", tableOfContentsContext.currentPrisonName)

@@ -45,7 +45,7 @@ class DossierService(
     val dossierContext = dossierContextFactory.createContext(recallId)
 
     return reasonsForRecallService.getOrGeneratePdf(dossierContext, currentUserId).map { reasonsForRecallPdfBytes ->
-      createTableOfContentsDocumentMap(reasonsForRecallPdfBytes, recallId, dossierContext.includeWelsh(), dossierContext.recallType)
+      createTableOfContentsDocumentMap(reasonsForRecallPdfBytes, recallId, dossierContext.includeWelsh(), dossierContext.recall.recallType())
     }.flatMap { tableOfContentsDocumentMap ->
       tableOfContentsService.generatePdf(dossierContext, tableOfContentsDocumentMap).map { tableOfContentsBytes ->
         mutableListOf(documentData(tableOfContentsBytes)).apply {

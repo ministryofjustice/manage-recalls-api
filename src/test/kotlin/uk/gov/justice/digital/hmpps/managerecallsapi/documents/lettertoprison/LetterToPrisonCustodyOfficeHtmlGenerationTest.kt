@@ -6,11 +6,12 @@ import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -56,11 +57,12 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
             additionalLicenceConditionsDetail = "Blah blah blah",
             differentNomsNumber = true,
             differentNomsNumberDetail = "ABC1234F",
+            confirmedRecallType = RecallType.FIXED,
           ),
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          RecallLengthDescription(recallLength),
+          RecallDescription(RecallType.FIXED, recallLength),
           UserDetails(
             ::UserId.random(),
             FirstName("Mandy"),
@@ -104,11 +106,12 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
             additionalLicenceConditionsDetail = "Blah blah blah",
             differentNomsNumber = true,
             differentNomsNumberDetail = "ABC1234F",
+            confirmedRecallType = RecallType.FIXED,
           ),
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          RecallLengthDescription(recallLength),
+          RecallDescription(RecallType.FIXED, recallLength),
           UserDetails(
             ::UserId.random(),
             FirstName("Mandy"),
@@ -151,11 +154,12 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
             additionalLicenceConditions = false,
             differentNomsNumber = true,
             differentNomsNumberDetail = "ABC1234F",
+            confirmedRecallType = RecallType.FIXED
           ),
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          RecallLengthDescription(recallLength),
+          RecallDescription(RecallType.FIXED, recallLength),
           UserDetails(
             ::UserId.random(),
             FirstName("Mandy"),
