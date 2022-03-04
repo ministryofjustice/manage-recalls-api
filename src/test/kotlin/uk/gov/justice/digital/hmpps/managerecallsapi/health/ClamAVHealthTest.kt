@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
+import io.micrometer.core.instrument.Tags
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -33,6 +34,7 @@ class ClamAVHealthTest {
     assertThat(response.status, equalTo(Status.UP))
 
     verify { clamavClient.ping() }
+    verify { meterRegistry.gauge("upstream_healthcheck", Tags.of("service", "clamAV"), 1) }
   }
 
   @Test
@@ -60,5 +62,6 @@ class ClamAVHealthTest {
     assertThat(response.status, equalTo(Status.DOWN))
 
     verify { clamavClient.ping() }
+    verify { meterRegistry.gauge("upstream_healthcheck", Tags.of("service", "clamAV"), 0) }
   }
 }
