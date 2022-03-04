@@ -9,6 +9,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
@@ -64,6 +66,8 @@ class RecallNotificationContextTest {
     LastName("Badger"),
     prisonerCroNumber,
     dateOfBirth,
+    recommendedRecallType = STANDARD,
+    confirmedRecallType = FIXED,
     recallLength = recallLength,
     lastReleaseDate = lastReleaseDate,
     localPoliceForceId = PoliceForceId("metropolitan"),
@@ -144,7 +148,7 @@ class RecallNotificationContextTest {
   }
 
   @Test
-  fun `create LetterToProbationContext with all required data`() {
+  fun `create LetterToProbationContext for recall with all required data`() {
     val result = underTest.getLetterToProbationContext()
 
     assertThat(
@@ -159,6 +163,7 @@ class RecallNotificationContextTest {
           currentPrisonName,
           PersonName("Maria", lastName = "Badger"),
           inCustody,
+          FIXED
         )
       )
     )

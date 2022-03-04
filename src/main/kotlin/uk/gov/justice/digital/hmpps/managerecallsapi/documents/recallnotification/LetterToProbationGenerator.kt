@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RECALL_TEAM_CONTACT_NUMBER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RECALL_TEAM_NAME
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
@@ -20,16 +22,25 @@ class LetterToProbationGenerator(
       setVariable("teamName", RECALL_TEAM_NAME)
       setVariable("teamContactNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
-      setVariable("recallLengthDescription", context.recallLengthDescription.asFixedTermLengthDescription())
+      if (context.recallType == FIXED) {
+        setVariable("recallLengthDescription", context.recallLengthDescription!!.asFixedTermLengthDescription())
+      }
       setVariable("probationOfficerName", context.probationOfficerName)
       setVariable("prisonerNameOnLicense", context.prisonerNameOnLicense)
       setVariable("bookingNumber", context.bookingNumber)
-      setVariable("currentPrisonName", context.currentPrisonName)
+      if (context.inCustodyRecall) {
+        setVariable("currentPrisonName", context.currentPrisonName!!)
+      }
       setVariable("assessedByUserName", context.assessedByUserName)
       setVariable("inCustody", context.inCustodyRecall)
 
       setVariable("logoFileName", HmppsLogo.fileName)
     }.let {
-      templateEngine.process("letter-to-probation", it)
+      templateEngine.process(getTemplateName(context), it)
     }
+
+  private fun getTemplateName(context: LetterToProbationContext) =
+    if (context.recallType == STANDARD && context.inCustodyRecall)
+      "letter-to-probation_standard_in_custody"
+    else "letter-to-probation_others"
 }

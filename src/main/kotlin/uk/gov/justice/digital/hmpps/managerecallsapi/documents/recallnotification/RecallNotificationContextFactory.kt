@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUni
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
@@ -148,13 +149,14 @@ data class RecallNotificationContext(
   fun getLetterToProbationContext(): LetterToProbationContext =
     LetterToProbationContext(
       originalRecallNotificationCreatedDateTime.toLocalDate(),
-      RecallLengthDescription(recall.recallLength!!),
+      if (recall.recallType() == RecallType.STANDARD) null else RecallLengthDescription(recall.recallLength!!),
       recall.probationInfo!!.probationOfficerName,
       recall.prisonerNameOnLicense(),
       recall.bookingNumber!!,
       currentPrisonName,
       currentUserDetails.personName(),
-      recall.inCustodyRecall()
+      recall.inCustodyRecall(),
+      recall.recallType()
     )
 
   fun getOffenderNotificationContext(): OffenderNotificationContext =
@@ -190,13 +192,14 @@ data class OffenderNotificationContext(
 
 data class LetterToProbationContext(
   val licenceRevocationDate: LocalDate,
-  val recallLengthDescription: RecallLengthDescription,
+  val recallLengthDescription: RecallLengthDescription?,
   val probationOfficerName: String,
   val prisonerNameOnLicense: FullName,
   val bookingNumber: String,
   val currentPrisonName: PrisonName?,
   val assessedByUserName: PersonName,
   val inCustodyRecall: Boolean,
+  val recallType: RecallType
 )
 
 data class RecallSummaryContext(

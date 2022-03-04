@@ -320,6 +320,7 @@ data class Recall(
       ?: updateRecallRequest.inCustodyAtAssessment
 
   fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking!!
+  fun recallType(): RecallType = confirmedRecallType ?: recommendedRecallType!!
 
   fun status(): Status =
     if (stopRecord != null) {
