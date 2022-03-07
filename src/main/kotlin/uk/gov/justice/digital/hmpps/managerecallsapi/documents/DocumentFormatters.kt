@@ -49,18 +49,18 @@ data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = 
 }
 
 data class RecallDescription(val recallType: RecallType, val recallLength: RecallLength?) {
-  fun asFixedTermLengthDescription(): String {
-    return when (recallLength!!) {
+  fun asFixedTermLengthDescription(): String =
+    when (recallLength!!) {
       FOURTEEN_DAYS -> "14 DAY FIXED TERM RECALL"
       TWENTY_EIGHT_DAYS -> "28 DAY FIXED TERM RECALL"
     }
-  }
-  fun numberOfDays(): Int {
-    return when (recallLength!!) {
+
+  fun numberOfDays(): Int =
+    when (recallLength!!) {
       FOURTEEN_DAYS -> 14
       TWENTY_EIGHT_DAYS -> 28
     }
-  }
+
   fun tableOfContentsDescription() =
     when (recallType) {
       STANDARD -> "Standard 255c recall review"
@@ -69,6 +69,7 @@ data class RecallDescription(val recallType: RecallType, val recallLength: Recal
         TWENTY_EIGHT_DAYS -> "28 Day FTR 12 months & over"
       }
     }
+
   fun letterToPrisonAppealsPapersHeading() =
     when (recallLength!!) {
       FOURTEEN_DAYS -> "Annex H – Appeal Papers"
@@ -76,12 +77,11 @@ data class RecallDescription(val recallType: RecallType, val recallLength: Recal
     }
 }
 
-fun MappaLevel.shouldShowOnDocuments(): Boolean {
-  return when (this) {
+fun MappaLevel.shouldShowOnDocuments(): Boolean =
+  when (this) {
     LEVEL_1, LEVEL_2, LEVEL_3 -> true
     else -> false
   }
-}
 
 class YesOrNo(val value: Boolean) {
   override fun toString(): String = if (value) "YES" else "NO"

@@ -21,7 +21,7 @@ class LetterToProbationHtmlGenerationTest(
   private val underTest = LetterToProbationGenerator(templateEngine)
 
   @Test
-  fun `generate in custody fixed recall letter to probation HTML`(approver: ContentApprover) {
+  fun `generate in custody Fixed Term recall letter to probation HTML`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
         letterToProbationContext(true, FIXED)
@@ -30,7 +30,7 @@ class LetterToProbationHtmlGenerationTest(
   }
 
   @Test
-  fun `generate not in custody fixed recall letter to probation HTML`(approver: ContentApprover) {
+  fun `generate not in custody Fixed Term recall letter to probation HTML`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
         letterToProbationContext(false, FIXED)

@@ -18,7 +18,7 @@ class TableOfContentsHtmlGeneratorTest(
   private val underTest = TableOfContentsGenerator(templateEngine)
 
   @Test
-  fun `generate revocation order HTML for Fixed recall`(approver: ContentApprover) {
+  fun `generate revocation order HTML for Fixed Term recall`(approver: ContentApprover) {
     val generatedHtml = underTest.generateHtml(
       TableOfContentsContext(
         FullName("PrisonerFirstName PrisonerLastName"),

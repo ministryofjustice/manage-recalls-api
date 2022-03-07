@@ -23,17 +23,17 @@ import java.time.LocalDate
 class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
-  fun `can generate a dossier using gotenberg for a Fixed Recall with an English LDU and English current Prison`() {
+  fun `can generate a dossier using gotenberg for a Fixed Term recall with an English LDU and English current Prison`() {
     generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 11, PrisonId("MWI"), FIXED)
   }
 
   @Test
-  fun `can generate a dossier using gotenberg for a Fixed Recall with a Welsh LDU and English current Prison`() {
+  fun `can generate a dossier using gotenberg for a Fixed Term recall with a Welsh LDU and English current Prison`() {
     generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 15, PrisonId("MWI"), FIXED)
   }
 
   @Test
-  fun `can generate a dossier using gotenberg for a Fixed Recall with an English LDU and Welsh current Prison`() {
+  fun `can generate a dossier using gotenberg for a Fixed Term recall with an English LDU and Welsh current Prison`() {
     generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 15, PrisonId("CFI"), FIXED)
   }
 
