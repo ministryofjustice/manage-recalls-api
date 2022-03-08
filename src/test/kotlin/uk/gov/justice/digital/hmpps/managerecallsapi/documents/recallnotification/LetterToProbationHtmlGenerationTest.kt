@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
@@ -21,19 +21,19 @@ class LetterToProbationHtmlGenerationTest(
   private val underTest = LetterToProbationGenerator(templateEngine)
 
   @Test
-  fun `generate in custody fixed recall letter to probation HTML`(approver: ContentApprover) {
+  fun `generate in custody Fixed Term recall letter to probation HTML`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
-        letterToProbationContext(true, FIXED),
+        letterToProbationContext(true, FIXED)
       )
     )
   }
 
   @Test
-  fun `generate not in custody fixed recall letter to probation HTML`(approver: ContentApprover) {
+  fun `generate not in custody Fixed Term recall letter to probation HTML`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
-        letterToProbationContext(false, FIXED),
+        letterToProbationContext(false, FIXED)
       )
     )
   }
@@ -42,7 +42,7 @@ class LetterToProbationHtmlGenerationTest(
   fun `generate in custody standard recall letter to probation HTML`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
-        letterToProbationContext(true, STANDARD),
+        letterToProbationContext(true, STANDARD)
       )
     )
   }
@@ -51,14 +51,14 @@ class LetterToProbationHtmlGenerationTest(
   fun `generate not in custody standard recall letter to probation HTML`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
-        letterToProbationContext(false, STANDARD),
+        letterToProbationContext(false, STANDARD)
       )
     )
   }
 
   private fun letterToProbationContext(inCustody: Boolean, recallType: RecallType) = LetterToProbationContext(
     LocalDate.of(2021, 9, 29),
-    RecallLengthDescription(FOURTEEN_DAYS),
+    RecallDescription(recallType, FOURTEEN_DAYS),
     "Mr probation",
     FullName("Bertie Offender"),
     "bookingNumber",

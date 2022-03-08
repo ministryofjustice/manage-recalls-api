@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.integration.documents
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ConfirmedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LastKnownAddressOption
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
@@ -37,6 +38,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     recallType: RecallType
   ) {
     authenticatedClient.updateRecommendedRecallType(recallId, recallType)
+    authenticatedClient.updateConfirmedRecallType(recallId, ConfirmedRecallTypeRequest(recallType, "Some detail"))
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(

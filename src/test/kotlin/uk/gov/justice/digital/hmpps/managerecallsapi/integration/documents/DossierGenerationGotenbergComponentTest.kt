@@ -7,6 +7,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -21,24 +23,35 @@ import java.time.LocalDate
 class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
 
   @Test
-  fun `can generate a dossier using gotenberg for an English LDU and English current Prison`() {
-    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 11, PrisonId("MWI"))
+  fun `can generate a dossier using gotenberg for a Fixed Term recall with an English LDU and English current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 11, PrisonId("MWI"), FIXED)
   }
 
   @Test
-  fun `can generate a dossier using gotenberg for a Welsh LDU and English current Prison`() {
-    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 15, PrisonId("MWI"))
+  fun `can generate a dossier using gotenberg for a Fixed Term recall with a Welsh LDU and English current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 15, PrisonId("MWI"), FIXED)
   }
 
   @Test
-  fun `can generate a dossier using gotenberg for an English LDU and Welsh current Prison`() {
-    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 15, PrisonId("CFI"))
+  fun `can generate a dossier using gotenberg for a Fixed Term recall with an English LDU and Welsh current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 15, PrisonId("CFI"), FIXED)
+  }
+
+  @Test
+  fun `can generate a dossier using gotenberg for a Standard Recall with  an English LDU and English current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_HOUNSLOW, 11, PrisonId("MWI"), STANDARD)
+  }
+
+  @Test
+  fun `can generate a dossier using gotenberg for a Standard Recall with a Welsh LDU and English current Prison`() {
+    generateDossierUsingGotenberg(LocalDeliveryUnit.PS_NORTH_WALES, 16, PrisonId("MWI"), STANDARD)
   }
 
   private fun generateDossierUsingGotenberg(
     localDeliveryUnit: LocalDeliveryUnit,
     expectedPageCount: Int,
-    currentPrisonId: PrisonId
+    currentPrisonId: PrisonId,
+    recallType: RecallType
   ) {
     val nomsNumber = NomsNumber("123456")
 
@@ -57,7 +70,7 @@ class DossierGenerationGotenbergComponentTest : GotenbergComponentTestBase() {
       recall.recallId,
       localDeliveryUnit = localDeliveryUnit,
       currentPrisonId = currentPrisonId,
-      recallType = RecallType.FIXED
+      recallType = recallType
     )
     authenticatedClient.generateDocument(recall.recallId, RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"))
     expectNoVirusesWillBeFound()

@@ -7,6 +7,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel.LEVEL
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -46,37 +48,40 @@ data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = 
     }
 }
 
-data class RecallLengthDescription(val recallLength: RecallLength) {
-  fun asFixedTermLengthDescription(): String {
-    return when (recallLength) {
+data class RecallDescription(val recallType: RecallType, val recallLength: RecallLength?) {
+  fun asFixedTermLengthDescription(): String =
+    when (recallLength!!) {
       FOURTEEN_DAYS -> "14 DAY FIXED TERM RECALL"
       TWENTY_EIGHT_DAYS -> "28 DAY FIXED TERM RECALL"
     }
-  }
-  fun numberOfDays(): Int {
-    return when (recallLength) {
+
+  fun numberOfDays(): Int =
+    when (recallLength!!) {
       FOURTEEN_DAYS -> 14
       TWENTY_EIGHT_DAYS -> 28
     }
-  }
-  fun tableOfContentsFixedTermLengthDescription() =
-    when (recallLength) {
-      FOURTEEN_DAYS -> "14 Day FTR under 12 months"
-      TWENTY_EIGHT_DAYS -> "28 Day FTR 12 months & over"
+
+  fun tableOfContentsDescription() =
+    when (recallType) {
+      STANDARD -> "Standard 255c recall review"
+      RecallType.FIXED -> when (recallLength!!) {
+        FOURTEEN_DAYS -> "14 Day FTR under 12 months"
+        TWENTY_EIGHT_DAYS -> "28 Day FTR 12 months & over"
+      }
     }
+
   fun letterToPrisonAppealsPapersHeading() =
-    when (recallLength) {
+    when (recallLength!!) {
       FOURTEEN_DAYS -> "Annex H – Appeal Papers"
       TWENTY_EIGHT_DAYS -> "Annex I – Appeal Papers"
     }
 }
 
-fun MappaLevel.shouldShowOnDocuments(): Boolean {
-  return when (this) {
+fun MappaLevel.shouldShowOnDocuments(): Boolean =
+  when (this) {
     LEVEL_1, LEVEL_2, LEVEL_3 -> true
     else -> false
   }
-}
 
 class YesOrNo(val value: Boolean) {
   override fun toString(): String = if (value) "YES" else "NO"

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 
 @Component
 class LetterToPrisonConfirmationGenerator(
@@ -15,9 +15,9 @@ class LetterToPrisonConfirmationGenerator(
       setVariable("fullName", context.prisonerNameOnLicense)
 
       with(context.recall) {
-        val recallLengthDescription = RecallLengthDescription(this.recallLength!!)
-        setVariable("recallLengthDescription", recallLengthDescription.asFixedTermLengthDescription())
-        setVariable("recallLengthDays", recallLengthDescription.numberOfDays())
+        val recallDescription = RecallDescription(this.recallType(), this.recallLength)
+        setVariable("recallLengthDescription", recallDescription.asFixedTermLengthDescription())
+        setVariable("recallLengthDays", recallDescription.numberOfDays())
         setVariable("bookingNumber", this.bookingNumber)
       }
     }.let {

@@ -57,7 +57,7 @@ class LetterToPrisonService(
       }.map { mergedPdfContentBytes ->
         pdfDecorator.numberPagesOnRightWithHeaderAndFooter(
           mergedPdfContentBytes,
-          headerText = context.recallLengthDescription.letterToPrisonAppealsPapersHeading(),
+          headerText = context.recallDescription.letterToPrisonAppealsPapersHeading(),
           firstHeaderPage = letterToPrisonCustodyOfficePageCount + 1,
           footerText = "OFFICIAL"
         )

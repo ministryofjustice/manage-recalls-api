@@ -9,10 +9,11 @@ import org.springframework.core.io.ClassPathResource
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -66,7 +67,7 @@ internal class LetterToPrisonServiceTest {
       custodyOfficeBytes
     )
     every { pdfDocumentGenerationService.mergePdfs(any()) } returns Mono.just(mergedBytes)
-    every { context.recallLengthDescription } returns RecallLengthDescription(RecallLength.FOURTEEN_DAYS)
+    every { context.recallDescription } returns RecallDescription(RecallType.FIXED, RecallLength.FOURTEEN_DAYS)
     every { pdfDecorator.numberPagesOnRightWithHeaderAndFooter(mergedBytes, any(), any(), any(), any(), "OFFICIAL", any()) } returns letterBytes
     every { documentService.storeDocument(recallId, currentUserId, letterBytes, LETTER_TO_PRISON, fileName, "New Version") } returns documentId
 

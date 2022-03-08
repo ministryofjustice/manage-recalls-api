@@ -18,7 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -156,7 +156,7 @@ class RecallNotificationContextTest {
       equalTo(
         LetterToProbationContext(
           LocalDate.of(2021, 10, 4),
-          RecallLengthDescription(recallLength),
+          RecallDescription(FIXED, recallLength),
           probationOfficerName,
           FullName("Barrie Badger"),
           recallBookingNumber,

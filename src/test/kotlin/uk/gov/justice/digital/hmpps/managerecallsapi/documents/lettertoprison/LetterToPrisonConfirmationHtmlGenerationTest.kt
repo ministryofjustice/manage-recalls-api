@@ -5,11 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallLengthDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -46,11 +47,12 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
             LocalDate.of(1999, 12, 1),
             recallLength = recallLength,
             bookingNumber = "B1234",
+            confirmedRecallType = RecallType.FIXED,
           ),
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           PrisonName("Prison B"),
-          RecallLengthDescription(recallLength),
+          RecallDescription(RecallType.FIXED, recallLength),
           UserDetails(
             ::UserId.random(),
             FirstName("Mandy"),

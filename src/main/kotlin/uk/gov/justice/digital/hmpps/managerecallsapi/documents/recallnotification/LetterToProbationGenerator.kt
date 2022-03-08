@@ -23,7 +23,7 @@ class LetterToProbationGenerator(
       setVariable("teamContactNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
       if (context.recallType == FIXED) {
-        setVariable("recallLengthDescription", context.recallLengthDescription!!.asFixedTermLengthDescription())
+        setVariable("recallLengthDescription", context.recallDescription!!.asFixedTermLengthDescription())
       }
       setVariable("probationOfficerName", context.probationOfficerName)
       setVariable("prisonerNameOnLicense", context.prisonerNameOnLicense)

@@ -31,7 +31,7 @@ slack-fail-post-step: &slack-fail-post-step
           }
 
 orbs:
-  hmpps: ministryofjustice/hmpps@3.11
+  hmpps: ministryofjustice/hmpps@3.14
   gradle: circleci/gradle@2.2.0
   mem: circleci/rememborb@0.0.1
   slack: circleci/slack@4.5
@@ -273,6 +273,7 @@ workflows:
 
       - hmpps/build_docker:
           name: build_docker
+          no_output_timeout: 30m
           publish: false
           persist_container_image: true
           additional_docker_build_args: --build-arg BUILD_URL=${CIRCLE_BUILD_URL}
