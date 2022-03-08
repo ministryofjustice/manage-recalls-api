@@ -5,6 +5,14 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.present
+import com.ninjasquad.springmockk.MockkBean
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tag
+import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
+import io.mockk.verify
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -14,7 +22,10 @@ import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
@@ -27,6 +38,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientCo
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
 
 @ExtendWith(SpringExtension::class)
+@Import(MetricsAutoConfiguration::class, CompositeMeterRegistryAutoConfiguration::class)
 @TestInstance(PER_CLASS)
 @ActiveProfiles("test")
 @SpringBootTest(
@@ -38,6 +50,9 @@ class PrisonRegisterIntegrationTest(
 ) {
 
   private val prisonRegisterMockServer = PrisonRegisterMockServer(mapper)
+
+  @MockkBean private lateinit var meterRegistry: MeterRegistry
+  @MockkBean private lateinit var timeoutCounter: Counter
 
   @BeforeAll
   fun startMockServer() {
@@ -52,6 +67,9 @@ class PrisonRegisterIntegrationTest(
   @BeforeEach
   fun resetMocks() {
     prisonRegisterMockServer.resetAll()
+
+    every { meterRegistry.counter("http_client_requests_timeout", any<Iterable<Tag>>()) } returns timeoutCounter
+    every { timeoutCounter.increment() } just runs
   }
 
   @Test
@@ -95,17 +113,21 @@ class PrisonRegisterIntegrationTest(
 
   @Test
   fun `handle timeout from client`() {
-    prisonRegisterMockServer.delaySearch("/prisons", 2500)
+    prisonRegisterMockServer.delaySearch("/prisons", 3000)
+
     val exception = assertThrows<RuntimeException> {
       prisonRegisterClient.getAllPrisons().block()
     }
     assertThat(exception.cause!!.javaClass, equalTo(ClientTimeoutException::class.java))
     assertThat(exception.cause!!.message, equalTo("PrisonRegisterClient: [java.util.concurrent.TimeoutException]"))
+
+    verify(exactly = 1) { timeoutCounter.increment() }
   }
 
   @Test
   fun `handle exception from client`() {
     prisonRegisterMockServer.stubCallWithException("/prisons")
+
     val exception = assertThrows<RuntimeException> {
       prisonRegisterClient.getAllPrisons().block()!!
     }
