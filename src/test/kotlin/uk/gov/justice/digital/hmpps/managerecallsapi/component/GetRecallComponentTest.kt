@@ -173,6 +173,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.localDeliveryUnit").isEqualTo(fullyPopulatedRecall.probationInfo!!.localDeliveryUnit.name)
       .jsonPath("$.localPoliceForceId").isEqualTo(fullyPopulatedRecall.localPoliceForceId!!.toString())
       .jsonPath("$.mappaLevel").isEqualTo(fullyPopulatedRecall.mappaLevel!!.name)
+      .jsonPath("$.partBDueDate").isEqualTo(fullyPopulatedRecall.partBDueDate!!.toString())
       .jsonPath("$.previousConvictionMainName").isEqualTo(fullyPopulatedRecall.previousConvictionMainName!!)
       .jsonPath("$.previousConvictionMainNameCategory").isEqualTo(fullyPopulatedRecall.previousConvictionMainNameCategory!!.toString())
       .jsonPath("$.probationOfficerEmail").isEqualTo(fullyPopulatedRecall.probationInfo!!.probationOfficerEmail)

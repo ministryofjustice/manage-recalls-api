@@ -135,6 +135,8 @@ data class Recall(
   val localPoliceForceId: PoliceForceId? = null,
   @Enumerated(STRING)
   val mappaLevel: MappaLevel? = null,
+  @Column(name = "part_b_due_date")
+  val partBDueDate: LocalDate? = null,
   val previousConvictionMainName: String? = null,
   @Enumerated(STRING)
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
@@ -205,6 +207,7 @@ data class Recall(
     licenceConditionsBreached: String? = null,
     localPoliceForceId: PoliceForceId? = null,
     mappaLevel: MappaLevel? = null,
+    partBDueDate: LocalDate? = null,
     previousConvictionMainName: String? = null,
     previousConvictionMainNameCategory: NameFormatCategory? = null,
     probationInfo: ProbationInfo? = null,
@@ -266,6 +269,7 @@ data class Recall(
       licenceConditionsBreached,
       localPoliceForceId,
       mappaLevel,
+      partBDueDate,
       previousConvictionMainName,
       previousConvictionMainNameCategory,
       probationInfo,
@@ -313,20 +317,26 @@ data class Recall(
     }
   }
 
-  fun inCustodyRecallOrBeingUpdatedToBeElseNull(updateRecallRequest: UpdateRecallRequest): Boolean? =
+  fun inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest: UpdateRecallRequest): Boolean =
     inCustodyAtAssessment
       ?: inCustodyAtBooking
       ?: updateRecallRequest.inCustodyAtBooking
       ?: updateRecallRequest.inCustodyAtAssessment
+      ?: false
 
   fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking!!
-  fun recallType(): RecallType = confirmedRecallType ?: recommendedRecallType!!
+  fun recallTypeOrNull(): RecallType? = confirmedRecallType ?: recommendedRecallType
+  fun recallType(): RecallType = recallTypeOrNull()!!
 
   fun status(): Status =
     if (stopRecord != null) {
       Status.STOPPED
     } else if (dossierCreatedByUserId != null) {
-      Status.DOSSIER_ISSUED
+      if (recallType() == RecallType.STANDARD) {
+        Status.AWAITING_PART_B
+      } else {
+        Status.DOSSIER_ISSUED
+      }
     } else if (assessedByUserId != null) {
       if (inCustodyRecall()) {
         if (assignee != null) {
@@ -420,20 +430,20 @@ data class StopRecord(
 data class ReturnedToCustodyRecord(
   val returnedToCustodyDateTime: OffsetDateTime,
   val returnedToCustodyNotificationDateTime: OffsetDateTime,
-  val returnedToCustodyRecordedByUserId: UUID?,
+  val returnedToCustodyRecordedByUserId: UUID,
   val returnedToCustodyRecordedDateTime: OffsetDateTime
 ) {
   constructor(
     returnedToCustodyDateTime: OffsetDateTime,
     returnedToCustodyNotificationDateTime: OffsetDateTime,
-    returnedToCustodyRecordedDateTime: OffsetDateTime,
-    returnedToCustodyRecordedByUserId: UserId? = null
+    returnedToCustodyRecordedByUserId: UserId,
+    returnedToCustodyRecordedDateTime: OffsetDateTime
   ) :
     this(
       returnedToCustodyDateTime,
       returnedToCustodyNotificationDateTime,
-      returnedToCustodyRecordedByUserId?.value,
+      returnedToCustodyRecordedByUserId.value,
       returnedToCustodyRecordedDateTime
     )
-  fun recordedByUserId() = returnedToCustodyRecordedByUserId?.let(::UserId)
+  fun recordedByUserId() = returnedToCustodyRecordedByUserId.let(::UserId)
 }

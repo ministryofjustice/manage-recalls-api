@@ -14,7 +14,7 @@ class BankHolidayService(@Autowired private val bankHolidayClient: BankHolidayRe
     }
   }
 
-  fun nextWorkingDate(sourceDate: LocalDate): LocalDate? {
+  fun nextWorkingDate(sourceDate: LocalDate): LocalDate {
     var nextDate = sourceDate.plusDays(1)
     while (
       nextDate.dayOfWeek == DayOfWeek.SATURDAY ||
@@ -24,5 +24,12 @@ class BankHolidayService(@Autowired private val bankHolidayClient: BankHolidayRe
       nextDate = nextDate.plusDays(1)
     }
     return nextDate
+  }
+
+  fun plusWorkingDays(localDate: LocalDate, numberOfDays: Int): LocalDate {
+    return if (numberOfDays == 0)
+      localDate
+    else
+      plusWorkingDays(nextWorkingDate(localDate), numberOfDays - 1)
   }
 }

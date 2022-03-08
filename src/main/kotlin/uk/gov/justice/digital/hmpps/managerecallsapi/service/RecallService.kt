@@ -132,6 +132,7 @@ class RecallService(
       bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
       dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
       dossierTargetDate = calculateDossierTargetDate(updateRecallRequest, this),
+      partBDueDate = calculatePartBDueDate(updateRecallRequest, this),
       lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
       arrestIssues = updateRecallRequest.arrestIssues ?: arrestIssues,
       arrestIssuesDetail = updateRecallRequest.arrestIssuesDetail ?: arrestIssuesDetail,
@@ -139,15 +140,23 @@ class RecallService(
     )
   }
 
-  fun calculateDossierTargetDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? =
-    when (recall.inCustodyRecallOrBeingUpdatedToBeElseNull(updateRecallRequest)) {
-      true -> {
-        updateRecallRequest.recallNotificationEmailSentDateTime?.let {
-          bankHolidayService.nextWorkingDate(it.toLocalDate())
-        }
+  fun calculateDossierTargetDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? {
+    val dossierDate = if (recall.inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest)) {
+      updateRecallRequest.recallNotificationEmailSentDateTime?.let {
+        bankHolidayService.nextWorkingDate(it.toLocalDate())
       }
-      else -> null
-    } ?: recall.dossierTargetDate
+    } else null
+    return dossierDate ?: recall.dossierTargetDate
+  }
+
+  fun calculatePartBDueDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? {
+    val partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD && recall.inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest)) {
+      updateRecallRequest.recallNotificationEmailSentDateTime?.let {
+        bankHolidayService.plusWorkingDays(it.toLocalDate(), 15)
+      }
+    } else null
+    return partBDueDate ?: recall.partBDueDate
+  }
 
   @Transactional
   fun updateCustodyStatus(currentUserId: UserId) {
@@ -179,10 +188,11 @@ class RecallService(
         returnedToCustody = ReturnedToCustodyRecord(
           returnedToCustodyDateTime,
           returnedToCustodyNotificationDateTime,
-          OffsetDateTime.now(clock),
-          recordedUserId
+          recordedUserId,
+          OffsetDateTime.now(clock)
         ),
         dossierTargetDate = bankHolidayService.nextWorkingDate(returnedToCustodyNotificationDateTime.toLocalDate()),
+        partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) bankHolidayService.plusWorkingDays(returnedToCustodyNotificationDateTime.toLocalDate(), 15) else null,
       ),
       recordedUserId
     )

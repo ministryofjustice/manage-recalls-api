@@ -91,7 +91,7 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
       },
       returnedToCustody = recall.returnedToCustody?.let { rtc ->
         rtc.copy(
-          returnedToCustodyRecordedByUserId = (knownUserId ?: rtc.recordedByUserId())?.value
+          returnedToCustodyRecordedByUserId = (knownUserId ?: rtc.recordedByUserId()).value
         )
       }
     )
