@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.register
 
-import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -13,10 +13,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 @Component
 class PoliceUkApiClient(
   @Autowired internal val policeUkApiWebClient: WebClient,
-  @Value("\${policeUkApi.endpoint.url}") val policeUkApiEndpointUrl: String,
   @Value("\${clientApi.timeout}") val timeout: Long,
-  @Autowired private val meterRegistry: MeterRegistry,
-) : ErrorHandlingClient(policeUkApiWebClient, policeUkApiEndpointUrl, timeout, meterRegistry) {
+  @Autowired private val policeUkApiTimeoutCounter: Counter
+) : ErrorHandlingClient(policeUkApiWebClient, timeout, policeUkApiTimeoutCounter) {
   // As critical Recall data we likely should have more robust access than calling out everytime to a public website,
   // e.g. caching the responses locally, perhaps introducing a boolean active property etc.
 

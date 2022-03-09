@@ -7,11 +7,9 @@ import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.present
 import com.ninjasquad.springmockk.MockkBean
 import io.micrometer.core.instrument.Counter
-import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.Tag
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
-import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -51,8 +49,7 @@ class PrisonRegisterIntegrationTest(
 
   private val prisonRegisterMockServer = PrisonRegisterMockServer(mapper)
 
-  @MockkBean private lateinit var meterRegistry: MeterRegistry
-  @MockkBean private lateinit var timeoutCounter: Counter
+  @MockkBean private lateinit var prisonRegisterTimeoutCounter: Counter
 
   @BeforeAll
   fun startMockServer() {
@@ -67,9 +64,6 @@ class PrisonRegisterIntegrationTest(
   @BeforeEach
   fun resetMocks() {
     prisonRegisterMockServer.resetAll()
-
-    every { meterRegistry.counter("http_client_requests_timeout", any<Iterable<Tag>>()) } returns timeoutCounter
-    every { timeoutCounter.increment() } just runs
   }
 
   @Test
@@ -113,6 +107,8 @@ class PrisonRegisterIntegrationTest(
 
   @Test
   fun `handle timeout from client`() {
+    every { prisonRegisterTimeoutCounter.increment() } just Runs
+
     prisonRegisterMockServer.delaySearch("/prisons", 3000)
 
     val exception = assertThrows<RuntimeException> {
@@ -121,7 +117,7 @@ class PrisonRegisterIntegrationTest(
     assertThat(exception.cause!!.javaClass, equalTo(ClientTimeoutException::class.java))
     assertThat(exception.cause!!.message, equalTo("PrisonRegisterClient: [java.util.concurrent.TimeoutException]"))
 
-    verify(exactly = 1) { timeoutCounter.increment() }
+    verify(exactly = 1) { prisonRegisterTimeoutCounter.increment() }
   }
 
   @Test
