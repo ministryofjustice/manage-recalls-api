@@ -1,6 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.register
 
-import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
@@ -13,10 +13,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 @Component
 class PrisonRegisterClient(
   @Autowired private val prisonRegisterWebClient: WebClient,
-  @Value("\${prisonRegister.endpoint.url}") val prisonRegisterEndpointUrl: String,
   @Value("\${clientApi.timeout}") val timeout: Long,
-  @Autowired private val meterRegistry: MeterRegistry,
-) : ErrorHandlingClient(prisonRegisterWebClient, prisonRegisterEndpointUrl, timeout, meterRegistry) {
+  @Autowired private val prisonRegisterTimeoutCounter: Counter,
+) : ErrorHandlingClient(prisonRegisterWebClient, timeout, prisonRegisterTimeoutCounter) {
 
   fun getAllPrisons(): Mono<List<Api.Prison>> =
     getResponse("/prisons", object : ParameterizedTypeReference<List<Api.Prison>>() {})
