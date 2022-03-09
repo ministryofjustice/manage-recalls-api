@@ -320,8 +320,8 @@ data class Recall(
   fun inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest: UpdateRecallRequest): Boolean =
     inCustodyAtAssessment
       ?: inCustodyAtBooking
-      ?: updateRecallRequest.inCustodyAtBooking
       ?: updateRecallRequest.inCustodyAtAssessment
+      ?: updateRecallRequest.inCustodyAtBooking
       ?: false
 
   fun inCustodyRecall(): Boolean = inCustodyAtAssessment ?: inCustodyAtBooking!!

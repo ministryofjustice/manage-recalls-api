@@ -81,7 +81,7 @@ class RecallServiceTest {
 
   private val fullyPopulatedUpdateRecallRequest: UpdateRecallRequest =
     fullyPopulatedInstance<UpdateRecallRequest>().copy(
-      inCustodyAtBooking = true,
+      inCustodyAtAssessment = true,
       recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock)
     )
 
