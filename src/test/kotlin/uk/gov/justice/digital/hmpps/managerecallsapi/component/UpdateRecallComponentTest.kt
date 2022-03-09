@@ -427,6 +427,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
       dossierCreatedByUserId = dossierCreatedByUserId
     )
 
+    authenticatedClient.updateRecommendedRecallType(recallId, FIXED)
+    authenticatedClient.updateConfirmedRecallType(recallId, ConfirmedRecallTypeRequest(FIXED, "Detail..."))
     val response = authenticatedClient.updateRecall(recallId, updateRecallRequest)
 
     assertThat(
@@ -444,7 +446,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           status = Status.DOSSIER_ISSUED,
           dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
           dossierCreatedByUserId = dossierCreatedByUserId,
-          dossierCreatedByUserName = FullName("Bertie Badger")
+          dossierCreatedByUserName = FullName("Bertie Badger"),
+          recommendedRecallType = FIXED,
+          confirmedRecallType = FIXED,
+          confirmedRecallTypeDetail = "Detail..."
         )
       )
     )

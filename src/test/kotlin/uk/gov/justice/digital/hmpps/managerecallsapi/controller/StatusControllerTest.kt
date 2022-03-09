@@ -48,8 +48,8 @@ class StatusControllerTest {
     val returnedToCustodyRecord = ReturnedToCustodyRecord(
       returnedToCustodyDateTime,
       returnedToCustodyNotificationDateTime,
-      OffsetDateTime.now(),
-      userUuid
+      userUuid,
+      OffsetDateTime.now()
     )
     val updatedRecall = recall.copy(returnedToCustody = returnedToCustodyRecord, dossierTargetDate = LocalDate.now().plusDays(1))
 

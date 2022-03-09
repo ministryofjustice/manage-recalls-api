@@ -159,7 +159,8 @@ class RecallControllerTest {
   )
   private val inCustodyDossierInProgressRecall =
     newRecall().copy(inCustodyAtBooking = true, assessedByUserId = assessedByUserId.value, assignee = assignee.value)
-  private val dossierIssuedRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value)
+  private val dossierIssuedRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value, confirmedRecallType = RecallType.FIXED)
+  private val awaitingPartBRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value, confirmedRecallType = RecallType.STANDARD)
 
   @Test
   fun `gets all recalls for a band FOUR_PLUS returns all recalls`() {
@@ -172,7 +173,8 @@ class RecallControllerTest {
       inCustodyAwaitingDossierCreationRecall,
       notInCustodyAssessedRecall,
       inCustodyDossierInProgressRecall,
-      dossierIssuedRecall
+      dossierIssuedRecall,
+      awaitingPartBRecall
     )
     val userId = ::UserId.random()
     val currentUserDetails = mockk<UserDetails>()
@@ -185,7 +187,7 @@ class RecallControllerTest {
 
     val results = underTest.findAll(bearerToken)
 
-    assertThat(results.size, equalTo(8))
+    assertThat(results.size, equalTo(9))
 
     assertThat(
       results,
@@ -207,7 +209,8 @@ class RecallControllerTest {
           inCustodyAtBooking = true,
           assigneeUserName = FullName("Mickey Mouse")
         ),
-        recallLiteResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED)
+        recallLiteResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED),
+        recallLiteResponse(awaitingPartBRecall, Status.AWAITING_PART_B),
       )
     )
   }
@@ -223,7 +226,8 @@ class RecallControllerTest {
       inCustodyAwaitingDossierCreationRecall,
       notInCustodyAssessedRecall,
       inCustodyDossierInProgressRecall,
-      dossierIssuedRecall
+      dossierIssuedRecall,
+      awaitingPartBRecall
     )
     val userId = ::UserId.random()
     val currentUserDetails = mockk<UserDetails>()
@@ -236,7 +240,7 @@ class RecallControllerTest {
 
     val results = underTest.findAll(bearerToken)
 
-    assertThat(results.size, equalTo(6))
+    assertThat(results.size, equalTo(7))
 
     assertThat(
       results,
@@ -256,7 +260,8 @@ class RecallControllerTest {
           inCustodyAtBooking = true,
           assigneeUserName = FullName("Mickey Mouse")
         ),
-        recallLiteResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED)
+        recallLiteResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED),
+        recallLiteResponse(awaitingPartBRecall, Status.AWAITING_PART_B),
       )
 
     )
@@ -354,7 +359,9 @@ class RecallControllerTest {
     val recallWithIds = recall.copy(
       assessedByUserId = assessedByUserId.value,
       bookedByUserId = bookedByUserId.value,
-      dossierCreatedByUserId = dossierCreatedByUserId.value
+      dossierCreatedByUserId = dossierCreatedByUserId.value,
+      recommendedRecallType = RecallType.STANDARD,
+      confirmedRecallType = RecallType.FIXED
     )
 
     every { userDetailsService.get(assessedByUserId) } returns UserDetails(
@@ -403,6 +410,8 @@ class RecallControllerTest {
           bookedByUserName = fullNameBookedBy,
           dossierCreatedByUserId = dossierCreatedByUserId,
           dossierCreatedByUserName = fullNameDossierCreatedBy,
+          recommendedRecallType = RecallType.STANDARD,
+          confirmedRecallType = RecallType.FIXED
         )
       )
     )

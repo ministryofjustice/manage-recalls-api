@@ -104,8 +104,8 @@ class RecallTest {
       returnedToCustody = ReturnedToCustodyRecord(
         OffsetDateTime.now(),
         OffsetDateTime.now(),
-        OffsetDateTime.now(),
-        ::UserId.random()
+        ::UserId.random(),
+        OffsetDateTime.now()
       )
     )
 
@@ -154,42 +154,66 @@ class RecallTest {
       bookedByUserId = ::UserId.random().value,
       assessedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value,
-      returnedToCustody = ReturnedToCustodyRecord(OffsetDateTime.now(), OffsetDateTime.now(), OffsetDateTime.now(), ::UserId.random()),
+      returnedToCustody = ReturnedToCustodyRecord(
+        OffsetDateTime.now(),
+        OffsetDateTime.now(),
+        ::UserId.random(),
+        OffsetDateTime.now()
+      ),
     )
 
     assertThat(recall.status(), equalTo(Status.DOSSIER_IN_PROGRESS))
   }
 
   @Test
-  fun `Recall with dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
+  fun `Fixed term recall with dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
     val recall = recall.copy(
-      dossierCreatedByUserId = ::UserId.random().value
+      dossierCreatedByUserId = ::UserId.random().value,
+      recommendedRecallType = FIXED,
+      confirmedRecallType = FIXED
     )
 
     assertThat(recall.status(), equalTo(Status.DOSSIER_ISSUED))
   }
 
   @Test
-  fun `Recall with bookedByUserId, assessedByUserId, dossierCreatedByUserId and assignee set returns status DOSSIER_ISSUED`() {
+  fun `Fixed term Recall with bookedByUserId, assessedByUserId, dossierCreatedByUserId and assignee set returns status DOSSIER_ISSUED`() {
     val recall = recall.copy(
       bookedByUserId = ::UserId.random().value,
       assessedByUserId = ::UserId.random().value,
       assignee = ::UserId.random().value,
-      dossierCreatedByUserId = ::UserId.random().value
+      dossierCreatedByUserId = ::UserId.random().value,
+      recommendedRecallType = FIXED,
+      confirmedRecallType = FIXED
     )
 
     assertThat(recall.status(), equalTo(Status.DOSSIER_ISSUED))
   }
 
   @Test
-  fun `Recall with bookedByUserId, assessedByUserId and dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
+  fun `Fixed term Recall with bookedByUserId, assessedByUserId and dossierCreatedByUserId set returns status DOSSIER_ISSUED`() {
     val recall = recall.copy(
       bookedByUserId = ::UserId.random().value,
       assessedByUserId = ::UserId.random().value,
       dossierCreatedByUserId = ::UserId.random().value,
+      recommendedRecallType = FIXED,
+      confirmedRecallType = FIXED
     )
 
     assertThat(recall.status(), equalTo(Status.DOSSIER_ISSUED))
+  }
+
+  @Test
+  fun `Standard recall with bookedByUserId, assessedByUserId and dossierCreatedByUserId set returns status AWAITING_PART_B`() {
+    val recall = recall.copy(
+      bookedByUserId = ::UserId.random().value,
+      assessedByUserId = ::UserId.random().value,
+      dossierCreatedByUserId = ::UserId.random().value,
+      recommendedRecallType = STANDARD,
+      confirmedRecallType = STANDARD
+    )
+
+    assertThat(recall.status(), equalTo(Status.AWAITING_PART_B))
   }
 
   @Test

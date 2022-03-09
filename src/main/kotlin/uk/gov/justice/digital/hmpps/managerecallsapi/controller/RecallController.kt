@@ -183,6 +183,7 @@ class RecallController(
       dossierTargetDate = dossierTargetDate,
       recallAssessmentDueDateTime = recallAssessmentDueDateTime(),
       assigneeUserName = assignee()?.let { users[it]!!.fullName() },
+      partBDueDate = partBDueDate
     )
 
   fun Recall.toResponse() = RecallResponse(
@@ -241,6 +242,7 @@ class RecallController(
     localDeliveryUnit = probationInfo?.localDeliveryUnit,
     localPoliceForceId = localPoliceForceId,
     mappaLevel = mappaLevel,
+    partBDueDate = partBDueDate,
     previousConvictionMainName = previousConvictionMainName,
     previousConvictionMainNameCategory = previousConvictionMainNameCategory,
     probationOfficerEmail = probationInfo?.probationOfficerEmail,
@@ -385,6 +387,7 @@ data class RecallResponseLite(
   val dossierTargetDate: LocalDate? = null,
   val recallAssessmentDueDateTime: OffsetDateTime? = null,
   val assigneeUserName: FullName? = null,
+  val partBDueDate: LocalDate? = null,
 )
 
 data class RecallResponse(
@@ -443,6 +446,7 @@ data class RecallResponse(
   val localDeliveryUnit: LocalDeliveryUnit? = null,
   val localPoliceForceId: PoliceForceId? = null,
   val mappaLevel: MappaLevel? = null,
+  val partBDueDate: LocalDate? = null,
   val previousConvictionMainName: String? = null,
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
   val probationOfficerEmail: String? = null,
@@ -549,14 +553,15 @@ private val ALL_BANDINGS = setOf(THREE, FOUR_PLUS)
 private val FOUR_PLUS_ONLY = setOf(FOUR_PLUS)
 
 enum class Status(val visibilityBands: Set<CaseworkerBand>) {
+  ASSESSED_NOT_IN_CUSTODY(ALL_BANDINGS),
+  AWAITING_DOSSIER_CREATION(ALL_BANDINGS),
+  AWAITING_PART_B(ALL_BANDINGS),
+  AWAITING_RETURN_TO_CUSTODY(ALL_BANDINGS),
   BEING_BOOKED_ON(ALL_BANDINGS),
   BOOKED_ON(FOUR_PLUS_ONLY),
-  IN_ASSESSMENT(FOUR_PLUS_ONLY),
-  ASSESSED_NOT_IN_CUSTODY(ALL_BANDINGS),
-  AWAITING_RETURN_TO_CUSTODY(ALL_BANDINGS),
-  AWAITING_DOSSIER_CREATION(ALL_BANDINGS),
   DOSSIER_IN_PROGRESS(ALL_BANDINGS),
   DOSSIER_ISSUED(ALL_BANDINGS),
+  IN_ASSESSMENT(FOUR_PLUS_ONLY),
   STOPPED(ALL_BANDINGS);
 }
 

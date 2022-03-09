@@ -68,12 +68,7 @@ class GetRecallsComponentTest : ComponentTestBase() {
 
     val recall1 = authenticatedClient.bookRecall(request1)
     val recall2 = authenticatedClient.bookRecall(request2)
-    authenticatedClient.updateRecall(
-      recall2.recallId,
-      UpdateRecallRequest(
-        licenceNameCategory = FIRST_MIDDLE_LAST
-      )
-    )
+    authenticatedClient.updateRecall(recall2.recallId, UpdateRecallRequest(licenceNameCategory = FIRST_MIDDLE_LAST))
     val rtcRecall = authenticatedClient.bookRecall(request3)
     authenticatedClient.updateRecall(
       rtcRecall.recallId,

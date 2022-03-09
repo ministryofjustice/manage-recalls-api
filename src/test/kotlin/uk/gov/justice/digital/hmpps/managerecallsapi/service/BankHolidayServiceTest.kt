@@ -46,4 +46,13 @@ class BankHolidayServiceTest {
 
     assertThat(nextWorkingDate, equalTo(LocalDate.of(2021, 12, 29)))
   }
+
+  @Test
+  fun `plusWorkingDays increments appropriate number of days`() {
+    every { bankHolidayRegisterClient.getBankHolidays() } returns Mono.just(emptyList())
+
+    val date = LocalDate.of(2022, 3, 8)
+    val plus10days = underTest.plusWorkingDays(date, 10)
+    assertThat(plus10days, equalTo(LocalDate.of(2022, 3, 22)))
+  }
 }
