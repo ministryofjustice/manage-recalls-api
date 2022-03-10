@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import org.junit.jupiter.api.Test
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
@@ -87,8 +86,7 @@ class SearchRecallsComponentTest : ComponentTestBase() {
           LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
-          Status.BEING_BOOKED_ON
+          Status.BEING_BOOKED_ON,
         ),
         RecallResponse(
           recall3.recallId(),
@@ -101,8 +99,7 @@ class SearchRecallsComponentTest : ComponentTestBase() {
           LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
-          Status.BEING_BOOKED_ON
+          Status.BEING_BOOKED_ON,
         )
       )
     )

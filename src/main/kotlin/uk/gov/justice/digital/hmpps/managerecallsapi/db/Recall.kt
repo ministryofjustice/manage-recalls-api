@@ -75,9 +75,6 @@ data class Recall(
   val croNumber: CroNumber,
   @Column(nullable = false)
   val dateOfBirth: LocalDate,
-  @Column(nullable = false)
-  @Enumerated(STRING)
-  val licenceNameCategory: NameFormatCategory,
 
 // COLLECTIONS
   @OneToMany(cascade = [ALL])
@@ -131,6 +128,8 @@ data class Recall(
   @Convert(converter = PrisonIdJpaConverter::class)
   val lastReleasePrison: PrisonId? = null,
   val licenceConditionsBreached: String? = null,
+  @Enumerated(STRING)
+  val licenceNameCategory: NameFormatCategory? = null,
   @Convert(converter = PoliceForceIdJpaConverter::class)
   val localPoliceForceId: PoliceForceId? = null,
   @Enumerated(STRING)
@@ -170,7 +169,6 @@ data class Recall(
     lastName: LastName,
     croNumber: CroNumber,
     dateOfBirth: LocalDate,
-    licenceNameCategory: NameFormatCategory = FIRST_LAST,
     lastUpdatedByUserId: UserId = createdByUserId,
     lastUpdatedDateTime: OffsetDateTime = createdDateTime,
     documents: Set<Document> = emptySet(),
@@ -205,6 +203,7 @@ data class Recall(
     lastReleaseDate: LocalDate? = null,
     lastReleasePrison: PrisonId? = null,
     licenceConditionsBreached: String? = null,
+    licenceNameCategory: NameFormatCategory? = null,
     localPoliceForceId: PoliceForceId? = null,
     mappaLevel: MappaLevel? = null,
     partBDueDate: LocalDate? = null,
@@ -235,7 +234,6 @@ data class Recall(
       lastName,
       croNumber,
       dateOfBirth,
-      licenceNameCategory,
       documents,
       lastKnownAddresses,
       missingDocumentsRecords,
@@ -267,6 +265,7 @@ data class Recall(
       lastReleaseDate,
       lastReleasePrison,
       licenceConditionsBreached,
+      licenceNameCategory,
       localPoliceForceId,
       mappaLevel,
       partBDueDate,
@@ -295,9 +294,9 @@ data class Recall(
 
   fun recallAssessmentDueDateTime(): OffsetDateTime? = recallEmailReceivedDateTime?.plusHours(24)
 
-  fun prisonerNameOnLicense(): FullName =
+  fun prisonerNameOnLicence(): FullName =
     prisonerName().let {
-      when (licenceNameCategory) {
+      when (licenceNameCategory!!) {
         FIRST_LAST -> it.firstAndLastName()
         FIRST_MIDDLE_LAST -> it.firstMiddleLast()
         OTHER -> throw IllegalStateException("OTHER licenceNameCategory not supported")

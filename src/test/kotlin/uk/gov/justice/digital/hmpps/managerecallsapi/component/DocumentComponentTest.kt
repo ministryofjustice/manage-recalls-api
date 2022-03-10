@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.RecallDocument
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -340,6 +341,7 @@ class DocumentComponentTest : ComponentTestBase() {
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(
+        licenceNameCategory = NameFormatCategory.FIRST_LAST,
         currentPrison = PrisonId("MWI"),
         lastReleasePrison = PrisonId("CFI"),
         localPoliceForceId = PoliceForceId("avon-and-somerset"),

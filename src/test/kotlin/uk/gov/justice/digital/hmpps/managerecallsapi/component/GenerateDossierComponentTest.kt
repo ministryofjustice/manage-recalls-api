@@ -7,6 +7,7 @@ import org.springframework.core.io.ClassPathResource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
@@ -68,24 +69,25 @@ class GenerateDossierComponentTest : ComponentTestBase() {
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(
+        authorisingAssistantChiefOfficer = "not empty",
+        bookingNumber = "booking number",
         currentPrison = PrisonId("MWI"),
-        lastReleasePrison = PrisonId("CFI"),
-        localPoliceForceId = PoliceForceId("avon-and-somerset"),
+        inCustodyAtBooking = true,
+        indexOffence = "Badgering",
         lastReleaseDate = LocalDate.of(2021, 9, 2),
-        sentenceDate = LocalDate.of(2012, 5, 17),
+        lastReleasePrison = PrisonId("CFI"),
+        licenceConditionsBreached = "he was a very naughty boy",
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
+        licenceNameCategory = NameFormatCategory.FIRST_LAST,
+        localDeliveryUnit = LocalDeliveryUnit.PS_SWINDON_AND_WILTSHIRE,
+        localPoliceForceId = PoliceForceId("avon-and-somerset"),
+        probationOfficerEmail = "not empty",
+        probationOfficerName = "not empty",
+        probationOfficerPhoneNumber = "not empty",
+        sentenceDate = LocalDate.of(2012, 5, 17),
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),
         sentenceLength = Api.SentenceLength(10, 1, 5),
         sentencingCourt = CourtId("CARLCT"),
-        indexOffence = "Badgering",
-        bookingNumber = "booking number",
-        licenceConditionsBreached = "he was a very naughty boy",
-        localDeliveryUnit = LocalDeliveryUnit.PS_SWINDON_AND_WILTSHIRE,
-        probationOfficerName = "not empty",
-        probationOfficerPhoneNumber = "not empty",
-        probationOfficerEmail = "not empty",
-        authorisingAssistantChiefOfficer = "not empty",
-        inCustodyAtBooking = true
       )
     )
     expectNoVirusesWillBeFound()

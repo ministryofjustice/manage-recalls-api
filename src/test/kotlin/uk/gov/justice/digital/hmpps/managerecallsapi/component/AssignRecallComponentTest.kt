@@ -5,7 +5,6 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
@@ -40,7 +39,17 @@ class AssignRecallComponentTest : ComponentTestBase() {
     setupUserDetailsFor(assignee)
     setupUserDetailsFor(createdByUserId)
 
-    val recall = Recall(recallId, nomsNumber, createdByUserId, now, FirstName("Barrie"), null, LastName("Badger"), CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1))
+    val recall = Recall(
+      recallId,
+      nomsNumber,
+      createdByUserId,
+      now,
+      FirstName("Barrie"),
+      null,
+      LastName("Badger"),
+      CroNumber("ABC/1234A"),
+      LocalDate.of(1999, 12, 1)
+    )
 
     recallRepository.save(recall, createdByUserId)
     userDetailsRepository.save(
@@ -69,10 +78,9 @@ class AssignRecallComponentTest : ComponentTestBase() {
           OffsetDateTime.now(fixedClock), FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           assignee = assignee,
-          assigneeUserName = FullName("Bertie Badger")
+          assigneeUserName = FullName("Bertie Badger"),
         )
       )
     )
@@ -113,7 +121,6 @@ class AssignRecallComponentTest : ComponentTestBase() {
           OffsetDateTime.now(fixedClock), FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON
         )
       )

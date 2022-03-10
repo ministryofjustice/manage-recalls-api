@@ -64,7 +64,7 @@ class RecallAuditRepositoryIntegrationTest(
     recallRepository.saveAndFlush(recallToUpdate2)
 
     val recallAudits = underTest.auditSummaryForRecall(recall.id)
-    assertThat(recallAudits.map { it.columnName }, equalTo(listOf("last_updated_by_user_id", "licence_name_category", "date_of_birth", "last_updated_date_time", "contraband_detail", "noms_number", "created_by_user_id", "cro_number", "created_date_time", "first_name", "last_name")))
+    assertThat(recallAudits.map { it.columnName }, equalTo(listOf("last_updated_by_user_id", "date_of_birth", "last_updated_date_time", "contraband_detail", "noms_number", "created_by_user_id", "cro_number", "created_date_time", "first_name", "last_name")))
     val contrabandDetailAudit = recallAudits.first { it.columnName == "contraband_detail" }
     assertThat(contrabandDetailAudit.auditCount, equalTo(2))
   }

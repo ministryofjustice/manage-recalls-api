@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.LocalDeliveryUnit
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
@@ -39,11 +40,19 @@ class DossierContextTest {
   private val currentPrisonName = PrisonName("Wormwood Rubs")
   private val recall = Recall(
     ::RecallId.random(),
-    nomsNumber, ::UserId.random(), OffsetDateTime.now(), firstName, null, lastName, CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
-    recallLength = recallLength,
+    nomsNumber,
+    ::UserId.random(),
+    OffsetDateTime.now(),
+    firstName,
+    null,
+    lastName,
+    CroNumber("ABC/1234A"),
+    LocalDate.of(1999, 12, 1),
     bookingNumber = bookingNumber,
-    licenceConditionsBreached = licenceConditionsBreached,
     confirmedRecallType = FIXED,
+    licenceConditionsBreached = licenceConditionsBreached,
+    licenceNameCategory = NameFormatCategory.FIRST_LAST,
+    recallLength = recallLength,
   )
 
   @Test

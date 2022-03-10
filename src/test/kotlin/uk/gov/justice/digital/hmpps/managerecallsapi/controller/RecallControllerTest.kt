@@ -99,7 +99,7 @@ class RecallControllerTest {
   private val recallResponse =
     RecallResponse(
       recallId, nomsNumber, createdByUserId, now, now, firstName, null, lastName,
-      croNumber, LocalDate.of(1999, 12, 1), NameFormatCategory.FIRST_LAST, Status.BEING_BOOKED_ON
+      croNumber, LocalDate.of(1999, 12, 1), Status.BEING_BOOKED_ON
     )
 
   @Test
@@ -140,8 +140,8 @@ class RecallControllerTest {
       firstName,
       middleNames,
       lastName,
-      NameFormatCategory.FIRST_MIDDLE_LAST,
-      status
+      status,
+      licenceNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST
     )
 
   private val beingBookedOnRecall = newRecall()

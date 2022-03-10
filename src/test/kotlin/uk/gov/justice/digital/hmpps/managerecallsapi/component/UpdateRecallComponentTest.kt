@@ -90,10 +90,10 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_MIDDLE_LAST,
           Status.BEING_BOOKED_ON,
+          currentPrison = PrisonId("BMI"),
           lastReleasePrison = PrisonId("MWI"),
-          currentPrison = PrisonId("BMI")
+          licenceNameCategory = NameFormatCategory.FIRST_MIDDLE_LAST
         )
       )
     )
@@ -168,16 +168,15 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
-          recommendedRecallType = FIXED,
-          recallLength = TWENTY_EIGHT_DAYS,
-          sentenceDate = sentencingInfo.sentenceDate,
-          licenceExpiryDate = sentencingInfo.licenceExpiryDate,
-          sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
-          sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
-          sentenceLength = Api.SentenceLength(2, 5, 31)
+          licenceExpiryDate = sentencingInfo.licenceExpiryDate,
+          recallLength = TWENTY_EIGHT_DAYS,
+          recommendedRecallType = FIXED,
+          sentenceDate = sentencingInfo.sentenceDate,
+          sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
+          sentenceLength = Api.SentenceLength(2, 5, 31),
+          sentencingCourt = sentencingInfo.sentencingCourt
         )
       )
     )
@@ -227,16 +226,15 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
-          recommendedRecallType = STANDARD,
-          recallLength = null,
-          sentenceDate = sentencingInfo.sentenceDate,
-          licenceExpiryDate = sentencingInfo.licenceExpiryDate,
-          sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
-          sentencingCourt = sentencingInfo.sentencingCourt,
           indexOffence = sentencingInfo.indexOffence,
-          sentenceLength = Api.SentenceLength(2, 5, 31)
+          licenceExpiryDate = sentencingInfo.licenceExpiryDate,
+          recallLength = null,
+          recommendedRecallType = STANDARD,
+          sentenceDate = sentencingInfo.sentenceDate,
+          sentenceExpiryDate = sentencingInfo.sentenceExpiryDate,
+          sentenceLength = Api.SentenceLength(2, 5, 31),
+          sentencingCourt = sentencingInfo.sentencingCourt
         )
       )
     )
@@ -314,9 +312,8 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
-          bookingNumber = bookingNumber
+          bookingNumber = bookingNumber,
         )
       )
     )
@@ -344,7 +341,6 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           localPoliceForceId = policeForceId
         )
@@ -374,10 +370,9 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
-          licenceConditionsBreached = "Breached",
           reasonsForRecall = listOf(BREACH_EXCLUSION_ZONE),
+          licenceConditionsBreached = "Breached",
           reasonsForRecallOtherDetail = "Other reasons"
         )
       )
@@ -406,13 +401,12 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.AWAITING_DOSSIER_CREATION,
-          inCustodyAtBooking = true,
-          recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime,
           assessedByUserId = assessedByUserId,
           assessedByUserName = FullName("Bertie Badger"),
-          dossierTargetDate = LocalDate.parse("2021-12-29")
+          dossierTargetDate = LocalDate.parse("2021-12-29"),
+          inCustodyAtBooking = true,
+          recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime
         )
       )
     )
@@ -442,14 +436,13 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           status = Status.DOSSIER_ISSUED,
-          dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
+          confirmedRecallType = FIXED,
+          confirmedRecallTypeDetail = "Detail...",
           dossierCreatedByUserId = dossierCreatedByUserId,
           dossierCreatedByUserName = FullName("Bertie Badger"),
-          recommendedRecallType = FIXED,
-          confirmedRecallType = FIXED,
-          confirmedRecallTypeDetail = "Detail..."
+          dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate,
+          recommendedRecallType = FIXED
         )
       )
     )
@@ -476,12 +469,11 @@ class UpdateRecallComponentTest : ComponentTestBase() {
           fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
           Status.BEING_BOOKED_ON,
           additionalLicenceConditions = request.additionalLicenceConditions,
           additionalLicenceConditionsDetail = request.additionalLicenceConditionsDetail,
           differentNomsNumber = request.differentNomsNumber,
-          differentNomsNumberDetail = request.differentNomsNumberDetail
+          differentNomsNumberDetail = request.differentNomsNumberDetail,
         )
       )
     )

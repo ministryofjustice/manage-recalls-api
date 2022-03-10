@@ -5,7 +5,6 @@ import com.natpryce.hamkrest.equalTo
 import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.NOT_FOUND
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
@@ -63,8 +62,7 @@ class GetRecallComponentTest : ComponentTestBase() {
           LastName("Badger"),
           CroNumber("ABC/1234A"),
           LocalDate.of(1999, 12, 1),
-          NameFormatCategory.FIRST_LAST,
-          Status.BEING_BOOKED_ON
+          Status.BEING_BOOKED_ON,
         )
       )
     )

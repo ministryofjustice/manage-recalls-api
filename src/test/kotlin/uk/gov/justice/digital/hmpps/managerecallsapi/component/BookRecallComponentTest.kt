@@ -7,7 +7,6 @@ import com.natpryce.hamkrest.has
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -39,7 +38,6 @@ class BookRecallComponentTest : ComponentTestBase() {
         has(RecallResponse::nomsNumber, equalTo(nomsNumber)),
         has(RecallResponse::createdDateTime, present()),
         has(RecallResponse::lastUpdatedDateTime, present()),
-        has(RecallResponse::licenceNameCategory, equalTo(NameFormatCategory.FIRST_LAST)),
       )
     )
   }
