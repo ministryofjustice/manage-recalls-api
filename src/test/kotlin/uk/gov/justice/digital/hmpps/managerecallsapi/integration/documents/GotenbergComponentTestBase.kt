@@ -42,6 +42,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
+        licenceNameCategory = NameFormatCategory.FIRST_LAST,
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         previousConvictionMainName = "Nat The Naughty",
@@ -91,6 +92,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
     authenticatedClient.updateRecall(
       recallId,
       UpdateRecallRequest(
+        licenceNameCategory = NameFormatCategory.FIRST_LAST,
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         previousConvictionMainName = "Nat The Naughty",

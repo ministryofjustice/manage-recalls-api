@@ -106,11 +106,12 @@ class RecallNotificationContextFactoryTest {
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
+      licenceNameCategory = NameFormatCategory.FIRST_LAST,
+      currentPrison = currentPrisonId,
+      inCustodyAtBooking = true,
       lastReleasePrison = lastReleasePrisonId,
       localPoliceForceId = localPoliceForceId,
-      inCustodyAtBooking = true,
-      sentencingInfo = sentencingInfo,
-      currentPrison = currentPrisonId
+      sentencingInfo = sentencingInfo
     )
     val userDetails = mockk<UserDetails>()
     val document = mockk<Document>()
@@ -165,11 +166,11 @@ class RecallNotificationContextFactoryTest {
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
+      currentPrison = currentPrisonId,
+      inCustodyAtBooking = true,
       lastReleasePrison = lastReleasePrisonId,
       localPoliceForceId = localPoliceForceId,
-      inCustodyAtBooking = true,
-      sentencingInfo = sentencingInfo,
-      currentPrison = currentPrisonId
+      sentencingInfo = sentencingInfo
     )
     val userDetails = mockk<UserDetails>()
 
@@ -234,25 +235,26 @@ class RecallNotificationContextFactoryTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      lastReleasePrison = lastReleasePrisonId,
-      lastReleaseDate = LocalDate.now(),
-      localPoliceForceId = localPoliceForceId,
-      inCustodyAtBooking = false,
-      inCustodyAtAssessment = false,
-      contraband = true,
-      vulnerabilityDiversity = true,
-      mappaLevel = MappaLevel.LEVEL_2,
-      sentencingInfo = sentencingInfo,
-      bookingNumber = "1243A",
-      probationInfo = probationInfo,
-      previousConvictionMainNameCategory = prevConsMainNameCategory,
-      previousConvictionMainName = prevConsMainName,
-      arrestIssues = false,
-      lastKnownAddressOption = LastKnownAddressOption.YES,
       lastKnownAddresses = setOf(
         LastKnownAddress(::LastKnownAddressId.random(), recallId, "Line 1", null, "A Town", null, AddressSource.MANUAL, 1, ::UserId.random(), OffsetDateTime.now()),
         LastKnownAddress(::LastKnownAddressId.random(), recallId, "Line 1", "Line 2", "Another Town", "AB12 3CD", AddressSource.LOOKUP, 2, ::UserId.random(), OffsetDateTime.now()),
-      )
+      ),
+      arrestIssues = false,
+      bookingNumber = "1243A",
+      contraband = true,
+      inCustodyAtAssessment = false,
+      inCustodyAtBooking = false,
+      lastKnownAddressOption = LastKnownAddressOption.YES,
+      lastReleaseDate = LocalDate.now(),
+      lastReleasePrison = lastReleasePrisonId,
+      licenceNameCategory = NameFormatCategory.FIRST_LAST,
+      localPoliceForceId = localPoliceForceId,
+      mappaLevel = MappaLevel.LEVEL_2,
+      previousConvictionMainName = prevConsMainName,
+      previousConvictionMainNameCategory = prevConsMainNameCategory,
+      probationInfo = probationInfo,
+      sentencingInfo = sentencingInfo,
+      vulnerabilityDiversity = true
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -301,15 +303,16 @@ class RecallNotificationContextFactoryTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      bookingNumber = bookingNumber,
       reasonsForRecall = setOf(ELM_FURTHER_OFFENCE, BREACH_EXCLUSION_ZONE, FAILED_HOME_VISIT, OTHER),
-      reasonsForRecallOtherDetail = "Another reason",
-      inCustodyAtBooking = false,
+      bookingNumber = bookingNumber,
       inCustodyAtAssessment = false,
+      inCustodyAtBooking = false,
       lastReleasePrison = lastReleasePrisonId,
+      licenceNameCategory = NameFormatCategory.FIRST_LAST,
       localPoliceForceId = localPoliceForceId,
-      sentencingInfo = sentencingInfo,
       probationInfo = probationInfo,
+      reasonsForRecallOtherDetail = "Another reason",
+      sentencingInfo = sentencingInfo,
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall

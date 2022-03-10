@@ -85,7 +85,7 @@ data class RecallNotificationContext(
   fun getRevocationOrderContext(): RevocationOrderContext {
     return RevocationOrderContext(
       recall.recallId(),
-      recall.prisonerNameOnLicense(),
+      recall.prisonerNameOnLicence(),
       recall.dateOfBirth,
       recall.bookingNumber!!,
       recall.croNumber,
@@ -100,7 +100,7 @@ data class RecallNotificationContext(
   fun getRecallSummaryContext(): RecallSummaryContext {
     return RecallSummaryContext(
       originalRecallNotificationCreatedDateTime.toZonedDateTime().withZoneSameInstant(ZoneId.of("Europe/London")),
-      recall.prisonerNameOnLicense(),
+      recall.prisonerNameOnLicence(),
       recall.dateOfBirth,
       recall.croNumber,
       currentUserDetails.personName(),
@@ -151,7 +151,7 @@ data class RecallNotificationContext(
       originalRecallNotificationCreatedDateTime.toLocalDate(),
       RecallDescription(recall.recallType(), recall.recallLength),
       recall.probationInfo!!.probationOfficerName,
-      recall.prisonerNameOnLicense(),
+      recall.prisonerNameOnLicence(),
       recall.bookingNumber!!,
       currentPrisonName,
       currentUserDetails.personName(),
@@ -161,7 +161,7 @@ data class RecallNotificationContext(
 
   fun getOffenderNotificationContext(): OffenderNotificationContext =
     OffenderNotificationContext(
-      recall.prisonerNameOnLicense(),
+      recall.prisonerNameOnLicence(),
       recall.bookingNumber!!,
       originalRecallNotificationCreatedDateTime.toLocalDate(),
       buildReasonsForRecall()

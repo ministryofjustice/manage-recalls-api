@@ -38,7 +38,7 @@ data class DossierContext(
 ) {
   fun getReasonsForRecallContext(): ReasonsForRecallContext {
     return ReasonsForRecallContext(
-      recall.prisonerNameOnLicense(),
+      recall.prisonerNameOnLicence(),
       recall.bookingNumber!!,
       recall.nomsNumber,
       recall.licenceConditionsBreached!!,
@@ -48,7 +48,7 @@ data class DossierContext(
 
   fun getTableOfContentsContext(): TableOfContentsContext =
     TableOfContentsContext(
-      recall.prisonerNameOnLicense(),
+      recall.prisonerNameOnLicence(),
       RecallDescription(recall.recallType(), recall.recallLength),
       currentPrisonName,
       recall.bookingNumber!!,

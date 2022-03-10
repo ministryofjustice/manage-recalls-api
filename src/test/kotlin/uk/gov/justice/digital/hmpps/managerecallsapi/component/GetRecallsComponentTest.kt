@@ -67,12 +67,14 @@ class GetRecallsComponentTest : ComponentTestBase() {
     )
 
     val recall1 = authenticatedClient.bookRecall(request1)
+    authenticatedClient.updateRecall(recall1.recallId, UpdateRecallRequest(licenceNameCategory = FIRST_LAST))
     val recall2 = authenticatedClient.bookRecall(request2)
     authenticatedClient.updateRecall(recall2.recallId, UpdateRecallRequest(licenceNameCategory = FIRST_MIDDLE_LAST))
     val rtcRecall = authenticatedClient.bookRecall(request3)
     authenticatedClient.updateRecall(
       rtcRecall.recallId,
       UpdateRecallRequest(
+        licenceNameCategory = FIRST_LAST,
         assessedByUserId = createdByUserId,
         inCustodyAtAssessment = false,
         warrantReferenceNumber = WarrantReferenceNumber("ABC1234/C")
@@ -82,6 +84,7 @@ class GetRecallsComponentTest : ComponentTestBase() {
     authenticatedClient.updateRecall(
       nicRecall.recallId,
       UpdateRecallRequest(
+        licenceNameCategory = FIRST_LAST,
         assessedByUserId = createdByUserId,
         inCustodyAtAssessment = false,
         warrantReferenceNumber = WarrantReferenceNumber("ABC1234/C")
@@ -102,8 +105,8 @@ class GetRecallsComponentTest : ComponentTestBase() {
           FirstName("Barrie"),
           null,
           LastName("Badger"),
-          FIRST_LAST,
-          Status.BEING_BOOKED_ON
+          Status.BEING_BOOKED_ON,
+          licenceNameCategory = FIRST_LAST,
         ),
         RecallResponseLite(
           recall2.recallId,
@@ -114,8 +117,8 @@ class GetRecallsComponentTest : ComponentTestBase() {
           FirstName("Barrie"),
           MiddleNames("Barnie"),
           LastName("Badger"),
-          FIRST_MIDDLE_LAST,
-          Status.BEING_BOOKED_ON
+          Status.BEING_BOOKED_ON,
+          licenceNameCategory = FIRST_MIDDLE_LAST,
         ),
         RecallResponseLite(
           rtcRecall.recallId,
@@ -126,10 +129,10 @@ class GetRecallsComponentTest : ComponentTestBase() {
           FirstName("Mary"),
           null,
           LastName("Mouse"),
-          FIRST_LAST,
           Status.AWAITING_DOSSIER_CREATION,
+          inCustodyAtAssessment = false,
           dossierTargetDate = LocalDate.of(2022, 2, 7),
-          inCustodyAtAssessment = false
+          licenceNameCategory = FIRST_LAST,
         ),
         RecallResponseLite(
           nicRecall.recallId,
@@ -140,10 +143,10 @@ class GetRecallsComponentTest : ComponentTestBase() {
           FirstName("Mary"),
           null,
           LastName("Mouse"),
-          FIRST_LAST,
           Status.AWAITING_RETURN_TO_CUSTODY,
-          inCustodyAtAssessment = false
-        )
+          inCustodyAtAssessment = false,
+          licenceNameCategory = FIRST_LAST,
+        ),
       )
     )
   }

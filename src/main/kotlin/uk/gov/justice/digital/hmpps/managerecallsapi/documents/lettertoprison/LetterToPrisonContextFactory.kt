@@ -30,7 +30,7 @@ class LetterToPrisonContextFactory(
     val currentUserDetails = userDetailsService.get(currentUserId)
     val recallDescription = RecallDescription(recall.recallType(), recall.recallLength)
     val originalCreatedDate = documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, LETTER_TO_PRISON, 1)?.createdDateTime?.toLocalDate() ?: LocalDate.now()
-    return LetterToPrisonContext(recall, recall.prisonerNameOnLicense(), currentPrisonName, lastReleasePrisonName, recallDescription, currentUserDetails, originalCreatedDate)
+    return LetterToPrisonContext(recall, recall.prisonerNameOnLicence(), currentPrisonName, lastReleasePrisonName, recallDescription, currentUserDetails, originalCreatedDate)
   }
 }
 

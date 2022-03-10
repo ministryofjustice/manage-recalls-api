@@ -9,6 +9,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
@@ -65,8 +66,8 @@ class DossierContextFactoryTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      currentPrison = currentPrison,
-      confirmedRecallType = FIXED
+      confirmedRecallType = FIXED,
+      currentPrison = currentPrison
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -138,10 +139,11 @@ class DossierContextFactoryTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      currentPrison = currentPrison,
-      recommendedRecallType = recallType,
       bookingNumber = "A1234",
-      recallLength = recallLength
+      currentPrison = currentPrison,
+      licenceNameCategory = NameFormatCategory.FIRST_LAST,
+      recallLength = recallLength,
+      recommendedRecallType = recallType
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -155,7 +157,7 @@ class DossierContextFactoryTest {
       result,
       equalTo(
         TableOfContentsContext(
-          recall.prisonerNameOnLicense(),
+          recall.prisonerNameOnLicence(),
           RecallDescription(recallType, recallLength),
           currentPrisonName,
           "A1234",

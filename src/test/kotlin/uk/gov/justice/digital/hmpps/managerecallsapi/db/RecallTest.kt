@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
@@ -34,7 +35,8 @@ class RecallTest {
     MiddleNames("Barnie"),
     LastName("Badger"),
     CroNumber("ABC/1234A"),
-    LocalDate.of(1999, 12, 1)
+    LocalDate.of(1999, 12, 1),
+    licenceNameCategory = NameFormatCategory.FIRST_LAST,
   )
 
   @Test
@@ -233,23 +235,23 @@ class RecallTest {
 
   @Test
   fun `Recall with FIRST_LAST licenceNameCategory returns correctly formatted name`() {
-    assertThat(recall.prisonerNameOnLicense(), equalTo(FullName("Barrie Badger")))
+    assertThat(recall.prisonerNameOnLicence(), equalTo(FullName("Barrie Badger")))
   }
 
   @Test
   fun `Recall with FIRST_MIDDLE_LAST licenceNameCategory returns correctly formatted name`() {
-    assertThat(recall.copy(licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicense(), equalTo(FullName("Barrie Barnie Badger")))
+    assertThat(recall.copy(licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicence(), equalTo(FullName("Barrie Barnie Badger")))
   }
 
   @Test
   fun `Recall with FIRST_MIDDLE_LAST licenceNameCategory but no middle name returns correctly formatted name`() {
-    assertThat(recall.copy(middleNames = null, licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicense(), equalTo(FullName("Barrie Badger")))
+    assertThat(recall.copy(middleNames = null, licenceNameCategory = FIRST_MIDDLE_LAST).prisonerNameOnLicence(), equalTo(FullName("Barrie Badger")))
   }
 
   @Test
   fun `Recall with OTHER licenceNameCategory throws exception`() {
     assertThrows<IllegalStateException> {
-      recall.copy(licenceNameCategory = OTHER).prisonerNameOnLicense()
+      recall.copy(licenceNameCategory = OTHER).prisonerNameOnLicence()
     }
   }
 

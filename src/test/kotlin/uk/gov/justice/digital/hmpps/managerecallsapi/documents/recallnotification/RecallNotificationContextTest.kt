@@ -66,18 +66,30 @@ class RecallNotificationContextTest {
     LastName("Badger"),
     prisonerCroNumber,
     dateOfBirth,
-    recommendedRecallType = STANDARD,
+    licenceNameCategory = NameFormatCategory.FIRST_LAST,
+    reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
+    assessedByUserId = userId,
+    bookingNumber = recallBookingNumber,
     confirmedRecallType = FIXED,
-    recallLength = recallLength,
-    lastReleaseDate = lastReleaseDate,
-    localPoliceForceId = PoliceForceId("metropolitan"),
-    inCustodyAtBooking = inCustody,
-    inCustodyAtAssessment = if (inCustody) null else false,
     contraband = true,
     contrabandDetail = "I believe that they will bring contraband to prison",
-    vulnerabilityDiversity = true,
-    vulnerabilityDiversityDetail = "Some stuff",
+    inCustodyAtAssessment = if (inCustody) null else false,
+    inCustodyAtBooking = inCustody,
+    lastKnownAddressOption = if (!inCustody) LastKnownAddressOption.NO_FIXED_ABODE else null,
+    lastReleaseDate = lastReleaseDate,
+    localPoliceForceId = PoliceForceId("metropolitan"),
     mappaLevel = LEVEL_3,
+    previousConvictionMainName = "Bryan Badger",
+    previousConvictionMainNameCategory = NameFormatCategory.OTHER,
+    probationInfo = ProbationInfo(
+      probationOfficerName,
+      "01234567890",
+      "officer@myprobation.com",
+      PS_TOWER_HAMLETS,
+      "Ms Authoriser"
+    ),
+    recallLength = recallLength,
+    recommendedRecallType = STANDARD,
     sentencingInfo = SentencingInfo(
       lastReleaseDate,
       LocalDate.of(2020, 11, 1),
@@ -86,19 +98,8 @@ class RecallNotificationContextTest {
       "Some offence",
       SentenceLength(2, 3, 10),
     ),
-    bookingNumber = recallBookingNumber,
-    probationInfo = ProbationInfo(
-      probationOfficerName,
-      "01234567890",
-      "officer@myprobation.com",
-      PS_TOWER_HAMLETS,
-      "Ms Authoriser"
-    ),
-    reasonsForRecall = setOf(ELM_FURTHER_OFFENCE),
-    previousConvictionMainNameCategory = NameFormatCategory.OTHER,
-    previousConvictionMainName = "Bryan Badger",
-    assessedByUserId = userId,
-    lastKnownAddressOption = if (!inCustody) LastKnownAddressOption.NO_FIXED_ABODE else null
+    vulnerabilityDiversity = true,
+    vulnerabilityDiversityDetail = "Some stuff"
   )
 
   private val currentUserDetails = UserDetails(
