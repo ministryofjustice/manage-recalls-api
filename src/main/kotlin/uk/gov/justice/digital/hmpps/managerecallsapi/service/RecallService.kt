@@ -96,46 +96,43 @@ class RecallService(
   private fun Recall.updateWithRequestDetails(updateRecallRequest: UpdateRecallRequest): Recall {
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
-      licenceNameCategory = updateRecallRequest.licenceNameCategory ?: licenceNameCategory,
-      recallLength = sentencingInfo?.calculateRecallLength(recommendedRecallType),
-      recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recallEmailReceivedDateTime,
-      lastReleasePrison = updateRecallRequest.lastReleasePrison ?: lastReleasePrison,
-      lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,
-      localPoliceForceId = updateRecallRequest.localPoliceForceId ?: localPoliceForceId,
-      inCustodyAtBooking = updateRecallRequest.inCustodyAtBooking ?: inCustodyAtBooking,
-      inCustodyAtAssessment = updateRecallRequest.inCustodyAtAssessment ?: inCustodyAtAssessment,
-      contraband = updateRecallRequest.contraband ?: contraband,
-      contrabandDetail = updateRecallRequest.contrabandDetail ?: contrabandDetail,
-      vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity ?: vulnerabilityDiversity,
-      vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: vulnerabilityDiversityDetail,
-      mappaLevel = updateRecallRequest.mappaLevel ?: mappaLevel,
-      sentencingInfo = sentencingInfo,
-      probationInfo = updateRecallRequest.toProbationInfo(this),
-      bookingNumber = updateRecallRequest.bookingNumber ?: bookingNumber,
-      licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
-      reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
-      reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
-      currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
       additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
-      additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail
-        ?: additionalLicenceConditionsDetail,
-      differentNomsNumber = updateRecallRequest.differentNomsNumber ?: differentNomsNumber,
-      differentNomsNumberDetail = updateRecallRequest.differentNomsNumberDetail ?: differentNomsNumberDetail,
-      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime
-        ?: recallNotificationEmailSentDateTime,
-      dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate ?: dossierEmailSentDate,
-      previousConvictionMainNameCategory = updateRecallRequest.previousConvictionMainNameCategory
-        ?: previousConvictionMainNameCategory,
-      hasDossierBeenChecked = updateRecallRequest.hasDossierBeenChecked ?: hasDossierBeenChecked,
-      previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
-      assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
-      bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
-      dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
-      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest, this),
-      partBDueDate = calculatePartBDueDate(updateRecallRequest, this),
-      lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
+      additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail ?: additionalLicenceConditionsDetail,
       arrestIssues = updateRecallRequest.arrestIssues ?: arrestIssues,
       arrestIssuesDetail = updateRecallRequest.arrestIssuesDetail ?: arrestIssuesDetail,
+      assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
+      bookedByUserId = updateRecallRequest.bookedByUserId?.value ?: bookedByUserId,
+      bookingNumber = updateRecallRequest.bookingNumber ?: bookingNumber,
+      contraband = updateRecallRequest.contraband ?: contraband,
+      contrabandDetail = updateRecallRequest.contrabandDetail ?: contrabandDetail,
+      currentPrison = updateRecallRequest.currentPrison ?: currentPrison,
+      differentNomsNumber = updateRecallRequest.differentNomsNumber ?: differentNomsNumber,
+      differentNomsNumberDetail = updateRecallRequest.differentNomsNumberDetail ?: differentNomsNumberDetail,
+      dossierCreatedByUserId = updateRecallRequest.dossierCreatedByUserId?.value ?: dossierCreatedByUserId,
+      dossierEmailSentDate = updateRecallRequest.dossierEmailSentDate ?: dossierEmailSentDate,
+      dossierTargetDate = calculateDossierTargetDate(updateRecallRequest, this),
+      hasDossierBeenChecked = updateRecallRequest.hasDossierBeenChecked ?: hasDossierBeenChecked,
+      inCustodyAtAssessment = updateRecallRequest.inCustodyAtAssessment ?: inCustodyAtAssessment,
+      inCustodyAtBooking = updateRecallRequest.inCustodyAtBooking ?: inCustodyAtBooking,
+      lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
+      lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,
+      lastReleasePrison = updateRecallRequest.lastReleasePrison ?: lastReleasePrison,
+      licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
+      licenceNameCategory = updateRecallRequest.licenceNameCategory ?: licenceNameCategory,
+      localPoliceForceId = updateRecallRequest.localPoliceForceId ?: localPoliceForceId,
+      mappaLevel = updateRecallRequest.mappaLevel ?: mappaLevel,
+      partBDueDate = calculatePartBDueDate(updateRecallRequest, this),
+      previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
+      previousConvictionMainNameCategory = updateRecallRequest.previousConvictionMainNameCategory ?: previousConvictionMainNameCategory,
+      probationInfo = updateRecallRequest.toProbationInfo(this),
+      reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
+      reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
+      recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recallEmailReceivedDateTime,
+      recallLength = sentencingInfo?.calculateRecallLength(recommendedRecallType),
+      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
+      sentencingInfo = sentencingInfo,
+      vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity ?: vulnerabilityDiversity,
+      vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: vulnerabilityDiversityDetail,
       warrantReferenceNumber = updateRecallRequest.warrantReferenceNumber ?: warrantReferenceNumber,
     )
   }
@@ -152,7 +149,7 @@ class RecallService(
   fun calculatePartBDueDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? {
     val partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD && recall.inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest)) {
       updateRecallRequest.recallNotificationEmailSentDateTime?.let {
-        bankHolidayService.plusWorkingDays(it.toLocalDate(), 15)
+        bankHolidayService.plusWorkingDays(it.toLocalDate(), 14)
       }
     } else null
     return partBDueDate ?: recall.partBDueDate
@@ -192,7 +189,7 @@ class RecallService(
           OffsetDateTime.now(clock)
         ),
         dossierTargetDate = bankHolidayService.nextWorkingDate(returnedToCustodyNotificationDateTime.toLocalDate()),
-        partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) bankHolidayService.plusWorkingDays(returnedToCustodyNotificationDateTime.toLocalDate(), 15) else null,
+        partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) bankHolidayService.plusWorkingDays(returnedToCustodyDateTime.toLocalDate(), 14) else null,
       ),
       recordedUserId
     )
