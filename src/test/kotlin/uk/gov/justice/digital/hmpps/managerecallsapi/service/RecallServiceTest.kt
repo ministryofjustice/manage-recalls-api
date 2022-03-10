@@ -58,7 +58,7 @@ class RecallServiceTest {
   private val prisonApiClient = mockk<PrisonApiClient>()
   private val meterRegistry = mockk<MeterRegistry>(relaxed = true)
   private val autoReturnedToCustodyCounter = mockk<Counter>()
-  private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
+  private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:14:50.00Z"), ZoneId.of("UTC"))
   private val returnToCustodyUpdateThresholdMinutes = 60L
 
   private lateinit var underTest: RecallService
@@ -244,7 +244,7 @@ class RecallServiceTest {
       confirmedRecallType = STANDARD
     )
     val nextWorkingDay = LocalDate.now().plusDays(1)
-    val partBDueDate = LocalDate.now().plusDays(15)
+    val partBDueDate = LocalDate.now().plusDays(14)
     val recallNotificationEmailSentDateTime = OffsetDateTime.now()
     val updatedRecall = recall.copy(
       recallNotificationEmailSentDateTime = recallNotificationEmailSentDateTime,
@@ -254,7 +254,7 @@ class RecallServiceTest {
 
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { bankHolidayService.nextWorkingDate(LocalDate.now()) } returns nextWorkingDay
-    every { bankHolidayService.plusWorkingDays(LocalDate.now(), 15) } returns partBDueDate
+    every { bankHolidayService.plusWorkingDays(LocalDate.now(), 14) } returns partBDueDate
     every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
 
     val response = underTest.updateRecall(recallId, UpdateRecallRequest(recallNotificationEmailSentDateTime = recallNotificationEmailSentDateTime), currentUserId)
@@ -263,7 +263,7 @@ class RecallServiceTest {
     assertThat(response.partBDueDate, equalTo(partBDueDate))
 
     verify { bankHolidayService.nextWorkingDate(LocalDate.now()) }
-    verify { bankHolidayService.plusWorkingDays(LocalDate.now(), 15) }
+    verify { bankHolidayService.plusWorkingDays(LocalDate.now(), 14) }
   }
 
   @Test
@@ -285,8 +285,8 @@ class RecallServiceTest {
     assertThat(response.dossierTargetDate, equalTo(null))
     assertThat(response.partBDueDate, equalTo(null))
 
-    verify(exactly = 0) { bankHolidayService.nextWorkingDate(LocalDate.now()) }
-    verify(exactly = 0) { bankHolidayService.plusWorkingDays(LocalDate.now(), 15) }
+    verify(exactly = 0) { bankHolidayService.nextWorkingDate(any()) }
+    verify(exactly = 0) { bankHolidayService.plusWorkingDays(any(), 14) }
   }
 
   @Test
@@ -295,32 +295,32 @@ class RecallServiceTest {
       inCustodyAtAssessment = false,
       confirmedRecallType = STANDARD
     )
-    val today = LocalDate.now()
-    val nextWorkingDay = today.plusDays(1)
-    val partBDueDate = today.plusDays(15)
+    val sameTimeYesterday = OffsetDateTime.now().minusDays(1)
     val now = OffsetDateTime.now()
+    val nextWorkingDay = now.toLocalDate().plusDays(1)
+    val partBDueDate = sameTimeYesterday.toLocalDate().plusDays(14)
     val updatedRecall = recall.copy(
-      returnedToCustody = ReturnedToCustodyRecord(now, now, currentUserId, OffsetDateTime.now(fixedClock)),
+      returnedToCustody = ReturnedToCustodyRecord(sameTimeYesterday, now, currentUserId, OffsetDateTime.now(fixedClock)),
       dossierTargetDate = nextWorkingDay,
       partBDueDate = partBDueDate
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { bankHolidayService.nextWorkingDate(today) } returns nextWorkingDay
-    every { bankHolidayService.plusWorkingDays(today, 15) } returns partBDueDate
+    every { bankHolidayService.nextWorkingDate(now.toLocalDate()) } returns nextWorkingDay
+    every { bankHolidayService.plusWorkingDays(sameTimeYesterday.toLocalDate(), 14) } returns partBDueDate
     every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
 
-    val response = underTest.manuallyReturnedToCustody(recallId, now, now, currentUserId)
+    val response = underTest.manuallyReturnedToCustody(recallId, sameTimeYesterday, now, currentUserId)
 
     assertThat(response.dossierTargetDate, equalTo(nextWorkingDay))
     assertThat(response.partBDueDate, equalTo(partBDueDate))
 
-    verify { bankHolidayService.nextWorkingDate(today) }
-    verify { bankHolidayService.plusWorkingDays(today, 15) }
+    verify { bankHolidayService.nextWorkingDate(now.toLocalDate()) }
+    verify { bankHolidayService.plusWorkingDays(sameTimeYesterday.toLocalDate(), 14) }
   }
 
   @Test
-  fun `dossierTargetDate is calculated  and set but partBDueDate is not calculated and not set for not in custody fixed term recall when return to custody is updated`() {
+  fun `dossierTargetDate is calculated and set but partBDueDate is not calculated and not set for not in custody fixed term recall when return to custody is updated`() {
     val recall = existingRecall.copy(
       inCustodyAtAssessment = false,
       confirmedRecallType = FIXED
@@ -342,7 +342,7 @@ class RecallServiceTest {
     assertThat(response.partBDueDate, equalTo(null))
 
     verify { bankHolidayService.nextWorkingDate(LocalDate.now()) }
-    verify(exactly = 0) { bankHolidayService.plusWorkingDays(LocalDate.now(), 15) }
+    verify(exactly = 0) { bankHolidayService.plusWorkingDays(LocalDate.now(), 14) }
   }
 
   @Test
@@ -459,7 +459,7 @@ class RecallServiceTest {
     every { recallRepository.getByRecallId(recallId) } returns recall
     every { recallRepository.save(updatedRecall, currentUserId) } returns updatedRecall
     every { bankHolidayService.nextWorkingDate(returnedToCustodyDateTime.toLocalDate()) } returns LocalDate.now().plusDays(1)
-    every { bankHolidayService.plusWorkingDays(returnedToCustodyDateTime.toLocalDate(), 15) } returns LocalDate.now().plusDays(15)
+    every { bankHolidayService.plusWorkingDays(returnedToCustodyDateTime.toLocalDate(), 14) } returns LocalDate.now().plusDays(14)
 
     underTest.manuallyReturnedToCustody(recallId, returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, currentUserId)
 
@@ -502,11 +502,11 @@ class RecallServiceTest {
 
     val recallList = listOf(nicRtcRecall, nicStillUalRecentlyUpdatedRecall, nicStillUalPreviouslyUpdatedRecall, inCustodyRecall)
 
-    val returnedToCustodyDateTime = OffsetDateTime.now().minusHours(15)
+    val returnedToCustodyDateTime = OffsetDateTime.now().minusHours(14)
     val movementDate = returnedToCustodyDateTime.toLocalDate()
     val movementTime = returnedToCustodyDateTime.toLocalTime()
     val dossierTargetDate = OffsetDateTime.now(fixedClock).plusDays(1).toLocalDate()
-    val partBDueDate = OffsetDateTime.now(fixedClock).plusDays(15).toLocalDate()
+    val partBDueDate = OffsetDateTime.now(fixedClock).plusDays(14).toLocalDate()
     val expectedRecall = nicRtcRecall.copy(
       returnedToCustody = ReturnedToCustodyRecord(
         returnedToCustodyDateTime,
@@ -522,7 +522,7 @@ class RecallServiceTest {
 
     every { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) } returns listOf(Movement(rtcNoms.value, movementDate, movementTime))
     every { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) } returns dossierTargetDate
-    every { bankHolidayService.plusWorkingDays(OffsetDateTime.now(fixedClock).toLocalDate(), 15) } returns partBDueDate
+    every { bankHolidayService.plusWorkingDays(OffsetDateTime.now(fixedClock).toLocalDate(), 14) } returns partBDueDate
     every { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) } returns expectedRecall
 
     underTest.updateCustodyStatus(currentUserId)
