@@ -31,6 +31,3 @@ generic-service:
 
 generic-prometheus-alerts:
   alertSeverity: ppud-replacement-alerts
-  extraDashboardTags:
-    - manage-recalls
-    - dev

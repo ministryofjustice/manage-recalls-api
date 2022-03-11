@@ -1,9 +1,13 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tags
 import io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS
 import io.netty.handler.timeout.ReadTimeoutHandler
 import io.netty.handler.timeout.WriteTimeoutHandler
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.metrics.web.reactive.client.MetricsWebClientCustomizer
 import org.springframework.context.annotation.Bean
@@ -24,10 +28,13 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.AuthenticatingRestClient
 import java.lang.Integer.MAX_VALUE
+import java.net.URI
 import java.util.concurrent.TimeUnit.MILLISECONDS
 
 @Configuration
-class AuthenticatedWebClientConfig {
+class AuthenticatedWebClientConfig(
+  @Autowired private val meterRegistry: MeterRegistry
+) {
 
   @Value("\${prisonerSearch.endpoint.url}")
   private lateinit var prisonerOffenderSearchBaseUrl: String
@@ -49,6 +56,9 @@ class AuthenticatedWebClientConfig {
       "offender-search-client"
     )
 
+  @Bean("prisonerOffenderSearchTimeoutCounter")
+  fun prisonerOffenderSearchTimeoutCounter(): Counter = timeoutCounter(prisonerOffenderSearchBaseUrl)
+
   @Value("\${prisonApi.endpoint.url}")
   private lateinit var prisonApiBaseUrl: String
 
@@ -62,6 +72,9 @@ class AuthenticatedWebClientConfig {
       webClientFactory(prisonApiBaseUrl, authorizedClientManager, MAX_VALUE, objectMapper, metricsCustomizer),
       "prison-api-client"
     )
+
+  @Bean("prisonApiTimeoutCounter")
+  fun prisonApiTimeoutCounter(): Counter = timeoutCounter(prisonApiBaseUrl)
 
   private fun webClientFactory(
     baseUrl: String,
@@ -92,6 +105,12 @@ class AuthenticatedWebClientConfig {
       .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
       .apply(oauth2Client.oauth2Configuration())
       .build()
+  }
+
+  private fun timeoutCounter(endpointUrl: String): Counter {
+    val metricName = "http_client_requests_timeout"
+    val host = URI(endpointUrl).host
+    return meterRegistry.counter(metricName, Tags.of("clientName", host))
   }
 
   @Bean

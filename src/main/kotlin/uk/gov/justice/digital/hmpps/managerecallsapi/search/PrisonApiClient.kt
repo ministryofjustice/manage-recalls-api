@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.search
 
+import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -17,6 +18,8 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.TimeoutException
 
+// FIXME: PUD-1577 - Add some tests to this code
+
 @Component
 class PrisonApiClient(
   @Value("\${clientApi.timeout}") val timeout: Long
@@ -25,6 +28,10 @@ class PrisonApiClient(
   @Autowired
   @Qualifier("prisonApiWebClient")
   internal lateinit var webClient: AuthenticatingRestClient
+
+  @Autowired
+  @Qualifier("prisonApiTimeoutCounter")
+  internal lateinit var timeoutCounter: Counter
 
   fun latestInboundMovements(nomsNumbers: Set<NomsNumber>): List<Movement> =
     webClient
@@ -35,7 +42,10 @@ class PrisonApiClient(
         Mono.error(ClientException(this.javaClass.simpleName, exception))
       }
       .timeout(Duration.ofSeconds(timeout))
-      .onErrorMap(TimeoutException::class.java) { ex -> ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName) }
+      .onErrorMap(TimeoutException::class.java) { ex ->
+        timeoutCounter.increment()
+        ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName)
+      }
       .block()!!
 }
 
