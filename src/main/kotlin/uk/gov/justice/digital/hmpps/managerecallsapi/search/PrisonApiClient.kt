@@ -18,6 +18,8 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.TimeoutException
 
+// FIXME: PUD-1577 - Add some tests to this code
+
 @Component
 class PrisonApiClient(
   @Value("\${clientApi.timeout}") val timeout: Long

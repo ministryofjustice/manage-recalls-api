@@ -16,6 +16,8 @@ import java.time.Duration
 import java.time.LocalDate
 import java.util.concurrent.TimeoutException
 
+// FIXME: PUD-1577 - Add some tests to this code
+
 @Component
 class PrisonerOffenderSearchClient(
   @Value("\${prisonerSearch.timeout}") val timeout: Long
