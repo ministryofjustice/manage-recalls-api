@@ -33,6 +33,3 @@ generic-service:
 
 generic-prometheus-alerts:
   alertSeverity: ppud-replacement-prod
-  extraDashboardTags:
-    - manage-recalls
-    - prod
