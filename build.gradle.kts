@@ -43,8 +43,11 @@ dependencies {
   implementation("software.amazon.awssdk:s3:2.17.129")
   implementation("org.http4k:http4k-format-jackson:4.19.0.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:5.6.0")
-  implementation("io.sentry:sentry-logback:5.6.0")
+  "5.6.1".let { sentryVersion ->
+    implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
+    implementation("io.sentry:sentry-logback:$sentryVersion")
+  }
+  implementation("io.opentelemetry:opentelemetry-api:1.12.0")
   implementation("com.github.librepdf:openpdf:1.3.26")
   implementation("com.github.librepdf:openpdf-fonts-extra:1.3.26")
   implementation("xyz.capybara:clamav-client:2.1.2")
