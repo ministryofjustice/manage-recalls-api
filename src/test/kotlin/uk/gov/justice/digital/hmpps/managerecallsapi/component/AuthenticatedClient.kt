@@ -31,7 +31,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordCon
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
@@ -214,15 +213,6 @@ class AuthenticatedClient(
 
   fun deleteLastKnownAddress(recallId: RecallId, lastKnownAddressId: LastKnownAddressId, expectedStatus: HttpStatus = NO_CONTENT) =
     deleteRequest("/recalls/$recallId/last-known-addresses/$lastKnownAddressId", expectedStatus)
-
-  fun search(searchRequest: SearchRequest, expectedStatus: HttpStatus) =
-    sendPostRequest("/search", searchRequest, expectedStatus)
-
-  fun search(searchRequest: SearchRequest) =
-    search(searchRequest, OK)
-      .expectBody(object : ParameterizedTypeReference<List<SearchController.Api.Prisoner>>() {})
-      .returnResult()
-      .responseBody!!
 
   fun prisonerByNomsNumber(nomsNumber: NomsNumber, expectedStatus: HttpStatus) =
     sendGetRequest("/prisoner/$nomsNumber", expectedStatus)

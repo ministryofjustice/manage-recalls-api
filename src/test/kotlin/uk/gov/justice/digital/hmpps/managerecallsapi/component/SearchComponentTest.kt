@@ -2,30 +2,43 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.isEmpty
 import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomAdultDateOfBirth
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 
 class SearchComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
-  private val apiSearchRequest = SearchRequest(nomsNumber)
-  private val prisonerSearchRequest = PrisonerSearchRequest(nomsNumber)
+
+  // TODO PUD-1578
+  // @Test
+  // fun `returns 404 if get prisoner returns not found`() {
+  //   prisonerOffenderSearchMockServer.getPrisonerByNomsNumberReturnsWith(nomsNumber, NOT_FOUND)
+  //
+  //   val result = authenticatedClient.get("/prisoner/$nomsNumber", NOT_FOUND)
+  //     .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+  //
+  //   assertThat(
+  //     result,
+  //     equalTo(
+  //       ErrorResponse(
+  //         NOT_FOUND,
+  //         "ClientException: PrisonerOffenderSearchClient: [401 Unauthorized from GET http://localhost:9092/prisoner/123456]"
+  //       )
+  //     )
+  //   )
+  // }
 
   @Test
-  fun `returns 500 if prisoner search api returns unauthorized`() {
+  fun `returns 500 if get prisoner returns unauthorized`() {
     prisonerOffenderSearchMockServer.getPrisonerByNomsNumberReturnsWith(nomsNumber, UNAUTHORIZED)
 
     val result = authenticatedClient.get("/prisoner/$nomsNumber", INTERNAL_SERVER_ERROR)
@@ -43,55 +56,17 @@ class SearchComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `can send search request to prisoner search api and retrieve no matches`() {
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(prisonerSearchRequest, emptyList())
-
-    val responseBody = authenticatedClient.search(apiSearchRequest)
-
-    assertThat(responseBody, isEmpty)
-  }
-
-  @Test
-  fun `search request with blank noms number returns 400`() {
-    val result = authenticatedClient.post("/search", "{\"nomsNumber\":\"\"}")
-      .expectStatus().isBadRequest
-      .expectBody(ErrorResponse::class.java)
-      .returnResult().responseBody!!
-
-    assertThat(
-      result,
-      equalTo(
-        ErrorResponse(
-          BAD_REQUEST,
-          "JSON parse error: '' violated uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber rule; nested exception is com.fasterxml.jackson.databind.JsonMappingException: '' violated uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber rule (through reference chain: uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest[\"nomsNumber\"])"
-        )
-      )
-    )
-  }
-
-  @Test
-  fun `can send search request to prisoner search api and retrieve matches`() {
-    val prisoner1 = testPrisoner(nomsNumber)
-    val prisoner2 = testPrisoner(null)
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(prisonerSearchRequest, listOf(prisoner1, prisoner2))
-
-    val response = authenticatedClient.search(apiSearchRequest)
-
-    assertThat(response, equalTo(listOf(prisoner1.apiPrisoner(), prisoner2.apiPrisoner())))
-  }
-
-  @Test
-  fun `can send get request to prisoner search api and get response`() {
-    val prisoner1 = testPrisoner(nomsNumber)
-    prisonerOffenderSearchMockServer.getPrisonerByNomsNumberRespondsWith(nomsNumber, prisoner1)
+  fun `can send get request to PrisonerOffenderSearch api and return response`() {
+    val prisoner = testPrisoner(nomsNumber)
+    prisonerOffenderSearchMockServer.getPrisonerByNomsNumberRespondsWith(nomsNumber, prisoner)
 
     val response = authenticatedClient.prisonerByNomsNumber(nomsNumber)
 
-    assertThat(response, equalTo(prisoner1.apiPrisoner()))
+    assertThat(response, equalTo(prisoner.apiPrisoner()))
   }
 
   @Test
-  fun `prisoner offender timeout is handled gracefully`() {
+  fun `PrisonerOffenderSearch timeout is handled gracefully`() {
     val nomsNumber = randomNoms()
     prisonerOffenderSearchMockServer.delayGetPrisoner(nomsNumber, 1500)
 

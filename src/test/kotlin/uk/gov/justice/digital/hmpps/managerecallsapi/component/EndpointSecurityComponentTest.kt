@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecommendedRecal
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
@@ -60,7 +59,6 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val uploadDocumentRequest = UploadDocumentRequest(category, fileBytes.encodeToBase64String(), FileName("part_a.pdf"), details)
   private val updateRecallRequest = UpdateRecallRequest()
   private val recallSearchRequest = RecallSearchRequest(nomsNumber)
-  private val apiSearchRequest = SearchRequest(nomsNumber)
   private val userDetailsRequest = AddUserDetailsRequest(
     FirstName("John"),
     LastName("Badger"),
@@ -102,7 +100,6 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
       webTestClient.post().uri("/recalls/search").bodyValue(recallSearchRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents/uploaded").bodyValue(uploadDocumentRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/documents/generated").bodyValue(generateDocumentRequest),
-      webTestClient.post().uri("/search").bodyValue(apiSearchRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/assignee/${::UserId.random()}"),
       webTestClient.post().uri("/users/").bodyValue(userDetailsRequest),
       webTestClient.post().uri("/recalls/${UUID.randomUUID()}/missing-documents-records").bodyValue(missingDocumentsRecordRequest),
