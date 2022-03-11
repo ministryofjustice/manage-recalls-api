@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.0.4"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.0"
   kotlin("plugin.spring") version "1.5.21"
   kotlin("plugin.jpa") version "1.5.20"
   kotlin("plugin.serialization") version "1.4.31"
@@ -23,7 +23,7 @@ dependencyCheck {
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.2")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.3")
   implementation("io.micrometer:micrometer-registry-prometheus:1.8.2")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
@@ -35,19 +35,19 @@ dependencies {
   // implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.6")    // PUD-1485: not achieving any of what it promises?
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.6")
 
-  implementation("org.flywaydb:flyway-core:8.4.2")
+  implementation("org.flywaydb:flyway-core:8.5.0")
   implementation("org.postgresql:postgresql:42.3.2")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
-  implementation("software.amazon.awssdk:s3:2.17.112")
-  implementation("org.http4k:http4k-format-jackson:4.17.9.0")
+  implementation("software.amazon.awssdk:s3:2.17.129")
+  implementation("org.http4k:http4k-format-jackson:4.19.0.0")
 
-  implementation("io.sentry:sentry-spring-boot-starter:5.5.0")
-  implementation("io.sentry:sentry-logback:5.5.0")
+  implementation("io.sentry:sentry-spring-boot-starter:5.6.0")
+  implementation("io.sentry:sentry-logback:5.6.0")
   implementation("com.github.librepdf:openpdf:1.3.26")
   implementation("com.github.librepdf:openpdf-fonts-extra:1.3.26")
-  implementation("xyz.capybara:clamav-client:2.0.2")
+  implementation("xyz.capybara:clamav-client:2.1.2")
   implementation("dev.forkhandles:result4k:2.0.0.0")
   implementation("net.sf.jmimemagic:jmimemagic:0.1.5") {
     exclude("log4j", "log4j")
@@ -73,7 +73,7 @@ dependencies {
 
   testImplementation("au.com.dius.pact.provider:junit5:4.3.4")
   testImplementation("au.com.dius.pact.provider:junit5spring:4.3.4")
-  testImplementation("org.http4k:http4k-testing-approval:4.17.9.0")
+  testImplementation("org.http4k:http4k-testing-approval:4.19.0.0")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.0.30")
 }
 
