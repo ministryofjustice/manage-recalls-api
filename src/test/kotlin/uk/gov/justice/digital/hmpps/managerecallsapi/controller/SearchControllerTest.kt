@@ -2,8 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.isEmpty
-import com.natpryce.hamkrest.present
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -22,42 +20,21 @@ class SearchControllerTest {
   private val underTest = SearchController(prisonerOffenderSearchClient)
 
   private val nomsNumber = NomsNumber("A1234AA")
-  private val searchRequest = SearchRequest(nomsNumber)
-
-  @Test
-  fun `prisonerSearch returns empty results`() {
-    every { prisonerOffenderSearchClient.prisonerSearch(searchRequest) } returns Mono.just(emptyList())
-
-    val results = underTest.prisonerSearch(searchRequest)
-
-    StepVerifier
-      .create(results)
-      .assertNext { assertThat(it.body, present(isEmpty)) }
-      .verifyComplete()
-  }
 
   @Test
   fun `prisonerSearch returns prisoner results`() {
     val prisoner1 = prisoner("A1234AA", "Jim", "Smith", "Norman", LocalDate.of(1994, 10, 15))
-    val prisoner2 = prisoner(
-      "A1234ZZ", "Bob", "Smith", "Norman Stanley", LocalDate.of(1994, 10, 16),
-    )
-    every { prisonerOffenderSearchClient.prisonerSearch(searchRequest) } returns Mono.just(listOf(prisoner1, prisoner2))
+    every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner1)
 
-    val results = underTest.prisonerSearch(searchRequest)
+    val results = underTest.prisonerByNomsNumber(nomsNumber)
 
     StepVerifier
       .create(results)
       .assertNext {
         assertThat(
-          it.body,
-          present(
-            equalTo(
-              listOf(
-                prisoner1.toApiPrisoner(),
-                prisoner2.toApiPrisoner()
-              )
-            )
+          it,
+          equalTo(
+            prisoner1.toApiPrisoner(),
           )
         )
       }

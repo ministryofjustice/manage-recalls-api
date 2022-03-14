@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import java.time.Duration
 import java.time.LocalDate
@@ -44,20 +43,6 @@ class PrisonerOffenderSearchClient(
         timeoutCounter.increment()
         ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName)
       }
-
-  fun prisonerSearch(searchRequest: SearchRequest): Mono<List<Prisoner>> =
-    webClient
-      .post("/prisoner-search/match-prisoners", PrisonerSearchRequest(searchRequest.nomsNumber))
-      .retrieve()
-      .bodyToMono(object : ParameterizedTypeReference<List<Prisoner>>() {})
-      .onErrorResume(WebClientResponseException::class.java) { exception ->
-        Mono.error(ClientException(this.javaClass.simpleName, exception))
-      }
-      .timeout(Duration.ofSeconds(timeout))
-      .onErrorMap(TimeoutException::class.java) { ex ->
-        timeoutCounter.increment()
-        ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName)
-      }
 }
 
 data class Prisoner(
@@ -72,5 +57,3 @@ data class Prisoner(
   val status: String? = null,
   val bookNumber: String? = null
 )
-
-data class PrisonerSearchRequest(val prisonerIdentifier: NomsNumber)

@@ -55,7 +55,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecallWithoutDocuments
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
 import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanner
 import java.time.LocalDate
@@ -105,35 +104,10 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State("a prisoner exists for NOMS number")
   fun `a prisoner exists for NOMS number`() {
-    mockPrisonerResponses(matchedNomsNumber)
+    mockGetPrisoner(matchedNomsNumber)
   }
 
-  private fun mockPrisonerResponses(nomsNum: NomsNumber) {
-    prisonerOffenderSearchMockServer.prisonerSearchRespondsWith(
-      PrisonerSearchRequest(nomsNum),
-      listOf(
-        Prisoner(
-          prisonerNumber = nomsNum.value,
-          pncNumber = "98/7654Z",
-          croNumber = "1234/56A",
-          firstName = "Bobby",
-          middleNames = "John",
-          lastName = "Badger",
-          dateOfBirth = LocalDate.of(1999, 5, 28),
-          gender = "Male"
-        ),
-        Prisoner(
-          prisonerNumber = nomsNum.value,
-          pncNumber = "98/7654Z",
-          croNumber = "1234/56A",
-          firstName = "Bertie",
-          middleNames = "Barry",
-          lastName = "Badger",
-          dateOfBirth = LocalDate.of(1990, 10, 30),
-          gender = "Male"
-        )
-      )
-    )
+  private fun mockGetPrisoner(nomsNum: NomsNumber) {
     prisonerOffenderSearchMockServer.getPrisonerByNomsNumberRespondsWith(
       nomsNum,
       Prisoner(
@@ -177,7 +151,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         licenceNameCategory = NameFormatCategory.FIRST_LAST,
       )
     }
-    mockPrisonerResponses(recall.nomsNumber)
+    mockGetPrisoner(recall.nomsNumber)
     gotenbergMockServer.stubGenerateRevocationOrder(revocationOrderBytes, recall.firstName.value)
     setupUserDetailsFor(userIdOnes)
     setupUserDetailsFor(::UserId.zeroes())
