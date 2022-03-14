@@ -1,7 +1,9 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.controller
+package uk.gov.justice.digital.hmpps.managerecallsapi.config
 
 import io.opentelemetry.api.trace.Span
 import io.sentry.Sentry
+import io.sentry.SentryEvent
+import io.sentry.SentryOptions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -9,10 +11,10 @@ import org.springframework.web.servlet.HandlerInterceptor
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-private val log: Logger = LoggerFactory.getLogger(SentryContextAppender::class.java)
-
 @Component
 class SentryContextAppender : HandlerInterceptor {
+  private val log: Logger = LoggerFactory.getLogger(this::class.java)
+
   @Throws(Exception::class)
   override fun preHandle(
     request: HttpServletRequest,
@@ -21,7 +23,6 @@ class SentryContextAppender : HandlerInterceptor {
   ): Boolean {
     val operationId: String = Span.current().spanContext.traceId
 
-    // TODO: remove logging once we've confirmed the operationId is being captured correctly
     log.info("[preHandle] ${request.method} ${request.requestURI} - operationId: $operationId")
 
     Sentry.configureScope { scope ->
@@ -29,5 +30,20 @@ class SentryContextAppender : HandlerInterceptor {
     }
 
     return true
+  }
+}
+
+@Component
+class SentryBeforeSendCallback : SentryOptions.BeforeSendCallback {
+  private val log: Logger = LoggerFactory.getLogger(this::class.java)
+
+  override fun execute(event: SentryEvent, hint: Any?): SentryEvent? {
+    log.info("event: '{}', throwable: '{}', hint: '{}'", event, event.throwable, hint)
+
+    if (event.throwable is ClientTimeoutException) {
+      return null
+    }
+
+    return event
   }
 }
