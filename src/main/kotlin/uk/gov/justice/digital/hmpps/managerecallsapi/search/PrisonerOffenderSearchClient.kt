@@ -11,11 +11,12 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import java.time.Duration
 import java.time.LocalDate
 import java.util.concurrent.TimeoutException
 
-// FIXME: PUD-1577 - Add some tests to this code
+// FIXME: PUD-1577 - Add some tests to this code - or refactor to greater sharing of webclient handling e.g. with ErrorHandlingClient?
 
 @Component
 class PrisonerOffenderSearchClient(
@@ -36,7 +37,10 @@ class PrisonerOffenderSearchClient(
       .retrieve()
       .bodyToMono(object : ParameterizedTypeReference<Prisoner>() {})
       .onErrorResume(WebClientResponseException::class.java) { exception ->
-        Mono.error(ClientException(this.javaClass.simpleName, exception))
+        when (exception.rawStatusCode) {
+          404 -> Mono.error(PrisonerNotFoundException(nomsNumber))
+          else -> Mono.error(ClientException(this.javaClass.simpleName, exception))
+        }
       }
       .timeout(Duration.ofSeconds(timeout))
       .onErrorMap(TimeoutException::class.java) { ex ->
@@ -44,6 +48,8 @@ class PrisonerOffenderSearchClient(
         ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName)
       }
 }
+
+data class PrisonerNotFoundException(val nomsNumber: NomsNumber) : NotFoundException()
 
 data class Prisoner(
   val prisonerNumber: String? = null,
