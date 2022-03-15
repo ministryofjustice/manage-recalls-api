@@ -106,14 +106,14 @@ class RecallControllerTest {
   fun `book recall returns request with id`() {
     val bearerToken = "Bearer header.payload"
     val userUuid = ::UserId.random()
-    val recall = recallRequest.toRecall(userUuid, fixedClock).copy(createdDateTime = now, lastUpdatedDateTime = now)
+    val recall = recallRequest.toRecall(userUuid, fixedClock)
 
     every { recallRepository.save(any(), userUuid) } returns recall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
-    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid)))
+    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid, licenceNameCategory = NameFormatCategory.FIRST_LAST)))
   }
 
   private fun newRecall() =

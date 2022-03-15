@@ -357,7 +357,8 @@ fun BookRecallRequest.toRecall(userUuid: UserId, clock: Clock): Recall {
     middleNames,
     lastName,
     croNumber,
-    dateOfBirth
+    dateOfBirth,
+    licenceNameCategory = if (middleNames == null) NameFormatCategory.FIRST_LAST else null
   )
 }
 
