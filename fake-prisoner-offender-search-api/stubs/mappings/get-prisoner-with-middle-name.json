@@ -8,6 +8,6 @@
     "headers": {
       "Content-Type": "application/json"
     },
-    "bodyFileName": "get-prisoner-in-custody.json"
+    "bodyFileName": "get-prisoner-with-middle-name.json"
   }
 }
