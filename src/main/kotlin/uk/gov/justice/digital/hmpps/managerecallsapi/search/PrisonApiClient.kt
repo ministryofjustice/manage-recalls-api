@@ -18,7 +18,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.TimeoutException
 
-// FIXME: PUD-1577 - Add some tests to this code
+// FIXME: PUD-1577 - Add some tests to this code - or refactor to greater sharing of webclient handling e.g. with ErrorHandlingClient?
 
 @Component
 class PrisonApiClient(

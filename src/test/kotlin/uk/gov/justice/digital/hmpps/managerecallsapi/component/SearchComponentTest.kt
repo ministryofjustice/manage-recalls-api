@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.GATEWAY_TIMEOUT
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
@@ -18,24 +19,23 @@ class SearchComponentTest : ComponentTestBase() {
 
   private val nomsNumber = NomsNumber("123456")
 
-  // TODO PUD-1578
-  // @Test
-  // fun `returns 404 if get prisoner returns not found`() {
-  //   prisonerOffenderSearchMockServer.getPrisonerByNomsNumberReturnsWith(nomsNumber, NOT_FOUND)
-  //
-  //   val result = authenticatedClient.get("/prisoner/$nomsNumber", NOT_FOUND)
-  //     .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
-  //
-  //   assertThat(
-  //     result,
-  //     equalTo(
-  //       ErrorResponse(
-  //         NOT_FOUND,
-  //         "ClientException: PrisonerOffenderSearchClient: [401 Unauthorized from GET http://localhost:9092/prisoner/123456]"
-  //       )
-  //     )
-  //   )
-  // }
+  @Test
+  fun `returns 404 if get prisoner returns not found`() {
+    prisonerOffenderSearchMockServer.getPrisonerByNomsNumberReturnsWith(nomsNumber, NOT_FOUND)
+
+    val result = authenticatedClient.get("/prisoner/$nomsNumber", NOT_FOUND)
+      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+
+    assertThat(
+      result,
+      equalTo(
+        ErrorResponse(
+          NOT_FOUND,
+          "PrisonerNotFoundException(nomsNumber=123456)"
+        )
+      )
+    )
+  }
 
   @Test
   fun `returns 500 if get prisoner returns unauthorized`() {

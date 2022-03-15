@@ -22,14 +22,14 @@ class SearchControllerTest {
   private val nomsNumber = NomsNumber("A1234AA")
 
   @Test
-  fun `prisonerSearch returns prisoner results`() {
+  fun `prisonerByNomsNumber returns prisoner result`() {
     val prisoner1 = prisoner("A1234AA", "Jim", "Smith", "Norman", LocalDate.of(1994, 10, 15))
     every { prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber) } returns Mono.just(prisoner1)
 
-    val results = underTest.prisonerByNomsNumber(nomsNumber)
+    val result = underTest.prisonerByNomsNumber(nomsNumber)
 
     StepVerifier
-      .create(results)
+      .create(result)
       .assertNext {
         assertThat(
           it,
