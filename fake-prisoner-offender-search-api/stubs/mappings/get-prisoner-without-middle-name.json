@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/prisoner/Z9876ZZ"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "get-prisoner-without-middle-name.json"
+  }
+}
