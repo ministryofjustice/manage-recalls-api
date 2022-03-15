@@ -1,13 +1,13 @@
 {
   "request": {
     "method": "GET",
-    "url": "/prisoner/A1234AA"
+    "url": "/prisoner/Z9876ZZ"
   },
   "response": {
     "status": 200,
     "headers": {
       "Content-Type": "application/json"
     },
-    "bodyFileName": "get-prisoner-in-custody.json"
+    "bodyFileName": "get-prisoner-without-middle-name.json"
   }
 }
