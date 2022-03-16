@@ -15,10 +15,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
 
-class LetterToProbationHtmlGenerationTest(
+class RecallNotificationLetterToProbationHtmlGenerationTest(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) : HtmlGenerationTestCase() {
-  private val underTest = LetterToProbationGenerator(templateEngine)
+  private val underTest = RecallNotificationLetterToProbationGenerator(templateEngine)
 
   @Test
   fun `generate in custody Fixed Term recall letter to probation HTML`(approver: ContentApprover) {

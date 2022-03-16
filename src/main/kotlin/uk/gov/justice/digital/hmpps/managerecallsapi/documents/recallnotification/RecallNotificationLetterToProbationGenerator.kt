@@ -12,7 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.Hmpps
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.asStandardDateFormat
 
 @Component
-class LetterToProbationGenerator(
+class RecallNotificationLetterToProbationGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
 
@@ -23,10 +23,10 @@ class LetterToProbationGenerator(
       setVariable("teamContactNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
       if (context.recallType == FIXED) {
-        setVariable("recallLengthDescription", context.recallDescription!!.asFixedTermLengthDescription())
+        setVariable("recallLengthDescription", context.recallDescription!!.asTitle())
       }
       setVariable("probationOfficerName", context.probationOfficerName)
-      setVariable("prisonerNameOnLicense", context.prisonerNameOnLicense)
+      setVariable("prisonerNameOnLicence", context.prisonerNameOnLicence)
       setVariable("bookingNumber", context.bookingNumber)
       if (context.inCustodyRecall) {
         setVariable("currentPrisonName", context.currentPrisonName!!)

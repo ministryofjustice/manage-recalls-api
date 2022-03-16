@@ -198,8 +198,8 @@ class RecallController(
     croNumber = croNumber,
     dateOfBirth = dateOfBirth,
     status = status(),
-    documents = latestDocuments(documents),
 
+    documents = latestDocuments(documents),
     lastKnownAddresses = lastKnownAddresses.map { address -> address.toResponse() },
     missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse(documents) },
     notes = notes.map { note -> note.toResponse(documents) },

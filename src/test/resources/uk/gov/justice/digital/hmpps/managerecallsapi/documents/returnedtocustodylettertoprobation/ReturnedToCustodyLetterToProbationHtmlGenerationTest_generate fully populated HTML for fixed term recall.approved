@@ -1,0 +1,515 @@
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <style type="text/css">ol {
+    margin: 0;
+    padding: 0
+  }
+
+  table td, table th {
+    padding: 0
+  }
+
+  .c17 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #ffffff;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #ffffff;
+    vertical-align: top;
+    border-right-color: #ffffff;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 82.3pt;
+    border-top-color: #ffffff;
+    border-bottom-style: solid
+  }
+
+  .c18 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #ffffff;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #ffffff;
+    vertical-align: top;
+    border-right-color: #ffffff;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 61pt;
+    border-top-color: #ffffff;
+    border-bottom-style: solid
+  }
+
+  .c10 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #ffffff;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #ffffff;
+    vertical-align: top;
+    border-right-color: #ffffff;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 170.7pt;
+    border-top-color: #ffffff;
+    border-bottom-style: solid
+  }
+
+  .c22 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #ffffff;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #ffffff;
+    vertical-align: top;
+    border-right-color: #ffffff;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 291.9pt;
+    border-top-color: #ffffff;
+    border-bottom-style: solid
+  }
+
+  .c15 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #ffffff;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #ffffff;
+    vertical-align: top;
+    border-right-color: #ffffff;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 11.8pt;
+    border-top-color: #ffffff;
+    border-bottom-style: solid
+  }
+
+  .c13 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #ffffff;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #ffffff;
+    vertical-align: top;
+    border-right-color: #ffffff;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 230.9pt;
+    border-top-color: #ffffff;
+    border-bottom-style: solid
+  }
+
+  .c30 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #ffffff;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #ffffff;
+    vertical-align: top;
+    border-right-color: #ffffff;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 241.2pt;
+    border-top-color: #ffffff;
+    border-bottom-style: solid
+  }
+
+  .c9 {
+    -webkit-text-decoration-skip: none;
+    color: #000000;
+    font-weight: 700;
+    text-decoration: underline;
+    vertical-align: baseline;
+    text-decoration-skip-ink: none;
+    font-size: 17pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c4 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left;
+    height: 11pt
+  }
+
+  .c1 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c8 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 10pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c3 {
+    color: #000000;
+    font-weight: 700;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c28 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: center;
+    margin-right: 18pt
+  }
+
+  .c2 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 8.5pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c7 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c27 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify
+  }
+
+  .c33 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+  }
+
+  .c0 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: right
+  }
+
+  .c20 {
+    color: #000000;
+    text-decoration: none;
+    font-size: 8.5pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c24 {
+    margin-left: -70.6pt;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c25 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.1500000000000001;
+    text-align: left
+  }
+
+  .c23 {
+    text-decoration-skip-ink: none;
+    font-size: 16pt;
+    -webkit-text-decoration-skip: none;
+    text-decoration: underline
+  }
+
+  .c31 {
+    background-color: #ffffff;
+    max-width: 462pt;
+    padding: 10pt 42.5pt 15pt 90.7pt
+  }
+
+  .c16 {
+    font-size: 10pt;
+    color: #000000
+  }
+
+  .c14 {
+    font-size: 10pt;
+    font-style: italic
+  }
+
+  .c35 {
+    margin-left: 0.1pt;
+    text-indent: -0.1pt
+  }
+
+  .c29 {
+    height: 8.5pt
+  }
+
+  .c11 {
+    font-weight: 700
+  }
+
+  .c12 {
+    vertical-align: baseline
+  }
+
+  .c26 {
+    font-size: 10pt
+  }
+
+  .c19 {
+    height: 68pt
+  }
+
+  .c34 {
+    height: 28.4pt
+  }
+
+  .c5 {
+    height: 11pt
+  }
+
+  li {
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+  }
+
+  p {
+    margin: 0;
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+  }
+
+  h1 {
+    padding-top: 24pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 24pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h2 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 14pt;
+    padding-bottom: 3pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    font-style: italic;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h3 {
+    padding-top: 14pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 14pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h4 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 14pt;
+    padding-bottom: 3pt;
+    font-family: "Times New Roman";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h5 {
+    padding-top: 11pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 11pt;
+    padding-bottom: 2pt;
+    font-family: "Arial";
+    line-height: 1.0;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h6 {
+    padding-top: 12pt;
+    color: #000000;
+    font-weight: 700;
+    font-size: 11pt;
+    padding-bottom: 3pt;
+    font-family: "Times New Roman";
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }</style>
+</head>
+<body class="c31">
+<div><p class="c0 c5"><span class="c1"></span></p></div>
+<p class="c5 c25"><span class="c1"></span></p><a id="t.59943e8695bc87218648d3b556fb27bb05130beb"></a><a id="t.0"></a>
+<table class="c24">
+  <tbody>
+  <tr class="c19">
+    <td class="c22" colspan="2" rowspan="1"><p class="c7 c35"><span
+      style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 249.13px; height: 109.93px;"><img
+      src="hmpps-logo.png"
+      style="width: 249.13px; height: 109.93px; margin-left: -0.00px; margin-top: -0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+      title=""></span></p></td>
+    <td class="c15" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p></td>
+    <td class="c30" colspan="2" rowspan="4"><p class="c0"><span class="c11 c12 c16">Her Majesty&rsquo;s Prison &amp; Probation Service</span>
+    </p>
+      <p class="c0"><span class="c8">Public Protection Group</span></p>
+      <p class="c0"><span class="c8">Public Protection Casework Section</span></p>
+      <p class="c0"><span class="c8">15th Floor, Southern House </span></p>
+      <p class="c0"><span class="c8">Wellesley Grove </span></p>
+      <p class="c0"><span class="c8">Croydon</span></p>
+      <p class="c0"><span class="c8">CR0 1XG</span></p>
+      <p class="c0 c5"><span class="c8"></span></p>
+      <p class="c0"><span class="c12 c26">HM Prison &amp; Probation Service (</span><span
+        class="c12 c14">PPCS</span><span class="c8">)</span></p>
+      <p class="c0"><span class="c8">DX 330701, Croydon 52</span></p>
+      <p class="c0 c5"><span class="c2"></span></p>
+      <p class="c0"><span class="c11 c12 c26">Team: </span><span class="c11 c26">Recall Team</span></p>
+      <p class="c0"><span class="c11 c12 c26">T</span><span class="c12 c26">: </span><span class="c8">N/K</span></p>
+      <p class="c0 c5"><span class="c8"></span></p>
+      <p class="c0 c5"><span class="c2"></span></p>
+      <p class="c0"><span class="c11 c12 c20">www.justice.gov.uk</span></p></td>
+  </tr>
+  <tr class="c29">
+    <td class="c18" colspan="1" rowspan="1"><p class="c4"><span class="c2"></span></p></td>
+    <td class="c13" colspan="1" rowspan="1"><p class="c4"><span class="c2"></span></p></td>
+    <td class="c15" colspan="1" rowspan="1"><p class="c4"><span class="c2"></span></p></td>
+  </tr>
+  <tr class="c34">
+    <td class="c18" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p></td>
+    <td class="c13" colspan="1" rowspan="1"><p class="c7"><span class="c1">For recall team 1 cases e-mail:</span></p>
+      <p class="c7"><span class="c11 c12">recall1@justice.gov.uk</span></p></td>
+    <td class="c15" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p></td>
+  </tr>
+  <tr class="c34">
+    <td class="c18" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p></td>
+    <td class="c13" colspan="1" rowspan="1"><p class="c7"><span class="c1">For recall team 2 cases e-mail:</span></p>
+      <p class="c7"><span class="c11 c12">recall2@justice.gov.uk</span></p></td>
+    <td class="c15" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p></td>
+  </tr>
+  <tr class="c34">
+    <td class="c18" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p></td>
+    <td class="c13" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p>
+      <p class="c4"><span class="c1"></span></p>
+      <p class="c4"><span class="c1"></span></p>
+      <p class="c7"><span class="c1">&nbsp;</span></p></td>
+    <td class="c17" colspan="2" rowspan="1"><p class="c4"><span class="c1"></span></p></td>
+    <td class="c10" colspan="1" rowspan="1"><p class="c4"><span class="c1"></span></p>
+      <p class="c0"><span class="c1">16 Mar 2022</span></p>
+      <p class="c0 c5"><span class="c1"></span></p></td>
+  </tr>
+  </tbody>
+</table>
+<p class="c33"><span class="c11 c23 c9">14 DAY FIXED TERM RECALL</span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c7"><span class="c12">Dear </span><span>Probation Paul</span><span class="c1">,</span></p>
+<p class="c0 c5"><span class="c1"></span></p>
+<p class="c7"><span class="c11 c12">Licensee: </span><span class="c11">Billie Badger</span><span class="c1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+</p>
+<p class="c7"><span class="c11 c12">Our Ref: </span><span class="c11">B12345C</span>
+  <span class="c11 c12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PNomis Number: </span><span class="c3">ZY9876X</span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c7"><span class="c1">Further to our email concerning the above named licensee.</span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c7"><span>Billie Badger</span><span class="c12"> was arrested on </span>
+  <span class="c12">15 Mar 2022</span><span> and is now in custody at </span><span>Prison A</span><span class="c1">&nbsp;under PNomis number <span>AB1234C</span>
+</p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c7"><span>Billie Badger</span><span class="c1">&rsquo;s licence was revoked as a Fixed Term Recall under Section 254 of the Criminal Justice Act 2003, as amended.</span>
+</p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c7"><span>Billie Badger</span><span class="c12">&nbsp;will be released automatically </span><span
+  class="c11 c12">at the end of the </span><span class="c11">14</span><span class="c11 c12">&nbsp;in custody</span><span
+  class="c1">, beginning on the date that they returned to custody.&nbsp;The Current Establishment will provide this date.</span>
+</p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c7"><span class="c1">Yours sincerely,</span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c4"><span class="c1"></span></p>
+<p class="c7"><span class="c11 c12">Mandy Pandy</span></p>
+<p class="c7"><span class="c11 c12">Public Protection Casework Section </span></p>
+</body>
+</html>

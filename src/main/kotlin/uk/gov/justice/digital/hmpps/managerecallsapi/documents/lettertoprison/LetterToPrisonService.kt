@@ -31,7 +31,7 @@ class LetterToPrisonService(
   fun generateAndStorePdf(
     recallId: RecallId,
     currentUserId: UserId,
-    documentDetails1: FileName,
+    fileName: FileName,
     documentDetails: String?
   ): Mono<DocumentId> {
     val context = letterToPrisonContextFactory.createContext(recallId, currentUserId)
@@ -62,7 +62,7 @@ class LetterToPrisonService(
           footerText = "OFFICIAL"
         )
       }.map { letterToPrisonBytes ->
-        documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, FileName("$LETTER_TO_PRISON.pdf"), documentDetails)
+        documentService.storeDocument(recallId, currentUserId, letterToPrisonBytes, LETTER_TO_PRISON, fileName, documentDetails)
       }
   }
 

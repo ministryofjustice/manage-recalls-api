@@ -184,7 +184,7 @@ private fun LastKnownAddress.toAddressString(): String {
 }
 
 data class OffenderNotificationContext(
-  val prisonerNameOnLicense: FullName,
+  val prisonerNameOnLicence: FullName,
   val bookingNumber: String,
   val licenceRevocationDate: LocalDate,
   val reasonsForRecall: List<String>
@@ -194,7 +194,7 @@ data class LetterToProbationContext(
   val licenceRevocationDate: LocalDate,
   val recallDescription: RecallDescription?,
   val probationOfficerName: String,
-  val prisonerNameOnLicense: FullName,
+  val prisonerNameOnLicence: FullName,
   val bookingNumber: String,
   val currentPrisonName: PrisonName?,
   val assessedByUserName: PersonName,
@@ -204,7 +204,7 @@ data class LetterToProbationContext(
 
 data class RecallSummaryContext(
   val originalCreatedDateTime: ZonedDateTime,
-  val prisonerNameOnLicense: FullName,
+  val prisonerNameOnLicence: FullName,
   val dateOfBirth: LocalDate,
   val croNumber: CroNumber,
   val assessedByUserName: PersonName,
@@ -239,7 +239,7 @@ data class RecallSummaryContext(
 
 data class RevocationOrderContext(
   val recallId: RecallId,
-  val prisonerNameOnLicense: FullName,
+  val prisonerNameOnLicence: FullName,
   val dateOfBirth: LocalDate,
   val bookingNumber: String,
   val croNumber: CroNumber,

@@ -49,10 +49,13 @@ data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = 
 }
 
 data class RecallDescription(val recallType: RecallType, val recallLength: RecallLength?) {
-  fun asFixedTermLengthDescription(): String =
-    when (recallLength!!) {
-      FOURTEEN_DAYS -> "14 DAY FIXED TERM RECALL"
-      TWENTY_EIGHT_DAYS -> "28 DAY FIXED TERM RECALL"
+  fun asTitle(): String =
+    when (recallType) {
+      STANDARD -> "STANDARD RECALL"
+      RecallType.FIXED -> when (recallLength!!) {
+        FOURTEEN_DAYS -> "14 DAY FIXED TERM RECALL"
+        TWENTY_EIGHT_DAYS -> "28 DAY FIXED TERM RECALL"
+      }
     }
 
   fun numberOfDays(): Int =

@@ -1,0 +1,433 @@
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <style type="text/css">ol {
+    margin: 0;
+    padding: 0
+  }
+
+  table td, table th {
+    padding: 0
+  }
+
+  .c30 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 241.2pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c25 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 170.7pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c21 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 291.9pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c19 {
+    border-right-style: solid;
+    padding: 0pt 5.4pt 0pt 5.4pt;
+    border-bottom-color: #000000;
+    border-top-width: 0pt;
+    border-right-width: 0pt;
+    border-left-color: #000000;
+    vertical-align: top;
+    border-right-color: #000000;
+    border-left-width: 0pt;
+    border-top-style: solid;
+    border-left-style: solid;
+    border-bottom-width: 0pt;
+    width: 61pt;
+    border-top-color: #000000;
+    border-bottom-style: solid
+  }
+
+  .c24 {
+    -webkit-text-decoration-skip: none;
+    color: #000000;
+    font-weight: 400;
+    text-decoration: underline;
+    vertical-align: baseline;
+    text-decoration-skip-ink: none;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c5 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify;
+    height: 11pt
+  }
+
+  .c0 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c20 {
+    color: #993366;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c11 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: center
+  }
+
+  .c3 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c8 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: right
+  }
+
+  .c29 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-family: "Times New Roman";
+    font-style: normal
+  }
+
+  .c18 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify
+  }
+
+  .c4 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c6 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.15;
+    text-align: left;
+    height: 11pt
+  }
+
+  .c31 {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-right: auto
+  }
+
+  .c16 {
+    text-decoration-skip-ink: none;
+    font-size: 17pt;
+    -webkit-text-decoration-skip: none;
+    text-decoration: underline
+  }
+
+  .c27 {
+    text-decoration-skip-ink: none;
+    -webkit-text-decoration-skip: none;
+    text-decoration: underline
+  }
+
+  .c28 {
+    background-color: #ffffff;
+    max-width: 451.4pt;
+    padding: 10pt 50pt 10pt 75pt
+  }
+
+  .c22 {
+    margin-left: 0.1pt;
+    text-indent: -0.1pt
+  }
+
+  .c17 {
+    font-style: italic
+  }
+
+  .c15 {
+    height: 28.4pt
+  }
+
+  .c2 {
+    font-weight: 700
+  }
+
+  .c1 {
+    font-size: 10pt
+  }
+
+  .c23 {
+    height: 68pt
+  }
+
+  .c13 {
+    height: 11pt
+  }
+
+  .c26 {
+    height: 8.5pt
+  }
+
+  .c12 {
+    font-size: 8.5pt
+  }
+
+  li {
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+  }
+
+  p {
+    margin: 0;
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+  }
+
+  h1 {
+    padding-top: 20pt;
+    color: #000000;
+    font-size: 20pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h2 {
+    padding-top: 18pt;
+    color: #000000;
+    font-size: 16pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h3 {
+    padding-top: 16pt;
+    color: #434343;
+    font-size: 14pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h4 {
+    padding-top: 14pt;
+    color: #666666;
+    font-size: 12pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h5 {
+    padding-top: 12pt;
+    color: #666666;
+    font-size: 11pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h6 {
+    padding-top: 12pt;
+    color: #666666;
+    font-size: 11pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    font-style: italic;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }</style>
+</head>
+<body class="c28"><p class="c6"><span class="c0"></span></p><a id="t.167f207d528beec5f8466e2cb2b594fab4658602"></a><a
+  id="t.0"></a>
+<table class="c31">
+  <tbody>
+  <tr class="c23">
+    <td class="c21" rowspan="1"><p class="c3 c22"><span
+      style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 249.13px; height: 109.93px;"><img
+      src="hmpps-logo.png"
+      style="width: 249.13px; height: 109.93px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+      title=""></span></p></td>
+    <td class="c30" rowspan="4">
+      <p class="c8"><span class="c2 c1">Her Majesty&rsquo;s Prison &amp; Probation Service</span></p>
+      <p class="c8"><span class="c4 c1">Public Protection Group</span></p>
+      </p>
+      <p class="c8"><span class="c4 c1">Public Protection Casework Section</span>
+      <p class="c8"><span class="c4 c1">15th Floor, Southern House </span></p>
+      <p class="c8"><span class="c1 c4">Wellesley Grove </span></p>
+      <p class="c8"><span class="c4 c1">Croydon</span></p>
+      <p class="c8"><span class="c4 c1">CR0 1XG</span></p>
+      <p class="c8 c13"><span class="c4 c1"></span></p>
+      <p class="c8"><span class="c1">HM Prison &amp; Probation Service (</span><span class="c1 c17">PPCS</span><span
+        class="c4 c1">)</span></p>
+      <p class="c8"><span class="c4 c1">DX 330701, Croydon 52</span></p>
+      <p class="c8 c13"><span class="c1 c29"></span></p>
+      <p class="c8"><span class="c2 c1">Team: <span>Recall Team</span></span></p>
+      <p class="c8"><span class="c1 c2">T</span><span class="c1">: </span><span class="c1">N/K</span></p>
+      <p class="c8 c13"><span class="c0"></span></p>
+      <p class="c8"><span class="c2 c12">www.justice.gov.uk</span></p></td>
+  </tr>
+  <tr class="c26">
+    <td class="c19" colspan="2" rowspan="1"><p class="c3 c13"><span class="c4 c12"></span></p></td>
+  </tr>
+  <tr class="c15">
+    <td class="c19" rowspan="1"><p class="c3"><span class="c0">For recall team 1 cases e-mail:</span></p>
+      <p class="c3"><span class="c2">recall1@justice.gov.uk</span></p></td>
+  </tr>
+  <tr class="c15">
+    <td class="c19" rowspan="1"><p class="c3"><span class="c0">For recall team 2 cases e-mail:</span></p>
+      <p class="c3"><span class="c2">recall2@justice.gov.uk</span></p></td>
+  </tr>
+  <tr class="c15">
+    <td class="c19" colspan="1" rowspan="1"><p class="c3 c13"><span class="c0"></span></p></td>
+    <td class="c25" colspan="1" rowspan="1"><p class="c3 c13"><span class="c0"></span></p>
+      <p class="c8"><span class="c0">16 Mar 2022</span></p></td>
+  </tr>
+  </tbody>
+</table>
+<p class="c11"><span class="c2 c16">STANDARD RECALL</span></p>
+<p class="c3 c13"><span class="c0"></span></p>
+<p class="c3 c13"><span class="c0"></span></p>
+<p class="c3"><span class="c0">Dear <span>Mr ACO</span> / <span>Probation Paul</span>,</span></p>
+<p class="c3 c13"><span class="c0"></span></p>
+<p class="c3"><span class="c2">Licensee:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="c0">Billie Badger</span></p>
+<p class="c3"><span class="c2">Our Ref: <span>B12345C</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PNomis Number:</span>
+  <span class="c0">ZY9876X</span></p>
+<p class="c3 c13"><span class="c0"></span></p>
+<p class="c18"><span class="c0">We are sending this letter further to our email about the licence revocation in respect of the above named licensee. </span>
+</p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c18"><span><span>Billie Badger</span> was arrested on </span><span class="c2">15 Mar 2022</span>
+  <span class="c0">&nbsp;and is now in custody at <span>Prison A</span> under PNomis number <span>AB1234C</span>. &nbsp;This offender&rsquo;s licence was revoked under Section 254 of the Criminal Justice Act 2003, as amended.</span>
+</p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c18"><span>It is your responsibility to ensure that the Day 28 Risk Management Report (Part B) and the updated Risk Management Plan (OASys R11) are submitted to PPCS no later than <span>2022-03-26</span></span><span
+  class="c2">.</span><span>&nbsp;This should include any further information relevant to the offender&rsquo;s risk, for example an update on any pending charges or prosecutions.</span>
+  <span class="c2">&nbsp;</span></p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c18"><span class="c2 c27">You will NOT be reminded to submit the papers and if the Report and Plan are not received by the deadline this will delay the Parole Board&rsquo;s review of suitability for re-release. &nbsp;In these cases your manager and/or ACO will be notified of the delay.</span>
+</p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c18"><span class="c0">Please note that it is extremely important that you give a clear recommendation on whether or not re-release is supported before or after day 28 of return to custody, so that the Public Protection Casework Section can make a decision on whether or not the offender should be re-released into the community.</span>
+</p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c18"><span class="c2">If re-release is supported, prompt submission of the reports will enable the Secretary of State to consider the case for executive re-release and discuss with yourself if appropriate. The report should include details of accommodation with dates of availability (if available for a limited time only please highlight this to the PPCS caseworker) and full details of any proposed licence conditions. &nbsp;Where the offender requires a prescription for methadone or any other type of medication please ensure that you are very clear about the timescales required to secure that ahead of any actual release date.</span>
+</p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c18"><span class="c0">In addition, please be mindful that you may need to liaise with other agencies, for example, in respect of MAPPA or PPO initiatives or with the Victim Liaison Officer. Where appropriate, this will need to be fed into the Risk Management Plan.</span>
+</p>
+<p class="c5"><span class="c24"></span></p>
+<p class="c18"><span class="c0">Please be aware that, in the event that the Parole Board decide to make no recommendation for release, the information provided by you in the Risk Management Report will be used as part of an initial assessment to consider whether the offender has sufficient time before his Sentence Expiry Date (SED) to reduce his risk of harm and reoffending and be safely re-released into the community on licence.</span>
+</p>
+<p class="c5"><span class="c20"></span></p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c18"><span class="c0">Yours sincerely,</span></p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c5"><span class="c0"></span></p>
+<p class="c3"><span class="c2">Mandy Pandy</span></p>
+<p class="c18"><span class="c2">Public Protection Casework Section </span></p>
+</html>

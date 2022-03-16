@@ -16,7 +16,7 @@ class OffenderNotificationGenerator(
     Context().apply {
       setVariable("logoFileName", RecallImage.HmppsLogo.fileName)
       setVariable("licenceRevocationDate", context.licenceRevocationDate.asStandardDateFormat())
-      setVariable("prisonerNameOnLicense", context.prisonerNameOnLicense)
+      setVariable("prisonerNameOnLicence", context.prisonerNameOnLicence)
       setVariable("bookingNumber", context.bookingNumber)
       setVariable("reasonsForRecall", context.reasonsForRecall)
     }.let {

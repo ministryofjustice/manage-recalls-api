@@ -9,12 +9,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Compani
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 
-class LetterToProbationServiceTest {
+class RecallNotificationLetterToProbationServiceTest {
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
-  private val letterToProbationGenerator = mockk<LetterToProbationGenerator>()
+  private val recallNotificationLetterToProbationGenerator = mockk<RecallNotificationLetterToProbationGenerator>()
 
-  private val underTest = LetterToProbationService(
-    letterToProbationGenerator,
+  private val underTest = RecallNotificationLetterToProbationService(
+    recallNotificationLetterToProbationGenerator,
     pdfDocumentGenerationService
   )
 
@@ -24,7 +24,7 @@ class LetterToProbationServiceTest {
     val generatedHtml = "some html"
     val pdfBytes = "pdf".toByteArray()
 
-    every { letterToProbationGenerator.generateHtml(letterToProbationContext) } returns generatedHtml
+    every { recallNotificationLetterToProbationGenerator.generateHtml(letterToProbationContext) } returns generatedHtml
     every { pdfDocumentGenerationService.generatePdf(generatedHtml, recallImage(HmppsLogo)) } returns Mono.just(pdfBytes)
 
     val result = underTest.generatePdf(letterToProbationContext).block()!!

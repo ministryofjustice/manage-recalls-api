@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import java.lang.IllegalStateException
 
@@ -115,6 +116,7 @@ class ClientException(clientName: String, exception: Exception) : ManageRecallsE
 
 class WrongDocumentTypeException(val category: DocumentCategory) : ManageRecallsException(category.name)
 class MissingDetailsException(val category: DocumentCategory, val version: Int) : ManageRecallsException("$category version: [$version]")
+class ReturnedToCustodyRecallExpectedException(val recallId: RecallId) : ManageRecallsException(recallId.toString())
 
 class InvalidPrisonOrCourtException(validAndActiveCurrentPrison: Boolean, validLastReleasePrison: Boolean, validSentencingCourt: Boolean) :
   ManageRecallsException("validAndActiveCurrentPrison=[$validAndActiveCurrentPrison], validLastReleasePrison=[$validLastReleasePrison], validSentencingCourt=[$validSentencingCourt]")

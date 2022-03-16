@@ -12,11 +12,11 @@ class LetterToPrisonConfirmationGenerator(
 ) {
   fun generateHtml(context: LetterToPrisonContext): String =
     Context().apply {
-      setVariable("fullName", context.prisonerNameOnLicense)
+      setVariable("fullName", context.prisonerNameOnLicence)
 
       with(context.recall) {
         val recallDescription = RecallDescription(this.recallType(), this.recallLength)
-        setVariable("recallLengthDescription", recallDescription.asFixedTermLengthDescription())
+        setVariable("recallLengthDescription", recallDescription.asTitle())
         setVariable("recallLengthDays", recallDescription.numberOfDays())
         setVariable("bookingNumber", this.bookingNumber)
       }

@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PROBATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
@@ -33,6 +34,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64Str
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RevocationOrderService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.returnedtocustodylettertoprobation.ReturnedToCustodyLetterToProbationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -51,6 +53,7 @@ class DocumentControllerTest {
   private val recallNotificationService = mockk<RecallNotificationService>()
   private val revocationOrderService = mockk<RevocationOrderService>()
   private val reasonsForRecallService = mockk<ReasonsForRecallService>()
+  private val returnedToCustodyLetterToProbationService = mockk<ReturnedToCustodyLetterToProbationService>()
   private val dossierService = mockk<DossierService>()
   private val letterToPrisonService = mockk<LetterToPrisonService>()
   private val advertisedBaseUri = "https://api"
@@ -62,6 +65,7 @@ class DocumentControllerTest {
     letterToPrisonService,
     revocationOrderService,
     reasonsForRecallService,
+    returnedToCustodyLetterToProbationService,
     tokenExtractor,
     userDetailsService,
     advertisedBaseUri
@@ -207,7 +211,7 @@ class DocumentControllerTest {
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
 
-    DocumentCategory.values().filter { !it.uploaded && !setOf(RECALL_NOTIFICATION, REVOCATION_ORDER, REASONS_FOR_RECALL, DOSSIER, LETTER_TO_PRISON).contains(it) }.forEach {
+    DocumentCategory.values().filter { !it.uploaded && !setOf(RECALL_NOTIFICATION, REVOCATION_ORDER, REASONS_FOR_RECALL, DOSSIER, LETTER_TO_PRISON, LETTER_TO_PROBATION).contains(it) }.forEach {
       assertThrows<WrongDocumentTypeException> {
         underTest.generateDocument(recallId, GenerateDocumentRequest(it, FileName("$it.pdf"), "blah, blah, blah"), bearerToken)
       }
@@ -236,6 +240,7 @@ class DocumentControllerTest {
     verify { revocationOrderService wasNot Called }
     verify { reasonsForRecallService wasNot Called }
     verify { dossierService wasNot Called }
+    verify { returnedToCustodyLetterToProbationService wasNot Called }
   }
 
   @Test
@@ -260,6 +265,7 @@ class DocumentControllerTest {
     verify { recallNotificationService wasNot Called }
     verify { reasonsForRecallService wasNot Called }
     verify { dossierService wasNot Called }
+    verify { returnedToCustodyLetterToProbationService wasNot Called }
   }
 
   @Test
@@ -284,6 +290,7 @@ class DocumentControllerTest {
     verify { recallNotificationService wasNot Called }
     verify { revocationOrderService wasNot Called }
     verify { dossierService wasNot Called }
+    verify { returnedToCustodyLetterToProbationService wasNot Called }
   }
 
   @Test
@@ -308,6 +315,32 @@ class DocumentControllerTest {
     verify { recallNotificationService wasNot Called }
     verify { revocationOrderService wasNot Called }
     verify { reasonsForRecallService wasNot Called }
+    verify { returnedToCustodyLetterToProbationService wasNot Called }
+  }
+
+  @Test
+  fun `generate new letter to probation`() {
+    val bearerToken = "BEARER TOKEN"
+    val userId = ::UserId.random()
+    val documentId = ::DocumentId.random()
+    val fileName = FileName("SMITH TOM LETTER TO PROBATION.pdf")
+
+    every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
+    every { returnedToCustodyLetterToProbationService.generateAndStorePdf(recallId, userId, fileName, details) } returns Mono.just(documentId)
+
+    val result = underTest.generateDocument(recallId, GenerateDocumentRequest(LETTER_TO_PROBATION, fileName, details), bearerToken)
+
+    StepVerifier
+      .create(result)
+      .assertNext {
+        assertThat(it.body, equalTo(NewDocumentResponse(documentId)))
+      }
+      .verifyComplete()
+
+    verify { recallNotificationService wasNot Called }
+    verify { revocationOrderService wasNot Called }
+    verify { reasonsForRecallService wasNot Called }
+    verify { dossierService wasNot Called }
   }
 
   @Test

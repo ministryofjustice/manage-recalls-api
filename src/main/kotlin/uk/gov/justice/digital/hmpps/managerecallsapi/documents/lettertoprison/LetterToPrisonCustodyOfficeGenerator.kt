@@ -23,11 +23,11 @@ class LetterToPrisonCustodyOfficeGenerator(
       setVariable("teamPhoneNumber", RECALL_TEAM_CONTACT_NUMBER)
       setVariable("todaysDate", context.originalCreatedDate.asStandardDateFormat())
 
-      setVariable("fullName", context.prisonerNameOnLicense)
+      setVariable("fullName", context.prisonerNameOnLicence)
 
       with(context.recall) {
         val recallDescription = RecallDescription(this.recallType(), this.recallLength)
-        setVariable("recallLengthDescription", recallDescription.asFixedTermLengthDescription())
+        setVariable("recallLengthDescription", recallDescription.asTitle())
         setVariable("recallLengthDays", recallDescription.numberOfDays())
         setVariable("bookingNumber", this.bookingNumber)
         setVariable("nomisNumberHeldUnder", if (this.differentNomsNumber!!) this.differentNomsNumberDetail else this.nomsNumber.value)

@@ -11,6 +11,7 @@ enum class DocumentCategory(val uploaded: Boolean, val versioned: Versioned) {
   DOSSIER(false, YES_WITH_DETAILS),
   EXCLUSION_ZONE_MAP(true, YES_WITH_DETAILS),
   LETTER_TO_PRISON(false, YES_WITH_DETAILS),
+  LETTER_TO_PROBATION(false, YES_WITH_DETAILS),
   LICENCE(true, YES_WITH_DETAILS),
   OASYS_RISK_ASSESSMENT(true, YES_WITH_DETAILS),
   PART_A_RECALL_REPORT(true, YES_WITH_DETAILS),
