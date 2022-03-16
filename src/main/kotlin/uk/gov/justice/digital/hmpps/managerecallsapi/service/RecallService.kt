@@ -59,11 +59,10 @@ class RecallService(
   @Transactional
   fun unassignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
     return recallRepository.getByRecallId(recallId)
-      .takeIf { it.assignee == assignee.value }
-      ?.copy(
+      .copy(
         assignee = null
       )
-      ?.let { recallRepository.save(it, currentUserId) } ?: throw NotFoundException()
+      .let { recallRepository.save(it, currentUserId) }
   }
 
   @Transactional

@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.component
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
@@ -91,6 +90,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("123456")
     val assignee = ::UserId.random()
+    val notAssignee = ::UserId.random()
     val createdByUserId = ::UserId.random()
     setupUserDetailsFor(assignee)
     setupUserDetailsFor(createdByUserId)
@@ -108,7 +108,7 @@ class AssignRecallComponentTest : ComponentTestBase() {
     )
     recallRepository.save(recall, createdByUserId)
 
-    val response = authenticatedClient.unassignRecall(recallId, assignee)
+    val response = authenticatedClient.unassignRecall(recallId, notAssignee)
 
     assertThat(
       response,
@@ -125,33 +125,6 @@ class AssignRecallComponentTest : ComponentTestBase() {
         )
       )
     )
-  }
-
-  @Test
-  fun `unassign recall with wrong assignee throws 404`() {
-    val recallId = ::RecallId.random()
-    val nomsNumber = NomsNumber("123456")
-    val assignee = ::UserId.random()
-    val otherAssignee = ::UserId.random()
-    val createdByUserId = ::UserId.random()
-    setupUserDetailsFor(assignee)
-    setupUserDetailsFor(otherAssignee)
-    setupUserDetailsFor(createdByUserId)
-
-    val recall = Recall(
-      recallId,
-      nomsNumber,
-      createdByUserId,
-      OffsetDateTime.now(),
-      FirstName("Barrie"),
-      null,
-      LastName("Badger"),
-      CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
-      assignee = assignee
-    )
-    recallRepository.save(recall, createdByUserId)
-
-    authenticatedClient.unassignRecall(recallId, otherAssignee, HttpStatus.NOT_FOUND)
   }
 
   @Test

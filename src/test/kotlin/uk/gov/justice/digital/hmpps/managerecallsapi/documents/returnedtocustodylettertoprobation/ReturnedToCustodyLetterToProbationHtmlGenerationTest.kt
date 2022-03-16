@@ -16,6 +16,7 @@ import java.time.LocalDate
 class ReturnedToCustodyLetterToProbationHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
   HtmlGenerationTestCase() {
   private val underTest = ReturnedToCustodyLetterToProbationGenerator(templateEngine)
+  private val originalCreatedDate = LocalDate.of(2022, 3, 16)
 
   @Test
   fun `generate fully populated HTML for fixed term recall`(approver: ContentApprover) {
@@ -31,8 +32,8 @@ class ReturnedToCustodyLetterToProbationHtmlGenerationTest(@Autowired private va
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           FullName("Mandy Pandy"),
-          LocalDate.now().minusDays(1),
-          LocalDate.now(),
+          originalCreatedDate.minusDays(1),
+          originalCreatedDate,
           "Mr ACO",
           null,
         )
@@ -54,10 +55,10 @@ class ReturnedToCustodyLetterToProbationHtmlGenerationTest(@Autowired private va
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           FullName("Mandy Pandy"),
-          LocalDate.now().minusDays(1),
-          LocalDate.now(),
+          originalCreatedDate.minusDays(1),
+          originalCreatedDate,
           "Mr ACO",
-          LocalDate.now().plusDays(10),
+          originalCreatedDate.plusDays(10),
         )
       )
     )
