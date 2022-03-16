@@ -466,6 +466,7 @@ workflows:
             - hmpps-common-vars
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
       - hmpps/gradle_owasp_dependency_check:
+          cache_key: v2_1
           context:
             - hmpps-common-vars
           slack_channel: << pipeline.parameters.alerts-slack-channel >>
