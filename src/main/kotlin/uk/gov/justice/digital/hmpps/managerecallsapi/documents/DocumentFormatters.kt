@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.FOURTEEN_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STANDARD
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -52,7 +53,7 @@ data class RecallDescription(val recallType: RecallType, val recallLength: Recal
   fun asTitle(): String =
     when (recallType) {
       STANDARD -> "STANDARD RECALL"
-      RecallType.FIXED -> when (recallLength!!) {
+      FIXED -> when (recallLength!!) {
         FOURTEEN_DAYS -> "14 DAY FIXED TERM RECALL"
         TWENTY_EIGHT_DAYS -> "28 DAY FIXED TERM RECALL"
       }
@@ -64,20 +65,31 @@ data class RecallDescription(val recallType: RecallType, val recallLength: Recal
       TWENTY_EIGHT_DAYS -> 28
     }
 
+  fun typeWithoutLength(): String =
+    when (recallType) {
+      STANDARD -> "Standard Recall"
+      FIXED -> "Fixed Term Recall"
+    }
+
   fun tableOfContentsDescription() =
     when (recallType) {
       STANDARD -> "Standard 255c recall review"
-      RecallType.FIXED -> when (recallLength!!) {
+      FIXED -> when (recallLength!!) {
         FOURTEEN_DAYS -> "14 Day FTR under 12 months"
         TWENTY_EIGHT_DAYS -> "28 Day FTR 12 months & over"
       }
     }
 
   fun letterToPrisonAppealsPapersHeading() =
-    when (recallLength!!) {
-      FOURTEEN_DAYS -> "Annex H – Appeal Papers"
-      TWENTY_EIGHT_DAYS -> "Annex I – Appeal Papers"
+    when (recallType) {
+      STANDARD -> "Annex G - Appeal Papers"
+      FIXED -> when (recallLength!!) {
+        FOURTEEN_DAYS -> "Annex H – Appeal Papers"
+        TWENTY_EIGHT_DAYS -> "Annex I – Appeal Papers"
+      }
     }
+
+  fun isFixedTermRecall(): Boolean = recallType == FIXED
 }
 
 fun MappaLevel.shouldShowOnDocuments(): Boolean =

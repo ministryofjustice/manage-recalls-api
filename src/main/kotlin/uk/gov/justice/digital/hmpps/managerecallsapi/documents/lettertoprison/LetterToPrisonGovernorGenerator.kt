@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RECALL_TEAM_CONTACT_NUMBER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RECALL_TEAM_NAME
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.asStandardDateFormat
 
@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.asStandardDateFor
 class LetterToPrisonGovernorGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
-  fun generateHtml(context: LetterToPrisonContext): String =
+  fun generateHtml(context: LetterToPrisonGovernorContext): String =
     Context().apply {
 
       setVariable("logoFileName", HmppsLogo.fileName)
@@ -24,13 +24,13 @@ class LetterToPrisonGovernorGenerator(
 
       setVariable("fullName", context.prisonerNameOnLicence)
 
-      with(context.recall) {
-        val recallDescription = RecallDescription(this.recallType(), this.recallLength)
-        setVariable("recallLengthDescription", recallDescription.asTitle())
-        setVariable("recallLengthDays", recallDescription.numberOfDays())
-        setVariable("bookingNumber", this.bookingNumber)
-        setVariable("lastReleaseDate", this.lastReleaseDate!!.asStandardDateFormat())
+      setVariable("isFixedTermRecall", context.recallDescription.isFixedTermRecall())
+      setVariable("recallTitle", context.recallDescription.asTitle())
+      if (context.recallDescription.recallType == RecallType.FIXED) {
+        setVariable("recallLengthDays", context.recallDescription.numberOfDays())
       }
+      setVariable("bookingNumber", context.bookingNumber)
+      setVariable("lastReleaseDate", context.lastReleaseDate.asStandardDateFormat())
 
       setVariable("currentPrisonName", context.currentPrisonName)
       setVariable("lastReleasePrison", context.lastReleasePrisonName)

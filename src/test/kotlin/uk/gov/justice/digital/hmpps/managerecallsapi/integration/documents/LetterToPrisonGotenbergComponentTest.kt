@@ -23,7 +23,7 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
   private val assessedByUserId = ::UserId.random()
 
   @Test
-  fun `can generate a letter to prison using gotenberg`() {
+  fun `can generate a letter to prison for a fixed term recall using gotenberg`() {
     setupUserDetailsFor(assessedByUserId)
 
     val recall = authenticatedClient.bookRecall(
@@ -51,5 +51,35 @@ class LetterToPrisonGotenbergComponentTest : GotenbergComponentTestBase() {
     // writeBase64EncodedStringToFile("letter-to-prison-28-day-FTR-example.pdf", letterToPrison.content)  // i.e. sentence duration >= 1 year
 
     assertThat(Pdf(letterToPrison.content), hasNumberOfPages(equalTo(5)))
+  }
+
+  @Test
+  fun `can generate a letter to prison for a standard recall using gotenberg`() {
+    setupUserDetailsFor(assessedByUserId)
+
+    val recall = authenticatedClient.bookRecall(
+      BookRecallRequest(
+        nomsNumber,
+        FirstName("Barrie"),
+        null,
+        LastName("Badger"),
+        CroNumber("1234/56A"),
+        LocalDate.now()
+      )
+    )
+    updateRecallWithRequiredInformationForTheLetterToPrison(
+      recall.recallId,
+      contrabandDetail = "Contraband 1\nContraband 2",
+      vulnerabilityDiversityDetail = "Diversity 1\nDiversity 2",
+      assessedByUserId = assessedByUserId,
+      sentenceYears = 10,
+      recallType = RecallType.STANDARD
+    )
+
+    val letterToPrisonId = authenticatedClient.generateDocument(recall.recallId, LETTER_TO_PRISON, FileName("LETTER_TO_PRISON.pdf"))
+    val letterToPrison = authenticatedClient.getDocument(recall.recallId, letterToPrisonId.documentId)
+    // writeBase64EncodedStringToFile("letter-to-prison-Standard-example.pdf", letterToPrison.content)
+
+    assertThat(Pdf(letterToPrison.content), hasNumberOfPages(equalTo(7)))
   }
 }

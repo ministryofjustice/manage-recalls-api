@@ -72,7 +72,7 @@
       <td width=389 colspan=2 valign=top style='width:291.85pt;border:solid white 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
         <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
-  border:none'><span style='color:black'><img width=187 height=82 th:src="${logoFileName}"></span></p>
+  border:none'><span style='color:black'><img width=187 height=82 src="hmpps-logo.png"></span></p>
       </td>
       <td width=16 valign=top style='width:11.8pt;border:solid white 1.0pt;
   border-left:none;padding:0cm 5.4pt 0cm 5.4pt;height:68.05pt'>
@@ -106,9 +106,9 @@
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'><span style='font-size:10.0pt'>&nbsp;</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt'>Team: <span th:text="${teamName}"/></span></b></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt'>Team: <span>Recall Team</span></span></b></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt'><b><span style='font-size:10.0pt'>T</span></b><span style='font-size:10.0pt'>: <span th:text="${teamPhoneNumber}"/></span></p>
+  text-indent:-.1pt'><b><span style='font-size:10.0pt'>T</span></b><span style='font-size:10.0pt'>: <span>N/K</span></span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
   text-indent:-.1pt'>&nbsp;</p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
@@ -207,7 +207,7 @@
         <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt;line-height:normal;
   border:none'><span style='color:black'>&nbsp;</span></p>
         <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
-  text-indent:-.1pt;line-height:normal;border:none' th:text="${todaysDate}"></p>
+  text-indent:-.1pt;line-height:normal;border:none'>04 Oct 2021</p>
       </td>
     </tr>
     <tr height=0>
@@ -222,7 +222,7 @@
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span style='font-size:10.5pt;color:white'>                        </span></p>
 
   <p class=MsoNormal align=center style='margin-left:.05pt;text-align:center;
-text-indent:-.15pt'><b><u><span style='font-size:17.0pt' th:text="${recallTitle}"/></u></b></p>
+text-indent:-.15pt'><b><u><span style='font-size:17.0pt'>STANDARD RECALL</span></u></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span
     style='font-size:10.5pt'>                                     </span></p>
@@ -232,25 +232,25 @@ text-indent:-.15pt'><b><u><span style='font-size:17.0pt' th:text="${recallTitle}
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><b>To:</b>The Governor </p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt' th:text="${currentPrisonName}"/>
+  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>Prison A</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal align=center style='margin-left:0cm;text-align:center;
-text-indent:-.1pt'><b>RECALL TO PRISON OF: <span th:text="${fullName}"/></b></p>
+text-indent:-.1pt'><b>RECALL TO PRISON OF: <span>Billie Badger</span></b></p>
 
   <p class=MsoNormal align=right style='margin-left:0cm;text-align:right;
 text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>PRISON NUMBER</b>:<span th:text="${bookingNumber}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>PRISON NUMBER</b>:<span>B1234</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASED ON LICENCE: </b><span th:text="${lastReleaseDate}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASED ON LICENCE: </b><span>01 Oct 2020</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
-  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASING PRISON: </b><span th:text="${lastReleasePrison}"/></p>
+  <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><b>RELEASING PRISON: </b><span>Prison B</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>&nbsp;</p>
 
@@ -260,7 +260,7 @@ text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><span style='text-decoration:none'>&nbsp;</span></p>
 
-<div th:unless="${isFixedTermRecall}">
+<div>
   <p class="MsoNormal"><span class="c31">Note: It is imperative that Parts 1, 2 &amp; 3 of Annex G are completed, scanned and returned by e-mail to Public Protection Casework Section, Public Protection Group no later than </span><span
     class="c38 c31"><u>5 working days</u></span><span class="c7">&nbsp;from the date of this letter. </span></p>
 
@@ -274,13 +274,8 @@ text-indent:-.1pt'>&nbsp;</p>
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 line-height:normal'><span dir=LTR></span>The following documents are enclosed:</p>
 
-<div th:if="${isFixedTermRecall}">
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
-line-height:normal;border:none'><span style='font-family:"Noto Sans Symbols";
-color:black'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;</span></span><span dir=LTR></span>
-    <span style='color:black'>Part 1 – Confirmation of Representations against recall document</span></p>
-</div>
-<div th:unless="${isFixedTermRecall}">
+
+<div>
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 line-height:normal;border:none'><span style='font-family:"Noto Sans Symbols";
 color:black'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;</span></span><span dir=LTR></span>
@@ -333,9 +328,8 @@ understands the contents and reason for recall.</span></p>
 line-height:normal'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
 </span><span dir=LTR></span>Inform the offender that they have been recalled
     under Section 254 of the Criminal Justice Act 2003, as amended, which means
-    that they <span th:if="${isFixedTermRecall}">will be released automatically at the end of <span th:text="${recallLengthDays}"/>
-      days in custody, beginning on the date that they returned to custody. </span>
-<span th:unless="${isFixedTermRecall}">are liable to remain in custody until their sentence expiry date, unless re-released earlier by the Parole Board or Secretary of State. </span>
+    that they 
+<span>are liable to remain in custody until their sentence expiry date, unless re-released earlier by the Parole Board or Secretary of State. </span>
   </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
@@ -353,14 +347,13 @@ line-height:normal'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&n
     <span dir=LTR></span>The offender should be asked whether they wish
     to make written representations and if they wish to do so they should then be
     asked to sign the form at Part 1.
-<span th:unless="${isFixedTermRecall}"> If the offender does not wish to make written representations, they must still be asked to sign the form at Part 1 to that effect. </span>
+<span> If the offender does not wish to make written representations, they must still be asked to sign the form at Part 1 to that effect. </span>
     <b>
-      <span th:if="${isFixedTermRecall}">If the offender wishes to make
-      representations,</span> Part 1 <i>must</i> be returned to the Public Protection
+       Part 1 <i>must</i> be returned to the Public Protection
       Casework Section, Public Protection Group within
     <u>
-      <span th:if="${recallLengthDays == 14}">2</span>
-      <span th:unless="${recallLengthDays == 14}">5</span>
+      
+      <span>5</span>
       working days
     </u> of the
       date of this letter.</b> </p>
@@ -389,8 +382,8 @@ line-height:normal'>&nbsp;</p>
 line-height:normal'><span dir=LTR></span><b>Any representations must be scanned and e-mailed
     to the Public Protection Casework Section, Public Protection Group, no later
     than
-<span th:if="${isFixedTermRecall}"><span th:text="${recallLengthDays}"/> calendar </span>
-<span th:unless="${isFixedTermRecall}">10 working </span>
+
+<span>10 working </span>
     days from the date the offender returned to custody.</b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;

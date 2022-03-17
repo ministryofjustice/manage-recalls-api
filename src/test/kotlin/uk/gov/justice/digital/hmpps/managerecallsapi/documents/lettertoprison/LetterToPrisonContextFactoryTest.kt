@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
@@ -53,6 +54,13 @@ class LetterToPrisonContextFactoryTest {
       lastReleasePrison = PrisonId("BOB"),
       licenceNameCategory = NameFormatCategory.FIRST_LAST,
       recallLength = recallLength,
+      bookingNumber = "ABC123",
+      lastReleaseDate = LocalDate.now(),
+      differentNomsNumber = false,
+      additionalLicenceConditions = false,
+      contraband = false,
+      vulnerabilityDiversity = false,
+      mappaLevel = MappaLevel.NA
     )
     val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
@@ -60,6 +68,7 @@ class LetterToPrisonContextFactoryTest {
     val recallDescription = RecallDescription(FIXED, recallLength)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
+    every { createdByUserDetails.fullName() } returns FullName("Casey Caseworker")
     every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(recall.lastReleasePrison!!) } returns lastReleasePrisonName
     every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
@@ -71,13 +80,24 @@ class LetterToPrisonContextFactoryTest {
       result,
       equalTo(
         LetterToPrisonContext(
-          recall,
           FullName("Barrie Badger"),
           currentPrisonName,
           lastReleasePrisonName,
           recallDescription,
-          createdByUserDetails,
-          LocalDate.now()
+          "ABC123",
+          LocalDate.now(),
+          FullName("Casey Caseworker"),
+          LocalDate.now(),
+          NomsNumber("AA1234A"),
+          false,
+          NomsNumber("AA1234A"),
+          false,
+          null,
+          false,
+          null,
+          false,
+          null,
+          MappaLevel.NA
         )
       )
     )
@@ -97,6 +117,13 @@ class LetterToPrisonContextFactoryTest {
       lastReleasePrison = PrisonId("BOB"),
       licenceNameCategory = NameFormatCategory.FIRST_LAST,
       recallLength = recallLength,
+      bookingNumber = "ABC123",
+      lastReleaseDate = LocalDate.now(),
+      differentNomsNumber = false,
+      additionalLicenceConditions = false,
+      contraband = false,
+      vulnerabilityDiversity = false,
+      mappaLevel = MappaLevel.NA
     )
     val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
@@ -106,6 +133,7 @@ class LetterToPrisonContextFactoryTest {
     val originalCreatedDateTime = OffsetDateTime.now().minusDays(4)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
+    every { createdByUserDetails.fullName() } returns FullName("Casey Caseworker")
     every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(recall.lastReleasePrison!!) } returns lastReleasePrisonName
     every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
@@ -118,13 +146,24 @@ class LetterToPrisonContextFactoryTest {
       result,
       equalTo(
         LetterToPrisonContext(
-          recall,
           FullName("Barrie Badger"),
           currentPrisonName,
           lastReleasePrisonName,
           recallDescription,
-          createdByUserDetails,
-          originalCreatedDateTime.toLocalDate()
+          "ABC123",
+          LocalDate.now(),
+          FullName("Casey Caseworker"),
+          originalCreatedDateTime.toLocalDate(),
+          NomsNumber("AA1234A"),
+          false,
+          NomsNumber("AA1234A"),
+          false,
+          null,
+          false,
+          null,
+          false,
+          null,
+          MappaLevel.NA
         )
       )
     )

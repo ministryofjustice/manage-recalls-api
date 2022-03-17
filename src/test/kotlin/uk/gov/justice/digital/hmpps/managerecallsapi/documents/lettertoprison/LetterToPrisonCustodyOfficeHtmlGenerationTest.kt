@@ -7,24 +7,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MappaLevel
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
-import java.time.OffsetDateTime
 
 class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
   HtmlGenerationTestCase() {
@@ -35,45 +23,23 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
     val recallLength = RecallLength.FOURTEEN_DAYS
     approver.assertApproved(
       underTest.generateHtml(
-        LetterToPrisonContext(
-          Recall(
-            ::RecallId.random(),
-            NomsNumber("AA1234A"),
-            ::UserId.random(),
-            OffsetDateTime.now(),
-            FirstName("Barrie"),
-            null,
-            LastName("Badger"),
-            CroNumber("ABC/1234A"),
-            LocalDate.of(1999, 12, 1),
-            additionalLicenceConditions = true,
-            additionalLicenceConditionsDetail = "Blah blah blah",
-            bookingNumber = "B1234",
-            confirmedRecallType = RecallType.FIXED,
-            contraband = true,
-            contrabandDetail = "Because...",
-            differentNomsNumber = true,
-            differentNomsNumberDetail = "ABC1234F",
-            mappaLevel = MappaLevel.LEVEL_2,
-            recallLength = recallLength,
-            vulnerabilityDiversity = true,
-            vulnerabilityDiversityDetail = "Yes, yadda yadda",
-          ),
+        LetterToPrisonCustodyContext(
           FullName("Billie Badger"),
           PrisonName("Prison A"),
-          PrisonName("Prison B"),
           RecallDescription(RecallType.FIXED, recallLength),
-          UserDetails(
-            ::UserId.random(),
-            FirstName("Mandy"),
-            LastName("Pandy"),
-            "",
-            Email("mandy@pandy.com"),
-            PhoneNumber("09876543210"),
-            CaseworkerBand.FOUR_PLUS,
-            OffsetDateTime.now()
-          ),
-          LocalDate.of(2021, 10, 4)
+          "B1234",
+          FullName("Mandy Pandy"),
+          LocalDate.of(2021, 10, 4),
+          NomsNumber("ABC1234F"),
+          true,
+          NomsNumber("AA1234A"),
+          true,
+          "Blah blah blah",
+          true,
+          "Because...",
+          true,
+          "Yes, yadda yadda",
+          MappaLevel.LEVEL_2,
         )
       )
     )
@@ -84,45 +50,23 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
     approver.assertApproved(
       underTest.generateHtml(
-        LetterToPrisonContext(
-          Recall(
-            ::RecallId.random(),
-            NomsNumber("AA1234A"),
-            ::UserId.random(),
-            OffsetDateTime.now(),
-            FirstName("Barrie"),
-            null,
-            LastName("Badger"),
-            CroNumber("ABC/1234A"),
-            LocalDate.of(1999, 12, 1),
-            additionalLicenceConditions = true,
-            additionalLicenceConditionsDetail = "Blah blah blah",
-            bookingNumber = "B1234",
-            confirmedRecallType = RecallType.FIXED,
-            contraband = true,
-            contrabandDetail = "Because...",
-            differentNomsNumber = true,
-            differentNomsNumberDetail = "ABC1234F",
-            mappaLevel = MappaLevel.LEVEL_2,
-            recallLength = recallLength,
-            vulnerabilityDiversity = true,
-            vulnerabilityDiversityDetail = "Yes, yadda yadda",
-          ),
+        LetterToPrisonCustodyContext(
           FullName("Billie Badger"),
           PrisonName("Prison A"),
-          PrisonName("Prison B"),
           RecallDescription(RecallType.FIXED, recallLength),
-          UserDetails(
-            ::UserId.random(),
-            FirstName("Mandy"),
-            LastName("Pandy"),
-            "",
-            Email("mandy@pandy.com"),
-            PhoneNumber("09876543210"),
-            CaseworkerBand.FOUR_PLUS,
-            OffsetDateTime.now()
-          ),
-          LocalDate.of(2021, 10, 4)
+          "B1234",
+          FullName("Mandy Pandy"),
+          LocalDate.of(2021, 10, 4),
+          NomsNumber("ABC1234F"),
+          true,
+          NomsNumber("AA1234A"),
+          true,
+          "Blah blah blah",
+          true,
+          "Because...",
+          true,
+          "Yes, yadda yadda",
+          MappaLevel.LEVEL_2,
         )
       )
     )
@@ -133,44 +77,49 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
     val recallLength = RecallLength.FOURTEEN_DAYS
     approver.assertApproved(
       underTest.generateHtml(
-        LetterToPrisonContext(
-          Recall(
-            ::RecallId.random(),
-            NomsNumber("AA1234A"),
-            ::UserId.random(),
-            OffsetDateTime.now(),
-            FirstName("Barrie"),
-            null,
-            LastName("Badger"),
-            CroNumber("ABC/1234A"),
-            LocalDate.of(1999, 12, 1),
-            additionalLicenceConditions = false,
-            bookingNumber = "B1234",
-            confirmedRecallType = RecallType.FIXED,
-            contraband = true,
-            contrabandDetail = "Because...",
-            differentNomsNumber = true,
-            differentNomsNumberDetail = "ABC1234F",
-            mappaLevel = MappaLevel.LEVEL_2,
-            recallLength = recallLength,
-            vulnerabilityDiversity = true,
-            vulnerabilityDiversityDetail = "Yes, yadda yadda"
-          ),
+        LetterToPrisonCustodyContext(
           FullName("Billie Badger"),
           PrisonName("Prison A"),
-          PrisonName("Prison B"),
           RecallDescription(RecallType.FIXED, recallLength),
-          UserDetails(
-            ::UserId.random(),
-            FirstName("Mandy"),
-            LastName("Pandy"),
-            "",
-            Email("mandy@pandy.com"),
-            PhoneNumber("09876543210"),
-            CaseworkerBand.FOUR_PLUS,
-            OffsetDateTime.now()
-          ),
-          LocalDate.of(2021, 10, 4)
+          "B1234",
+          FullName("Mandy Pandy"),
+          LocalDate.of(2021, 10, 4),
+          NomsNumber("ABC1234F"),
+          true,
+          NomsNumber("AA1234A"),
+          false,
+          null,
+          true,
+          "Because...",
+          true,
+          "Yes, yadda yadda",
+          MappaLevel.LEVEL_2,
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `generate fully populated HTML Standard recall`(approver: ContentApprover) {
+    approver.assertApproved(
+      underTest.generateHtml(
+        LetterToPrisonCustodyContext(
+          FullName("Billie Badger"),
+          PrisonName("Prison A"),
+          RecallDescription(RecallType.STANDARD, null),
+          "B1234",
+          FullName("Mandy Pandy"),
+          LocalDate.of(2021, 10, 4),
+          NomsNumber("ABC1234F"),
+          true,
+          NomsNumber("AA1234A"),
+          true,
+          "Blah blah blah",
+          true,
+          "Because...",
+          true,
+          "Yes, yadda yadda",
+          MappaLevel.LEVEL_2,
         )
       )
     )
