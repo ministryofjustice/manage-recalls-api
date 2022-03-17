@@ -415,31 +415,8 @@ class RecallServiceTest {
     )
     every { recallRepository.save(recall, currentUserId) } returns recall
 
-    val assignedRecall = underTest.unassignRecall(recallId, assignee, currentUserId)
+    val assignedRecall = underTest.unassignRecall(recallId, ::UserId.random(), currentUserId)
     assertThat(assignedRecall, equalTo(recall))
-  }
-
-  @Test
-  fun `can't unassign a recall when assignee doesnt match`() {
-    val assignee = ::UserId.random()
-    val otherAssignee = ::UserId.random()
-    val nomsNumber = randomNoms()
-    val createdByUserId = ::UserId.random()
-
-    every { recallRepository.getByRecallId(recallId) } returns Recall(
-      recallId,
-      nomsNumber,
-      createdByUserId,
-      OffsetDateTime.now(),
-      FirstName("Barrie"),
-      null,
-      LastName("Badger"),
-      CroNumber("ABC/1234A"),
-      LocalDate.of(1999, 12, 1),
-      assignee = assignee
-    )
-
-    assertThrows<NotFoundException> { underTest.unassignRecall(recallId, otherAssignee, currentUserId) }
   }
 
   @Test
@@ -555,7 +532,7 @@ class RecallServiceTest {
   @Test
   fun `updating recallType to FIXED also updates the recallLength when sentencing info is set`() {
     val recallType = FIXED
-    val recallWithSentencingInfo = existingRecall.copy(recommendedRecallType = RecallType.STANDARD, sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), CourtId("ABC"), "Some offence", SentenceLength(1, 0, 0)))
+    val recallWithSentencingInfo = existingRecall.copy(recommendedRecallType = STANDARD, sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), CourtId("ABC"), "Some offence", SentenceLength(1, 0, 0)))
     val updatedRecall = recallWithSentencingInfo.copy(recommendedRecallType = recallType, recallLength = TWENTY_EIGHT_DAYS)
 
     every { recallRepository.getByRecallId(recallId) } returns recallWithSentencingInfo
@@ -572,7 +549,7 @@ class RecallServiceTest {
 
   @Test
   fun `updating recallType to STANDARD also clears the recallLength when sentencing info is set`() {
-    val recallType = RecallType.STANDARD
+    val recallType = STANDARD
     val recallWithSentencingInfo = existingRecall.copy(recommendedRecallType = FIXED, recallLength = TWENTY_EIGHT_DAYS, sentencingInfo = SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), CourtId("ABC"), "Some offence", SentenceLength(1, 0, 0)))
     val updatedRecall = recallWithSentencingInfo.copy(recommendedRecallType = recallType, recallLength = null)
 
