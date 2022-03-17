@@ -11,7 +11,7 @@ class ReasonsForRecallGenerator(
 ) {
   fun generateHtml(reasonsForRecallContext: ReasonsForRecallContext): String =
     Context().apply {
-      setVariable("fullName", reasonsForRecallContext.prisonerNameOnLicense)
+      setVariable("fullName", reasonsForRecallContext.prisonerNameOnLicence)
       setVariable("bookingNumber", reasonsForRecallContext.bookingNumber)
       setVariable("nomsNumber", reasonsForRecallContext.nomsNumber)
       setVariable("licenceConditionsBreached", reasonsForRecallContext.licenceConditionsBreached)

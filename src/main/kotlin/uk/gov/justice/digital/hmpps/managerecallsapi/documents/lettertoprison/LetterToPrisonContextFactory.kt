@@ -36,7 +36,7 @@ class LetterToPrisonContextFactory(
 
 data class LetterToPrisonContext(
   val recall: Recall,
-  val prisonerNameOnLicense: FullName,
+  val prisonerNameOnLicence: FullName,
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
   val recallDescription: RecallDescription,

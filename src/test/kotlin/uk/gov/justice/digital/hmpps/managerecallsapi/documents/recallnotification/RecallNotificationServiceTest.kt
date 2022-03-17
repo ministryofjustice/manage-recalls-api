@@ -31,7 +31,7 @@ internal class RecallNotificationServiceTest {
   private val recallNotificationContextFactory = mockk<RecallNotificationContextFactory>()
   private val revocationOrderService = mockk<RevocationOrderService>()
   private val recallSummaryService = mockk<RecallSummaryService>()
-  private val letterToProbationService = mockk<LetterToProbationService>()
+  private val recallNotificationLetterToProbationService = mockk<RecallNotificationLetterToProbationService>()
   private val offenderNotificationService = mockk<OffenderNotificationService>()
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val documentService = mockk<DocumentService>()
@@ -40,7 +40,7 @@ internal class RecallNotificationServiceTest {
     recallNotificationContextFactory,
     revocationOrderService,
     recallSummaryService,
-    letterToProbationService,
+    recallNotificationLetterToProbationService,
     offenderNotificationService,
     pdfDocumentGenerationService,
     documentService
@@ -70,7 +70,7 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContext.recall } returns recall
     every { recall.inCustodyRecall() } returns true
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
-    every { letterToProbationService.generatePdf(letterToProbationContext) } returns Mono.just(letterToProbationContent.toByteArray())
+    every { recallNotificationLetterToProbationService.generatePdf(letterToProbationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { recallSummaryService.generatePdf(recallSummaryContext) } returns Mono.just(recallSummaryContent.toByteArray())
     every { revocationOrderService.getOrGeneratePdf(revocationOrderContext) } returns Mono.just(revocationOrderContent.toByteArray())
 
@@ -138,7 +138,7 @@ internal class RecallNotificationServiceTest {
     every { recallNotificationContext.recall } returns recall
     every { recall.inCustodyRecall() } returns false
     every { recallNotificationContextFactory.createContext(recallId, createdByUserId) } returns recallNotificationContext
-    every { letterToProbationService.generatePdf(letterToProbationContext) } returns Mono.just(letterToProbationContent.toByteArray())
+    every { recallNotificationLetterToProbationService.generatePdf(letterToProbationContext) } returns Mono.just(letterToProbationContent.toByteArray())
     every { offenderNotificationService.generatePdf(offenderNotificationContext) } returns Mono.just(offenderNotificationContent.toByteArray())
     every { recallSummaryService.generatePdf(recallSummaryContext) } returns Mono.just(recallSummaryContent.toByteArray())
     every { revocationOrderService.getOrGeneratePdf(revocationOrderContext) } returns Mono.just(revocationOrderContent.toByteArray())

@@ -62,7 +62,7 @@ data class DossierContext(
 
 data class TableOfContentsItem(val title: String, val pageNumber: Int)
 data class TableOfContentsContext(
-  val prisonerNameOnLicense: FullName,
+  val prisonerNameOnLicence: FullName,
   val recallDescription: RecallDescription,
   val currentPrisonName: PrisonName,
   val bookingNumber: String,
@@ -70,7 +70,7 @@ data class TableOfContentsContext(
 )
 
 data class ReasonsForRecallContext(
-  val prisonerNameOnLicense: FullName,
+  val prisonerNameOnLicence: FullName,
   val bookingNumber: String,
   val nomsNumber: NomsNumber,
   val licenceConditionsBreached: String,

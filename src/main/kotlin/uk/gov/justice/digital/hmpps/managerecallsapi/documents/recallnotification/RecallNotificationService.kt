@@ -19,7 +19,7 @@ class RecallNotificationService(
   @Autowired private val recallNotificationContextFactory: RecallNotificationContextFactory,
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val recallSummaryService: RecallSummaryService,
-  @Autowired private val letterToProbationService: LetterToProbationService,
+  @Autowired private val recallNotificationLetterToProbationService: RecallNotificationLetterToProbationService,
   @Autowired private val offenderNotificationService: OffenderNotificationService,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val documentService: DocumentService,
@@ -32,7 +32,7 @@ class RecallNotificationService(
       { recallSummaryService.generatePdf(recallNotificationContext.getRecallSummaryContext()) },
       { revocationOrderService.getOrGeneratePdf(recallNotificationContext.getRevocationOrderContext()) }
     ).plus(getNotInCustodyDocumentGenerators(recallNotificationContext))
-      .plus { letterToProbationService.generatePdf(recallNotificationContext.getLetterToProbationContext()) }
+      .plus { recallNotificationLetterToProbationService.generatePdf(recallNotificationContext.getLetterToProbationContext()) }
       .toTypedArray()
 
     val documentGenerators: Flux<() -> Mono<ByteArray>> = Flux.just(*documentGeneratorList)

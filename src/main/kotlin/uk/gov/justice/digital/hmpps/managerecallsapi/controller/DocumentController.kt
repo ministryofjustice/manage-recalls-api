@@ -31,6 +31,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.DOSSIER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PROBATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REASONS_FOR_RECALL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
@@ -40,6 +41,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64Str
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.lettertoprison.LetterToPrisonService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RecallNotificationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.recallnotification.RevocationOrderService
+import uk.gov.justice.digital.hmpps.managerecallsapi.documents.returnedtocustodylettertoprobation.ReturnedToCustodyLetterToProbationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -63,6 +65,7 @@ class DocumentController(
   @Autowired private val letterToPrisonService: LetterToPrisonService,
   @Autowired private val revocationOrderService: RevocationOrderService,
   @Autowired private val reasonsForRecallService: ReasonsForRecallService,
+  @Autowired private val returnedToCustodyLetterToProbationService: ReturnedToCustodyLetterToProbationService,
   @Autowired private val tokenExtractor: TokenExtractor,
   @Autowired private val userDetailsService: UserDetailsService,
   @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
@@ -168,6 +171,7 @@ class DocumentController(
       REASONS_FOR_RECALL -> reasonsForRecallService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
       DOSSIER -> dossierService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
       LETTER_TO_PRISON -> letterToPrisonService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
+      LETTER_TO_PROBATION -> returnedToCustodyLetterToProbationService.generateAndStorePdf(recallId, currentUserUuid, generateDocumentRequest.fileName, generateDocumentRequest.details)
       else -> throw WrongDocumentTypeException(generateDocumentRequest.category)
     }
   }

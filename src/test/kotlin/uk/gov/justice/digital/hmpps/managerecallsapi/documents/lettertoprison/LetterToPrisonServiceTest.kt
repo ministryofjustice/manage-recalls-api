@@ -55,7 +55,7 @@ internal class LetterToPrisonServiceTest {
     val letterBytes = "letter bytes".toByteArray()
     val documentId = ::DocumentId.random()
     val custodyOfficeBytes = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
-    val fileName = FileName("LETTER_TO_PRISON.pdf")
+    val fileName = FileName("BADGER BARRIE LETTER TO PRISON.pdf")
 
     every { letterToPrisonContextFactory.createContext(recallId, currentUserId) } returns context
     every { letterToPrisonConfirmationGenerator.generateHtml(context) } returns ltpConfirmationHtml

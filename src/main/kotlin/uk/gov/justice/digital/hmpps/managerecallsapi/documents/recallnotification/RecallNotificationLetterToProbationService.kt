@@ -8,13 +8,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenera
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 
 @Service
-class LetterToProbationService(
-  @Autowired private val letterToProbationGenerator: LetterToProbationGenerator,
+class RecallNotificationLetterToProbationService(
+  @Autowired private val recallNotificationLetterToProbationGenerator: RecallNotificationLetterToProbationGenerator,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
 ) {
   fun generatePdf(context: LetterToProbationContext): Mono<ByteArray> =
     pdfDocumentGenerationService.generatePdf(
-      letterToProbationGenerator.generateHtml(context),
+      recallNotificationLetterToProbationGenerator.generateHtml(context),
       recallImage(HmppsLogo)
     )
 }

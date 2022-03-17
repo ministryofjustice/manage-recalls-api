@@ -36,7 +36,7 @@ class PdfDecorator {
     pdfContent: ByteArray,
     numberOfPagesToSkip: Int = 0,
     shouldCountAllPages: Boolean = true,
-    headerText: String?,
+    headerText: String? = null,
     firstHeaderPage: Int = 1,
     footerText: String?,
     firstFooterPage: Int = 1
@@ -58,7 +58,7 @@ class PdfDecorator {
             )
           }
           if (pageNumber >= firstHeaderPage) {
-            headerText.let { header ->
+            headerText?.let { header ->
               val headerPhrase = Phrase("$header", Liberation.SERIF.create(10))
               val xRightPos: Float = pdfReader.getPageSize(pageNumber).width - 20f
               val yPosHeader: Float = pdfReader.getPageSize(pageNumber).getTop(20f)
@@ -69,7 +69,7 @@ class PdfDecorator {
             }
           }
           if (pageNumber >= firstFooterPage) {
-            footerText.let { footer ->
+            footerText?.let { footer ->
               val xCentralPos: Float = pdfReader.getPageSize(pageNumber).width / 2
               val footerPhrase = Phrase(footer, Liberation.SERIF_BOLD.create(10))
               val yPosFooter: Float = pdfReader.getPageSize(pageNumber).getBottom(30f)
