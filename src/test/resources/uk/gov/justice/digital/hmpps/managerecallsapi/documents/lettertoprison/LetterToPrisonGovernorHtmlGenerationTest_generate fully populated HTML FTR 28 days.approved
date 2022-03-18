@@ -260,6 +260,8 @@ text-indent:-.1pt'>&nbsp;</p>
 
   <p class=MsoNormal style='margin-left:0cm;text-indent:-.1pt'><span style='text-decoration:none'>&nbsp;</span></p>
 
+
+
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><b><u>DOCUMENTS</u></b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span style='text-decoration:none'>&nbsp;</span></p>
@@ -267,14 +269,14 @@ text-indent:-.1pt'>&nbsp;</p>
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 line-height:normal'><span dir=LTR></span>The following documents are enclosed:</p>
 
+<div>
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 line-height:normal;border:none'><span style='font-family:"Noto Sans Symbols";
 color:black'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;</span></span><span dir=LTR></span>
     <span style='color:black'>Part 1 – Confirmation of Representations against recall document</span></p>
+</div>
 
-  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
-line-height:normal;border:none'><span style='font-family:"Noto Sans Symbols";
-color:black'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;</span></span><span dir=LTR></span>
+  <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt; line-height:normal;border:none'><span style='font-family:"Noto Sans Symbols"; color:black'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;</span></span><span dir=LTR></span>
     <span style='color:black'>A copy of the Recall Dossier</span></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'><span style='text-decoration:none'>&nbsp;</span></p>
@@ -311,8 +313,10 @@ understands the contents and reason for recall.</span></p>
 line-height:normal'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
 </span><span dir=LTR></span>Inform the offender that they have been recalled
     under Section 254 of the Criminal Justice Act 2003, as amended, which means
-    that they will be released automatically at the end of <span>28</span>
-    days in custody, beginning on the date that they returned to custody. </p>
+    that they <span>will be released automatically at the end of <span>28</span>
+      days in custody, beginning on the date that they returned to custody. </span>
+
+  </p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 line-height:normal'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;
@@ -328,8 +332,11 @@ line-height:normal'>●<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&n
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt'>
     <span dir=LTR></span>The offender should be asked whether they wish
     to make written representations and if they wish to do so they should then be
-    asked to sign the form at Part 1.  <b>If the offender wishes to make
-      representations, Part 1 <i>must</i> be returned to the Public Protection
+    asked to sign the form at Part 1.
+
+    <b>
+      <span>If the offender wishes to make
+      representations,</span> Part 1 <i>must</i> be returned to the Public Protection
       Casework Section, Public Protection Group within
     <u>
       
@@ -361,7 +368,10 @@ line-height:normal'>&nbsp;</p>
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 line-height:normal'><span dir=LTR></span><b>Any representations must be scanned and e-mailed
     to the Public Protection Casework Section, Public Protection Group, no later
-    than <span>28</span> calendar days from the date the offender returned to custody.</b></p>
+    than
+<span><span>28</span> calendar </span>
+
+    days from the date the offender returned to custody.</b></p>
 
   <p class=MsoNormal style='margin-left:0cm;text-align:justify;text-indent:-.1pt;
 line-height:normal;border:none'><span style='color:black'>&nbsp;</span></p>

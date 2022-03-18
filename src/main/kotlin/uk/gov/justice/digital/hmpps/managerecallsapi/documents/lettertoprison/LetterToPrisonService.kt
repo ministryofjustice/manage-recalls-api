@@ -24,6 +24,7 @@ class LetterToPrisonService(
   @Autowired private val letterToPrisonCustodyOfficeGenerator: LetterToPrisonCustodyOfficeGenerator,
   @Autowired private val letterToPrisonGovernorGenerator: LetterToPrisonGovernorGenerator,
   @Autowired private val letterToPrisonConfirmationGenerator: LetterToPrisonConfirmationGenerator,
+  @Autowired private val letterToPrisonStandardPartsGenerator: LetterToPrisonStandardPartsGenerator,
   @Autowired private val pdfDocumentGenerationService: PdfDocumentGenerationService,
   @Autowired private val pdfDecorator: PdfDecorator,
 ) {
@@ -37,11 +38,13 @@ class LetterToPrisonService(
     val context = letterToPrisonContextFactory.createContext(recallId, currentUserId)
     var letterToPrisonCustodyOfficePageCount = 0
 
-    val documentGenerators = Flux.just(
+    val documentGeneratorList: Array<() -> Mono<ByteArray>> = listOf(
       generateLetterToPrisonCustodyOffice(context),
       generateLetterToPrisonGovernor(context),
-      generateLetterToPrisonConfirmation(context)
-    )
+    ).plus(getRecallTypeSpecificDocumentGenerators(context))
+      .toTypedArray()
+
+    val documentGenerators: Flux<() -> Mono<ByteArray>> = Flux.just(*documentGeneratorList)
     return documentGenerators
       .flatMapSequential { it() }
       .map { documentData(it) }
@@ -66,21 +69,50 @@ class LetterToPrisonService(
       }
   }
 
+  private fun getRecallTypeSpecificDocumentGenerators(context: LetterToPrisonContext): List<() -> Mono<ByteArray>> =
+    if (context.recallDescription.isFixedTermRecall()) {
+      listOf(generateLetterToPrisonConfirmation(context))
+    } else {
+      listOf(
+        generateLetterToPrisonStandardPart1(context),
+        generateLetterToPrisonStandardPart2(context),
+        generateLetterToPrisonStandardPart3(context),
+      )
+    }
+
+  private fun generateLetterToPrisonStandardPart1(context: LetterToPrisonContext): () -> Mono<ByteArray> =
+    {
+      val letterToPrisonConfirmationHtml = letterToPrisonStandardPartsGenerator.generatePart1Html(context.getStandardPartsContext())
+      pdfDocumentGenerationService.generatePdf(letterToPrisonConfirmationHtml)
+    }
+
+  private fun generateLetterToPrisonStandardPart2(context: LetterToPrisonContext): () -> Mono<ByteArray> =
+    {
+      val letterToPrisonConfirmationHtml = letterToPrisonStandardPartsGenerator.generatePart2Html(context.getStandardPartsContext())
+      pdfDocumentGenerationService.generatePdf(letterToPrisonConfirmationHtml)
+    }
+
+  private fun generateLetterToPrisonStandardPart3(context: LetterToPrisonContext): () -> Mono<ByteArray> =
+    {
+      val letterToPrisonConfirmationHtml = letterToPrisonStandardPartsGenerator.generatePart3Html(context.getStandardPartsContext())
+      pdfDocumentGenerationService.generatePdf(letterToPrisonConfirmationHtml)
+    }
+
   private fun generateLetterToPrisonConfirmation(context: LetterToPrisonContext): () -> Mono<ByteArray> =
     {
-      val letterToPrisonConfirmationHtml = letterToPrisonConfirmationGenerator.generateHtml(context)
+      val letterToPrisonConfirmationHtml = letterToPrisonConfirmationGenerator.generateHtml(context.getConfirmationContext())
       pdfDocumentGenerationService.generatePdf(letterToPrisonConfirmationHtml)
     }
 
   private fun generateLetterToPrisonGovernor(context: LetterToPrisonContext): () -> Mono<ByteArray> =
     {
-      val letterToPrisonGovernorHtml = letterToPrisonGovernorGenerator.generateHtml(context)
+      val letterToPrisonGovernorHtml = letterToPrisonGovernorGenerator.generateHtml(context.getGovernorContext())
       pdfDocumentGenerationService.generatePdf(letterToPrisonGovernorHtml, 1.0, 0.8, recallImage(HmppsLogo))
     }
 
   private fun generateLetterToPrisonCustodyOffice(context: LetterToPrisonContext): () -> Mono<ByteArray> =
     {
-      val letterToPrisonCustodyOfficeHtml = letterToPrisonCustodyOfficeGenerator.generateHtml(context)
+      val letterToPrisonCustodyOfficeHtml = letterToPrisonCustodyOfficeGenerator.generateHtml(context.getCustodyContext())
       pdfDocumentGenerationService.generatePdf(letterToPrisonCustodyOfficeHtml, 1.0, 0.8, recallImage(HmppsLogo))
     }
 }

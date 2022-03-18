@@ -6,7 +6,6 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RECALL_TEAM_CONTACT_NUMBER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RECALL_TEAM_NAME
-import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.asStandardDateFormat
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.shouldShowOnDocuments
@@ -15,7 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.shouldShowOnDocum
 class LetterToPrisonCustodyOfficeGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
-  fun generateHtml(context: LetterToPrisonContext): String =
+  fun generateHtml(context: LetterToPrisonCustodyOfficeContext): String =
     Context().apply {
 
       setVariable("logoFileName", HmppsLogo.fileName)
@@ -25,26 +24,27 @@ class LetterToPrisonCustodyOfficeGenerator(
 
       setVariable("fullName", context.prisonerNameOnLicence)
 
-      with(context.recall) {
-        val recallDescription = RecallDescription(this.recallType(), this.recallLength)
-        setVariable("recallLengthDescription", recallDescription.asTitle())
-        setVariable("recallLengthDays", recallDescription.numberOfDays())
-        setVariable("bookingNumber", this.bookingNumber)
-        setVariable("nomisNumberHeldUnder", if (this.differentNomsNumber!!) this.differentNomsNumberDetail else this.nomsNumber.value)
-        setVariable("differentNomsNumber", this.differentNomsNumber)
-        setVariable("originalNomisNumber", this.nomsNumber.value)
-        setVariable("hasAdditionalLicenceConditions", this.additionalLicenceConditions)
-        setVariable("additionalLicenceConditionsDetail", this.additionalLicenceConditionsDetail)
-        setVariable("hasContraband", this.contraband!!)
-        setVariable("contrabandDetail", this.contrabandDetail)
-        setVariable("hasVulnerabilities", this.vulnerabilityDiversity!!)
-        setVariable("vulnerabilityDiversityDetail", this.vulnerabilityDiversityDetail)
-        setVariable("hasMappaLevel", this.mappaLevel!!.shouldShowOnDocuments())
-        setVariable("mappaLevel", this.mappaLevel.label)
+      setVariable("isFixedTermRecall", context.recallDescription.isFixedTermRecall())
+      setVariable("recallTitle", context.recallDescription.asTitle())
+      setVariable("recallTypeWithoutLength", context.recallDescription.typeWithoutLength())
+      if (context.recallDescription.isFixedTermRecall()) {
+        setVariable("recallLengthDays", context.recallDescription.numberOfDays())
       }
+      setVariable("bookingNumber", context.bookingNumber)
+      setVariable("nomsNumberHeldUnder", context.nomsNumberHeldUnder)
+      setVariable("differentNomsNumber", context.differentNomsNumber)
+      setVariable("originalNomsNumber", context.originalNomsNumber)
+      setVariable("hasAdditionalLicenceConditions", context.hasAdditionalLicenceConditions)
+      setVariable("additionalLicenceConditionsDetail", context.additionalLicenceConditionsDetail)
+      setVariable("hasContraband", context.hasContraband)
+      setVariable("contrabandDetail", context.contrabandDetail)
+      setVariable("hasVulnerabilities", context.hasVulnerabilities)
+      setVariable("vulnerabilityDiversityDetail", context.vulnerabilityDetail)
+      setVariable("hasMappaLevel", context.mappaLevel.shouldShowOnDocuments())
+      setVariable("mappaLevel", context.mappaLevel.label)
 
       setVariable("currentEstablishment", context.currentPrisonName)
-      setVariable("signatoryName", context.currentUser.fullName())
+      setVariable("signatoryName", context.currentUserName)
     }.let {
       templateEngine.process("letter-to-prison_custody-office", it)
     }

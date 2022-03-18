@@ -365,6 +365,8 @@ data class Recall(
     } else {
       Status.BEING_BOOKED_ON
     }
+
+  fun nomsNumberHeldUnder(): NomsNumber = if (differentNomsNumber!!) NomsNumber(differentNomsNumberDetail!!) else nomsNumber
 }
 
 @Embeddable

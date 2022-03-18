@@ -9,7 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClie
 @Service
 class PrisonLookupService(@Autowired private val prisonRegisterClient: PrisonRegisterClient) {
 
-  private val welshPrisonsByCode = setOf<PrisonId>(
+  private val welshPrisonsByCode = setOf(
     PrisonId("BWI"),
     PrisonId("CFI"),
     PrisonId("PRI"),

@@ -25,13 +25,12 @@ class ReturnedToCustodyLetterToProbationContextFactory(
     val currentUserName = userDetailsService.get(currentUserId).fullName()
     val recallDescription = RecallDescription(recall.recallType(), recall.recallLength)
     val originalCreatedDate = documentRepository.findByRecallIdAndCategoryAndVersion(recall.id, DocumentCategory.LETTER_TO_PROBATION, 1)?.createdDateTime?.toLocalDate() ?: LocalDate.now()
-    val nomsNumberHeldUnder = if (recall.differentNomsNumber!!) NomsNumber(recall.differentNomsNumberDetail!!) else recall.nomsNumber
     val partBDueDate = recall.partBDueDate
     return ReturnedToCustodyLetterToProbationContext(
       recallDescription,
       recall.bookingNumber!!,
-      nomsNumberHeldUnder,
-      recall.differentNomsNumber,
+      recall.nomsNumberHeldUnder(),
+      recall.differentNomsNumber!!,
       recall.nomsNumber,
       recall.probationInfo!!.probationOfficerName,
       recall.prisonerNameOnLicence(),

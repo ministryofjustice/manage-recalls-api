@@ -14,33 +14,20 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PRISON
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.ImageData.Companion.recallImage
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDecorator
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PdfDocumentGenerationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
-import java.time.LocalDate
-import java.time.OffsetDateTime
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -50,10 +37,10 @@ internal class LetterToPrisonServiceParameterizedTest {
   private val pdfDocumentGenerationService = mockk<PdfDocumentGenerationService>()
   private val letterToPrisonContextFactory = mockk<LetterToPrisonContextFactory>()
   private val documentService = mockk<DocumentService>()
-  private val recallRepository = mockk<RecallRepository>()
   private val letterToPrisonCustodyOfficeGenerator = mockk<LetterToPrisonCustodyOfficeGenerator>()
   private val letterToPrisonGovernorGenerator = mockk<LetterToPrisonGovernorGenerator>()
   private val letterToPrisonConfirmationGenerator = mockk<LetterToPrisonConfirmationGenerator>()
+  private val letterToPrisonStandardPartsGenerator = mockk<LetterToPrisonStandardPartsGenerator>()
   private val pdfDecorator = mockk<PdfDecorator>()
 
   private val underTest = LetterToPrisonService(
@@ -62,6 +49,7 @@ internal class LetterToPrisonServiceParameterizedTest {
     letterToPrisonCustodyOfficeGenerator,
     letterToPrisonGovernorGenerator,
     letterToPrisonConfirmationGenerator,
+    letterToPrisonStandardPartsGenerator,
     pdfDocumentGenerationService,
     pdfDecorator
   )
@@ -81,38 +69,8 @@ internal class LetterToPrisonServiceParameterizedTest {
   @ParameterizedTest
   @MethodSource("letterToPrisonParameters")
   fun `generates a letter to prison for a recall `(recallLength: RecallLength, annexHeaderText: String) {
-    val aRecall = Recall(
-      recallId,
-      nomsNumber,
-      ::UserId.random(),
-      OffsetDateTime.now(),
-      FirstName("Barrie"),
-      null,
-      LastName("Badger"),
-      CroNumber("ABC/1234A"),
-      LocalDate.of(1999, 12, 1),
-      recallLength = recallLength
-    )
     val documentId = ::DocumentId.random()
-    val assessor = UserDetails(
-      ::UserId.random(),
-      FirstName("Mandy"),
-      LastName("Pandy"),
-      "",
-      Email("mandy@pandy.com"),
-      PhoneNumber("09876543210"),
-      CaseworkerBand.FOUR_PLUS,
-      OffsetDateTime.now()
-    )
-    val context = LetterToPrisonContext(
-      aRecall,
-      FullName("Billie Badger"),
-      PrisonName("A Prison"),
-      PrisonName("Prison B"),
-      RecallDescription(RecallType.FIXED, recallLength),
-      assessor,
-      LocalDate.now()
-    )
+    val context = mockk<LetterToPrisonContext>()
     val custodyOfficeHtml = "Some CO html, honest"
     val generatedHtml = "Some html, honest"
     val pdfWith3Pages = ClassPathResource("/document/3_pages_unnumbered.pdf").file.readBytes()
@@ -122,10 +80,13 @@ internal class LetterToPrisonServiceParameterizedTest {
     val fileName = FileName("LETTER_TO_PRISON.pdf")
 
     every { letterToPrisonContextFactory.createContext(recallId, createdByUserId) } returns context
-    every { recallRepository.getByRecallId(recallId) } returns aRecall
-    every { letterToPrisonCustodyOfficeGenerator.generateHtml(context) } returns custodyOfficeHtml
-    every { letterToPrisonGovernorGenerator.generateHtml(context) } returns generatedHtml
-    every { letterToPrisonConfirmationGenerator.generateHtml(context) } returns generatedHtml
+    every { context.recallDescription } returns RecallDescription(RecallType.FIXED, recallLength)
+    every { context.getCustodyContext() } returns mockk()
+    every { context.getGovernorContext() } returns mockk()
+    every { context.getConfirmationContext() } returns mockk()
+    every { letterToPrisonCustodyOfficeGenerator.generateHtml(context.getCustodyContext()) } returns custodyOfficeHtml
+    every { letterToPrisonGovernorGenerator.generateHtml(context.getGovernorContext()) } returns generatedHtml
+    every { letterToPrisonConfirmationGenerator.generateHtml(context.getConfirmationContext()) } returns generatedHtml
     every {
       pdfDocumentGenerationService.generatePdf(custodyOfficeHtml, 1.0, 0.8, recallImage(HmppsLogo))
     } returns Mono.just(pdfWith3Pages)

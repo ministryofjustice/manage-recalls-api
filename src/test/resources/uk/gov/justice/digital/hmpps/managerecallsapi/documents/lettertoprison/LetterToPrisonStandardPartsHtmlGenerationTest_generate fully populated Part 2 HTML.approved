@@ -1,0 +1,1112 @@
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <style
+    type="text/css">@import url('https://themes.googleusercontent.com/fonts/css?kit=iMc4-4exjgqA-toZgqqJBf35jAjY-31lSKWZb9Fa77M');
+
+  .lst-kix_pnmh7whitv6-7 > li:before {
+    content: "o  "
+  }
+
+  .lst-kix_pnmh7whitv6-8 > li:before {
+    content: "\0025aa  "
+  }
+
+  .lst-kix_pnmh7whitv6-5 > li:before {
+    content: "\0025aa  "
+  }
+
+  .lst-kix_pnmh7whitv6-6 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_9bhkmat180vs-8 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-8
+  }
+
+  .lst-kix_fp2xi75y4bck-2 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-2
+  }
+
+  .lst-kix_lef8232oypvk-6 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-6
+  }
+
+  .lst-kix_9u48j05naszi-0 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-0
+  }
+
+  .lst-kix_vyk6mr5mgybu-2 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-2
+  }
+
+  .lst-kix_pnmh7whitv6-1 > li:before {
+    content: "o  "
+  }
+
+  .lst-kix_pnmh7whitv6-0 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_pnmh7whitv6-4 > li:before {
+    content: "o  "
+  }
+
+  .lst-kix_pnmh7whitv6-3 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_pnmh7whitv6-2 > li:before {
+    content: "\0025aa  "
+  }
+
+  .lst-kix_us542dvi88a2-2 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-2
+  }
+
+  .lst-kix_sdes54k3d1dz-7 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-7
+  }
+
+  .lst-kix_vyk6mr5mgybu-6 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-6
+  }
+
+  .lst-kix_9bhkmat180vs-4 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-4
+  }
+
+  .lst-kix_sdes54k3d1dz-0 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-0
+  }
+
+  .lst-kix_lef8232oypvk-2 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-2
+  }
+
+  .lst-kix_9u48j05naszi-4 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-4
+  }
+
+  .lst-kix_ado76rvptis3-0 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-0
+  }
+
+  .lst-kix_9u48j05naszi-7 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-7
+  }
+
+  .lst-kix_8mr05em9xgug-0 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-0, decimal) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-2 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-2, lower-roman) ". "
+  }
+
+  .lst-kix_ado76rvptis3-7 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-7
+  }
+
+  .lst-kix_sdes54k3d1dz-5 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-5, lower-roman) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-6 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-6, decimal) ". "
+  }
+
+  .lst-kix_sdes54k3d1dz-3 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-3, decimal) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-4 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-4, lower-latin) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-8 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-8, lower-roman) ". "
+  }
+
+  .lst-kix_9bhkmat180vs-1 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-1
+  }
+
+  .lst-kix_sdes54k3d1dz-1 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-1, lower-latin) ". "
+  }
+
+  .lst-kix_ado76rvptis3-8 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-8
+  }
+
+  .lst-kix_sdes54k3d1dz-3 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-3
+  }
+
+  .lst-kix_1d6hdcdeqvp0-7 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-7
+  }
+
+  .lst-kix_8mr05em9xgug-2 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-2
+  }
+
+  .lst-kix_fp2xi75y4bck-6 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-6
+  }
+
+  .lst-kix_sdes54k3d1dz-7 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-7, lower-latin) ". "
+  }
+
+  .lst-kix_lef8232oypvk-3 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-3
+  }
+
+  .lst-kix_8mr05em9xgug-1 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-1
+  }
+
+  .lst-kix_lef8232oypvk-1 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-1, decimal) ". "
+  }
+
+  .lst-kix_lef8232oypvk-5 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-5, lower-roman) ". "
+  }
+
+  .lst-kix_lef8232oypvk-3 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-3, decimal) ". "
+  }
+
+  .lst-kix_lef8232oypvk-7 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-7, lower-latin) ". "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-7 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-7, lower-latin) ". "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-5 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-5, lower-roman) ". "
+  }
+
+  .lst-kix_9bhkmat180vs-0 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-0
+  }
+
+  .lst-kix_1d6hdcdeqvp0-3 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-3, decimal) ". "
+  }
+
+  .lst-kix_sdes54k3d1dz-8 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-8
+  }
+
+  .lst-kix_1d6hdcdeqvp0-1 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-1, lower-latin) ". "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-0 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-0
+  }
+
+  .lst-kix_9bhkmat180vs-7 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-7
+  }
+
+  .lst-kix_vyk6mr5mgybu-3 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-3
+  }
+
+  .lst-kix_vyk6mr5mgybu-5 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-5
+  }
+
+  .lst-kix_fp2xi75y4bck-3 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-3
+  }
+
+  .lst-kix_us542dvi88a2-1 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-1, lower-latin) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-8 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-8
+  }
+
+  .lst-kix_us542dvi88a2-2 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-2, lower-roman) ". "
+  }
+
+  .lst-kix_ado76rvptis3-2 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-2, lower-roman) ". "
+  }
+
+  .lst-kix_ado76rvptis3-1 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-1, lower-latin) ". "
+  }
+
+  .lst-kix_us542dvi88a2-5 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-5, lower-roman) ". "
+  }
+
+  .lst-kix_us542dvi88a2-6 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-6, decimal) ". "
+  }
+
+  .lst-kix_ado76rvptis3-6 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-6, decimal) ". "
+  }
+
+  .lst-kix_ado76rvptis3-5 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-5, lower-roman) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-5 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-5
+  }
+
+  .lst-kix_ado76rvptis3-3 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-3
+  }
+
+  .lst-kix_vyk6mr5mgybu-8 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-8, lower-roman) ". "
+  }
+
+  .lst-kix_sdes54k3d1dz-4 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-4, lower-latin) ". "
+  }
+
+  .lst-kix_us542dvi88a2-5 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-5
+  }
+
+  .lst-kix_8mr05em9xgug-3 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-3, decimal) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-3 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-3
+  }
+
+  .lst-kix_sdes54k3d1dz-0 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-0, decimal) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-7 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-7, lower-latin) ". "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-4 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-4
+  }
+
+  .lst-kix_1d6hdcdeqvp0-8 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-8, lower-roman) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-5 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-5
+  }
+
+  .lst-kix_9u48j05naszi-1 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-1, lower-latin) ". "
+  }
+
+  .lst-kix_vyk6mr5mgybu-0 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-0, lower-latin) ". "
+  }
+
+  .lst-kix_9bhkmat180vs-2 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-2
+  }
+
+  .lst-kix_lef8232oypvk-0 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-0, decimal) ". "
+  }
+
+  .lst-kix_vyk6mr5mgybu-4 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-4, lower-latin) ". "
+  }
+
+  .lst-kix_lef8232oypvk-1 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-1
+  }
+
+  .lst-kix_sdes54k3d1dz-8 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-8, lower-roman) ". "
+  }
+
+  .lst-kix_lef8232oypvk-4 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-4, lower-latin) ". "
+  }
+
+  .lst-kix_9u48j05naszi-2 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-2
+  }
+
+  .lst-kix_lef8232oypvk-8 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-8, lower-roman) ". "
+  }
+
+  .lst-kix_ado76rvptis3-5 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-5
+  }
+
+  .lst-kix_9u48j05naszi-5 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-5, lower-roman) ". "
+  }
+
+  .lst-kix_9bhkmat180vs-0 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-0, decimal) ". "
+  }
+
+  .lst-kix_us542dvi88a2-0 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-0
+  }
+
+  .lst-kix_7p7yh5e27r3-2 > li:before {
+    content: "\0025a0  "
+  }
+
+  .lst-kix_7p7yh5e27r3-6 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_9bhkmat180vs-4 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-4, lower-latin) ". "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-4 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-4, lower-latin) ". "
+  }
+
+  .lst-kix_9bhkmat180vs-8 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-8, lower-roman) ". "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-0 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-0, decimal) ". "
+  }
+
+  .lst-kix_sdes54k3d1dz-5 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-5
+  }
+
+  .lst-kix_ado76rvptis3-2 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-2
+  }
+
+  .lst-kix_fp2xi75y4bck-7 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-7, lower-latin) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-8 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-8, lower-roman) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-0 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-0, lower-latin) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-1 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-1, lower-latin) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-6 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-6, decimal) ". "
+  }
+
+  .lst-kix_48hjtjsjhgku-8 > li:before {
+    content: "\0025aa  "
+  }
+
+  .lst-kix_fp2xi75y4bck-5 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-5, lower-roman) ". "
+  }
+
+  .lst-kix_lef8232oypvk-4 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-4
+  }
+
+  .lst-kix_fp2xi75y4bck-0 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-0
+  }
+
+  .lst-kix_fp2xi75y4bck-2 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-2, lower-roman) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-4 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-4, lower-latin) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-3 > li:before {
+    content: "" counter(lst-ctn-kix_fp2xi75y4bck-3, decimal) ". "
+  }
+
+  .lst-kix_48hjtjsjhgku-2 > li:before {
+    content: "\0025aa  "
+  }
+
+  .lst-kix_48hjtjsjhgku-0 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_48hjtjsjhgku-4 > li:before {
+    content: "o  "
+  }
+
+  .lst-kix_48hjtjsjhgku-1 > li:before {
+    content: "o  "
+  }
+
+  .lst-kix_48hjtjsjhgku-5 > li:before {
+    content: "\0025aa  "
+  }
+
+  .lst-kix_us542dvi88a2-7 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-7
+  }
+
+  .lst-kix_48hjtjsjhgku-6 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-2 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-2
+  }
+
+  .lst-kix_48hjtjsjhgku-7 > li:before {
+    content: "o  "
+  }
+
+  .lst-kix_8mr05em9xgug-0 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-0
+  }
+
+  .lst-kix_vyk6mr5mgybu-0 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-0
+  }
+
+  .lst-kix_48hjtjsjhgku-3 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_ado76rvptis3-6 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-6
+  }
+
+  .lst-kix_lef8232oypvk-8 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-8
+  }
+
+  .lst-kix_vyk6mr5mgybu-7 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-7, lower-latin) ". "
+  }
+
+  .lst-kix_fp2xi75y4bck-8 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-8
+  }
+
+  .lst-kix_1d6hdcdeqvp0-5 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-5
+  }
+
+  .lst-kix_9u48j05naszi-5 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-5
+  }
+
+  .lst-kix_us542dvi88a2-4 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-4
+  }
+
+  .lst-kix_vyk6mr5mgybu-8 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-8
+  }
+
+  .lst-kix_9u48j05naszi-0 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-0, decimal) ". "
+  }
+
+  .lst-kix_9u48j05naszi-6 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-6
+  }
+
+  .lst-kix_vyk6mr5mgybu-1 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-1, lower-latin) ". "
+  }
+
+  .lst-kix_vyk6mr5mgybu-3 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-3, decimal) ". "
+  }
+
+  .lst-kix_vyk6mr5mgybu-5 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-5, lower-roman) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-7 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-7
+  }
+
+  .lst-kix_9u48j05naszi-8 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-8, lower-roman) ". "
+  }
+
+  .lst-kix_9u48j05naszi-2 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-2, lower-roman) ". "
+  }
+
+  .lst-kix_9u48j05naszi-4 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-4, lower-latin) ". "
+  }
+
+  .lst-kix_9u48j05naszi-6 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-6, decimal) ". "
+  }
+
+  .lst-kix_7p7yh5e27r3-5 > li:before {
+    content: "\0025a0  "
+  }
+
+  .lst-kix_9bhkmat180vs-6 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-6
+  }
+
+  .lst-kix_9bhkmat180vs-1 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-1, decimal) ". "
+  }
+
+  .lst-kix_us542dvi88a2-3 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-3
+  }
+
+  .lst-kix_7p7yh5e27r3-1 > li:before {
+    content: "\0025cb  "
+  }
+
+  .lst-kix_9bhkmat180vs-3 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-3, decimal) ". "
+  }
+
+  .lst-kix_7p7yh5e27r3-7 > li:before {
+    content: "\0025cb  "
+  }
+
+  .lst-kix_fp2xi75y4bck-1 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-1
+  }
+
+  .lst-kix_fp2xi75y4bck-7 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-7
+  }
+
+  .lst-kix_sdes54k3d1dz-2 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-2
+  }
+
+  .lst-kix_9bhkmat180vs-7 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-7, lower-latin) ". "
+  }
+
+  .lst-kix_vyk6mr5mgybu-7 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-7
+  }
+
+  .lst-kix_9bhkmat180vs-5 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-5, lower-roman) ". "
+  }
+
+  .lst-kix_vyk6mr5mgybu-1 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-1
+  }
+
+  .lst-kix_7p7yh5e27r3-3 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-6 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-6
+  }
+
+  .lst-kix_ado76rvptis3-1 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-1
+  }
+
+  .lst-kix_1d6hdcdeqvp0-1 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-1
+  }
+
+  .lst-kix_lef8232oypvk-7 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-7
+  }
+
+  .lst-kix_us542dvi88a2-0 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-0, decimal) ". "
+  }
+
+  .lst-kix_9bhkmat180vs-5 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-5
+  }
+
+  .lst-kix_us542dvi88a2-3 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-3, decimal) ". "
+  }
+
+  .lst-kix_ado76rvptis3-3 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-3, decimal) ". "
+  }
+
+  .lst-kix_us542dvi88a2-7 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-7, lower-latin) ". "
+  }
+
+  .lst-kix_ado76rvptis3-0 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-0, decimal) ". "
+  }
+
+  .lst-kix_ado76rvptis3-4 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-4, lower-latin) ". "
+  }
+
+  .lst-kix_sdes54k3d1dz-1 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-1
+  }
+
+  .lst-kix_us542dvi88a2-4 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-4, lower-latin) ". "
+  }
+
+  .lst-kix_us542dvi88a2-8 > li:before {
+    content: "" counter(lst-ctn-kix_us542dvi88a2-8, lower-roman) ". "
+  }
+
+  .lst-kix_9u48j05naszi-1 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-1
+  }
+
+  .lst-kix_us542dvi88a2-8 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-8
+  }
+
+  .lst-kix_ado76rvptis3-8 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-8, lower-roman) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-6 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-6
+  }
+
+  .lst-kix_sdes54k3d1dz-6 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-6
+  }
+
+  .lst-kix_1d6hdcdeqvp0-8 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-8
+  }
+
+  .lst-kix_ado76rvptis3-7 > li:before {
+    content: "" counter(lst-ctn-kix_ado76rvptis3-7, lower-latin) ". "
+  }
+
+  .lst-kix_us542dvi88a2-1 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-1
+  }
+
+  .lst-kix_lef8232oypvk-5 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-5
+  }
+
+  .lst-kix_sdes54k3d1dz-4 > li {
+    counter-increment: lst-ctn-kix_sdes54k3d1dz-4
+  }
+
+  .lst-kix_vyk6mr5mgybu-6 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-6, decimal) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-1 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-1, lower-latin) ". "
+  }
+
+  .lst-kix_lef8232oypvk-0 > li {
+    counter-increment: lst-ctn-kix_lef8232oypvk-0
+  }
+
+  .lst-kix_8mr05em9xgug-4 > li {
+    counter-increment: lst-ctn-kix_8mr05em9xgug-4
+  }
+
+  .lst-kix_sdes54k3d1dz-6 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-6, decimal) ". "
+  }
+
+  .lst-kix_sdes54k3d1dz-2 > li:before {
+    content: "" counter(lst-ctn-kix_sdes54k3d1dz-2, lower-roman) ". "
+  }
+
+  .lst-kix_8mr05em9xgug-5 > li:before {
+    content: "" counter(lst-ctn-kix_8mr05em9xgug-5, lower-roman) ". "
+  }
+
+  .lst-kix_9u48j05naszi-3 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-3
+  }
+
+  .lst-kix_vyk6mr5mgybu-2 > li:before {
+    content: "" counter(lst-ctn-kix_vyk6mr5mgybu-2, lower-roman) ". "
+  }
+
+  .lst-kix_lef8232oypvk-2 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-2, lower-latin) ". "
+  }
+
+  .lst-kix_lef8232oypvk-6 > li:before {
+    content: "" counter(lst-ctn-kix_lef8232oypvk-6, decimal) ". "
+  }
+
+  .lst-kix_9u48j05naszi-7 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-7, lower-latin) ". "
+  }
+
+  .lst-kix_ado76rvptis3-4 > li {
+    counter-increment: lst-ctn-kix_ado76rvptis3-4
+  }
+
+  .lst-kix_9u48j05naszi-8 > li {
+    counter-increment: lst-ctn-kix_9u48j05naszi-8
+  }
+
+  .lst-kix_9u48j05naszi-3 > li:before {
+    content: "" counter(lst-ctn-kix_9u48j05naszi-3, decimal) ". "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-6 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-6, decimal) ". "
+  }
+
+  .lst-kix_us542dvi88a2-6 > li {
+    counter-increment: lst-ctn-kix_us542dvi88a2-6
+  }
+
+  .lst-kix_9bhkmat180vs-3 > li {
+    counter-increment: lst-ctn-kix_9bhkmat180vs-3
+  }
+
+  .lst-kix_9bhkmat180vs-2 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-2, lower-latin) ". "
+  }
+
+  .lst-kix_7p7yh5e27r3-0 > li:before {
+    content: "\0025cf  "
+  }
+
+  .lst-kix_7p7yh5e27r3-8 > li:before {
+    content: "\0025a0  "
+  }
+
+  .lst-kix_1d6hdcdeqvp0-2 > li:before {
+    content: "" counter(lst-ctn-kix_1d6hdcdeqvp0-2, lower-roman) ". "
+  }
+
+  .lst-kix_vyk6mr5mgybu-4 > li {
+    counter-increment: lst-ctn-kix_vyk6mr5mgybu-4
+  }
+
+  .lst-kix_fp2xi75y4bck-4 > li {
+    counter-increment: lst-ctn-kix_fp2xi75y4bck-4
+  }
+
+  .lst-kix_1d6hdcdeqvp0-3 > li {
+    counter-increment: lst-ctn-kix_1d6hdcdeqvp0-3
+  }
+
+  .lst-kix_9bhkmat180vs-6 > li:before {
+    content: "" counter(lst-ctn-kix_9bhkmat180vs-6, decimal) ". "
+  }
+
+  .lst-kix_7p7yh5e27r3-4 > li:before {
+    content: "\0025cb  "
+  }
+
+  ol {
+    margin: 0;
+    padding: 0
+  }
+
+  table td, table th {
+    padding: 0
+  }
+
+  .c3 {
+    -webkit-text-decoration-skip: none;
+    color: #000000;
+    font-weight: 400;
+    text-decoration: underline;
+    vertical-align: baseline;
+    text-decoration-skip-ink: none;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c24 {
+    padding-top: 0pt;
+    text-indent: -38.5pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify;
+    height: 11pt
+  }
+
+  .c1 {
+    color: #000000;
+    font-weight: 400;
+    text-decoration: none;
+    vertical-align: baseline;
+    font-size: 11pt;
+    font-family: "Arial";
+    font-style: normal
+  }
+
+  .c28 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify;
+    height: 11pt
+  }
+
+  .c49 {
+    padding-top: 0pt;
+    padding-bottom: 6pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c39 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: justify
+  }
+
+  .c14 {
+    padding-top: 0pt;
+    padding-bottom: 0pt;
+    line-height: 1.0;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  .c5 {
+    text-decoration-skip-ink: none;
+    -webkit-text-decoration-skip: none;
+    font-weight: 700;
+    text-decoration: underline
+  }
+
+  .c81 {
+    background-color: #ffffff;
+    max-width: 451.4pt;
+    padding: 72pt 72pt 72pt 72pt
+  }
+
+  .c56 {
+    text-decoration-skip-ink: none;
+    -webkit-text-decoration-skip: none;
+    text-decoration: underline
+  }
+
+  .c34 {
+    font-weight: 700
+  }
+
+  .c18 {
+    margin-left: -38.5pt
+  }
+
+  .c26 {
+    text-indent: -38.5pt
+  }
+
+  li {
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+  }
+
+  p {
+    margin: 0;
+    color: #000000;
+    font-size: 11pt;
+    font-family: "Arial"
+  }
+
+  h1 {
+    padding-top: 20pt;
+    color: #000000;
+    font-size: 20pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h2 {
+    padding-top: 18pt;
+    color: #000000;
+    font-size: 16pt;
+    padding-bottom: 6pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h3 {
+    padding-top: 16pt;
+    color: #434343;
+    font-size: 14pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h4 {
+    padding-top: 14pt;
+    color: #666666;
+    font-size: 12pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h5 {
+    padding-top: 12pt;
+    color: #666666;
+    font-size: 11pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }
+
+  h6 {
+    padding-top: 12pt;
+    color: #666666;
+    font-size: 11pt;
+    padding-bottom: 4pt;
+    font-family: "Arial";
+    line-height: 1.15;
+    page-break-after: avoid;
+    font-style: italic;
+    orphans: 2;
+    widows: 2;
+    text-align: left
+  }</style>
+</head>
+<body class="c81">
+<p class="c49 c26"><span>Part 2</span></p>
+<p class="c24"><span class="c3"></span></p>
+<p class="c39 c26"><span class="c5">Acknowledgment slip</span></p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c14"><span class="c5">Please complete, scan and return by e-mail within 5 working days</span><span
+  class="c34">. </span></p>
+<p class="c24"><span class="c3"></span></p>
+<p class="c39 c26"><span class="c1">FAO: The Governor &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Date: <span>17 Mar 2022</span>
+</p>
+<p class="c14 c26"><span class="c1">HMP Prison</span></p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c24"><span class="c1"></span></p>
+<table>
+  <tr>
+    <td>
+      <p class="c14 c26">Offenders Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+    </td>
+    <td>
+      <p class="c34">Billie Badger</p>
+    </td>
+  </tr>
+  <tr><td colspan="2"><br></td></tr>
+  <tr>
+    <td>
+      <p class="c14 c26">Prison Number:</p>
+    </td>
+    <td>
+      <p class="c34">B1234</p>
+    </td>
+  </tr>
+</table>
+<p class="c24"><span class="c1"></span></p>
+<p class="c39 c26"><span class="c1">_____________________________________________________________________________</span>
+</p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c14 c18"><span class="c1">I acknowledge receipt of a copy of the recall dossier for the above named offender who has been recalled to prison.</span>
+</p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c39 c26"><span>Date dossier received by prison:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+  class="c3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+</p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c39 c26"><span>Date dossier disclosed to offender:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+  class="c3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+</p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c24"><span class="c1"></span></p>
+<p class="c24"><span class="c1"></span></p>
+
+<table>
+  <tr>
+    <td>
+      <p class="c39 c26">Signed: <span class="c56">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+    </td>
+    <td><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+    <td>
+      <p class="c39 ">Date: <span class="c3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+    </td>
+  </tr>
+  <tr><td colspan="2"><br><br><br><br></td> </tr>
+  <tr>
+    <td>
+      <p class="c39 c26">Name: <span class="c56">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+    </td>
+    <td><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+    <td>
+      <p class="c39 ">Telephone: <span class="c3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
