@@ -34,7 +34,7 @@ class LetterToPrisonStandardPartsHtmlGenerationTest(@Autowired private val templ
         LetterToPrisonStandardPartsContext(
           FullName("Billie Badger"),
           "B1234",
-          LocalDate.now(),
+          LocalDate.of(2022, 3, 17),
           PrisonName("HMP Prison")
         )
       )
