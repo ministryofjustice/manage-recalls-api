@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.util.stream.Stream
@@ -46,7 +47,7 @@ class TableOfContentsGeneratorTest {
     every { templateEngine.process("table-of-contents", capture(contextSlot)) } returns expectedHtml
 
     val currentPrisonName = PrisonName("Prison (ABC)")
-    val bookingNumber = "ABC123F"
+    val bookingNumber = BookingNumber("ABC123F")
     val tableOfContentsItems = listOf(TableOfContentsItem("Document 1", 1))
 
     val result = underTest.generateHtml(
@@ -73,7 +74,7 @@ class TableOfContentsGeneratorTest {
         has("fullName", { it.variableAsString("fullName") }, equalTo("Bertie Badger")),
         has("currentPrisonName", { it.variableAsString("currentPrisonName") }, equalTo(currentPrisonName.value)),
         has("category", { it.variableAsString("category") }, equalTo("Not Applicable")),
-        has("bookingNumber", { it.variableAsString("bookingNumber") }, equalTo(bookingNumber)),
+        has("bookingNumber", { it.variableAsString("bookingNumber") }, equalTo(bookingNumber.value)),
         has("version", { it.variableAsString("version") }, equalTo("0 (2)")),
         has("tableOfContentsItems", { it.variable("tableOfContentsItems") }, equalTo(tableOfContentsItems)),
       )

@@ -18,6 +18,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -50,7 +51,7 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
     recallId, NomsNumber("AA1234A"), ::UserId.random(),
     OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
     CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
-    bookingNumber = "AB1234",
+    bookingNumber = BookingNumber("AB1234"),
     confirmedRecallType = FIXED,
     differentNomsNumber = false,
     currentPrison = PrisonId("WIM"),

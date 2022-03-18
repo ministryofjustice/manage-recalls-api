@@ -9,6 +9,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -27,7 +28,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.FIXED, recallLength),
-          "B1234",
+          BookingNumber("B1234"),
           FullName("Mandy Pandy"),
           LocalDate.of(2021, 10, 4),
           NomsNumber("ABC1234F"),
@@ -54,7 +55,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.FIXED, recallLength),
-          "B1234",
+          BookingNumber("B1234"),
           FullName("Mandy Pandy"),
           LocalDate.of(2021, 10, 4),
           NomsNumber("ABC1234F"),
@@ -81,7 +82,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.FIXED, recallLength),
-          "B1234",
+          BookingNumber("B1234"),
           FullName("Mandy Pandy"),
           LocalDate.of(2021, 10, 4),
           NomsNumber("ABC1234F"),
@@ -107,7 +108,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.STANDARD, null),
-          "B1234",
+          BookingNumber("B1234"),
           FullName("Mandy Pandy"),
           LocalDate.of(2021, 10, 4),
           NomsNumber("ABC1234F"),

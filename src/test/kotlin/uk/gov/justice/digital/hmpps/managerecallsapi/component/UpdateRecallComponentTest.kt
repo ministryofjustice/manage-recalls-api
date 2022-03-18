@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -298,7 +299,7 @@ class UpdateRecallComponentTest : ComponentTestBase() {
 
   @Test
   fun `update a recall with booking number`() {
-    val bookingNumber = "BN12345"
+    val bookingNumber = BookingNumber("BN12345")
     val response = authenticatedClient.updateRecall(recallId, UpdateRecallRequest(bookingNumber = bookingNumber))
 
     assertThat(

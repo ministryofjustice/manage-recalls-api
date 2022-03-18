@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -46,7 +47,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         previousConvictionMainName = "Nat The Naughty",
-        bookingNumber = "NAT0001",
+        bookingNumber = BookingNumber("NAT0001"),
         lastReleasePrison = PrisonId("MWI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
         sentenceDate = LocalDate.of(2012, 5, 17),
@@ -96,7 +97,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         previousConvictionMainName = "Nat The Naughty",
-        bookingNumber = "NAT0001",
+        bookingNumber = BookingNumber("NAT0001"),
         lastReleasePrison = PrisonId("MWI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
         sentenceDate = LocalDate.of(2012, 5, 17),

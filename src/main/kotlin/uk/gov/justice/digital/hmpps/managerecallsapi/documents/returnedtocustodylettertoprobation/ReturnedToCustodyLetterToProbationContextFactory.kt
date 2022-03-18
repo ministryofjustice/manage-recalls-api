@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -46,7 +47,7 @@ class ReturnedToCustodyLetterToProbationContextFactory(
 
 data class ReturnedToCustodyLetterToProbationContext(
   val recallDescription: RecallDescription,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val nomsNumberHeldUnder: NomsNumber,
   val differentNomsNumber: Boolean,
   val originalNomsNumber: NomsNumber,

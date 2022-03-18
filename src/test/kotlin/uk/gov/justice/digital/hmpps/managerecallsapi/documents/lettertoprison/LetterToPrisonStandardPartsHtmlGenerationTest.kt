@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
@@ -19,7 +20,7 @@ class LetterToPrisonStandardPartsHtmlGenerationTest(@Autowired private val templ
       underTest.generatePart1Html(
         LetterToPrisonStandardPartsContext(
           FullName("Billie Badger"),
-          "B1234",
+          BookingNumber("B1234"),
           LocalDate.now(),
           PrisonName("HMP Prison")
         )
@@ -33,7 +34,7 @@ class LetterToPrisonStandardPartsHtmlGenerationTest(@Autowired private val templ
       underTest.generatePart2Html(
         LetterToPrisonStandardPartsContext(
           FullName("Billie Badger"),
-          "B1234",
+          BookingNumber("B1234"),
           LocalDate.of(2022, 3, 17),
           PrisonName("HMP Prison")
         )
@@ -47,7 +48,7 @@ class LetterToPrisonStandardPartsHtmlGenerationTest(@Autowired private val templ
       underTest.generatePart3Html(
         LetterToPrisonStandardPartsContext(
           FullName("Billie Badger"),
-          "B1234",
+          BookingNumber("B1234"),
           LocalDate.now(),
           PrisonName("HMP Prison")
         )

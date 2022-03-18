@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RECALL_NOTIFICATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -196,7 +197,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         arrestIssuesDetail = if (inCustody) null else "Some arrest issues",
         assessedByUserId = userId,
         authorisingAssistantChiefOfficer = "Ms Authoriser",
-        bookingNumber = "B1234",
+        bookingNumber = BookingNumber("B1234"),
         contraband = true,
         contrabandDetail = "Some contraband detail",
         currentPrison = PrisonId("BMI"),

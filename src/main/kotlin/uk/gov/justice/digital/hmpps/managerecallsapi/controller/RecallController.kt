@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -422,7 +423,7 @@ data class RecallResponse(
   val authorisingAssistantChiefOfficer: String? = null,
   val bookedByUserId: UserId? = null,
   val bookedByUserName: FullName? = null,
-  val bookingNumber: String? = null,
+  val bookingNumber: BookingNumber? = null,
   val conditionalReleaseDate: LocalDate? = null,
   val confirmedRecallType: RecallType? = null,
   val confirmedRecallTypeDetail: String? = null,
@@ -590,7 +591,7 @@ data class UpdateRecallRequest(
   val assessedByUserId: UserId? = null,
   val authorisingAssistantChiefOfficer: String? = null,
   val bookedByUserId: UserId? = null,
-  val bookingNumber: String? = null,
+  val bookingNumber: BookingNumber? = null,
   val conditionalReleaseDate: LocalDate? = null,
   val contraband: Boolean? = null,
   val contrabandDetail: String? = null,

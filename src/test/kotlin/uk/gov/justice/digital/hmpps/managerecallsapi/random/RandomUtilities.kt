@@ -4,6 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
@@ -150,6 +151,7 @@ fun <T : Validated<UUID>> ((UUID) -> T).zeroes() = this(UUID(0, 0))
 fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
 fun randomVersion(): Int = Random.nextInt(1, Int.MAX_VALUE)
 fun randomIndex(): Int = randomVersion()
+fun randomBookingNumber() = BookingNumber(RandomStringUtils.randomAlphanumeric(6))
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
 fun randomPrisonId() = PrisonId(RandomStringUtils.randomAlphanumeric(6))
 fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))

@@ -7,6 +7,7 @@ import org.springdoc.core.SpringDocUtils
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.ColumnName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
@@ -42,6 +43,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
   companion object {
     init {
       SpringDocUtils.getConfig()
+        .replaceWithClass(BookingNumber::class.java, String::class.java)
         .replaceWithClass(ColumnName::class.java, String::class.java)
         .replaceWithClass(CourtId::class.java, String::class.java)
         .replaceWithClass(CourtName::class.java, String::class.java)

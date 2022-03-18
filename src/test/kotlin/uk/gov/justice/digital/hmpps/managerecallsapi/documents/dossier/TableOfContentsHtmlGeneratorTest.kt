@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 
@@ -24,7 +25,7 @@ class TableOfContentsHtmlGeneratorTest(
         FullName("PrisonerFirstName PrisonerLastName"),
         RecallDescription(RecallType.FIXED, TWENTY_EIGHT_DAYS),
         PrisonName("Current Prison (ABC)"),
-        "ABC1234F",
+        BookingNumber("ABC1234F"),
         2
       ),
       listOf(
@@ -44,7 +45,7 @@ class TableOfContentsHtmlGeneratorTest(
         FullName("PrisonerFirstName PrisonerLastName"),
         RecallDescription(RecallType.STANDARD, null),
         PrisonName("Current Prison (ABC)"),
-        "ABC1234F",
+        BookingNumber("ABC1234F"),
         2
       ),
       listOf(

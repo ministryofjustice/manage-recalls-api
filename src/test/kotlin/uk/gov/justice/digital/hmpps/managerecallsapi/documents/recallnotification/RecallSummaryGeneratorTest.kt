@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallImage.HmppsLogo
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -61,7 +62,7 @@ class RecallSummaryGeneratorTest {
         "01234567890",
         PS_BARKING_DAGENHAM_HAVERING,
         "Bryan Badger",
-        "B1234",
+        BookingNumber("B1234"),
         NomsNumber("AA1234A"),
         LocalDate.of(2020, 10, 1),
         setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
@@ -146,7 +147,7 @@ class RecallSummaryGeneratorTest {
         "01234567890",
         PS_TOWER_HAMLETS,
         "Bryan Badger",
-        "B1234",
+        BookingNumber("B1234"),
         NomsNumber("AA1234A"),
         LocalDate.of(2020, 10, 1),
         setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),

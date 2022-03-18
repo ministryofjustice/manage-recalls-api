@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -62,7 +63,7 @@ data class LetterToPrisonContext(
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
   val recallDescription: RecallDescription,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val lastReleaseDate: LocalDate,
   val currentUserName: FullName,
   val originalCreatedDate: LocalDate,
@@ -121,7 +122,7 @@ data class LetterToPrisonGovernorContext(
   val currentPrisonName: PrisonName,
   val lastReleasePrisonName: PrisonName,
   val recallDescription: RecallDescription,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val lastReleaseDate: LocalDate,
   val currentUserName: FullName,
   val originalCreatedDate: LocalDate,
@@ -130,14 +131,14 @@ data class LetterToPrisonGovernorContext(
 data class LetterToPrisonConfirmationContext(
   val prisonerNameOnLicence: FullName,
   val recallDescription: RecallDescription,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
 )
 
 data class LetterToPrisonCustodyOfficeContext(
   val prisonerNameOnLicence: FullName,
   val currentPrisonName: PrisonName,
   val recallDescription: RecallDescription,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val currentUserName: FullName,
   val originalCreatedDate: LocalDate,
   val nomsNumberHeldUnder: NomsNumber,
@@ -154,7 +155,7 @@ data class LetterToPrisonCustodyOfficeContext(
 
 data class LetterToPrisonStandardPartsContext(
   val prisonerNameOnLicence: FullName,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val originalCreatedDate: LocalDate,
   val currentPrisonName: PrisonName
 )

@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
@@ -65,17 +66,17 @@ data class TableOfContentsContext(
   val prisonerNameOnLicence: FullName,
   val recallDescription: RecallDescription,
   val currentPrisonName: PrisonName,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val newVersion: Int
 )
 
 data class ReasonsForRecallContext(
   val prisonerNameOnLicence: FullName,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val nomsNumber: NomsNumber,
   val licenceConditionsBreached: String,
   val lastThenFirstName: String
 ) {
   fun fileName(): FileName =
-    FileName("${lastThenFirstName.uppercase()} ${bookingNumber.uppercase()} REASONS FOR RECALL.pdf")
+    FileName("${lastThenFirstName.uppercase()} ${bookingNumber.value.uppercase()} REASONS FOR RECALL.pdf")
 }
