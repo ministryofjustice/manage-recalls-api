@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
@@ -139,7 +140,7 @@ class DossierContextFactoryTest {
       LastName("Badger"),
       CroNumber("ABC/1234A"),
       LocalDate.of(1999, 12, 1),
-      bookingNumber = "A1234",
+      bookingNumber = BookingNumber("A1234"),
       currentPrison = currentPrison,
       licenceNameCategory = NameFormatCategory.FIRST_LAST,
       recallLength = recallLength,
@@ -160,7 +161,7 @@ class DossierContextFactoryTest {
           recall.prisonerNameOnLicence(),
           RecallDescription(recallType, recallLength),
           currentPrisonName,
-          "A1234",
+          BookingNumber("A1234"),
           1
         )
       )

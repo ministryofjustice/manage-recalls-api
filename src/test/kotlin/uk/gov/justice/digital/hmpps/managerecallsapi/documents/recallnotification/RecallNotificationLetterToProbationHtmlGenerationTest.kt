@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.STAND
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
@@ -61,7 +62,7 @@ class RecallNotificationLetterToProbationHtmlGenerationTest(
     RecallDescription(recallType, FOURTEEN_DAYS),
     "Mr probation",
     FullName("Bertie Offender"),
-    "bookingNumber",
+    BookingNumber("bookingNumber"),
     if (inCustody) PrisonName("Current prison name") else null,
     PersonName("Bobby", lastName = "Caseworker"),
     inCustody,

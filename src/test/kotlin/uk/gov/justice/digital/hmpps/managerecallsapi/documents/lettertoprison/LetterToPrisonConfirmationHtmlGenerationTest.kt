@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 
 class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templateEngine: SpringTemplateEngine) :
@@ -22,7 +23,7 @@ class LetterToPrisonConfirmationHtmlGenerationTest(@Autowired private val templa
         LetterToPrisonConfirmationContext(
           FullName("Billie Badger"),
           RecallDescription(RecallType.FIXED, recallLength),
-          "B1234",
+          BookingNumber("B1234"),
         )
       )
     )

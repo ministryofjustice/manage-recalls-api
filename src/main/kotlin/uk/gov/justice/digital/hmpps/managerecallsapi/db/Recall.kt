@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -106,7 +107,8 @@ data class Recall(
   val assessedByUserId: UUID? = null,
   val assignee: UUID? = null,
   val bookedByUserId: UUID? = null,
-  val bookingNumber: String? = null,
+  @Convert(converter = BookingNumberJpaConverter::class)
+  val bookingNumber: BookingNumber? = null,
   @Enumerated(STRING)
   val confirmedRecallType: RecallType? = null,
   val confirmedRecallTypeDetail: String? = null,
@@ -185,7 +187,7 @@ data class Recall(
     assessedByUserId: UserId? = null,
     assignee: UserId? = null,
     bookedByUserId: UserId? = null,
-    bookingNumber: String? = null,
+    bookingNumber: BookingNumber? = null,
     confirmedRecallType: RecallType? = null,
     confirmedRecallTypeDetail: String? = null,
     contraband: Boolean? = null,

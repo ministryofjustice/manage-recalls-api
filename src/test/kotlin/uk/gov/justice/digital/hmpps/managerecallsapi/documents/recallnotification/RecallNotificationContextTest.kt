@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -46,7 +47,7 @@ class RecallNotificationContextTest {
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
   private val userId = ::UserId.zeroes()
   private val recallId = ::RecallId.zeroes()
-  private val recallBookingNumber = "B1234"
+  private val recallBookingNumber = BookingNumber("B1234")
   private val dateOfBirth = LocalDate.of(1995, 10, 3)
   private val prisonerCroNumber = CroNumber("ABC/1234A")
   private val userSignature = "user signature"

@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
@@ -24,7 +25,7 @@ class ReturnedToCustodyLetterToProbationHtmlGenerationTest(@Autowired private va
       underTest.generateHtml(
         ReturnedToCustodyLetterToProbationContext(
           RecallDescription(RecallType.FIXED, RecallLength.FOURTEEN_DAYS),
-          "B12345C",
+          BookingNumber("B12345C"),
           NomsNumber("AB1234C"),
           true,
           NomsNumber("ZY9876X"),
@@ -47,7 +48,7 @@ class ReturnedToCustodyLetterToProbationHtmlGenerationTest(@Autowired private va
       underTest.generateHtml(
         ReturnedToCustodyLetterToProbationContext(
           RecallDescription(RecallType.STANDARD, null),
-          "B12345C",
+          BookingNumber("B12345C"),
           NomsNumber("AB1234C"),
           true,
           NomsNumber("ZY9876X"),

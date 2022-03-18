@@ -17,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -185,7 +186,7 @@ private fun LastKnownAddress.toAddressString(): String {
 
 data class OffenderNotificationContext(
   val prisonerNameOnLicence: FullName,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val licenceRevocationDate: LocalDate,
   val reasonsForRecall: List<String>
 )
@@ -195,7 +196,7 @@ data class LetterToProbationContext(
   val recallDescription: RecallDescription?,
   val probationOfficerName: String,
   val prisonerNameOnLicence: FullName,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val currentPrisonName: PrisonName?,
   val assessedByUserName: PersonName,
   val inCustodyRecall: Boolean,
@@ -220,7 +221,7 @@ data class RecallSummaryContext(
   val probationOfficerPhoneNumber: String,
   val localDeliveryUnit: LocalDeliveryUnit,
   val previousConvictionMainName: String,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val nomsNumber: NomsNumber,
   val lastReleaseDate: LocalDate,
   val reasonsForRecall: Set<ReasonForRecall>,
@@ -241,7 +242,7 @@ data class RevocationOrderContext(
   val recallId: RecallId,
   val prisonerNameOnLicence: FullName,
   val dateOfBirth: LocalDate,
-  val bookingNumber: String,
+  val bookingNumber: BookingNumber,
   val croNumber: CroNumber,
   val licenseRevocationDate: LocalDate,
   val lastReleaseDate: LocalDate,
@@ -249,5 +250,5 @@ data class RevocationOrderContext(
   val currentUserId: UserId,
   val lastThenFirstName: String,
 ) {
-  fun fileName(): FileName = FileName("${lastThenFirstName.uppercase()} ${bookingNumber.uppercase()} REVOCATION ORDER.pdf")
+  fun fileName(): FileName = FileName("${lastThenFirstName.uppercase()} ${bookingNumber.value.uppercase()} REVOCATION ORDER.pdf")
 }

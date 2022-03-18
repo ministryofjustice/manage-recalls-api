@@ -13,8 +13,10 @@ import java.util.UUID
   It will also need adding to the `OpenApiConfiguration` to ensure it is presented correctly in the swagger docs
   (until we can figure out how to get SpringDoc to do that otherwise).
   If it is to be used as a PathVariable it will need a customer Converter: see `DomainConverters`.
+  If used as a field on a persisted entity (e.g. Recall) then it will need a *JpaConverter in `Converters.jt`
  */
 
+class BookingNumber(value: String) : Validated<String>(value, notBlank, alphanumeric, 2.minLength)
 class ColumnName(value: String) : Validated<String>(value, notBlank)
 class CourtId(value: String) : Validated<String>(value, notBlank, alphanumeric, 2.minLength, 6.maxLength)
 class CourtName(value: String) : Validated<String>(value, notBlank)

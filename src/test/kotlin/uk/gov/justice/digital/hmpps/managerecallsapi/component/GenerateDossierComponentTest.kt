@@ -19,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCAT
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.dossier.RecallClassPathResource.FixedTermRecallInformationLeafletEnglish
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -70,7 +71,7 @@ class GenerateDossierComponentTest : ComponentTestBase() {
       recall.recallId,
       UpdateRecallRequest(
         authorisingAssistantChiefOfficer = "not empty",
-        bookingNumber = "booking number",
+        bookingNumber = BookingNumber("bookingNumber"),
         currentPrison = PrisonId("MWI"),
         inCustodyAtBooking = true,
         indexOffence = "Badgering",

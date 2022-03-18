@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Pdf
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_TO_PROBATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -91,7 +92,7 @@ class ReturnedToCustodyLetterToProbationGotenbergComponentTest : GotenbergCompon
       UpdateRecallRequest(
         licenceNameCategory = NameFormatCategory.FIRST_LAST,
         mappaLevel = MappaLevel.LEVEL_1,
-        bookingNumber = "NAT0001",
+        bookingNumber = BookingNumber("NAT0001"),
         sentenceDate = LocalDate.of(2012, 5, 17),
         licenceExpiryDate = LocalDate.of(2025, 12, 25),
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),

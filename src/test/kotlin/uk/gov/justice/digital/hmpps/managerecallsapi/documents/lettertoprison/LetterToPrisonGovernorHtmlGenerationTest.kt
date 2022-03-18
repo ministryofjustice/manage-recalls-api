@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import java.time.LocalDate
@@ -51,7 +52,7 @@ class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEn
       PrisonName("Prison A"),
       PrisonName("Prison B"),
       RecallDescription(recallType, recallLength),
-      "B1234",
+      BookingNumber("B1234"),
       LocalDate.of(2020, 10, 1),
       FullName("Mandy Pandy"),
       LocalDate.of(2021, 10, 4),

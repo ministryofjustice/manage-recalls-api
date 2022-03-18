@@ -25,9 +25,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomBookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomHistoricalDate
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
@@ -47,7 +47,7 @@ class LetterToPrisonContextFactoryTest {
     val recallId = ::RecallId.random()
     val createdByUserId = ::UserId.random()
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
-    val bookingNumber = randomString()
+    val bookingNumber = randomBookingNumber()
     val nomsNumber = randomNoms()
     val recall = Recall(
       recallId, nomsNumber, ::UserId.random(),
@@ -113,7 +113,7 @@ class LetterToPrisonContextFactoryTest {
     val createdByUserId = ::UserId.random()
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
     val lastReleaseDate = randomHistoricalDate()
-    val bookingNumber = randomString()
+    val bookingNumber = randomBookingNumber()
     val nomsNumber = randomNoms()
     val recall = Recall(
       recallId, nomsNumber, ::UserId.random(),

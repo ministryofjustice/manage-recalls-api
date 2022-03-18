@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.db
 
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
@@ -15,6 +16,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumb
 import javax.persistence.AttributeConverter
 
 class CourtIdJpaConverter : CustomJpaConverter<CourtId?, String?>({ it?.value }, { it?.let { CourtId(it) } })
+class BookingNumberJpaConverter : CustomJpaConverter<BookingNumber?, String?>({ it?.value }, { it?.let { BookingNumber(it) } })
 class CroNumberJpaConverter : CustomJpaConverter<CroNumber, String>({ it.value }, ::CroNumber)
 class EmailJpaConverter : CustomJpaConverter<Email, String>({ it.value }, ::Email)
 class FileNameJpaConverter : CustomJpaConverter<FileName?, String?>({ it?.value }, { it?.let { FileName(it) } })

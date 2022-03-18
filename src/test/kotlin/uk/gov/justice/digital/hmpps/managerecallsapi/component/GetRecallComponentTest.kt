@@ -149,7 +149,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.authorisingAssistantChiefOfficer").isEqualTo(fullyPopulatedRecall.probationInfo!!.authorisingAssistantChiefOfficer)
       .jsonPath("$.bookedByUserId").isEqualTo(fullyPopulatedRecall.bookedByUserId!!.toString())
       .jsonPath("$.bookedByUserName").isEqualTo("Bertie Badger")
-      .jsonPath("$.bookingNumber").isEqualTo(fullyPopulatedRecall.bookingNumber!!)
+      .jsonPath("$.bookingNumber").isEqualTo(fullyPopulatedRecall.bookingNumber!!.value)
       .jsonPath("$.conditionalReleaseDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.confirmedRecallType").isEqualTo(fullyPopulatedRecall.confirmedRecallType!!.name)
       .jsonPath("$.confirmedRecallTypeDetail").isEqualTo(fullyPopulatedRecall.confirmedRecallTypeDetail!!)

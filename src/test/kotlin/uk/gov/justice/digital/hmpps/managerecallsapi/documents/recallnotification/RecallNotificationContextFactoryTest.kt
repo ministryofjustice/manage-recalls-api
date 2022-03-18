@@ -29,6 +29,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -240,7 +241,7 @@ class RecallNotificationContextFactoryTest {
         LastKnownAddress(::LastKnownAddressId.random(), recallId, "Line 1", "Line 2", "Another Town", "AB12 3CD", AddressSource.LOOKUP, 2, ::UserId.random(), OffsetDateTime.now()),
       ),
       arrestIssues = false,
-      bookingNumber = "1243A",
+      bookingNumber = BookingNumber("1243A"),
       contraband = true,
       inCustodyAtAssessment = false,
       inCustodyAtBooking = false,
@@ -284,7 +285,7 @@ class RecallNotificationContextFactoryTest {
     val recallId = ::RecallId.random()
     val userIdGeneratingRecallNotification = ::UserId.random()
     val nomsNumber = NomsNumber("nomsNumber")
-    val bookingNumber = "A12345"
+    val bookingNumber = BookingNumber("A12345")
     val lastReleasePrisonId = PrisonId("XXX")
     val lastReleasePrisonName = PrisonName("Last Prison Name")
     val probationInfo = ProbationInfo("", "", "", LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, "")

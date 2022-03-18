@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.thymeleaf.spring5.SpringTemplateEngine
 import uk.gov.justice.digital.hmpps.managerecallsapi.approval.ContentApprover
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.HtmlGenerationTestCase
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -25,7 +26,7 @@ class RevocationOrderHtmlGenerationTest(
         ::RecallId.random(),
         FullName("PrisonerFirstName PrisonerLastName"),
         LocalDate.of(1999, 12, 31),
-        "RecallBookingNumber",
+        BookingNumber("RecallBookingNumber"),
         CroNumber("PrisonerCroNumber"),
         LocalDate.of(2021, 9, 1),
         LocalDate.of(2020, 9, 30),

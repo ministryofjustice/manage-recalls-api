@@ -23,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.REVOCATION_ORDER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64String
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
@@ -351,7 +352,7 @@ class DocumentComponentTest : ComponentTestBase() {
         sentenceLength = Api.SentenceLength(10, 1, 5),
         sentencingCourt = CourtId("CARLCT"),
         indexOffence = "Badgering",
-        bookingNumber = "booking number",
+        bookingNumber = BookingNumber("bookingNumber"),
         licenceConditionsBreached = "he was a very naughty boy",
         lastReleaseDate = LocalDate.now(),
         inCustodyAtBooking = true,
