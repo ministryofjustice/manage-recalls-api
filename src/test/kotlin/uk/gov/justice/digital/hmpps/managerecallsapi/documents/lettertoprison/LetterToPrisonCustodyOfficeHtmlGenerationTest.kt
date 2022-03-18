@@ -23,7 +23,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
     val recallLength = RecallLength.FOURTEEN_DAYS
     approver.assertApproved(
       underTest.generateHtml(
-        LetterToPrisonCustodyContext(
+        LetterToPrisonCustodyOfficeContext(
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.FIXED, recallLength),
@@ -50,7 +50,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
     approver.assertApproved(
       underTest.generateHtml(
-        LetterToPrisonCustodyContext(
+        LetterToPrisonCustodyOfficeContext(
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.FIXED, recallLength),
@@ -77,7 +77,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
     val recallLength = RecallLength.FOURTEEN_DAYS
     approver.assertApproved(
       underTest.generateHtml(
-        LetterToPrisonCustodyContext(
+        LetterToPrisonCustodyOfficeContext(
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.FIXED, recallLength),
@@ -103,7 +103,7 @@ class LetterToPrisonCustodyOfficeHtmlGenerationTest(@Autowired private val templ
   fun `generate fully populated HTML Standard recall`(approver: ContentApprover) {
     approver.assertApproved(
       underTest.generateHtml(
-        LetterToPrisonCustodyContext(
+        LetterToPrisonCustodyOfficeContext(
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           RecallDescription(RecallType.STANDARD, null),

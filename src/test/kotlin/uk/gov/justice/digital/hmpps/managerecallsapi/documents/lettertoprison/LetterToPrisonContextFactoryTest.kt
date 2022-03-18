@@ -20,12 +20,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomHistoricalDate
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
+import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
@@ -45,8 +47,10 @@ class LetterToPrisonContextFactoryTest {
     val recallId = ::RecallId.random()
     val createdByUserId = ::UserId.random()
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
+    val bookingNumber = randomString()
+    val nomsNumber = randomNoms()
     val recall = Recall(
-      recallId, NomsNumber("AA1234A"), ::UserId.random(),
+      recallId, nomsNumber, ::UserId.random(),
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
       CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
       confirmedRecallType = FIXED,
@@ -54,7 +58,7 @@ class LetterToPrisonContextFactoryTest {
       lastReleasePrison = PrisonId("BOB"),
       licenceNameCategory = NameFormatCategory.FIRST_LAST,
       recallLength = recallLength,
-      bookingNumber = "ABC123",
+      bookingNumber = bookingNumber,
       lastReleaseDate = LocalDate.now(),
       differentNomsNumber = false,
       additionalLicenceConditions = false,
@@ -84,13 +88,13 @@ class LetterToPrisonContextFactoryTest {
           currentPrisonName,
           lastReleasePrisonName,
           recallDescription,
-          "ABC123",
+          bookingNumber,
           LocalDate.now(),
           FullName("Casey Caseworker"),
           LocalDate.now(),
-          NomsNumber("AA1234A"),
+          nomsNumber,
           false,
-          NomsNumber("AA1234A"),
+          nomsNumber,
           false,
           null,
           false,
@@ -108,8 +112,11 @@ class LetterToPrisonContextFactoryTest {
     val recallId = ::RecallId.random()
     val createdByUserId = ::UserId.random()
     val recallLength = RecallLength.TWENTY_EIGHT_DAYS
+    val lastReleaseDate = randomHistoricalDate()
+    val bookingNumber = randomString()
+    val nomsNumber = randomNoms()
     val recall = Recall(
-      recallId, NomsNumber("AA1234A"), ::UserId.random(),
+      recallId, nomsNumber, ::UserId.random(),
       OffsetDateTime.now(), FirstName("Barrie"), null, LastName("Badger"),
       CroNumber("ABC/1234A"), LocalDate.of(1999, 12, 1),
       confirmedRecallType = FIXED,
@@ -117,8 +124,8 @@ class LetterToPrisonContextFactoryTest {
       lastReleasePrison = PrisonId("BOB"),
       licenceNameCategory = NameFormatCategory.FIRST_LAST,
       recallLength = recallLength,
-      bookingNumber = "ABC123",
-      lastReleaseDate = LocalDate.now(),
+      bookingNumber = bookingNumber,
+      lastReleaseDate = lastReleaseDate,
       differentNomsNumber = false,
       additionalLicenceConditions = false,
       contraband = false,
@@ -150,13 +157,13 @@ class LetterToPrisonContextFactoryTest {
           currentPrisonName,
           lastReleasePrisonName,
           recallDescription,
-          "ABC123",
-          LocalDate.now(),
+          bookingNumber,
+          lastReleaseDate,
           FullName("Casey Caseworker"),
           originalCreatedDateTime.toLocalDate(),
-          NomsNumber("AA1234A"),
+          nomsNumber,
           false,
-          NomsNumber("AA1234A"),
+          nomsNumber,
           false,
           null,
           false,

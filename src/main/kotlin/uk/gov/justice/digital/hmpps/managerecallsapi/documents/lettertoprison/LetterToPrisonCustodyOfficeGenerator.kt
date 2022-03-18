@@ -14,7 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.shouldShowOnDocum
 class LetterToPrisonCustodyOfficeGenerator(
   @Autowired private val templateEngine: SpringTemplateEngine
 ) {
-  fun generateHtml(context: LetterToPrisonCustodyContext): String =
+  fun generateHtml(context: LetterToPrisonCustodyOfficeContext): String =
     Context().apply {
 
       setVariable("logoFileName", HmppsLogo.fileName)

@@ -156,6 +156,7 @@ fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))
 fun randomPoliceForceId() = PoliceForceId(RandomStringUtils.randomAlphanumeric(6))
 fun randomVersionedDocumentCategory() = DocumentCategory.values().filter { it.versioned() }.random()
 fun randomUnVersionedDocumentCategory() = DocumentCategory.values().filter { !it.versioned() }.random()
+fun randomHistoricalDate() = LocalDate.now().minusDays(Random.nextLong(1, 1000))
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)
   val endEpochDay = age18.toEpochDay()

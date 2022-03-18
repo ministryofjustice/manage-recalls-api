@@ -77,8 +77,8 @@ data class LetterToPrisonContext(
   val vulnerabilityDetail: String?,
   val mappaLevel: MappaLevel
 ) {
-  fun getCustodyContext(): LetterToPrisonCustodyContext =
-    LetterToPrisonCustodyContext(
+  fun getCustodyContext(): LetterToPrisonCustodyOfficeContext =
+    LetterToPrisonCustodyOfficeContext(
       prisonerNameOnLicence,
       currentPrisonName,
       recallDescription,
@@ -133,7 +133,7 @@ data class LetterToPrisonConfirmationContext(
   val bookingNumber: String,
 )
 
-data class LetterToPrisonCustodyContext(
+data class LetterToPrisonCustodyOfficeContext(
   val prisonerNameOnLicence: FullName,
   val currentPrisonName: PrisonName,
   val recallDescription: RecallDescription,
