@@ -41,6 +41,7 @@ class PrisonId(value: String) : Validated<String>(value, notBlank, alphanumeric,
 class PrisonName(value: String) : Validated<String>(value, notBlank)
 class RecallId(value: UUID) : Validated<UUID>(value)
 class RescindRecordId(value: UUID) : Validated<UUID>(value)
+class PartBRecordId(value: UUID) : Validated<UUID>(value)
 class UserId(value: UUID) : Validated<UUID>(value)
 class WarrantReferenceNumber(value: String) : Validated<String>(value, notBlank)
 

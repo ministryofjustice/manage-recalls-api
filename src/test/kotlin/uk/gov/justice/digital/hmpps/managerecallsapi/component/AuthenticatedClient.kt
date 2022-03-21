@@ -22,6 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -89,6 +90,9 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
+  fun decideRescind(recallId: RecallId, rescindRecordId: RescindRecordId, request: RescindDecisionRequest, status: HttpStatus = OK) =
+    patchRequest("/recalls/$recallId/rescind-records/$rescindRecordId", request, status)
+
   fun createNote(recallId: RecallId, request: CreateNoteRequest, status: HttpStatus) =
     sendPostRequest("/recalls/$recallId/notes", request).expectStatus().isEqualTo(status)
 
@@ -97,8 +101,13 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun decideRescind(recallId: RecallId, rescindRecordId: RescindRecordId, request: RescindDecisionRequest, status: HttpStatus = OK) =
-    patchRequest("/recalls/$recallId/rescind-records/$rescindRecordId", request, status)
+  fun <T> partBRecord(
+    recallId: RecallId,
+    request: PartBRequest,
+    expectedStatus: HttpStatus = CREATED,
+    responseClass: Class<T>
+  ) =
+    postRequest("/recalls/$recallId/partb-records", request, responseClass, expectedStatus)
 
   fun getRecallDocuments(recallId: RecallId, category: DocumentCategory): List<Api.RecallDocument> =
     webTestClient.get().uri { uriBuilder ->
@@ -168,9 +177,6 @@ class AuthenticatedClient(
 
   fun unassignRecall(recallId: RecallId, assignee: UserId) =
     deleteRequestWithResponse("/recalls/$recallId/assignee/$assignee", RecallResponse::class.java)
-
-  fun unassignRecall(recallId: RecallId, assignee: UserId, expectedStatus: HttpStatus) =
-    deleteRequest("/recalls/$recallId/assignee/$assignee", expectedStatus)
 
   fun returnedToCustody(recallId: RecallId, returnedToCustodyDateTime: OffsetDateTime, notificationDateTime: OffsetDateTime) =
     sendPostRequest("/recalls/$recallId/returned-to-custody", ReturnedToCustodyRequest(returnedToCustodyDateTime, notificationDateTime))

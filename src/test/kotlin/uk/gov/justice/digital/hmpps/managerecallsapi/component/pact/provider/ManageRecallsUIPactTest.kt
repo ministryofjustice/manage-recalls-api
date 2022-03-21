@@ -26,13 +26,18 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.MISSING_DOCUMENTS_EMAIL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.NOTE_DOCUMENT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OASYS_RISK_ASSESSMENT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_EMAIL_FROM_PROBATION
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_RISK_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.RESCIND_REQUEST_EMAIL
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.UNCATEGORISED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.PartBRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
@@ -46,6 +51,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -70,6 +76,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   private val matchedLastKnownAddressId = LastKnownAddressId(UUID.fromString("22222222-0000-0000-0000-000000000000"))
   private val matchedRescindRecordId = RescindRecordId(UUID.fromString("33333333-0000-0000-0000-000000000000"))
   private val matchedNoteId = NoteId(UUID.fromString("44444444-0000-0000-0000-000000000000"))
+  private val matchedPartBRecallId = NoteId(UUID.fromString("55555555-0000-0000-0000-000000000000"))
   private val userIdOnes = UserId(UUID.fromString("11111111-1111-1111-1111-111111111111"))
   private val revocationOrderBytes = ClassPathResource("/document/revocation-order.pdf").file.readBytes()
   private val details = "Random details"
@@ -93,6 +100,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     recallReasonAuditRepository.deleteAll()
     recallAuditRepository.deleteAll()
     missingDocumentsRecordRepository.deleteAll()
+    partBRecordRepository.deleteAll()
     lastKnownAddressRepository.deleteAll()
     rescindRecordRepository.deleteAll()
     noteRepository.deleteAll()
@@ -237,6 +245,16 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @State(
+    "a recall with part B records exists",
+    "a Fixed Term recall with part B records exists",
+  )
+  fun `a Fixed Term recall with part B records exists`() {
+    `a user and a fully populated Fixed Term recall without documents exists`()
+    `a note exists`(1, matchedNoteId, matchedDocumentId)
+    `a note exists`(2)
+  }
+
+  @State(
     "a recall with open rescind record exists",
     "a Fixed Term recall with open rescind record exists",
   )
@@ -301,10 +319,7 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   ) {
 
     val emailId = DocumentId(UUID.randomUUID())
-
-    documentCategories.forEach {
-      `a document exists`(emailId, it, FileName("MDR email.msg"), version, details)
-    }
+    `a document exists`(emailId, MISSING_DOCUMENTS_EMAIL, FileName("MDR email.msg"), version, null)
 
     missingDocumentsRecordRepository.save(
       MissingDocumentsRecord(
@@ -313,6 +328,37 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
         documentCategories,
         emailId,
         details,
+        version,
+        userIdOnes,
+        OffsetDateTime.now()
+      )
+    )
+  }
+
+  fun `a part B record and related documents exist`(
+    version: Int,
+    details: String
+  ) {
+
+    val documents = mapOf(
+      PART_B_RISK_REPORT to DocumentId(UUID.randomUUID()),
+      PART_B_EMAIL_FROM_PROBATION to DocumentId(UUID.randomUUID()),
+      OASYS_RISK_ASSESSMENT to DocumentId(UUID.randomUUID()),
+    )
+
+    documents.forEach {
+      `a document exists`(it.value, it.key, FileName("MDR email.msg"), 1, null)
+    }
+
+    partBRecordRepository.save(
+      PartBRecord(
+        PartBRecordId(UUID.randomUUID()),
+        matchedRecallId,
+        details,
+        LocalDate.now(),
+        documents[PART_B_RISK_REPORT]!!,
+        documents[PART_B_EMAIL_FROM_PROBATION]!!,
+        documents[OASYS_RISK_ASSESSMENT],
         version,
         userIdOnes,
         OffsetDateTime.now()

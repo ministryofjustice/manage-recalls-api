@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.PartBRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
@@ -42,6 +43,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -203,6 +205,7 @@ class RecallController(
     documents = latestDocuments(documents),
     lastKnownAddresses = lastKnownAddresses.map { address -> address.toResponse() },
     missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse(documents) },
+    partBRecords = partBRecords.map { record -> record.toResponse(documents) },
     notes = notes.map { note -> note.toResponse(documents) },
     reasonsForRecall = reasonsForRecall.toList(),
     rescindRecords = rescindRecords.map { record -> record.toResponse(documents) },
@@ -301,6 +304,21 @@ class RecallController(
     emailId(),
     documents.first { it.id == emailId }.fileName,
     details,
+    version,
+    userDetailsService.get(createdByUserId()).fullName(),
+    createdDateTime
+  )
+
+  fun PartBRecord.toResponse(documents: Set<Document>) = Api.PartBRecord(
+    id(),
+    details,
+    partBReceivedDate,
+    partBDocumentId(),
+    documents.first { it.id == partBDocumentId }.fileName,
+    emailId(),
+    documents.first { it.id == emailId }.fileName,
+    oasysDocumentId(),
+    documents.firstOrNull { it.id == oasysDocumentId }?.fileName,
     version,
     userDetailsService.get(createdByUserId()).fullName(),
     createdDateTime
@@ -408,6 +426,7 @@ data class RecallResponse(
   val documents: List<Api.RecallDocument> = emptyList(),
   val lastKnownAddresses: List<Api.LastKnownAddress> = emptyList(),
   val missingDocumentsRecords: List<Api.MissingDocumentsRecord> = emptyList(),
+  val partBRecords: List<Api.PartBRecord> = emptyList(),
   val notes: List<Api.Note> = emptyList(),
   val reasonsForRecall: List<ReasonForRecall> = emptyList(),
   val rescindRecords: List<Api.RescindRecord> = emptyList(),
@@ -496,6 +515,21 @@ class Api {
     val emailId: DocumentId,
     val emailFileName: FileName,
     val details: String,
+    val version: Int,
+    val createdByUserName: FullName,
+    val createdDateTime: OffsetDateTime
+  )
+
+  data class PartBRecord(
+    val partBRecordId: PartBRecordId,
+    val details: String,
+    val partBReceivedDate: LocalDate,
+    val partBDocumentId: DocumentId,
+    val partBFileName: FileName,
+    val emailId: DocumentId,
+    val emailFileName: FileName,
+    val oasysDocumentId: DocumentId?,
+    val oasysFileName: FileName?,
     val version: Int,
     val createdByUserName: FullName,
     val createdDateTime: OffsetDateTime

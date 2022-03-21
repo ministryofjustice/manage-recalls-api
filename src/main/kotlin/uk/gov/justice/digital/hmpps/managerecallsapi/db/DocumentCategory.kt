@@ -34,6 +34,7 @@ enum class DocumentCategory(val uploaded: Boolean, val versioned: Versioned) {
   // UNVERSIONED document categories
   RESCIND_REQUEST_EMAIL(true, NO), // linked to rescind record
   RESCIND_DECISION_EMAIL(true, NO), // linked to rescind record
+  PART_B_EMAIL_FROM_PROBATION(true, NO), // linked to part B record
   NOTE_DOCUMENT(true, NO), // linked to note record
   OTHER(true, NO),
   UNCATEGORISED(true, NO);
