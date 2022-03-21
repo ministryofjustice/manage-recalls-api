@@ -20,7 +20,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.ELM_FURTHER_OFFENCE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReasonForRecall.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallReasonAuditRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.JpaRecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallReasonAuditRepository
 import java.sql.Timestamp
 import java.time.Clock
@@ -36,7 +35,6 @@ import javax.transaction.Transactional
 @ActiveProfiles("db-test")
 class RecallReasonAuditRepositoryIntegrationTest(
   @Qualifier("jpaRecallReasonAuditRepository") @Autowired private val jpaRepository: JpaRecallReasonAuditRepository,
-  @Qualifier("jpaRecallRepository") @Autowired private val jpaRecallRepository: JpaRecallRepository,
 ) : IntegrationTestBase() {
   private val underTest = RecallReasonAuditRepository(jpaRepository)
 

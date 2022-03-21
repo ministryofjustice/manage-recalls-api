@@ -1,18 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.tomakehurst.wiremock.client.WireMock.aResponse
-import com.github.tomakehurst.wiremock.client.WireMock.get
-import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
-import com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer
-import com.github.tomakehurst.wiremock.http.HttpHeader
-import com.github.tomakehurst.wiremock.http.HttpHeaders
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpHeaders.CONTENT_TYPE
-import org.springframework.http.HttpStatus.OK
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -29,8 +20,8 @@ class PrisonRegisterMockServer(
   "/health/ping"
 ) {
 
-  fun stubPrisons() {
-    val prisons = listOf(
+  val prisons =
+    listOf(
       Prison(PrisonId("MWI"), PrisonName("Medway (STC)"), true),
       Prison(PrisonId("AKI"), PrisonName("Acklington (HMP)"), false),
       Prison(PrisonId("BMI"), PrisonName("Birmingham (HMP)"), true),
@@ -39,48 +30,9 @@ class PrisonRegisterMockServer(
       Prison(PrisonId("BLI"), PrisonName("BLI (HMP)"), true),
       Prison(PrisonId("CFI"), PrisonName("Cardiff (HMP)"), true)
     )
-    stubAllPrisons(prisons)
-    prisons.forEach { stubPrison(it) }
-  }
 
-  fun stubAllPrisons(prisons: List<Prison>) {
-    stubGet("/prisons", prisons)
-  }
+  fun stubPrisons() {
 
-  fun stubPrison(prison: Prison) {
-    stubGet("/prisons/id/${prison.prisonId}", prison)
-  }
-
-  fun stubFindAnyPrisonById() {
-    stubFor(
-      get(urlPathMatching("/prisons/id/(.*)"))
-        .willReturn(
-          aResponse()
-            .withStatus(OK.value())
-            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
-            .withBody(
-              "{\n" +
-                "      \"prisonId\": \"{{request.path.[2]}}\",\n" +
-                "      \"prisonName\": \"Test prison {{request.path.[2]}}\",\n" +
-                "      \"active\": true\n" +
-                "    }"
-            )
-            .withTransformers("response-template")
-        )
-    )
-  }
-
-  fun <T> stubGet(url: String, response: T) {
-    stubFor(
-      get(urlEqualTo(url))
-        .willReturn(
-          aResponse()
-            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
-            .withBody(
-              objectMapper.writeValueAsString(response)
-            )
-            .withStatus(OK.value())
-        )
-    )
+    stubGet("/prisons", prisons, objectMapper)
   }
 }

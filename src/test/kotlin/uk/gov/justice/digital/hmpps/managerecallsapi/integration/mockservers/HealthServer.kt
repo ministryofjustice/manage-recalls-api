@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
@@ -56,6 +57,27 @@ open class HealthServer(config: WireMockConfiguration, private val healthCheckPa
               )
             )
             .withFixedDelay(timeoutMillis)
+            .withStatus(HttpStatus.OK.value())
+        )
+    )
+  }
+
+  protected fun <T> stubGet(url: String, response: List<T>, objectMapper: ObjectMapper) {
+    stubFor(
+      get(urlEqualTo(url))
+        .willReturn(
+          aResponse()
+            .withHeaders(
+              com.github.tomakehurst.wiremock.http.HttpHeaders(
+                HttpHeader(
+                  HttpHeaders.CONTENT_TYPE,
+                  MediaType.APPLICATION_JSON_VALUE
+                )
+              )
+            )
+            .withBody(
+              objectMapper.writeValueAsString(response)
+            )
             .withStatus(HttpStatus.OK.value())
         )
     )

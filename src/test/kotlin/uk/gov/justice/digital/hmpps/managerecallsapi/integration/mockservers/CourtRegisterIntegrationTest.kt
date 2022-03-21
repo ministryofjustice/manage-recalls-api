@@ -5,11 +5,11 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.present
-import com.ninjasquad.springmockk.MockkBean
 import io.micrometer.core.instrument.Counter
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
+import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -28,15 +28,15 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
-import java.lang.RuntimeException
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.TimeoutHandlingWebClient
 
 @ExtendWith(SpringExtension::class)
 @Import(MetricsAutoConfiguration::class, CompositeMeterRegistryAutoConfiguration::class)
@@ -44,15 +44,18 @@ import java.lang.RuntimeException
 @ActiveProfiles("test")
 @SpringBootTest(
   properties = ["courtRegister.endpoint.url=http://localhost:9095"],
-  classes = [TestWebClientConfig::class, CourtRegisterClient::class]
+  classes = [TestWebClientConfig::class]
 )
 class CourtRegisterIntegrationTest(
-  @Autowired private val courtRegisterClient: CourtRegisterClient
+  @Autowired courtRegisterTestWebClient: WebClient
 ) {
 
-  private val courtRegisterMockServer = CourtRegisterMockServer(mapper)
+  private val courtRegisterTimeoutCounter: Counter = mockk()
 
-  @MockkBean private lateinit var courtRegisterTimeoutCounter: Counter
+  private val courtRegisterClient: CourtRegisterClient =
+    CourtRegisterClient(TimeoutHandlingWebClient(courtRegisterTestWebClient, 1, courtRegisterTimeoutCounter))
+
+  private val courtRegisterMockServer = CourtRegisterMockServer(mapper)
 
   @BeforeAll
   fun startMockServer() {
@@ -67,6 +70,7 @@ class CourtRegisterIntegrationTest(
   @BeforeEach
   fun resetMocks() {
     courtRegisterMockServer.resetAll()
+    courtRegisterClient.clearCache()
   }
 
   @Test
@@ -78,38 +82,21 @@ class CourtRegisterIntegrationTest(
     assertThat(result, hasSize(equalTo(5)))
   }
 
-  @Test
-  fun `can find court by id`() {
-    val courtId = CourtId("COURT")
-    val court = Court(courtId, CourtName("Test Court"))
-    courtRegisterMockServer.stub(court)
+  private fun courts(): List<Court> = courtRegisterMockServer.courts
 
-    val result = courtRegisterClient.findById(courtId).block()
+  @ParameterizedTest(name = "find court {0}")
+  @MethodSource("courts")
+  fun `can find court by id`(court: Court) {
+    courtRegisterMockServer.stubCourts()
 
+    val result = courtRegisterClient.findById(court.courtId).block()
     assertThat(result, present(equalTo(court)))
-  }
-
-  private fun courtIds(): List<CourtId> =
-    listOf(
-      CourtId("AAA"),
-      CourtId("XXX"),
-      CourtId("YYY"),
-    )
-
-  @ParameterizedTest(name = "find court with id {0}")
-  @MethodSource("courtIds")
-  fun `can find court by any id using response template`(courtId: CourtId) {
-    courtRegisterMockServer.stubFindAnyCourtById()
-
-    val result = courtRegisterClient.findById(courtId).block()
-    assertThat(
-      result,
-      present(equalTo(Court(courtId, CourtName("Test court $courtId"))))
-    )
   }
 
   @Test
   fun `find court returns empty if court does not exist`() {
+    courtRegisterMockServer.stubCourts()
+
     val result = courtRegisterClient.findById(CourtId("XXX")).block()
 
     assertThat(result, absent())

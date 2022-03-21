@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.register.PoliceUkApiClient
 
 @Service
 class PoliceForceLookupService(@Autowired private val policeUkApiClient: PoliceUkApiClient) {
+
   fun getPoliceForceName(policeForceId: PoliceForceId): PoliceForceName =
     policeUkApiClient.findById(policeForceId)
       .mapNotNull { it?.name }

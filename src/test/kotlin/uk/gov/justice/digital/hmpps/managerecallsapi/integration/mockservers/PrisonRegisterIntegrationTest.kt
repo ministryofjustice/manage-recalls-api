@@ -5,11 +5,11 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
 import com.natpryce.hamkrest.present
-import com.ninjasquad.springmockk.MockkBean
 import io.micrometer.core.instrument.Counter
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
+import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -19,6 +19,8 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration
@@ -26,14 +28,15 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.TimeoutHandlingWebClient
 
 @ExtendWith(SpringExtension::class)
 @Import(MetricsAutoConfiguration::class, CompositeMeterRegistryAutoConfiguration::class)
@@ -41,15 +44,17 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClie
 @ActiveProfiles("test")
 @SpringBootTest(
   properties = ["prisonRegister.endpoint.url=http://localhost:9094"],
-  classes = [TestWebClientConfig::class, PrisonRegisterClient::class]
+  classes = [TestWebClientConfig::class]
 )
 class PrisonRegisterIntegrationTest(
-  @Autowired private val prisonRegisterClient: PrisonRegisterClient
+  @Autowired private val prisonRegisterTestWebClient: WebClient
 ) {
+  private val prisonRegisterTimeoutCounter: Counter = mockk()
+
+  private val prisonRegisterClient: PrisonRegisterClient =
+    PrisonRegisterClient(TimeoutHandlingWebClient(prisonRegisterTestWebClient, 1, prisonRegisterTimeoutCounter))
 
   private val prisonRegisterMockServer = PrisonRegisterMockServer(mapper)
-
-  @MockkBean private lateinit var prisonRegisterTimeoutCounter: Counter
 
   @BeforeAll
   fun startMockServer() {
@@ -64,6 +69,7 @@ class PrisonRegisterIntegrationTest(
   @BeforeEach
   fun resetMocks() {
     prisonRegisterMockServer.resetAll()
+    prisonRegisterClient.clearCache()
   }
 
   @Test
@@ -75,31 +81,21 @@ class PrisonRegisterIntegrationTest(
     assertThat(result, hasSize(equalTo(7)))
   }
 
-  @Test
-  fun `can retrieve stubbed prison by id`() {
-    val prisonId = PrisonId("MWI")
-    val prison = Prison(prisonId, PrisonName("Medway (STC)"), true)
-    prisonRegisterMockServer.stubPrison(prison)
+  private fun prisons(): List<Prison> = prisonRegisterMockServer.prisons
 
-    val result = prisonRegisterClient.findPrisonById(prisonId).block()!!
+  @ParameterizedTest(name = "find prison {0}")
+  @MethodSource("prisons")
+  fun `can find prison by id`(prison: Prison) {
+    prisonRegisterMockServer.stubPrisons()
 
+    val result = prisonRegisterClient.findPrisonById(prison.prisonId).block()
     assertThat(result, present(equalTo(prison)))
   }
 
   @Test
-  fun `can retrieve find prison by id using response template`() {
-    val prisonId = PrisonId("AAA")
-    prisonRegisterMockServer.stubFindAnyPrisonById()
-
-    val result = prisonRegisterClient.findPrisonById(prisonId).block()
-    assertThat(
-      result,
-      present(equalTo(Prison(prisonId, PrisonName("Test prison $prisonId"), true)))
-    )
-  }
-
-  @Test
   fun `get prison returns empty if prison does not exist`() {
+    prisonRegisterMockServer.stubPrisons()
+
     val result = prisonRegisterClient.findPrisonById(PrisonId("XXX")).block()
 
     assertThat(result, absent())
