@@ -39,14 +39,14 @@ class AuthenticatedWebClientConfig(
   @Value("\${prisonerSearch.endpoint.url}")
   private lateinit var prisonerOffenderSearchBaseUrl: String
 
-  @Bean
+  @Bean("prisonerOffenderSearchWebClient")
   fun prisonerOffenderSearchWebClient(
     authorizedClientManager: OAuth2AuthorizedClientManager,
     objectMapper: ObjectMapper,
     metricsCustomizer: MetricsWebClientCustomizer
   ): AuthenticatingRestClient =
     AuthenticatingRestClient(
-      webClientFactory(
+      authenticatedWebClientFactory(
         prisonerOffenderSearchBaseUrl,
         authorizedClientManager,
         MAX_VALUE,
@@ -62,21 +62,21 @@ class AuthenticatedWebClientConfig(
   @Value("\${prisonApi.endpoint.url}")
   private lateinit var prisonApiBaseUrl: String
 
-  @Bean
+  @Bean("prisonApiWebClient")
   fun prisonApiWebClient(
     authorizedClientManager: OAuth2AuthorizedClientManager,
     objectMapper: ObjectMapper,
     metricsCustomizer: MetricsWebClientCustomizer
   ): AuthenticatingRestClient =
     AuthenticatingRestClient(
-      webClientFactory(prisonApiBaseUrl, authorizedClientManager, MAX_VALUE, objectMapper, metricsCustomizer),
+      authenticatedWebClientFactory(prisonApiBaseUrl, authorizedClientManager, MAX_VALUE, objectMapper, metricsCustomizer),
       "prison-api-client"
     )
 
   @Bean("prisonApiTimeoutCounter")
   fun prisonApiTimeoutCounter(): Counter = timeoutCounter(prisonApiBaseUrl)
 
-  private fun webClientFactory(
+  private fun authenticatedWebClientFactory(
     baseUrl: String,
     authorizedClientManager: OAuth2AuthorizedClientManager,
     bufferByteCount: Int,

@@ -2,7 +2,6 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.search
 
 import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
@@ -24,15 +23,13 @@ class PrisonerOffenderSearchClient(
 ) {
 
   @Autowired
-  @Qualifier("prisonerOffenderSearchWebClient")
-  internal lateinit var webClient: AuthenticatingRestClient
+  internal lateinit var prisonerOffenderSearchWebClient: AuthenticatingRestClient
 
   @Autowired
-  @Qualifier("prisonerOffenderSearchTimeoutCounter")
-  internal lateinit var timeoutCounter: Counter
+  internal lateinit var prisonerOffenderSearchTimeoutCounter: Counter
 
   fun prisonerByNomsNumber(nomsNumber: NomsNumber): Mono<Prisoner> =
-    webClient
+    prisonerOffenderSearchWebClient
       .get("/prisoner/$nomsNumber")
       .retrieve()
       .bodyToMono(object : ParameterizedTypeReference<Prisoner>() {})
@@ -44,7 +41,7 @@ class PrisonerOffenderSearchClient(
       }
       .timeout(Duration.ofSeconds(timeout))
       .onErrorMap(TimeoutException::class.java) { ex ->
-        timeoutCounter.increment()
+        prisonerOffenderSearchTimeoutCounter.increment()
         ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName)
       }
 }

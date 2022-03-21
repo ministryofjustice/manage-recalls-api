@@ -38,18 +38,24 @@ class PrisonerOffenderSearchMockServer(
     )
   }
 
-  fun getPrisonerByNomsNumberRespondsWith(nomsNumber: NomsNumber, responseBody: Prisoner) {
-    stubFor(
-      get(urlEqualTo("/prisoner/$nomsNumber"))
-        .withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
-        .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
-        .willReturn(
-          aResponse()
-            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
-            .withStatus(OK.value())
-            .withBody(objectMapper.writeValueAsString(responseBody))
-        )
-    )
+  fun getPrisonerByNomsNumberRespondsWith(
+    nomsNumber: NomsNumber,
+    responseBody: Prisoner,
+    withAuthorization: Boolean = true
+  ) {
+    var get = get(urlEqualTo("/prisoner/$nomsNumber"))
+    if (withAuthorization)
+      get = get.withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
+    get = get
+      .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
+      .willReturn(
+        aResponse()
+          .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
+          .withStatus(OK.value())
+          .withBody(objectMapper.writeValueAsString(responseBody))
+      )
+
+    stubFor(get)
   }
 
   fun delayGetPrisoner(nomsNumber: NomsNumber, timeoutMillis: Int) {

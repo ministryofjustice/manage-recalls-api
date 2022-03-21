@@ -17,16 +17,6 @@ abstract class CachingClient<T>(
     .maximumSize(1000)
     .build()
 
-  fun <T> getResponseWith404Handling(uri: String, typeReference: ParameterizedTypeReference<T>): Mono<T> {
-    return webClient.getWithTimeout(uri, typeReference, this.javaClass)
-      .onErrorResume(WebClientResponseException::class.java) { exception ->
-        when (exception.rawStatusCode) {
-          404 -> Mono.empty()
-          else -> Mono.error(ClientException(this.javaClass.simpleName, exception))
-        }
-      }
-  }
-
   fun getResponse(uri: String, typeReference: ParameterizedTypeReference<T>): Mono<T> {
     return checkCacheElseGetWithTimeout(uri, typeReference)
       .onErrorResume(WebClientResponseException::class.java) { exception ->

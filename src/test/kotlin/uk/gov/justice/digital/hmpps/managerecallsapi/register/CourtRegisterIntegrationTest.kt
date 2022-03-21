@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
+package uk.gov.justice.digital.hmpps.managerecallsapi.register
 
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
@@ -34,16 +34,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutExcepti
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.CourtRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.TimeoutHandlingWebClient
 
 @ExtendWith(SpringExtension::class)
 @Import(MetricsAutoConfiguration::class, CompositeMeterRegistryAutoConfiguration::class)
 @TestInstance(PER_CLASS)
 @ActiveProfiles("test")
 @SpringBootTest(
-  properties = ["courtRegister.endpoint.url=http://localhost:9095"],
+  properties = ["courtRegister.endpoint.url=http://localhost:9095", "spring.main.allow-bean-definition-overriding=true"],
   classes = [TestWebClientConfig::class]
 )
 class CourtRegisterIntegrationTest(
@@ -106,7 +105,7 @@ class CourtRegisterIntegrationTest(
   fun `handle timeout from client`() {
     every { courtRegisterTimeoutCounter.increment() } just Runs
 
-    courtRegisterMockServer.delaySearch("/courts/all", 3000)
+    courtRegisterMockServer.delayGet("/courts/all", 3000)
 
     val exception = assertThrows<RuntimeException> {
       courtRegisterClient.getAllCourts().block()!!
@@ -119,7 +118,7 @@ class CourtRegisterIntegrationTest(
 
   @Test
   fun `handle exception from client`() {
-    courtRegisterMockServer.stubCallWithException("/courts/all")
+    courtRegisterMockServer.stubGetWithException("/courts/all")
 
     val exception = assertThrows<RuntimeException> {
       courtRegisterClient.getAllCourts().block()!!

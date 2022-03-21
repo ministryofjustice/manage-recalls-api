@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
+package uk.gov.justice.digital.hmpps.managerecallsapi.register
 
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
@@ -35,15 +35,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJack
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.TimeoutHandlingWebClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
 
 @ExtendWith(SpringExtension::class)
 @Import(MetricsAutoConfiguration::class, CompositeMeterRegistryAutoConfiguration::class)
 @TestInstance(PER_CLASS)
 @ActiveProfiles("test")
 @SpringBootTest(
-  properties = ["prisonRegister.endpoint.url=http://localhost:9094"],
+  properties = ["prisonRegister.endpoint.url=http://localhost:9094", "spring.main.allow-bean-definition-overriding=true"],
   classes = [TestWebClientConfig::class]
 )
 class PrisonRegisterIntegrationTest(
@@ -105,7 +104,7 @@ class PrisonRegisterIntegrationTest(
   fun `handle timeout from client`() {
     every { prisonRegisterTimeoutCounter.increment() } just Runs
 
-    prisonRegisterMockServer.delaySearch("/prisons", 3000)
+    prisonRegisterMockServer.delayGet("/prisons", 3000)
 
     val exception = assertThrows<RuntimeException> {
       prisonRegisterClient.getAllPrisons().block()
@@ -118,7 +117,7 @@ class PrisonRegisterIntegrationTest(
 
   @Test
   fun `handle exception from client`() {
-    prisonRegisterMockServer.stubCallWithException("/prisons")
+    prisonRegisterMockServer.stubGetWithException("/prisons")
 
     val exception = assertThrows<RuntimeException> {
       prisonRegisterClient.getAllPrisons().block()!!
