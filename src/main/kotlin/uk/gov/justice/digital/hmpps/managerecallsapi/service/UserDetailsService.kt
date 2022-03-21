@@ -1,7 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import net.sf.jmimemagic.Magic
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
@@ -14,7 +13,6 @@ import java.util.Base64
 class UserDetailsService(
   @Autowired private val userDetailsRepository: UserDetailsRepository
 ) {
-  private val log = LoggerFactory.getLogger(this::class.java)
   private val validMimeTypes = setOf("jpg")
 
   fun save(userDetails: UserDetails): UserDetails =

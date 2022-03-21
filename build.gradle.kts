@@ -56,6 +56,7 @@ dependencies {
     exclude("log4j", "log4j")
   }
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.0.5")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 

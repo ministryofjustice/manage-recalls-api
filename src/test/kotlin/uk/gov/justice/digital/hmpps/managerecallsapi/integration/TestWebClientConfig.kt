@@ -16,14 +16,14 @@ class TestWebClientConfig {
   @Value("\${prisonRegister.endpoint.url}")
   private lateinit var prisonRegisterEndpointUrl: String
 
-  @Bean("prisonRegisterWebClient")
-  fun prisonRegisterWebClient(): WebClient = webClient(prisonRegisterEndpointUrl)
+  @Bean("prisonRegisterTestWebClient")
+  fun prisonRegisterTestWebClient(): WebClient = webClient(prisonRegisterEndpointUrl)
 
   @Value("\${courtRegister.endpoint.url}")
   private lateinit var courtRegisterEndpointUrl: String
 
-  @Bean("courtRegisterWebClient")
-  fun courtRegisterWebClient(): WebClient = webClient(courtRegisterEndpointUrl)
+  @Bean("courtRegisterTestWebClient")
+  fun courtRegisterTestWebClient(): WebClient = webClient(courtRegisterEndpointUrl)
 
   private fun webClient(endpointUrl: String): WebClient {
     val builder = WebClient.builder()

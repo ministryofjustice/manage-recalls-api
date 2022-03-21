@@ -25,7 +25,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import java.util.stream.Stream
@@ -56,7 +55,6 @@ internal class LetterToPrisonServiceParameterizedTest {
 
   private val recallId = ::RecallId.random()
   private val expectedBytes = randomString().toByteArray()
-  private val nomsNumber = randomNoms()
 
   @Suppress("unused")
   private fun letterToPrisonParameters(): Stream<Arguments> {

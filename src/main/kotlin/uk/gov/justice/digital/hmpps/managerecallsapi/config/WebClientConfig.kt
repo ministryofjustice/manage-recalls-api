@@ -14,13 +14,15 @@ import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.register.TimeoutHandlingWebClient
 import java.net.URI
 import java.time.Duration.ofSeconds
 
 @Configuration
 class WebClientConfig(
   @Autowired private val metricsCustomizer: MetricsWebClientCustomizer,
-  @Autowired private val meterRegistry: MeterRegistry
+  @Autowired private val meterRegistry: MeterRegistry,
+  @Value("\${clientApi.timeout}") val timeout: Long,
 ) {
 
   @Bean("webClientNoAuthNoMetrics") // health check only, not logging metrics
@@ -36,19 +38,13 @@ class WebClientConfig(
   private lateinit var bankHolidayRegisterEndpointUrl: String
 
   @Bean("bankHolidayRegisterWebClient")
-  fun bankHolidayRegisterWebClient(): WebClient = webClient(bankHolidayRegisterEndpointUrl)
-
-  @Bean("bankHolidayRegisterTimeoutCounter")
-  fun bankHolidayRegisterTimeoutCounter(): Counter = timeoutCounter(bankHolidayRegisterEndpointUrl)
+  fun bankHolidayRegisterWebClient(): TimeoutHandlingWebClient = timeoutHandlingWebClient(bankHolidayRegisterEndpointUrl)
 
   @Value("\${courtRegister.endpoint.url}")
   private lateinit var courtRegisterEndpointUrl: String
 
   @Bean("courtRegisterWebClient")
-  fun courtRegisterWebClient(): WebClient = webClient(courtRegisterEndpointUrl)
-
-  @Bean("courtRegisterTimeoutCounter")
-  fun courtRegisterTimeoutCounter(): Counter = timeoutCounter(courtRegisterEndpointUrl)
+  fun courtRegisterWebClient(): TimeoutHandlingWebClient = timeoutHandlingWebClient(courtRegisterEndpointUrl)
 
   @Value("\${gotenberg.endpoint.url}")
   private lateinit var gotenbergEndpointUrl: String
@@ -60,19 +56,13 @@ class WebClientConfig(
   private lateinit var policeUkApiEndpointUrl: String
 
   @Bean("policeUkApiWebClient")
-  fun policeUkApiWebClient(): WebClient = webClient(policeUkApiEndpointUrl)
-
-  @Bean("policeUkApiTimeoutCounter")
-  fun policeUkApiTimeoutCounter(): Counter = timeoutCounter(policeUkApiEndpointUrl)
+  fun policeUkApiWebClient(): TimeoutHandlingWebClient = timeoutHandlingWebClient(policeUkApiEndpointUrl)
 
   @Value("\${prisonRegister.endpoint.url}")
   private lateinit var prisonRegisterEndpointUrl: String
 
   @Bean("prisonRegisterWebClient")
-  fun prisonRegisterWebClient(): WebClient = webClient(prisonRegisterEndpointUrl)
-
-  @Bean("prisonRegisterTimeoutCounter")
-  fun prisonRegisterTimeoutCounter(): Counter = timeoutCounter(prisonRegisterEndpointUrl)
+  fun prisonRegisterWebClient(): TimeoutHandlingWebClient = timeoutHandlingWebClient(prisonRegisterEndpointUrl)
 
   private fun webClient(endpointUrl: String): WebClient {
     val builder = WebClient.builder()
@@ -92,4 +82,10 @@ class WebClientConfig(
     val host = URI(endpointUrl).host
     return meterRegistry.counter(metricName, Tags.of("clientName", host))
   }
+
+  private fun timeoutHandlingWebClient(endpointUrl: String) = TimeoutHandlingWebClient(
+    webClient(endpointUrl),
+    timeout,
+    timeoutCounter(endpointUrl)
+  )
 }
