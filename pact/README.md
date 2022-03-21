@@ -38,6 +38,12 @@ Then API PACT verification alone can be executed with:
 ./gradlew verifyPactAndPublish
 ```
 
+An IntelliJ IDEA or similar run config for the same can be created as a Gradle task configured with a
+`Run` command of:
+```
+:verifyPactAndPublish --tests "uk.gov.justice.digital.hmpps.managerecallsapi.component.pact.provider.ManagerRecallsUiAuthorizedPactTest"
+```
+
 ## Pact broker webhooks
 
 - [Pact broker webhooks documentation](https://docs.pact.io/pact_broker/webhooks/)

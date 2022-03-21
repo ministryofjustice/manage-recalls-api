@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -28,6 +29,7 @@ internal fun fullyPopulatedRecallWithoutDocuments(recallId: RecallId = ::RecallI
   fullyPopulatedRecall(recallId, userId, recallType).copy(
     documents = emptySet(),
     missingDocumentsRecords = emptySet(),
+    partBRecords = emptySet(),
     rescindRecords = emptySet(),
     notes = emptySet(),
   )
@@ -57,6 +59,16 @@ internal fun fullyPopulatedRecall(recallId: RecallId = ::RecallId.random(), know
         mdr.copy(
           recallId = recallId.value,
           emailId = recall.documents.random().id,
+          version = randomVersion(),
+          createdByUserId = (knownUserId ?: ::UserId.random()).value
+        )
+      }.toSet(),
+      partBRecords = recall.partBRecords.map { partBRecord ->
+        partBRecord.copy(
+          recallId = recallId.value,
+          partBDocumentId = recall.documents.random().id,
+          emailId = recall.documents.random().id,
+          oasysDocumentId = recall.documents.random().id,
           version = randomVersion(),
           createdByUserId = (knownUserId ?: ::UserId.random()).value
         )
@@ -150,6 +162,7 @@ private fun makeRandomSet(kclass: KClass<*>, type: KType): Set<Any> {
 fun <T : Validated<UUID>> ((UUID) -> T).zeroes() = this(UUID(0, 0))
 fun randomString(): String = RandomStringUtils.randomAlphanumeric(10)
 fun randomVersion(): Int = Random.nextInt(1, Int.MAX_VALUE)
+fun randomFileName(): FileName = FileName(randomString())
 fun randomIndex(): Int = randomVersion()
 fun randomBookingNumber() = BookingNumber(RandomStringUtils.randomAlphanumeric(6))
 fun randomNoms() = NomsNumber(RandomStringUtils.randomAlphanumeric(7))
@@ -158,7 +171,7 @@ fun randomCourtId() = CourtId(RandomStringUtils.randomAlphanumeric(6))
 fun randomPoliceForceId() = PoliceForceId(RandomStringUtils.randomAlphanumeric(6))
 fun randomVersionedDocumentCategory() = DocumentCategory.values().filter { it.versioned() }.random()
 fun randomUnVersionedDocumentCategory() = DocumentCategory.values().filter { !it.versioned() }.random()
-fun randomHistoricalDate() = LocalDate.now().minusDays(Random.nextLong(1, 1000))
+fun randomHistoricalDate(): LocalDate = LocalDate.now().minusDays(Random.nextLong(1, 1000))
 fun randomAdultDateOfBirth(): LocalDate? {
   val age18 = LocalDate.now().minusYears(18)
   val endEpochDay = age18.toEpochDay()

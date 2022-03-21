@@ -90,6 +90,9 @@ data class Recall(
   @OneToMany(cascade = [ALL])
   @JoinColumn(name = "recall_id")
   val notes: Set<Note> = emptySet(),
+  @OneToMany(cascade = [ALL])
+  @JoinColumn(name = "recall_id")
+  val partBRecords: Set<PartBRecord> = emptySet(),
   @ElementCollection(targetClass = ReasonForRecall::class)
   @JoinTable(name = "recall_reason", joinColumns = [JoinColumn(name = "recall_id")])
   @Column(name = "reason_for_recall", nullable = false)
@@ -177,6 +180,7 @@ data class Recall(
     missingDocumentsRecords: Set<MissingDocumentsRecord> = emptySet(),
     lastKnownAddresses: Set<LastKnownAddress> = emptySet(),
     notes: Set<Note> = emptySet(),
+    partBRecords: Set<PartBRecord> = emptySet(),
     reasonsForRecall: Set<ReasonForRecall> = emptySet(),
     rescindRecords: Set<RescindRecord> = emptySet(),
 
@@ -240,6 +244,7 @@ data class Recall(
       lastKnownAddresses,
       missingDocumentsRecords,
       notes,
+      partBRecords,
       reasonsForRecall,
       rescindRecords,
       additionalLicenceConditions,
