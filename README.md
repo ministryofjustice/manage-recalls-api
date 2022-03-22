@@ -1,5 +1,6 @@
 # Manage Recall API
 
+- [![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=for-the-badge&logo=github&label=MoJ%20Compliant&query=%24.data%5B%3F%28%40.name%20%3D%3D%20%22manage-recalls-api%22%29%5D.status&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fgithub_repositories)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/github_repositories#manage-recalls-api "Link to report")
 - CI Status: [![CircleCI](https://circleci.com/gh/ministryofjustice/manage-recalls-api/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/manage-recalls-api)
 - PACT Status: [![PACT](https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk/pacticipants/manage-recalls-api/latest-version/main/can-i-deploy/to/dev/badge)](https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk/)
   [![PACT](https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk/pacticipants/manage-recalls-api/latest-version/main/can-i-deploy/to/preprod/badge)](https://pact-broker-prod.apps.live-1.cloud-platform.service.justice.gov.uk/)
