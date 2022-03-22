@@ -153,6 +153,7 @@ data class Recall(
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   @Enumerated(STRING)
   val recommendedRecallType: RecallType? = null,
+  val rereleaseSupported: Boolean? = null,
   @Embedded
   val returnedToCustody: ReturnedToCustodyRecord? = null,
   @Embedded
@@ -221,6 +222,7 @@ data class Recall(
     recallLength: RecallLength? = null,
     recallNotificationEmailSentDateTime: OffsetDateTime? = null,
     recommendedRecallType: RecallType? = null,
+    rereleaseSupported: Boolean? = null,
     returnedToCustodyRecord: ReturnedToCustodyRecord? = null,
     sentencingInfo: SentencingInfo? = null,
     stopRecord: StopRecord? = null,
@@ -284,6 +286,7 @@ data class Recall(
       recallLength,
       recallNotificationEmailSentDateTime,
       recommendedRecallType,
+      rereleaseSupported,
       returnedToCustodyRecord,
       sentencingInfo,
       stopRecord,
