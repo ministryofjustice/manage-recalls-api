@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus.UNAUTHORIZED
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomAdultDateOfBirth
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 
 class SearchComponentTest : ComponentTestBase() {
 

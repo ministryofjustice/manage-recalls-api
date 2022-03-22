@@ -14,8 +14,8 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Movement
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Movement
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
 import java.time.LocalDate
 import java.time.LocalTime
 

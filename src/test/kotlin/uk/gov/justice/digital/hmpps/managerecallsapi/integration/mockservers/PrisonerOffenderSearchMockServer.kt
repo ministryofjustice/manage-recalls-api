@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
 
 @Component
 class PrisonerOffenderSearchMockServer(
@@ -38,18 +38,24 @@ class PrisonerOffenderSearchMockServer(
     )
   }
 
-  fun getPrisonerByNomsNumberRespondsWith(nomsNumber: NomsNumber, responseBody: Prisoner) {
-    stubFor(
-      get(urlEqualTo("/prisoner/$nomsNumber"))
-        .withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
-        .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
-        .willReturn(
-          aResponse()
-            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
-            .withStatus(OK.value())
-            .withBody(objectMapper.writeValueAsString(responseBody))
-        )
-    )
+  fun getPrisonerByNomsNumberRespondsWith(
+    nomsNumber: NomsNumber,
+    responseBody: Prisoner,
+    withAuthorizationHeader: Boolean = true
+  ) {
+    var get = get(urlEqualTo("/prisoner/$nomsNumber"))
+    if (withAuthorizationHeader)
+      get = get.withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
+    get = get
+      .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
+      .willReturn(
+        aResponse()
+          .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
+          .withStatus(OK.value())
+          .withBody(objectMapper.writeValueAsString(responseBody))
+      )
+
+    stubFor(get)
   }
 
   fun delayGetPrisoner(nomsNumber: NomsNumber, timeoutMillis: Int) {

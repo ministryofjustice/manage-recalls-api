@@ -1,8 +1,7 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.search
+package uk.gov.justice.digital.hmpps.managerecallsapi.nomis
 
 import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
@@ -11,6 +10,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.AuthenticatingWebClient
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
@@ -18,23 +18,19 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.TimeoutException
 
-// FIXME: PUD-1577 - Add some tests to this code - or refactor to greater sharing of webclient handling e.g. with ErrorHandlingClient?
-
 @Component
 class PrisonApiClient(
   @Value("\${clientApi.timeout}") val timeout: Long
 ) {
 
   @Autowired
-  @Qualifier("prisonApiWebClient")
-  internal lateinit var webClient: AuthenticatingRestClient
+  internal lateinit var prisonApiWebClient: AuthenticatingWebClient
 
   @Autowired
-  @Qualifier("prisonApiTimeoutCounter")
-  internal lateinit var timeoutCounter: Counter
+  internal lateinit var prisonApiTimeoutCounter: Counter
 
   fun latestInboundMovements(nomsNumbers: Set<NomsNumber>): List<Movement> =
-    webClient
+    prisonApiWebClient
       .post("/api/movements/offenders/?latestOnly=true&movementTypes=ADM", nomsNumbers)
       .retrieve()
       .bodyToMono(object : ParameterizedTypeReference<List<Movement>>() {})
@@ -43,7 +39,7 @@ class PrisonApiClient(
       }
       .timeout(Duration.ofSeconds(timeout))
       .onErrorMap(TimeoutException::class.java) { ex ->
-        timeoutCounter.increment()
+        prisonApiTimeoutCounter.increment()
         ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName)
       }
       .block()!!

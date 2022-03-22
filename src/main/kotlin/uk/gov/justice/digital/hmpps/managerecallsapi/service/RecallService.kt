@@ -20,9 +20,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonApiClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.PrisonApiClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.PrisonerOffenderSearchClient
 import java.time.Clock
 import java.time.LocalDate
 import java.time.OffsetDateTime

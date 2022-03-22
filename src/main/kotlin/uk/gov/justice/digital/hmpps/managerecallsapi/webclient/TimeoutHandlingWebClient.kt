@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.register
+package uk.gov.justice.digital.hmpps.managerecallsapi.webclient
 
 import io.micrometer.core.instrument.Counter
 import org.springframework.core.ParameterizedTypeReference
