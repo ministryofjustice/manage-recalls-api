@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.register
+package uk.gov.justice.digital.hmpps.managerecallsapi.webclient
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine

@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
 
 @Component
 class PrisonerOffenderSearchMockServer(
@@ -41,10 +41,10 @@ class PrisonerOffenderSearchMockServer(
   fun getPrisonerByNomsNumberRespondsWith(
     nomsNumber: NomsNumber,
     responseBody: Prisoner,
-    withAuthorization: Boolean = true
+    withAuthorizationHeader: Boolean = true
   ) {
     var get = get(urlEqualTo("/prisoner/$nomsNumber"))
-    if (withAuthorization)
+    if (withAuthorizationHeader)
       get = get.withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
     get = get
       .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))

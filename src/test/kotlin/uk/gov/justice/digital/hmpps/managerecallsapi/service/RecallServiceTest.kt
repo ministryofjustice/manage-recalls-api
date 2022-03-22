@@ -37,13 +37,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Movement
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.PrisonApiClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.PrisonerOffenderSearchClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedInstance
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecall
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Movement
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonApiClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate

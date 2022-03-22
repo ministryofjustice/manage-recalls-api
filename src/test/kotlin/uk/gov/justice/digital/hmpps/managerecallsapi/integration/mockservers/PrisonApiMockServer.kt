@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Movement
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Movement
 
 @Component
 class PrisonApiMockServer(
@@ -28,10 +28,10 @@ class PrisonApiMockServer(
   fun latestMovementsRespondsWith(
     request: Set<NomsNumber>,
     responseBody: List<Movement>?,
-    withAuthorization: Boolean = true
+    withAuthorizationHeader: Boolean = true
   ) {
     var post = post(urlEqualTo("/api/movements/offenders/?latestOnly=true&movementTypes=ADM"))
-    if (withAuthorization) {
+    if (withAuthorizationHeader) {
       post = post.withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
     }
     post = post.withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))

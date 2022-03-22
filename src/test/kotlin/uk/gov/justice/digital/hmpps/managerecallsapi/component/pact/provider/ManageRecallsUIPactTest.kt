@@ -58,9 +58,9 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.fullyPopulatedRecallWithoutDocuments
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.zeroes
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanner
 import java.time.LocalDate

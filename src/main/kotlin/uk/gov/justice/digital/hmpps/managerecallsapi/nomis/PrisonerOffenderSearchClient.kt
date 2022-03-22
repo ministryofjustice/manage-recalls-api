@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.search
+package uk.gov.justice.digital.hmpps.managerecallsapi.nomis
 
 import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,11 +11,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.AuthenticatingWebClient
 import java.time.Duration
 import java.time.LocalDate
 import java.util.concurrent.TimeoutException
-
-// FIXME: PUD-1577 - Add some tests to this code - or refactor to greater sharing of webclient handling e.g. with ErrorHandlingClient?
 
 @Component
 class PrisonerOffenderSearchClient(
@@ -23,7 +22,7 @@ class PrisonerOffenderSearchClient(
 ) {
 
   @Autowired
-  internal lateinit var prisonerOffenderSearchWebClient: AuthenticatingRestClient
+  internal lateinit var prisonerOffenderSearchWebClient: AuthenticatingWebClient
 
   @Autowired
   internal lateinit var prisonerOffenderSearchTimeoutCounter: Counter

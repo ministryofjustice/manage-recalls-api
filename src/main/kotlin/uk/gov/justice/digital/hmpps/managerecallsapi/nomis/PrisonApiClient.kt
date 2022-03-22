@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.search
+package uk.gov.justice.digital.hmpps.managerecallsapi.nomis
 
 import io.micrometer.core.instrument.Counter
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.AuthenticatingWebClient
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
@@ -23,7 +24,7 @@ class PrisonApiClient(
 ) {
 
   @Autowired
-  internal lateinit var prisonApiWebClient: AuthenticatingRestClient
+  internal lateinit var prisonApiWebClient: AuthenticatingWebClient
 
   @Autowired
   internal lateinit var prisonApiTimeoutCounter: Counter

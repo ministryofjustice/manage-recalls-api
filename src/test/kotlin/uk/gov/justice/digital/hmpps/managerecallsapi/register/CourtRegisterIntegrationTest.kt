@@ -36,6 +36,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.CourtRegisterMockServer
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.TimeoutHandlingWebClient
 
 @ExtendWith(SpringExtension::class)
 @Import(MetricsAutoConfiguration::class, CompositeMeterRegistryAutoConfiguration::class)

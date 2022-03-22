@@ -14,12 +14,12 @@ import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.TimeoutHandlingWebClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.TimeoutHandlingWebClient
 import java.net.URI
 import java.time.Duration.ofSeconds
 
 @Configuration
-class WebClientConfig(
+class NonAuthenticatingWebClientConfig(
   @Autowired private val metricsCustomizer: MetricsWebClientCustomizer,
   @Autowired private val meterRegistry: MeterRegistry,
   @Value("\${clientApi.timeout}") val timeout: Long,
@@ -35,8 +35,8 @@ class WebClientConfig(
       .build()
 
   @Bean("bankHolidayRegisterWebClient")
-  fun bankHolidayRegisterWebClient(@Value("\${bankHolidayRegister.endpoint.url}") bankHolidayRegisterEndpointUrl: String):
-    TimeoutHandlingWebClient = timeoutHandlingWebClient(bankHolidayRegisterEndpointUrl)
+  fun bankHolidayRegisterWebClient(@Value("\${bankHolidayRegister.endpoint.url}") bankHolidayRegisterEndpointUrl: String) =
+    timeoutHandlingWebClient(bankHolidayRegisterEndpointUrl)
 
   @Bean("courtRegisterWebClient")
   fun courtRegisterWebClient(@Value("\${courtRegister.endpoint.url}") courtRegisterEndpointUrl: String) =

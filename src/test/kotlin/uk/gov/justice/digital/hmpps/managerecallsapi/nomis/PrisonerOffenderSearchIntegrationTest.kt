@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.search
+package uk.gov.justice.digital.hmpps.managerecallsapi.nomis
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

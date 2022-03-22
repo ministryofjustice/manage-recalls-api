@@ -8,7 +8,7 @@ import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.AuthenticatingRestClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.AuthenticatingWebClient
 
 // Create WebClients without MetricsCustomizer
 @TestConfiguration
@@ -23,12 +23,12 @@ class TestWebClientConfig {
     webClient(courtRegisterEndpointUrl)
 
   @Bean("prisonerOffenderSearchWebClient")
-  fun prisonerOffenderSearchWebClient(@Value("\${prisonerSearch.endpoint.url}") prisonerOffenderSearchBaseUrl: String): AuthenticatingRestClient =
-    AuthenticatingRestClient(webClient(prisonerOffenderSearchBaseUrl), "unused")
+  fun prisonerOffenderSearchWebClient(@Value("\${prisonerSearch.endpoint.url}") prisonerOffenderSearchBaseUrl: String): AuthenticatingWebClient =
+    AuthenticatingWebClient(webClient(prisonerOffenderSearchBaseUrl), "unused")
 
   @Bean("prisonApiWebClient")
-  fun prisonApiWebClient(@Value("\${prisonApi.endpoint.url}") prisonApiBaseUrl: String): AuthenticatingRestClient =
-    AuthenticatingRestClient(webClient(prisonApiBaseUrl), "unused")
+  fun prisonApiWebClient(@Value("\${prisonApi.endpoint.url}") prisonApiBaseUrl: String): AuthenticatingWebClient =
+    AuthenticatingWebClient(webClient(prisonApiBaseUrl), "unused")
 
   private fun webClient(endpointUrl: String): WebClient {
     val builder = WebClient.builder()

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Prisoner
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.PrisonerOffenderSearchClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.PrisonerOffenderSearchClient
 import java.time.LocalDate
 import java.util.UUID
 
