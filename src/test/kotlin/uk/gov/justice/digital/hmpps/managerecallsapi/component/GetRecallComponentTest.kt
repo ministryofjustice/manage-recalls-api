@@ -196,6 +196,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.recallLength").isEqualTo(fullyPopulatedRecall.recallLength!!.name)
       .jsonPath("$.recallNotificationEmailSentDateTime").value(endsWith("Z"))
       .jsonPath("$.recommendedRecallType").isEqualTo(fullyPopulatedRecall.recommendedRecallType!!.name)
+      .jsonPath("$.rereleaseSupported").isEqualTo(fullyPopulatedRecall.rereleaseSupported!!)
       .jsonPath("$.returnedToCustodyDateTime").value(endsWith("Z"))
       .jsonPath("$.returnedToCustodyNotificationDateTime").value(endsWith("Z"))
       .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())

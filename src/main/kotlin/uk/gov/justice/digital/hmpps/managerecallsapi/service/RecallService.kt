@@ -129,6 +129,7 @@ class RecallService(
       recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recallEmailReceivedDateTime,
       recallLength = sentencingInfo?.calculateRecallLength(recommendedRecallType),
       recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
+      rereleaseSupported = updateRecallRequest.rereleaseSupported ?: rereleaseSupported,
       sentencingInfo = sentencingInfo,
       vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity ?: vulnerabilityDiversity,
       vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: vulnerabilityDiversityDetail,
