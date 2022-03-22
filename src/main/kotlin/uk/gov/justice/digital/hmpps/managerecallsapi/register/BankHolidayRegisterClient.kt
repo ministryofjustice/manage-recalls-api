@@ -5,6 +5,8 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.BankHolidayRegisterClient.BankHolidayResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.CachingClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.TimeoutHandlingWebClient
 import java.time.LocalDate
 
 @Component

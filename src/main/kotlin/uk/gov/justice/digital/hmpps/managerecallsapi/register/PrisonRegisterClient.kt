@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.CachingClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.TimeoutHandlingWebClient
 
 @Component
 class PrisonRegisterClient(

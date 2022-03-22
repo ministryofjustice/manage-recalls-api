@@ -52,8 +52,6 @@ class RecallNotificationService(
         { offenderNotificationService.generatePdf(context.getOffenderNotificationContext()) },
         { Mono.just(ClassPathResource("/pdfs/Police-Notification.pdf").inputStream.readAllBytes()) }
       )
-    } else {
-      emptyList()
-    }
+    } else emptyList()
   }
 }

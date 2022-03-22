@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers
+package uk.gov.justice.digital.hmpps.managerecallsapi.register
 
 import com.natpryce.hamkrest.absent
 import com.natpryce.hamkrest.assertion.assertThat
@@ -32,99 +32,98 @@ import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsApiJackson.mapper
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api.Prison
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.integration.TestWebClientConfig
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
-import uk.gov.justice.digital.hmpps.managerecallsapi.register.TimeoutHandlingWebClient
+import uk.gov.justice.digital.hmpps.managerecallsapi.integration.mockservers.PrisonRegisterMockServer
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.TimeoutHandlingWebClient
 
 @ExtendWith(SpringExtension::class)
 @Import(MetricsAutoConfiguration::class, CompositeMeterRegistryAutoConfiguration::class)
 @TestInstance(PER_CLASS)
 @ActiveProfiles("test")
 @SpringBootTest(
-  properties = ["courtRegister.endpoint.url=http://localhost:9095"],
+  properties = ["prisonRegister.endpoint.url=http://localhost:9094", "spring.main.allow-bean-definition-overriding=true"],
   classes = [TestWebClientConfig::class]
 )
-class CourtRegisterIntegrationTest(
-  @Autowired courtRegisterTestWebClient: WebClient
+class PrisonRegisterIntegrationTest(
+  @Autowired private val prisonRegisterTestWebClient: WebClient
 ) {
+  private val prisonRegisterTimeoutCounter: Counter = mockk()
 
-  private val courtRegisterTimeoutCounter: Counter = mockk()
+  private val prisonRegisterClient: PrisonRegisterClient =
+    PrisonRegisterClient(TimeoutHandlingWebClient(prisonRegisterTestWebClient, 1, prisonRegisterTimeoutCounter))
 
-  private val courtRegisterClient: CourtRegisterClient =
-    CourtRegisterClient(TimeoutHandlingWebClient(courtRegisterTestWebClient, 1, courtRegisterTimeoutCounter))
-
-  private val courtRegisterMockServer = CourtRegisterMockServer(mapper)
+  private val prisonRegisterMockServer = PrisonRegisterMockServer(mapper)
 
   @BeforeAll
   fun startMockServer() {
-    courtRegisterMockServer.start()
+    prisonRegisterMockServer.start()
   }
 
   @AfterAll
   fun stopMockServer() {
-    courtRegisterMockServer.stop()
+    prisonRegisterMockServer.stop()
   }
 
   @BeforeEach
   fun resetMocks() {
-    courtRegisterMockServer.resetAll()
-    courtRegisterClient.clearCache()
+    prisonRegisterMockServer.resetAll()
+    prisonRegisterClient.clearCache()
   }
 
   @Test
-  fun `can retrieve all courts`() {
-    courtRegisterMockServer.stubCourts()
+  fun `can retrieve all prisons`() {
+    prisonRegisterMockServer.stubPrisons()
 
-    val result = courtRegisterClient.getAllCourts().block()!!
+    val result = prisonRegisterClient.getAllPrisons().block()!!
 
-    assertThat(result, hasSize(equalTo(5)))
+    assertThat(result, hasSize(equalTo(7)))
   }
 
-  private fun courts(): List<Court> = courtRegisterMockServer.courts
+  private fun prisons(): List<Prison> = prisonRegisterMockServer.prisons
 
-  @ParameterizedTest(name = "find court {0}")
-  @MethodSource("courts")
-  fun `can find court by id`(court: Court) {
-    courtRegisterMockServer.stubCourts()
+  @ParameterizedTest(name = "find prison {0}")
+  @MethodSource("prisons")
+  fun `can find prison by id`(prison: Prison) {
+    prisonRegisterMockServer.stubPrisons()
 
-    val result = courtRegisterClient.findById(court.courtId).block()
-    assertThat(result, present(equalTo(court)))
+    val result = prisonRegisterClient.findPrisonById(prison.prisonId).block()
+    assertThat(result, present(equalTo(prison)))
   }
 
   @Test
-  fun `find court returns empty if court does not exist`() {
-    courtRegisterMockServer.stubCourts()
+  fun `get prison returns empty if prison does not exist`() {
+    prisonRegisterMockServer.stubPrisons()
 
-    val result = courtRegisterClient.findById(CourtId("XXX")).block()
+    val result = prisonRegisterClient.findPrisonById(PrisonId("XXX")).block()
 
     assertThat(result, absent())
   }
 
   @Test
   fun `handle timeout from client`() {
-    every { courtRegisterTimeoutCounter.increment() } just Runs
+    every { prisonRegisterTimeoutCounter.increment() } just Runs
 
-    courtRegisterMockServer.delaySearch("/courts/all", 3000)
+    prisonRegisterMockServer.delayGet("/prisons", 3000)
 
     val exception = assertThrows<RuntimeException> {
-      courtRegisterClient.getAllCourts().block()!!
+      prisonRegisterClient.getAllPrisons().block()
     }
     assertThat(exception.cause!!.javaClass, equalTo(ClientTimeoutException::class.java))
-    assertThat(exception.cause!!.message, equalTo("CourtRegisterClient: [java.util.concurrent.TimeoutException]"))
+    assertThat(exception.cause!!.message, equalTo("PrisonRegisterClient: [java.util.concurrent.TimeoutException]"))
 
-    verify(exactly = 1) { courtRegisterTimeoutCounter.increment() }
+    verify(exactly = 1) { prisonRegisterTimeoutCounter.increment() }
   }
 
   @Test
   fun `handle exception from client`() {
-    courtRegisterMockServer.stubCallWithException("/courts/all")
+    prisonRegisterMockServer.stubGetWithException("/prisons")
 
     val exception = assertThrows<RuntimeException> {
-      courtRegisterClient.getAllCourts().block()!!
+      prisonRegisterClient.getAllPrisons().block()!!
     }
     assertThat(exception.cause!!.javaClass, equalTo(ClientException::class.java))
-    assertThat(exception.cause!!.message, equalTo("CourtRegisterClient: [200 OK from GET http://localhost:9095/courts/all; nested exception is reactor.netty.http.client.PrematureCloseException: Connection prematurely closed DURING response]"))
+    assertThat(exception.cause!!.message, equalTo("PrisonRegisterClient: [200 OK from GET http://localhost:9094/prisons; nested exception is reactor.netty.http.client.PrematureCloseException: Connection prematurely closed DURING response]"))
   }
 }

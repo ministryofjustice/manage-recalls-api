@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.managerecallsapi.register
+package uk.gov.justice.digital.hmpps.managerecallsapi.webclient
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
@@ -16,16 +16,6 @@ abstract class CachingClient<T>(
     .expireAfterWrite(Duration.ofHours(4))
     .maximumSize(1000)
     .build()
-
-  fun <T> getResponseWith404Handling(uri: String, typeReference: ParameterizedTypeReference<T>): Mono<T> {
-    return webClient.getWithTimeout(uri, typeReference, this.javaClass)
-      .onErrorResume(WebClientResponseException::class.java) { exception ->
-        when (exception.rawStatusCode) {
-          404 -> Mono.empty()
-          else -> Mono.error(ClientException(this.javaClass.simpleName, exception))
-        }
-      }
-  }
 
   fun getResponse(uri: String, typeReference: ParameterizedTypeReference<T>): Mono<T> {
     return checkCacheElseGetWithTimeout(uri, typeReference)

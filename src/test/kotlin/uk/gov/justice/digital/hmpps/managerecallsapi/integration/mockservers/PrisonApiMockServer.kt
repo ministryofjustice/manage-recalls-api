@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.search.Movement
+import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Movement
 
 @Component
 class PrisonApiMockServer(
@@ -25,19 +25,24 @@ class PrisonApiMockServer(
   @Autowired private val objectMapper: ObjectMapper
 ) : HealthServer(9097, "/health/ping") {
 
-  fun latestMovementsRespondsWith(request: Set<NomsNumber>, responseBody: List<Movement>?) {
-    stubFor(
-      post(urlEqualTo("/api/movements/offenders/?latestOnly=true&movementTypes=ADM"))
-        .withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
-        .withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
-        .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
-        .withRequestBody(equalToJson(objectMapper.writeValueAsString(request)))
-        .willReturn(
-          aResponse()
-            .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
-            .withStatus(OK.value())
-            .withBody(objectMapper.writeValueAsString(responseBody))
-        )
-    )
+  fun latestMovementsRespondsWith(
+    request: Set<NomsNumber>,
+    responseBody: List<Movement>?,
+    withAuthorizationHeader: Boolean = true
+  ) {
+    var post = post(urlEqualTo("/api/movements/offenders/?latestOnly=true&movementTypes=ADM"))
+    if (withAuthorizationHeader) {
+      post = post.withHeader(AUTHORIZATION, equalTo("Bearer $apiClientJwt"))
+    }
+    post = post.withHeader(CONTENT_TYPE, equalTo(APPLICATION_JSON_VALUE))
+      .withHeader(ACCEPT, equalTo(APPLICATION_JSON_VALUE))
+      .withRequestBody(equalToJson(objectMapper.writeValueAsString(request)))
+      .willReturn(
+        aResponse()
+          .withHeaders(HttpHeaders(HttpHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)))
+          .withStatus(OK.value())
+          .withBody(objectMapper.writeValueAsString(responseBody))
+      )
+    stubFor(post)
   }
 }

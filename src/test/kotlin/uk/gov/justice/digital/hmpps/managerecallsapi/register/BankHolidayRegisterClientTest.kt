@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.BankHolidayRegisterClient.BankHoliday
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.BankHolidayRegisterClient.BankHolidayResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.TimeoutHandlingWebClient
 import java.time.LocalDate
 
 class BankHolidayRegisterClientTest {
