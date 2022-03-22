@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.MultiFileException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import java.lang.IllegalStateException
 
@@ -90,6 +92,14 @@ class ManageRecallsApiExceptionHandler {
       .body(ErrorResponse(BAD_REQUEST, e.toString()))
   }
 
+  @ExceptionHandler(MultiFileException::class)
+  fun handleException(e: MultiFileException): ResponseEntity<MultiFileErrorResponse> {
+    log.error("MultiFileException: ${e.message}: " + e.failures.map { it.first }.joinToString(", ", "for categories: "))
+    return ResponseEntity
+      .status(BAD_REQUEST)
+      .body(MultiFileErrorResponse(BAD_REQUEST, e.failures.map { FileError(it.first, it.second, e.message) }))
+  }
+
   @ExceptionHandler(IllegalStateException::class)
   fun handleException(e: IllegalStateException): ResponseEntity<ErrorResponse> {
     log.error("IllegalStateException", e)
@@ -100,6 +110,10 @@ class ManageRecallsApiExceptionHandler {
 }
 
 data class ErrorResponse(val status: HttpStatus, val message: String?)
+
+data class FileError(val category: DocumentCategory, val fileName: FileName, val error: String?)
+
+data class MultiFileErrorResponse(val status: HttpStatus, val fileErrors: List<FileError>)
 
 open class ManageRecallsException(override val message: String? = null, override val cause: Throwable? = null) : Exception(message, cause) {
   override fun toString(): String {

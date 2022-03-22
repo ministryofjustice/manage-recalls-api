@@ -46,6 +46,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -101,13 +102,14 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun <T> partBRecord(
-    recallId: RecallId,
-    request: PartBRequest,
-    expectedStatus: HttpStatus = CREATED,
-    responseClass: Class<T>
-  ) =
-    postRequest("/recalls/$recallId/partb-records", request, responseClass, expectedStatus)
+  fun partBRecord(recallId: RecallId, request: PartBRequest, status: HttpStatus) =
+    sendPostRequest("/recalls/$recallId/partb-records", request).expectStatus().isEqualTo(status)
+
+  fun partBRecord(recallId: RecallId, request: PartBRequest) =
+    partBRecord(recallId, request, CREATED)
+      .expectBody(PartBRecordId::class.java)
+      .returnResult()
+      .responseBody!!
 
   fun getRecallDocuments(recallId: RecallId, category: DocumentCategory): List<Api.RecallDocument> =
     webTestClient.get().uri { uriBuilder ->

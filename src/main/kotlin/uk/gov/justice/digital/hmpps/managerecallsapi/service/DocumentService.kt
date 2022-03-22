@@ -200,6 +200,7 @@ data class RecallDocumentWithCategoryNotFoundException(
 
 open class NotFoundException : ManageRecallsException()
 class VirusFoundException : ManageRecallsException()
+class MultiFileException(override val message: String, val failures: List<Pair<DocumentCategory, FileName>>) : Exception()
 class DocumentDeleteException(override val message: String?) : ManageRecallsException(message)
 class IllegalDocumentStateException(override val message: String?) : ManageRecallsException(message)
 

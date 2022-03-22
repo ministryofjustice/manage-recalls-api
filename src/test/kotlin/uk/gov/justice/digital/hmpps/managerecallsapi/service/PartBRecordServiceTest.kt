@@ -143,8 +143,6 @@ class PartBRecordServiceTest {
     assertThat(savedPartBRecordSlot.captured.version, equalTo(2))
   }
 
-  // TODO PUD-1605 Multiple error handling for virus found
-
   @Test
   fun `Returns failure if document scan returns Failure`() {
     val recall = mockk<Recall>()

@@ -57,7 +57,7 @@ class PartBRecordRepositoryIntegrationTest(
 
   @Test
   @Transactional
-  fun `can save and flush a partBRecord without oasys when all referenced documents already stored for an existing recall`() {
+  fun `can save and flush a partBRecord without oasys when record part B and email documents already stored for an existing recall`() {
     recallRepository.save(recall, currentUserId)
     val partBRecordId = ::PartBRecordId.random()
     val partBRecord = partBRecord(partBRecordId, 1, partBDocumentId = savePartB(), emailId = saveEmail())
