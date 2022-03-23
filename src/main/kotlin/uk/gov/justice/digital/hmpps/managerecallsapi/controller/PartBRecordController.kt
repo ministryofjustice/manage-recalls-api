@@ -1,7 +1,11 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import dev.forkhandles.result4k.map
-import dev.forkhandles.result4k.onFailure
+import dev.forkhandles.result4k.recover
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -13,12 +17,13 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.MultiErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.MultiFileException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PartBRecordService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 import java.time.LocalDate
 
 @RestController
@@ -29,22 +34,30 @@ class PartBRecordController(
   @Autowired private val tokenExtractor: TokenExtractor
 ) {
 
+  // TODO: The body of the 400 response can also have be a `schema = Schema(implementation = ErrorResponse::class))`; how to handle that for swagger?
+  @ApiResponses(
+    ApiResponse(
+      responseCode = "400",
+      description = "Bad request, e.g. one or more files uploaded failed virus scanning",
+      content = [Content(mediaType = "application/json", schema = Schema(implementation = MultiErrorResponse::class))]
+    )
+  )
   @PostMapping("/recalls/{recallId}/partb-records")
   @ResponseStatus(HttpStatus.CREATED)
   fun createPartBRecord(
     @PathVariable("recallId") recallId: RecallId,
-    @RequestBody request: PartBRequest,
+    @RequestBody request: PartBRecordRequest,
     @RequestHeader("Authorization") bearerToken: String
   ): PartBRecordId =
     tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
       partBRecordService.createRecord(recallId, currentUserId, request).map {
         it
-      }.onFailure {
-        throw VirusFoundException()
+      }.recover {
+        throw MultiFileException("VirusFoundException", it)
       }
     }
 
-  data class PartBRequest(
+  data class PartBRecordRequest(
     val details: String,
     val partBReceivedDate: LocalDate,
     val partBFileName: FileName,

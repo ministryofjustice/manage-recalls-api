@@ -30,6 +30,7 @@ class NoteService(
     request: CreateNoteRequest
   ): NoteId =
     recallRepository.getByRecallId(recallId).let { recall ->
+      // TODO: improve on this validation with PUD-1626 Cross-property Request validation: move to DTOs or restructure Request classes?
       val fileName = request.fileName
       val fileContent = request.fileContent
       if ((fileName == null && !fileContent.isNullOrBlank()) || (fileContent.isNullOrBlank() && fileName != null)) {

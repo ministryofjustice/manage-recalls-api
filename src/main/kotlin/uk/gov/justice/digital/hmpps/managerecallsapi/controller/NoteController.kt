@@ -1,5 +1,9 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
@@ -25,6 +30,13 @@ class NoteController(
   @Autowired private val tokenExtractor: TokenExtractor
 ) {
 
+  @ApiResponses(
+    ApiResponse(
+      responseCode = "400",
+      description = "Bad request, e.g. virus found exception",
+      content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
+    )
+  )
   @PostMapping("/recalls/{recallId}/notes")
   @ResponseStatus(HttpStatus.CREATED)
   fun createNote(

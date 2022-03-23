@@ -30,7 +30,7 @@ data class Note(
   @Column(nullable = false)
   val index: Int,
 
-  @Column(nullable = true)
+  @Column
   @JoinColumn(name = "document_id", table = "document")
   val documentId: UUID?,
 

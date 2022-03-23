@@ -205,8 +205,8 @@ class RecallController(
     documents = latestDocuments(documents),
     lastKnownAddresses = lastKnownAddresses.map { address -> address.toResponse() },
     missingDocumentsRecords = missingDocumentsRecords.map { record -> record.toResponse(documents) },
-    partBRecords = partBRecords.map { record -> record.toResponse(documents) },
     notes = notes.map { note -> note.toResponse(documents) },
+    partBRecords = partBRecords.map { record -> record.toResponse(documents) },
     reasonsForRecall = reasonsForRecall.toList(),
     rescindRecords = rescindRecords.map { record -> record.toResponse(documents) },
 

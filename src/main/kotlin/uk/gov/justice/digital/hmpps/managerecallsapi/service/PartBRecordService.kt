@@ -8,7 +8,7 @@ import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.valueOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OASYS_RISK_ASSESSMENT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_EMAIL_FROM_PROBATION
@@ -37,11 +37,10 @@ class PartBRecordService(
   fun createRecord(
     recallId: RecallId,
     currentUserId: UserId,
-    request: PartBRequest
+    request: PartBRecordRequest
   ): Result<PartBRecordId, List<Pair<DocumentCategory, FileName>>> =
     recallRepository.getByRecallId(recallId).let { recall ->
-      // TODO: Move validation to DTO?  Even then, cross-field validation requires custom code.
-      //  As these properties are mutually dependent an alternative would be to combine them as a single object in the DTO
+      // TODO: improve on this validation with PUD-1626 Cross-property Request validation: move to DTOs or restructure Request classes?
       val oasysName = request.oasysFileName
       val oasysContent = request.oasysFileContent
       if ((oasysName == null && !oasysContent.isNullOrBlank()) || (oasysContent.isNullOrBlank() && oasysName != null)) {
@@ -77,7 +76,7 @@ class PartBRecordService(
       Success(record.id())
     }
 
-  private fun scanAndStoreDocuments(request: PartBRequest, recallId: RecallId, currentUserId: UserId):
+  private fun scanAndStoreDocuments(request: PartBRecordRequest, recallId: RecallId, currentUserId: UserId):
     Map<DocumentCategory, Pair<FileName, Result<DocumentId, VirusScanResult>>> {
     val res = mutableMapOf(
       scanAndStore(PART_B_RISK_REPORT, request.details, request.partBFileContent, request.partBFileName, recallId, currentUserId),

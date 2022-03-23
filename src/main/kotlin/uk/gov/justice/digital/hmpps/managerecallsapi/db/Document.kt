@@ -33,10 +33,10 @@ data class Document(
   @Convert(converter = FileNameJpaConverter::class)
   val fileName: FileName,
 
-  @Column(nullable = true)
+  @Column
   val version: Int?,
 
-  @Column(nullable = true)
+  @Column
   val details: String?,
 
   @Column(nullable = false)

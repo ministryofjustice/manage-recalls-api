@@ -36,7 +36,7 @@ data class PartBRecord(
   @JoinColumn(name = "document_id", table = "document")
   val emailId: UUID,
 
-  @Column(nullable = true)
+  @Column
   @JoinColumn(name = "document_id", table = "document")
   val oasysDocumentId: UUID?,
 
