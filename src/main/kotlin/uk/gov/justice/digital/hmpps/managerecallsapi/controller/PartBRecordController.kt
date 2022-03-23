@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.MultiErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -34,12 +35,17 @@ class PartBRecordController(
   @Autowired private val tokenExtractor: TokenExtractor
 ) {
 
-  // TODO: The body of the 400 response can also have be a `schema = Schema(implementation = ErrorResponse::class))`; how to handle that for swagger?
+  // TODO: Persuade swagger to surface examples of both the 400 response objects
   @ApiResponses(
     ApiResponse(
       responseCode = "400",
       description = "Bad request, e.g. one or more files uploaded failed virus scanning",
-      content = [Content(mediaType = "application/json", schema = Schema(implementation = MultiErrorResponse::class))]
+      content = [
+        Content(
+          mediaType = "application/json",
+          schema = Schema(oneOf = [MultiErrorResponse::class, ErrorResponse::class])
+        )
+      ]
     )
   )
   @PostMapping("/recalls/{recallId}/partb-records")

@@ -25,6 +25,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
@@ -61,6 +62,7 @@ class OpenApiConfiguration(buildProperties: BuildProperties) {
         .replaceWithClass(MissingDocumentsRecordId::class.java, UUID::class.java)
         .replaceWithClass(NomsNumber::class.java, String::class.java)
         .replaceWithClass(NoteId::class.java, UUID::class.java)
+        .replaceWithClass(PartBRecordId::class.java, UUID::class.java)
         .replaceWithClass(PhoneNumber::class.java, String::class.java)
         .replaceWithClass(PoliceForceId::class.java, String::class.java)
         .replaceWithClass(PoliceForceName::class.java, String::class.java)
