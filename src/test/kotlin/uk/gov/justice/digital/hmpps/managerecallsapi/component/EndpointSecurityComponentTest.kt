@@ -10,7 +10,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownA
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecommendedRecallTypeRequest
@@ -71,7 +71,7 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.values().random())
   private val generateDocumentRequest = GenerateDocumentRequest(DocumentCategory.RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"), "some more detail")
   private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", FileName("email.msg"))
-  private val partBRecordRequest = PartBRequest("some detail", LocalDate.now(), FileName("partB.pdf"), "part B content", FileName("email.msg"), "email content", FileName("oasys.pdf"), "oasys content")
+  private val partBRecordRequest = PartBRecordRequest("some detail", LocalDate.now(), FileName("partB.pdf"), "part B content", FileName("email.msg"), "email content", FileName("oasys.pdf"), "oasys content")
   private val createLastKnownAddressRequest = CreateLastKnownAddressRequest(::RecallId.random(), "address line 1", "address line 2", "some town", "some postcode", AddressSource.LOOKUP)
   private val rescindRequestRequest = RescindRequestRequest("details", LocalDate.now(), "some content", FileName("filename"))
   private val rescindDecisionRequest = RescindDecisionRequest(true, "details", LocalDate.now(), "some content", FileName("filename"))

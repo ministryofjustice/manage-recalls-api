@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.MultiFileErrorResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.MultiErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
@@ -39,14 +39,14 @@ class PartBRecordController(
     ApiResponse(
       responseCode = "400",
       description = "Bad request, e.g. one or more files uploaded failed virus scanning",
-      content = [Content(mediaType = "application/json", schema = Schema(implementation = MultiFileErrorResponse::class))]
+      content = [Content(mediaType = "application/json", schema = Schema(implementation = MultiErrorResponse::class))]
     )
   )
   @PostMapping("/recalls/{recallId}/partb-records")
   @ResponseStatus(HttpStatus.CREATED)
   fun createPartBRecord(
     @PathVariable("recallId") recallId: RecallId,
-    @RequestBody request: PartBRequest,
+    @RequestBody request: PartBRecordRequest,
     @RequestHeader("Authorization") bearerToken: String
   ): PartBRecordId =
     tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
@@ -57,7 +57,7 @@ class PartBRecordController(
       }
     }
 
-  data class PartBRequest(
+  data class PartBRecordRequest(
     val details: String,
     val partBReceivedDate: LocalDate,
     val partBFileName: FileName,

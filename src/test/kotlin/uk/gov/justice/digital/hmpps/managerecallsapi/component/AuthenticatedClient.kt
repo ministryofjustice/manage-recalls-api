@@ -22,7 +22,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GetDocumentRespo
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocumentsRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -102,10 +102,10 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  fun partBRecord(recallId: RecallId, request: PartBRequest, status: HttpStatus) =
+  fun partBRecord(recallId: RecallId, request: PartBRecordRequest, status: HttpStatus) =
     sendPostRequest("/recalls/$recallId/partb-records", request).expectStatus().isEqualTo(status)
 
-  fun partBRecord(recallId: RecallId, request: PartBRequest) =
+  fun partBRecord(recallId: RecallId, request: PartBRecordRequest) =
     partBRecord(recallId, request, CREATED)
       .expectBody(PartBRecordId::class.java)
       .returnResult()

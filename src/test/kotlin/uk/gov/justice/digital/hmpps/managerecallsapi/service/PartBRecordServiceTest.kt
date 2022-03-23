@@ -9,7 +9,7 @@ import io.mockk.mockk
 import io.mockk.slot
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OASYS_RISK_ASSESSMENT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_EMAIL_FROM_PROBATION
@@ -72,7 +72,7 @@ class PartBRecordServiceTest {
     every { mockPartBRecord.id() } returns partBRecordId
     every { mockPartBRecord.version } returns 1
 
-    val request = partBRequest()
+    val request = PartBRecordRequest()
 
     val response = underTest.createRecord(recallId, userId, request)
 
@@ -102,7 +102,7 @@ class PartBRecordServiceTest {
     every { mockPartBRecord.id() } returns partBRecordId
     every { mockPartBRecord.version } returns 1
 
-    val request = partBRequest().copy(oasysFileName = null, oasysFileContent = null)
+    val request = PartBRecordRequest().copy(oasysFileName = null, oasysFileContent = null)
 
     val response = underTest.createRecord(recallId, userId, request)
 
@@ -134,7 +134,7 @@ class PartBRecordServiceTest {
     every { existingPartBRecord.id() } returns partBRecordId
     every { existingPartBRecord.version } returns 1
 
-    val request = partBRequest()
+    val request = PartBRecordRequest()
 
     val response = underTest.createRecord(recallId, userId, request)
 
@@ -153,7 +153,7 @@ class PartBRecordServiceTest {
 
     mockScanAndStoreDocumentFailure(oasysContent, OASYS_RISK_ASSESSMENT, oasysFileName, "Uploaded alongside Part B")
 
-    val request = partBRequest()
+    val request = PartBRecordRequest()
 
     val response = underTest.createRecord(recallId, userId, request)
 
@@ -164,7 +164,7 @@ class PartBRecordServiceTest {
   fun `NotFoundException thrown if recall does not exist on partBRecord creation`() {
     every { recallRepository.getByRecallId(recallId) } throws RecallNotFoundException(recallId)
 
-    val request = partBRequest()
+    val request = PartBRecordRequest()
 
     assertThrows<RecallNotFoundException> { underTest.createRecord(recallId, userId, request) }
   }
@@ -174,7 +174,7 @@ class PartBRecordServiceTest {
     val recall = mockk<Recall>()
     every { recallRepository.getByRecallId(recallId) } returns recall
 
-    val request = partBRequest().copy(oasysFileName = null)
+    val request = PartBRecordRequest().copy(oasysFileName = null)
 
     assertThrows<IllegalArgumentException> { underTest.createRecord(recallId, userId, request) }
   }
@@ -184,12 +184,12 @@ class PartBRecordServiceTest {
     val recall = mockk<Recall>()
     every { recallRepository.getByRecallId(recallId) } returns recall
 
-    val request = partBRequest().copy(oasysFileContent = null)
+    val request = PartBRecordRequest().copy(oasysFileContent = null)
 
     assertThrows<IllegalArgumentException> { underTest.createRecord(recallId, userId, request) }
   }
 
-  private fun partBRequest() = PartBRequest(
+  private fun PartBRecordRequest() = PartBRecordRequest(
     details,
     emailReceivedDate,
     partBFileName,

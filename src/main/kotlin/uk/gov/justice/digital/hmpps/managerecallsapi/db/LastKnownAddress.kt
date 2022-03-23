@@ -29,10 +29,10 @@ data class LastKnownAddress(
   @Column(nullable = false)
   val line1: String,
 
-  @Column(nullable = true)
+  @Column
   val line2: String?,
 
-  @Column(nullable = true)
+  @Column
   val town: String,
 
   @Column(nullable = false)

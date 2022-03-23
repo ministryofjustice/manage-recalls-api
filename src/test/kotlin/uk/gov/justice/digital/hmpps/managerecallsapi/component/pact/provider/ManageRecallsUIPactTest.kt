@@ -236,9 +236,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State(
     "a recall with notes exists",
-    "a Fixed Term recall with notes exists",
   )
-  fun `a Fixed Term recall with notes exists`() {
+  fun `a recall with notes exists`() {
     `a user and a fully populated Fixed Term recall without documents exists`()
     `a note exists`(1, matchedNoteId, matchedDocumentId)
     `a note exists`(2)
@@ -246,9 +245,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
 
   @State(
     "a recall with part B records exists",
-    "a Fixed Term recall with part B records exists",
   )
-  fun `a Fixed Term recall with part B records exists`() {
+  fun `a recall with part B records exists`() {
     `a user and a fully populated Fixed Term recall without documents exists`()
     `a note exists`(1, matchedNoteId, matchedDocumentId)
     `a note exists`(2)

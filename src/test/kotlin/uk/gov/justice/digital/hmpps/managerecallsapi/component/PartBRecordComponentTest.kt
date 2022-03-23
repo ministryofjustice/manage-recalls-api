@@ -7,9 +7,9 @@ import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.FileError
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.MultiFileErrorResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.MultiErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OASYS_RISK_ASSESSMENT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_EMAIL_FROM_PROBATION
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_RISK_REPORT
@@ -51,7 +51,7 @@ class PartBRecordComponentTest : ComponentTestBase() {
 
     val partBRecordId = authenticatedClient.partBRecord(
       recall.recallId,
-      partBRequest()
+      PartBRecordRequest()
     )
     val recallWithPartBRecord = authenticatedClient.getRecall(recall.recallId)
 
@@ -76,14 +76,14 @@ class PartBRecordComponentTest : ComponentTestBase() {
 
     val response = authenticatedClient.partBRecord(
       recall.recallId,
-      partBRequest(),
+      PartBRecordRequest(),
       BAD_REQUEST
-    ).expectBody(MultiFileErrorResponse::class.java).returnResult().responseBody!!
+    ).expectBody(MultiErrorResponse::class.java).returnResult().responseBody!!
 
     assertThat(
       response,
       equalTo(
-        MultiFileErrorResponse(
+        MultiErrorResponse(
           BAD_REQUEST,
           listOf(
             FileError(PART_B_RISK_REPORT, partBFileName, "VirusFoundException"),
@@ -103,7 +103,7 @@ class PartBRecordComponentTest : ComponentTestBase() {
 
     authenticatedClient.partBRecord(
       recall.recallId,
-      partBRequest(),
+      PartBRecordRequest(),
       BAD_REQUEST
     ).expectBody()
       .jsonPath("$.fileErrors.length()").isEqualTo(3)
@@ -114,7 +114,7 @@ class PartBRecordComponentTest : ComponentTestBase() {
       .jsonPath("$.fileErrors[2].category").isEqualTo(OASYS_RISK_ASSESSMENT.toString())
   }
 
-  private fun partBRequest() = PartBRequest(
+  private fun PartBRecordRequest() = PartBRecordRequest(
     details,
     emailReceivedDate,
     partBFileName,

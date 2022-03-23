@@ -108,7 +108,7 @@ class ManageRecallsApiExceptionHandlerTest {
       )
     )
 
-    val expectedErrorResponse = MultiFileErrorResponse(
+    val expectedErrorResponse = MultiErrorResponse(
       BAD_REQUEST,
       listOf(
         FileError(firstCategory, firstFileName, error),

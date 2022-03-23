@@ -93,11 +93,11 @@ class ManageRecallsApiExceptionHandler {
   }
 
   @ExceptionHandler(MultiFileException::class)
-  fun handleException(e: MultiFileException): ResponseEntity<MultiFileErrorResponse> {
+  fun handleException(e: MultiFileException): ResponseEntity<MultiErrorResponse> {
     log.error("MultiFileException: ${e.message}: " + e.failures.map { it.first }.joinToString(", ", "for categories: "))
     return ResponseEntity
       .status(BAD_REQUEST)
-      .body(MultiFileErrorResponse(BAD_REQUEST, e.failures.map { FileError(it.first, it.second, e.message) }))
+      .body(MultiErrorResponse(BAD_REQUEST, e.failures.map { FileError(it.first, it.second, e.message) }))
   }
 
   @ExceptionHandler(IllegalStateException::class)
@@ -113,7 +113,7 @@ data class ErrorResponse(val status: HttpStatus, val message: String?)
 
 data class FileError(val category: DocumentCategory, val fileName: FileName, val error: String?)
 
-data class MultiFileErrorResponse(val status: HttpStatus, val fileErrors: List<FileError>)
+data class MultiErrorResponse(val status: HttpStatus, val fileErrors: List<FileError>)
 
 open class ManageRecallsException(override val message: String? = null, override val cause: Throwable? = null) : Exception(message, cause) {
   override fun toString(): String {

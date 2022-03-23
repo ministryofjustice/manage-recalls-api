@@ -8,7 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor.Token
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
@@ -51,7 +51,7 @@ class PartBRecordControllerTest {
   fun `create partBRecord calls service with recallId, userId from bearer token and request object and returns Id of new object on success`() {
     val partBRecordId = ::PartBRecordId.random()
 
-    val request = partBRequest()
+    val request = PartBRecordRequest()
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userId.toString())
     every { partBRecordService.createRecord(recallId, userId, request) } returns Success(partBRecordId)
@@ -66,7 +66,7 @@ class PartBRecordControllerTest {
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userId.toString())
 
-    val request = partBRequest()
+    val request = PartBRecordRequest()
     val failures = listOf<Pair<DocumentCategory, FileName>>()
 
     every { partBRecordService.createRecord(recallId, userId, request) } returns Failure(failures)
@@ -77,7 +77,7 @@ class PartBRecordControllerTest {
     assertThat(ex.failures, equalTo(failures))
   }
 
-  private fun partBRequest() = PartBRequest(
+  private fun PartBRecordRequest() = PartBRecordRequest(
     details,
     receivedDate,
     partBFileName,
