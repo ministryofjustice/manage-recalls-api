@@ -39,7 +39,6 @@ class ReturnedToCustodyLetterToProbationGenerator(
       setVariable("originalNomsNumber", context.originalNomsNumber)
 
       setVariable("currentPrisonName", context.currentPrisonName)
-      setVariable("signatoryName", context.currentUserName)
     }.let {
       templateEngine.process(getTemplateName(context), it)
     }

@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -29,17 +28,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomBookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomHistoricalDate
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomNoms
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
 class LetterToPrisonContextFactoryTest {
   private val recallRepository = mockk<RecallRepository>()
   private val prisonLookupService = mockk<PrisonLookupService>()
-  private val userDetailsService = mockk<UserDetailsService>()
   private val documentRepository = mockk<DocumentRepository>()
 
-  val underTest = LetterToPrisonContextFactory(recallRepository, prisonLookupService, userDetailsService, documentRepository)
+  val underTest = LetterToPrisonContextFactory(recallRepository, prisonLookupService, documentRepository)
 
   @Test
   fun `create LetterToPrisonContext with all required data uses todays date for first version`() {
@@ -66,16 +63,13 @@ class LetterToPrisonContextFactoryTest {
       vulnerabilityDiversity = false,
       mappaLevel = MappaLevel.NA
     )
-    val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
     val lastReleasePrisonName = PrisonName("Bobbins Prison")
     val recallDescription = RecallDescription(FIXED, recallLength)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { createdByUserDetails.fullName() } returns FullName("Casey Caseworker")
     every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(recall.lastReleasePrison!!) } returns lastReleasePrisonName
-    every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
     every { documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, LETTER_TO_PRISON, 1) } returns null
 
     val result = underTest.createContext(recallId, createdByUserId)
@@ -90,7 +84,6 @@ class LetterToPrisonContextFactoryTest {
           recallDescription,
           bookingNumber,
           LocalDate.now(),
-          FullName("Casey Caseworker"),
           LocalDate.now(),
           nomsNumber,
           false,
@@ -132,7 +125,6 @@ class LetterToPrisonContextFactoryTest {
       vulnerabilityDiversity = false,
       mappaLevel = MappaLevel.NA
     )
-    val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
     val lastReleasePrisonName = PrisonName("Bobbins Prison")
     val recallDescription = RecallDescription(FIXED, recallLength)
@@ -140,10 +132,8 @@ class LetterToPrisonContextFactoryTest {
     val originalCreatedDateTime = OffsetDateTime.now().minusDays(4)
 
     every { recallRepository.getByRecallId(recallId) } returns recall
-    every { createdByUserDetails.fullName() } returns FullName("Casey Caseworker")
     every { prisonLookupService.getPrisonName(recall.currentPrison!!) } returns currentPrisonName
     every { prisonLookupService.getPrisonName(recall.lastReleasePrison!!) } returns lastReleasePrisonName
-    every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
     every { documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, LETTER_TO_PRISON, 1) } returns document
     every { document.createdDateTime } returns originalCreatedDateTime
 
@@ -159,7 +149,6 @@ class LetterToPrisonContextFactoryTest {
           recallDescription,
           bookingNumber,
           lastReleaseDate,
-          FullName("Casey Caseworker"),
           originalCreatedDateTime.toLocalDate(),
           nomsNumber,
           false,
