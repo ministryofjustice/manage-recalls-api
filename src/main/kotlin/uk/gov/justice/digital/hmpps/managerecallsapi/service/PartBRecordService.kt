@@ -6,6 +6,9 @@ import dev.forkhandles.result4k.Success
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.valueOrNull
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
@@ -40,6 +43,7 @@ class PartBRecordService(
     request: PartBRecordRequest
   ): Result<PartBRecordId, List<Pair<DocumentCategory, FileName>>> =
     recallRepository.getByRecallId(recallId).let { recall ->
+
       // TODO: improve on this validation with PUD-1626 Cross-property Request validation: move to DTOs or restructure Request classes?
       val oasysName = request.oasysFileName
       val oasysContent = request.oasysFileContent
@@ -78,13 +82,21 @@ class PartBRecordService(
 
   private fun scanAndStoreDocuments(request: PartBRecordRequest, recallId: RecallId, currentUserId: UserId):
     Map<DocumentCategory, Pair<FileName, Result<DocumentId, VirusScanResult>>> {
-    val res = mutableMapOf(
-      scanAndStore(PART_B_RISK_REPORT, request.details, request.partBFileContent, request.partBFileName, recallId, currentUserId),
-      scanAndStore(PART_B_EMAIL_FROM_PROBATION, request.details, request.emailFileContent, request.emailFileName, recallId, currentUserId)
-    )
-    request.oasysFileContent?.let {
-      val oasysPair = scanAndStore(OASYS_RISK_ASSESSMENT, "Uploaded alongside Part B", it, request.oasysFileName!!, recallId, currentUserId)
-      res.put(oasysPair.first, oasysPair.second)
+    val res = mutableMapOf<DocumentCategory, Pair<FileName, Result<DocumentId, VirusScanResult>>>()
+    runBlocking {
+      val asyncs = mutableListOf<Deferred<Pair<DocumentCategory, Pair<FileName, Result<DocumentId, VirusScanResult>>>>>()
+
+      asyncs.add(async { scanAndStore(PART_B_RISK_REPORT, request.details, request.partBFileContent, request.partBFileName, recallId, currentUserId) })
+      asyncs.add(async { scanAndStore(PART_B_EMAIL_FROM_PROBATION, request.details, request.emailFileContent, request.emailFileName, recallId, currentUserId) })
+
+      request.oasysFileContent?.let {
+        asyncs.add(async { scanAndStore(OASYS_RISK_ASSESSMENT, "Uploaded alongside Part B", it, request.oasysFileName!!, recallId, currentUserId) })
+      }
+
+      asyncs.forEach {
+        val pair = it.await()
+        res[pair.first] = pair.second
+      }
     }
     return res
   }
