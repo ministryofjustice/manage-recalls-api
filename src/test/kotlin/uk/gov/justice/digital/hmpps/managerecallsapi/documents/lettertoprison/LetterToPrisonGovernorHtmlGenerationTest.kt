@@ -54,7 +54,6 @@ class LetterToPrisonGovernorHtmlGenerationTest(@Autowired private val templateEn
       RecallDescription(recallType, recallLength),
       BookingNumber("B1234"),
       LocalDate.of(2020, 10, 1),
-      FullName("Mandy Pandy"),
       LocalDate.of(2021, 10, 4),
     )
 }

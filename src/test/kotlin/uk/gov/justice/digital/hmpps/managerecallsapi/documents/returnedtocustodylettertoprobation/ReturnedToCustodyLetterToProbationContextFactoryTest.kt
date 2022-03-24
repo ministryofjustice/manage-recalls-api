@@ -16,7 +16,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
-import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -30,18 +29,15 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonLookupService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
 class ReturnedToCustodyLetterToProbationContextFactoryTest {
   private val prisonLookupService = mockk<PrisonLookupService>()
-  private val userDetailsService = mockk<UserDetailsService>()
   private val documentRepository = mockk<DocumentRepository>()
 
   val underTest = ReturnedToCustodyLetterToProbationContextFactory(
     prisonLookupService,
-    userDetailsService,
     documentRepository
   )
   private val recallId = ::RecallId.random()
@@ -64,12 +60,9 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
 
   @Test
   fun `create NotInCustodyLetterToProbationContext with all required data uses todays date for first version`() {
-    val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
 
     every { prisonLookupService.getPrisonName(fixedTermRecall.currentPrison!!) } returns currentPrisonName
-    every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
-    every { createdByUserDetails.fullName() } returns FullName("Carrie Caseworker")
     every { documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, LETTER_TO_PROBATION, 1) } returns null
 
     val result = underTest.createContext(fixedTermRecall, createdByUserId)
@@ -86,7 +79,6 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
           "Paul Probation",
           FullName("Barrie Badger"),
           currentPrisonName,
-          FullName("Carrie Caseworker"),
           LocalDate.now().minusDays(1),
           LocalDate.now(),
           "Mr ACO",
@@ -98,13 +90,10 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
 
   @Test
   fun `create NotInCustodyLetterToProbationContext with all required data uses created date of first version of letter`() {
-    val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
     val document = mockk<Document>()
 
     every { prisonLookupService.getPrisonName(fixedTermRecall.currentPrison!!) } returns currentPrisonName
-    every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
-    every { createdByUserDetails.fullName() } returns FullName("Carrie Caseworker")
     every { documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, LETTER_TO_PROBATION, 1) } returns document
     every { document.createdDateTime } returns OffsetDateTime.now().minusDays(5)
 
@@ -122,7 +111,6 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
           "Paul Probation",
           FullName("Barrie Badger"),
           currentPrisonName,
-          FullName("Carrie Caseworker"),
           LocalDate.now().minusDays(1),
           LocalDate.now().minusDays(5),
           "Mr ACO",
@@ -135,12 +123,9 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
   @Test
   fun `create NotInCustodyLetterToProbationContext with all required data for standard recall`() {
     val standardRecall = fixedTermRecall.copy(confirmedRecallType = STANDARD, recallLength = null, partBDueDate = LocalDate.now().plusDays(20))
-    val createdByUserDetails = mockk<UserDetails>()
     val currentPrisonName = PrisonName("WIM Prison")
 
     every { prisonLookupService.getPrisonName(standardRecall.currentPrison!!) } returns currentPrisonName
-    every { userDetailsService.get(createdByUserId) } returns createdByUserDetails
-    every { createdByUserDetails.fullName() } returns FullName("Carrie Caseworker")
     every { documentRepository.findByRecallIdAndCategoryAndVersion(recallId.value, LETTER_TO_PROBATION, 1) } returns null
 
     val result = underTest.createContext(standardRecall, createdByUserId)
@@ -157,7 +142,6 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
           "Paul Probation",
           FullName("Barrie Badger"),
           currentPrisonName,
-          FullName("Carrie Caseworker"),
           LocalDate.now().minusDays(1),
           LocalDate.now(),
           "Mr ACO",

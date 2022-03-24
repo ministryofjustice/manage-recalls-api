@@ -44,7 +44,6 @@ class LetterToPrisonCustodyOfficeGenerator(
       setVariable("mappaLevel", context.mappaLevel.label)
 
       setVariable("currentEstablishment", context.currentPrisonName)
-      setVariable("signatoryName", context.currentUserName)
     }.let {
       templateEngine.process("letter-to-prison_custody-office", it)
     }
