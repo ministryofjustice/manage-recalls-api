@@ -77,13 +77,14 @@ class PartBRecordServiceTest {
     val response = underTest.createRecord(recallId, userId, request)
 
     assertThat(response, equalTo(Success(partBRecordId)))
-    assertThat(savedPartBRecordSlot.captured.details, equalTo(details))
-    assertThat(savedPartBRecordSlot.captured.partBReceivedDate, equalTo(emailReceivedDate))
-    assertThat(savedPartBRecordSlot.captured.partBDocumentId, equalTo(partBDocumentId.value))
-    assertThat(savedPartBRecordSlot.captured.emailId, equalTo(emailDocumentId.value))
-    assertThat(savedPartBRecordSlot.captured.oasysDocumentId, equalTo(oasysDocumentId.value))
-    assertThat(savedPartBRecordSlot.captured.version, equalTo(1))
-    assertThat(savedPartBRecordSlot.captured.createdByUserId, equalTo(userId.value))
+    val partBRecord = savedPartBRecordSlot.captured
+    assertThat(partBRecord.details, equalTo(details))
+    assertThat(partBRecord.partBReceivedDate, equalTo(emailReceivedDate))
+    assertThat(partBRecord.partBDocumentId, equalTo(partBDocumentId.value))
+    assertThat(partBRecord.emailId, equalTo(emailDocumentId.value))
+    assertThat(partBRecord.oasysDocumentId, equalTo(oasysDocumentId.value))
+    assertThat(partBRecord.version, equalTo(1))
+    assertThat(partBRecord.createdByUserId, equalTo(userId.value))
   }
 
   @Test
@@ -107,13 +108,14 @@ class PartBRecordServiceTest {
     val response = underTest.createRecord(recallId, userId, request)
 
     assertThat(response, equalTo(Success(partBRecordId)))
-    assertThat(savedPartBRecordSlot.captured.details, equalTo(details))
-    assertThat(savedPartBRecordSlot.captured.partBReceivedDate, equalTo(emailReceivedDate))
-    assertThat(savedPartBRecordSlot.captured.partBDocumentId, equalTo(partBDocumentId.value))
-    assertThat(savedPartBRecordSlot.captured.emailId, equalTo(emailDocumentId.value))
-    assertThat(savedPartBRecordSlot.captured.oasysDocumentId, equalTo(null))
-    assertThat(savedPartBRecordSlot.captured.version, equalTo(1))
-    assertThat(savedPartBRecordSlot.captured.createdByUserId, equalTo(userId.value))
+    val partBRecord = savedPartBRecordSlot.captured
+    assertThat(partBRecord.details, equalTo(details))
+    assertThat(partBRecord.partBReceivedDate, equalTo(emailReceivedDate))
+    assertThat(partBRecord.partBDocumentId, equalTo(partBDocumentId.value))
+    assertThat(partBRecord.emailId, equalTo(emailDocumentId.value))
+    assertThat(partBRecord.oasysDocumentId, equalTo(null))
+    assertThat(partBRecord.version, equalTo(1))
+    assertThat(partBRecord.createdByUserId, equalTo(userId.value))
   }
 
   @Test

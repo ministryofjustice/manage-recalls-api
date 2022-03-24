@@ -56,16 +56,17 @@ class PartBRecordComponentTest : ComponentTestBase() {
     val recallWithPartBRecord = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithPartBRecord.partBRecords.size, equalTo(1))
-    assertThat(recallWithPartBRecord.partBRecords.first().partBRecordId, equalTo(partBRecordId))
-    assertThat(recallWithPartBRecord.partBRecords.first().details, equalTo(details))
-    assertThat(recallWithPartBRecord.partBRecords.first().partBReceivedDate, equalTo(emailReceivedDate))
-    assertThat(recallWithPartBRecord.partBRecords.first().partBDocumentId, present())
-    assertThat(recallWithPartBRecord.partBRecords.first().partBFileName, equalTo(partBFileName))
-    assertThat(recallWithPartBRecord.partBRecords.first().emailId, present())
-    assertThat(recallWithPartBRecord.partBRecords.first().emailFileName, equalTo(emailFileName))
-    assertThat(recallWithPartBRecord.partBRecords.first().oasysDocumentId, present())
-    assertThat(recallWithPartBRecord.partBRecords.first().oasysFileName, equalTo(oasysFileName))
-    assertThat(recallWithPartBRecord.partBRecords.first().version, equalTo(1))
+    val partBRecord = recallWithPartBRecord.partBRecords.first()
+    assertThat(partBRecord.partBRecordId, equalTo(partBRecordId))
+    assertThat(partBRecord.details, equalTo(details))
+    assertThat(partBRecord.partBReceivedDate, equalTo(emailReceivedDate))
+    assertThat(partBRecord.partBDocumentId, present())
+    assertThat(partBRecord.partBFileName, equalTo(partBFileName))
+    assertThat(partBRecord.emailId, present())
+    assertThat(partBRecord.emailFileName, equalTo(emailFileName))
+    assertThat(partBRecord.oasysDocumentId, present())
+    assertThat(partBRecord.oasysFileName, equalTo(oasysFileName))
+    assertThat(partBRecord.version, equalTo(1))
   }
 
   @Test
