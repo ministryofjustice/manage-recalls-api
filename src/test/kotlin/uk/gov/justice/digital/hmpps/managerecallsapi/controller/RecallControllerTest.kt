@@ -58,7 +58,7 @@ class RecallControllerTest {
   private val prisonValidationService = mockk<PrisonValidationService>()
   private val courtValidationService = mockk<CourtValidationService>()
   private val tokenExtractor = mockk<TokenExtractor>()
-  private val now = OffsetDateTime.now()
+  private val now = OffsetDateTime.now(ZoneId.of("UTC"))
   private val fixedClock = Clock.fixed(now.toInstant(), ZoneId.of("UTC"))
 
   private val underTest =
@@ -635,13 +635,11 @@ class RecallControllerTest {
 
     val response = underTest.getRecall(recallId)
 
+    assertThat(response.missingDocuments!!.required, equalTo(setOf(PART_A_RECALL_REPORT, LICENCE)))
     assertThat(
-      response.missingDocuments,
+      response.missingDocuments!!.desired,
       equalTo(
-        MissingDocuments(
-          setOf(PART_A_RECALL_REPORT, LICENCE),
-          setOf(OASYS_RISK_ASSESSMENT, PREVIOUS_CONVICTIONS_SHEET)
-        )
+        setOf(OASYS_RISK_ASSESSMENT, PREVIOUS_CONVICTIONS_SHEET)
       )
     )
   }
@@ -665,13 +663,11 @@ class RecallControllerTest {
 
     val response = underTest.getRecall(recallId)
 
+    assertThat(response.missingDocuments!!.required, equalTo(setOf(LICENCE)))
     assertThat(
-      response.missingDocuments,
+      response.missingDocuments!!.desired,
       equalTo(
-        MissingDocuments(
-          setOf(LICENCE),
-          setOf(OASYS_RISK_ASSESSMENT, PREVIOUS_CONVICTIONS_SHEET)
-        )
+        setOf(OASYS_RISK_ASSESSMENT, PREVIOUS_CONVICTIONS_SHEET)
       )
     )
   }
@@ -759,7 +755,8 @@ class RecallControllerTest {
 
     val response = underTest.getRecall(recallId)
 
-    assertThat(response.missingDocuments, equalTo(MissingDocuments(setOf(PART_B_RISK_REPORT), emptySet())))
+    assertThat(response.missingDocuments!!.required, equalTo(setOf(PART_B_RISK_REPORT)))
+    assertThat(response.missingDocuments!!.desired, equalTo(emptySet()))
   }
 
   @Test
