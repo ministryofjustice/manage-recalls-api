@@ -756,6 +756,6 @@ enum class LastKnownAddressOption(val label: String) {
 }
 
 data class MissingDocuments(
-  val desired: Set<DocumentCategory>,
-  val required: Set<DocumentCategory>
+  val required: Set<DocumentCategory>,
+  val desired: Set<DocumentCategory>
 )
