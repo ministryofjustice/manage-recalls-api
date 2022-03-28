@@ -14,8 +14,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenE
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor.Token
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OASYS_RISK_ASSESSMENT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OTHER
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_RISK_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PREVIOUS_CONVICTIONS_SHEET
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
@@ -52,7 +58,7 @@ class RecallControllerTest {
   private val prisonValidationService = mockk<PrisonValidationService>()
   private val courtValidationService = mockk<CourtValidationService>()
   private val tokenExtractor = mockk<TokenExtractor>()
-  private val now = OffsetDateTime.now()
+  private val now = OffsetDateTime.now(ZoneId.of("UTC"))
   private val fixedClock = Clock.fixed(now.toInstant(), ZoneId.of("UTC"))
 
   private val underTest =
@@ -113,7 +119,16 @@ class RecallControllerTest {
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
-    assertThat(results, equalTo(recallResponse.copy(recallId = recall.recallId(), createdByUserId = userUuid, licenceNameCategory = NameFormatCategory.FIRST_LAST)))
+    assertThat(
+      results,
+      equalTo(
+        recallResponse.copy(
+          recallId = recall.recallId(),
+          createdByUserId = userUuid,
+          licenceNameCategory = NameFormatCategory.FIRST_LAST
+        )
+      )
+    )
   }
 
   private fun newRecall() =
@@ -148,7 +163,10 @@ class RecallControllerTest {
   private val bookedOnRecall = newRecall().copy(bookedByUserId = bookedByUserId.value)
   private val inAssessmentRecall = newRecall().copy(bookedByUserId = bookedByUserId.value, assignee = assignee.value)
   private val stoppedRecall =
-    newRecall().copy(bookedByUserId = bookedByUserId.value, stopRecord = StopRecord(StopReason.LEGAL_REASON, createdByUserId, OffsetDateTime.now()))
+    newRecall().copy(
+      bookedByUserId = bookedByUserId.value,
+      stopRecord = StopRecord(StopReason.LEGAL_REASON, createdByUserId, OffsetDateTime.now())
+    )
   private val inCustodyAwaitingDossierCreationRecall =
     newRecall().copy(inCustodyAtBooking = true, assessedByUserId = assessedByUserId.value)
   private val notInCustodyAssessedRecall = newRecall().copy(
@@ -159,8 +177,10 @@ class RecallControllerTest {
   )
   private val inCustodyDossierInProgressRecall =
     newRecall().copy(inCustodyAtBooking = true, assessedByUserId = assessedByUserId.value, assignee = assignee.value)
-  private val dossierIssuedRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value, confirmedRecallType = RecallType.FIXED)
-  private val awaitingPartBRecall = newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value, confirmedRecallType = RecallType.STANDARD)
+  private val dossierIssuedRecall =
+    newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value, confirmedRecallType = RecallType.FIXED)
+  private val awaitingPartBRecall =
+    newRecall().copy(dossierCreatedByUserId = dossierCreatedByUserId.value, confirmedRecallType = RecallType.STANDARD)
 
   @Test
   fun `gets all recalls for a band FOUR_PLUS returns all recalls`() {
@@ -288,9 +308,9 @@ class RecallControllerTest {
       recallEmailReceivedDateTime = recallEmailReceivedDateTime
     )
     val userDetails = mockk<UserDetails>()
-    every { recallRepository.getByRecallId(recallId) } returns recall
-    every { userDetailsService.get(createdByUserId) } returns userDetails
     every { userDetails.fullName() } returns FullName("Boris Badger")
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+    every { recallRepository.getByRecallId(recallId) } returns recall
 
     val result = underTest.getRecall(recallId)
 
@@ -459,7 +479,10 @@ class RecallControllerTest {
     val thrown = assertThrows<InvalidPrisonOrCourtException> {
       underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
     }
-    assertThat(thrown.message, equalTo("validAndActiveCurrentPrison=[false], validLastReleasePrison=[true], validSentencingCourt=[true]"))
+    assertThat(
+      thrown.message,
+      equalTo("validAndActiveCurrentPrison=[false], validLastReleasePrison=[true], validSentencingCourt=[true]")
+    )
   }
 
   @Test
@@ -475,7 +498,10 @@ class RecallControllerTest {
     val thrown = assertThrows<InvalidPrisonOrCourtException> {
       underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
     }
-    assertThat(thrown.message, equalTo("validAndActiveCurrentPrison=[true], validLastReleasePrison=[false], validSentencingCourt=[true]"))
+    assertThat(
+      thrown.message,
+      equalTo("validAndActiveCurrentPrison=[true], validLastReleasePrison=[false], validSentencingCourt=[true]")
+    )
   }
 
   @Test
@@ -491,7 +517,10 @@ class RecallControllerTest {
     val thrown = assertThrows<InvalidPrisonOrCourtException> {
       underTest.updateRecall(recallId, updateRecallRequest, bearerToken)
     }
-    assertThat(thrown.message, equalTo("validAndActiveCurrentPrison=[true], validLastReleasePrison=[true], validSentencingCourt=[false]"))
+    assertThat(
+      thrown.message,
+      equalTo("validAndActiveCurrentPrison=[true], validLastReleasePrison=[true], validSentencingCourt=[false]")
+    )
   }
 
   @Test
@@ -517,8 +546,10 @@ class RecallControllerTest {
       now,
       createdByUserId
     )
-    val otherDoc1 = Document(::DocumentId.random(), recallId, OTHER, FileName("mydoc.pdf"), null, null, now, createdByUserId)
-    val otherDoc2 = Document(::DocumentId.random(), recallId, OTHER, FileName("mydoc.pdf"), null, null, now, createdByUserId)
+    val otherDoc1 =
+      Document(::DocumentId.random(), recallId, OTHER, FileName("mydoc.pdf"), null, null, now, createdByUserId)
+    val otherDoc2 =
+      Document(::DocumentId.random(), recallId, OTHER, FileName("mydoc.pdf"), null, null, now, createdByUserId)
     val recallWithDocuments = recall.copy(documents = setOf(partADoc1, partADoc2, otherDoc1, otherDoc2))
     val userDetails = mockk<UserDetails>()
     val fullName = FullName("Bertie Badger")
@@ -554,7 +585,8 @@ class RecallControllerTest {
       recommendedRecallType = recallType
     )
 
-    val response = underTest.updateRecommendedRecallType(recallId, RecommendedRecallTypeRequest(recallType), bearerToken)
+    val response =
+      underTest.updateRecommendedRecallType(recallId, RecommendedRecallTypeRequest(recallType), bearerToken)
     assertThat(response.recommendedRecallType, equalTo(recallType))
 
     verify { recallService.updateRecommendedRecallType(recallId, recallType, currentUserId) }
@@ -579,4 +611,188 @@ class RecallControllerTest {
 
     verify { recallService.confirmRecallType(recallId, request, currentUserId) }
   }
+
+  @Test
+  fun `missingDocuments is null when probationInfo not set`() {
+    every { recallRepository.getByRecallId(recallId) } returns recall
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(response.missingDocuments, equalTo(null))
+  }
+
+  @Test
+  fun `missingDocuments contains PART_A & LICENCE as required and OASYS and PRECONS as desired when probationInfo is set but no documents uploaded`() {
+    every { recallRepository.getByRecallId(recallId) } returns recall.copy(
+      probationInfo = ProbationInfo(
+        "Mr Probation",
+        "01234 567890",
+        "mr@probation.com",
+        LocalDeliveryUnit.CHANNEL_ISLANDS,
+        "Chief"
+      )
+    )
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(
+      response.missingDocuments,
+      equalTo(
+        MissingDocuments(
+          setOf(PART_A_RECALL_REPORT, LICENCE),
+          setOf(OASYS_RISK_ASSESSMENT, PREVIOUS_CONVICTIONS_SHEET)
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `missingDocuments contains LICENCE as required and OASYS and PRECONS as desired when probationInfo is set and only PART_A document uploaded`() {
+    every { recallRepository.getByRecallId(recallId) } returns recall.copy(
+      probationInfo = ProbationInfo(
+        "Mr Probation",
+        "01234 567890",
+        "mr@probation.com",
+        LocalDeliveryUnit.CHANNEL_ISLANDS,
+        "Chief"
+      ),
+      documents = setOf(document(PART_A_RECALL_REPORT))
+    )
+
+    val userDetails = mockk<UserDetails>()
+    every { userDetails.fullName() } returns FullName("Boris Badger")
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(
+      response.missingDocuments,
+      equalTo(
+        MissingDocuments(
+          setOf(LICENCE),
+          setOf(OASYS_RISK_ASSESSMENT, PREVIOUS_CONVICTIONS_SHEET)
+        )
+      )
+    )
+  }
+
+  @Test
+  fun `missingDocuments null when probationInfo is set and PART_A, LICENCE, PRECONS & OASYS documents uploaded`() {
+    every { recallRepository.getByRecallId(recallId) } returns recall.copy(
+      probationInfo = ProbationInfo(
+        "Mr Probation",
+        "01234 567890",
+        "mr@probation.com",
+        LocalDeliveryUnit.CHANNEL_ISLANDS,
+        "Chief"
+      ),
+      documents = setOf(
+        document(PART_A_RECALL_REPORT),
+        document(LICENCE),
+        document(OASYS_RISK_ASSESSMENT),
+        document(PREVIOUS_CONVICTIONS_SHEET),
+      )
+    )
+
+    val userDetails = mockk<UserDetails>()
+    every { userDetails.fullName() } returns FullName("Boris Badger")
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(response.missingDocuments, equalTo(null))
+  }
+
+  @Test
+  fun `missingDocuments null for Standard recall when Dossier NOT created and PART_B not uploaded`() {
+    every { recallRepository.getByRecallId(recallId) } returns recall.copy(
+      recommendedRecallType = RecallType.STANDARD,
+      confirmedRecallType = RecallType.STANDARD,
+      probationInfo = ProbationInfo(
+        "Mr Probation",
+        "01234 567890",
+        "mr@probation.com",
+        LocalDeliveryUnit.CHANNEL_ISLANDS,
+        "Chief"
+      ),
+      documents = setOf(
+        document(PART_A_RECALL_REPORT),
+        document(LICENCE),
+        document(OASYS_RISK_ASSESSMENT),
+        document(PREVIOUS_CONVICTIONS_SHEET),
+      ),
+    )
+
+    val userDetails = mockk<UserDetails>()
+    every { userDetails.fullName() } returns FullName("Boris Badger")
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(response.missingDocuments, equalTo(null))
+  }
+
+  @Test
+  fun `missingDocuments contains PART_B as required for Standard recall when Dossier created but PART_B not uploaded`() {
+    every { recallRepository.getByRecallId(recallId) } returns recall.copy(
+      probationInfo = ProbationInfo(
+        "Mr Probation",
+        "01234 567890",
+        "mr@probation.com",
+        LocalDeliveryUnit.CHANNEL_ISLANDS,
+        "Chief"
+      ),
+      recommendedRecallType = RecallType.STANDARD,
+      confirmedRecallType = RecallType.STANDARD,
+      dossierCreatedByUserId = createdByUserId.value,
+      documents = setOf(
+        document(PART_A_RECALL_REPORT),
+        document(LICENCE),
+        document(OASYS_RISK_ASSESSMENT),
+        document(PREVIOUS_CONVICTIONS_SHEET),
+      ),
+    )
+
+    val userDetails = mockk<UserDetails>()
+    every { userDetails.fullName() } returns FullName("Boris Badger")
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(response.missingDocuments, equalTo(MissingDocuments(setOf(PART_B_RISK_REPORT), emptySet())))
+  }
+
+  @Test
+  fun `missingDocuments null for Standard recall when Dossier created and PART_B uploaded`() {
+    every { recallRepository.getByRecallId(recallId) } returns recall.copy(
+      probationInfo = ProbationInfo(
+        "Mr Probation",
+        "01234 567890",
+        "mr@probation.com",
+        LocalDeliveryUnit.CHANNEL_ISLANDS,
+        "Chief"
+      ),
+      recommendedRecallType = RecallType.STANDARD,
+      confirmedRecallType = RecallType.STANDARD,
+      dossierCreatedByUserId = createdByUserId.value,
+      documents = setOf(
+        document(PART_A_RECALL_REPORT),
+        document(LICENCE),
+        document(OASYS_RISK_ASSESSMENT),
+        document(PREVIOUS_CONVICTIONS_SHEET),
+        document(PART_B_RISK_REPORT),
+      ),
+    )
+
+    val userDetails = mockk<UserDetails>()
+    every { userDetails.fullName() } returns FullName("Boris Badger")
+    every { userDetailsService.get(createdByUserId) } returns userDetails
+
+    val response = underTest.getRecall(recallId)
+
+    assertThat(response.missingDocuments, equalTo(null))
+  }
+
+  private fun document(category: DocumentCategory) =
+    Document(::DocumentId.random(), recallId, category, FileName("test.pdf"), 1, null, now, createdByUserId)
 }
