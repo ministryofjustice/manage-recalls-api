@@ -22,6 +22,11 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.FOUR_PLUS
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.CaseworkerBand.THREE
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OASYS_RISK_ASSESSMENT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_RECALL_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_RISK_REPORT
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PREVIOUS_CONVICTIONS_SHEET
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
@@ -201,6 +206,7 @@ class RecallController(
     croNumber = croNumber,
     dateOfBirth = dateOfBirth,
     status = status(),
+    missingDocuments = missingDocuments(),
 
     documents = latestDocuments(documents),
     lastKnownAddresses = lastKnownAddresses.map { address -> address.toResponse() },
@@ -298,6 +304,27 @@ class RecallController(
       )
     }
   }
+
+  private fun Recall.missingDocuments(): MissingDocuments? {
+    var requiredCategories: Set<DocumentCategory> = emptySet()
+    var desiredCategories: Set<DocumentCategory> = emptySet()
+    probationInfo?.let {
+      requiredCategories = setOf(PART_A_RECALL_REPORT, LICENCE)
+      desiredCategories = setOf(OASYS_RISK_ASSESSMENT, PREVIOUS_CONVICTIONS_SHEET)
+    }
+    if (recallTypeOrNull() == RecallType.STANDARD && dossierCreatedByUserId != null) {
+      requiredCategories = requiredCategories.plus(PART_B_RISK_REPORT)
+    }
+    val requiredButMissing = determineMissingCategories(requiredCategories)
+    val desiredButMissing = determineMissingCategories(desiredCategories)
+    return if (requiredButMissing.isEmpty() && desiredButMissing.isEmpty())
+      null
+    else
+      MissingDocuments(requiredButMissing, desiredButMissing)
+  }
+
+  private fun Recall.determineMissingCategories(categories: Set<DocumentCategory>) =
+    categories.filterNot { category -> documents.any { doc -> doc.category == category } }.toSet()
 
   fun MissingDocumentsRecord.toResponse(documents: Set<Document>) = Api.MissingDocumentsRecord(
     id(),
@@ -431,8 +458,8 @@ data class RecallResponse(
   val notes: List<Api.Note> = emptyList(),
   val reasonsForRecall: List<ReasonForRecall> = emptyList(),
   val rescindRecords: List<Api.RescindRecord> = emptyList(),
-  val additionalLicenceConditions: Boolean? = null,
 
+  val additionalLicenceConditions: Boolean? = null,
   val additionalLicenceConditionsDetail: String? = null,
   val arrestIssues: Boolean? = null,
   val arrestIssuesDetail: String? = null,
@@ -469,6 +496,7 @@ data class RecallResponse(
   val localDeliveryUnit: LocalDeliveryUnit? = null,
   val localPoliceForceId: PoliceForceId? = null,
   val mappaLevel: MappaLevel? = null,
+  val missingDocuments: MissingDocuments? = null,
   val partBDueDate: LocalDate? = null,
   val previousConvictionMainName: String? = null,
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
@@ -726,3 +754,8 @@ enum class LastKnownAddressOption(val label: String) {
   YES("YES"),
   NO_FIXED_ABODE("No Fixed Abode")
 }
+
+data class MissingDocuments(
+  val desired: Set<DocumentCategory>,
+  val required: Set<DocumentCategory>
+)
