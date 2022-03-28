@@ -58,7 +58,7 @@ class RecallControllerTest {
   private val prisonValidationService = mockk<PrisonValidationService>()
   private val courtValidationService = mockk<CourtValidationService>()
   private val tokenExtractor = mockk<TokenExtractor>()
-  private val now = OffsetDateTime.now(ZoneId.of("UTC"))
+  private val now = OffsetDateTime.now()
   private val fixedClock = Clock.fixed(now.toInstant(), ZoneId.of("UTC"))
 
   private val underTest =
