@@ -1,5 +1,5 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.1"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.2"
   kotlin("plugin.spring") version "1.5.21"
   kotlin("plugin.jpa") version "1.5.20"
   kotlin("plugin.serialization") version "1.4.31"
@@ -23,8 +23,8 @@ dependencyCheck {
 }
 
 dependencies {
-  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.4")
-  implementation("io.micrometer:micrometer-registry-prometheus:1.8.3")
+  implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.5")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.8.4")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
   implementation("org.springframework.boot:spring-boot-starter-security")
@@ -35,13 +35,13 @@ dependencies {
   // implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.6")    // PUD-1485: not achieving any of what it promises?
   implementation("org.springdoc:springdoc-openapi-kotlin:1.6.6")
 
-  implementation("org.flywaydb:flyway-core:8.5.2")
+  implementation("org.flywaydb:flyway-core:8.5.4")
   implementation("org.postgresql:postgresql:42.3.3")
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
-  implementation("software.amazon.awssdk:s3:2.17.143")
-  implementation("org.http4k:http4k-format-jackson:4.19.4.0")
+  implementation("software.amazon.awssdk:s3:2.17.155")
+  implementation("org.http4k:http4k-format-jackson:4.25.5.2")
 
   "5.6.1".let { sentryVersion ->
     implementation("io.sentry:sentry-spring-boot-starter:$sentryVersion")
@@ -56,7 +56,7 @@ dependencies {
     exclude("log4j", "log4j")
   }
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-  implementation("com.github.ben-manes.caffeine:caffeine:3.0.5")
+  implementation("com.github.ben-manes.caffeine:caffeine:3.0.6")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.0")
@@ -79,10 +79,10 @@ dependencies {
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("com.ninja-squad:springmockk:3.1.1")
 
-  testImplementation("au.com.dius.pact.provider:junit5:4.3.5")
-  testImplementation("au.com.dius.pact.provider:junit5spring:4.3.5")
-  testImplementation("org.http4k:http4k-testing-approval:4.19.4.0")
-  testImplementation("io.swagger.parser.v3:swagger-parser:2.0.30")
+  testImplementation("au.com.dius.pact.provider:junit5:4.3.6")
+  testImplementation("au.com.dius.pact.provider:junit5spring:4.3.6")
+  testImplementation("org.http4k:http4k-testing-approval:4.25.5.2")
+  testImplementation("io.swagger.parser.v3:swagger-parser:2.0.31")
 }
 
 tasks {
