@@ -7,6 +7,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.time.LocalDate
 import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -43,6 +44,23 @@ internal class LocalDeliveryUnitTest {
       Arguments.of(LocalDeliveryUnit.PS_CARDIFF_AND_VALE, true),
       Arguments.of(LocalDeliveryUnit.PS_GWENT, true),
       Arguments.of(LocalDeliveryUnit.PS_NORTH_DURHAM, false),
+    )
+  }
+
+  @ParameterizedTest(name = "LDU {0} should return {2} for isActiveOn on {1}")
+  @MethodSource("lduIsActiveExamples")
+  fun `validFrom and validTo are inclusive`(ldu: LocalDeliveryUnit, localDate: LocalDate, expected: Boolean) {
+    assertThat(ldu.isActiveOn(localDate), equalTo(expected))
+  }
+
+  private fun lduIsActiveExamples(): Stream<Arguments>? {
+    return Stream.of(
+      Arguments.of(LocalDeliveryUnit.PS_WORKINGTON, LocalDate.of(2021, 12, 9), false),
+      Arguments.of(LocalDeliveryUnit.PS_WORKINGTON, LocalDate.of(2021, 12, 10), true),
+      Arguments.of(LocalDeliveryUnit.PS_WORKINGTON, LocalDate.of(2021, 12, 11), true),
+      Arguments.of(LocalDeliveryUnit.PS_WEST_CHESHIRE, LocalDate.of(2021, 12, 9), true),
+      Arguments.of(LocalDeliveryUnit.PS_WEST_CHESHIRE, LocalDate.of(2021, 12, 10), true),
+      Arguments.of(LocalDeliveryUnit.PS_WEST_CHESHIRE, LocalDate.of(2021, 12, 11), false),
     )
   }
 }

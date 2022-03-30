@@ -21,6 +21,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient.Court
+import java.time.LocalDate
 
 class ReferenceDataComponentTest : ComponentTestBase() {
 
@@ -31,7 +32,7 @@ class ReferenceDataComponentTest : ComponentTestBase() {
       .returnResult()
       .responseBody!!
 
-    val expectedResponse = LocalDeliveryUnit.values().map { LocalDeliveryUnitResponse(it.name, it.label) }
+    val expectedResponse = LocalDeliveryUnit.values().map { LocalDeliveryUnitResponse(it.name, it.label, it.isActiveOn(LocalDate.now())) }
     assertThat(response, equalTo(expectedResponse))
   }
 
