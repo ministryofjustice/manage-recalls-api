@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PoliceUkApiClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/reference-data", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -19,7 +20,7 @@ class ReferenceDataController(
 
   @GetMapping("/local-delivery-units")
   fun localDeliveryUnits(): List<LocalDeliveryUnitResponse> = LocalDeliveryUnit.values()
-    .map { LocalDeliveryUnitResponse(it.name, it.label) }.toList()
+    .map { LocalDeliveryUnitResponse(it.name, it.label, it.isActiveOn(LocalDate.now())) }.toList()
 
   @GetMapping("/mappa-levels")
   fun mappaLevels(): List<MappaLevelResponse> = MappaLevel.values()
@@ -44,20 +45,20 @@ class ReferenceDataController(
 }
 
 // TODO: PUD-1118 Make reference data responses consistent: migrate name, label to id, name to be closer to e.g. courts and prisons responses
-data class LocalDeliveryUnitResponse(val name: String, val label: String)
+data class LocalDeliveryUnitResponse(val name: String, val label: String, val active: Boolean)
 data class MappaLevelResponse(val id: String, val name: String)
 data class RecallReasonResponse(val id: String, val name: String)
 data class StopReasonResponse(val id: String, val name: String, val validForStopCall: Boolean)
 
 @Suppress("unused")
-enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) {
+enum class LocalDeliveryUnit(val label: String, val validFrom: LocalDate = LocalDate.MIN, val validTo: LocalDate = LocalDate.MAX, val isInWales: Boolean = false) {
   CENTRAL_AUDIT_TEAM("Central Audit Team"),
   CHANNEL_ISLANDS("Channel Islands"),
   ISLE_OF_MAN("Isle of Man"),
   NORTHERN_IRELAND("Northern Ireland"),
   NOT_APPLICABLE("Not applicable"),
   NOT_SPECIFIED("Not specified"),
-  PS_ACCRINGTON("PS - Accrington"), // Active from 10 Dec 2021
+  PS_ACCRINGTON("PS - Accrington", validFrom = LocalDate.of(2021, 12, 10)), // Active from 10 Dec 2021
   PS_BARKING_DAGENHAM_HAVERING("PS - Barking, Dagenham & Havering"),
   PS_BARNET("PS - Barnet"),
   PS_BARNSLEY("PS - Barnsley"),
@@ -82,14 +83,14 @@ enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) 
   PS_CAMBRIDGESHIRE_AND_PETERBOROUGH("PS - Cambridgeshire and Peterborough"),
   PS_CAMDEN_ISLINGTON("PS - Camden & Islington"),
   PS_CARDIFF_AND_VALE("PS - Cardiff and Vale", isInWales = true),
-  PS_CARLISLE("PS - Carlisle"), // Active from 10 Dec 2021
+  PS_CARLISLE("PS - Carlisle", validFrom = LocalDate.of(2021, 12, 10)), // Active from 10 Dec 2021
   PS_CHESTER("PS - Chester"),
   PS_CHORLEY("PS - Chorley"),
   PS_CORNWALL_AND_ISLES_OF_SCILLY("PS - Cornwall and Isles of Scilly"),
   PS_COVENTRY("PS - Coventry"),
   PS_CREWE("PS - Crewe"),
   PS_CROYDON("PS - Croydon"),
-  PS_CUMBRIA("PS - Cumbria"), // No longer active 10 Dec 2021
+  PS_CUMBRIA("PS - Cumbria", validTo = LocalDate.of(2021, 12, 10)), // No longer active 10 Dec 2021
   PS_CWM_TAF_MORGANNWG("PS - Cwm Taf Morgannwg", isInWales = true),
   PS_DERBY_CITY("PS - Derby City"),
   PS_DERBYSHIRE("PS - Derbyshire"),
@@ -101,9 +102,9 @@ enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) 
   PS_DYFED_POWYS("PS - Dyfed-Powys", isInWales = true),
   PS_EALING("PS - Ealing"),
   PS_EAST_BERKSHIRE("PS - East Berkshire"),
-  PS_EAST_CHESHIRE("PS - East Cheshire"), // No longer active 10 Dec 2021
+  PS_EAST_CHESHIRE("PS - East Cheshire", validTo = LocalDate.of(2021, 12, 10)), // No longer active 10 Dec 2021
   PS_EAST_KENT("PS - East Kent"),
-  PS_EAST_LANCASHIRE("PS - East Lancashire"), // No longer active 10 Dec 2021
+  PS_EAST_LANCASHIRE("PS - East Lancashire", validTo = LocalDate.of(2021, 12, 10)), // No longer active 10 Dec 2021
   PS_EAST_RIDING("PS - East Riding"),
   PS_ENFIELD("PS - Enfield"),
   PS_ESSEX_NORTH("PS - Essex North"),
@@ -124,7 +125,7 @@ enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) 
   PS_HILLINGDON("PS - Hillingdon"),
   PS_HOUNSLOW("PS - Hounslow"),
   PS_HULL("PS - Hull"),
-  PS_KENDAL("PS - Kendal"), // Active from 10 Dec 2021
+  PS_KENDAL("PS - Kendal", validFrom = LocalDate.of(2021, 12, 10)), // Active from 10 Dec 2021
   PS_KENSINGTON_CHELSEA_WESTMINSTER("PS - Kensington, Chelsea & Westminster"),
   PS_KINGSTON_RICHMOND("PS - Kingston & Richmond"),
   PS_KIRKLEES("PS - Kirklees"),
@@ -160,7 +161,7 @@ enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) 
   PS_NOTTINGHAMSHIRE("PS - Nottinghamshire"),
   PS_OLDHAM("PS - Oldham"),
   PS_OXFORDSHIRE("PS - Oxfordshire"),
-  PS_PENRITH("PS - Penrith"), // Active from 10 Dec 2021
+  PS_PENRITH("PS - Penrith", validFrom = LocalDate.of(2021, 12, 10)), // Active from 10 Dec 2021
   PS_PLYMOUTH("PS - Plymouth"),
   PS_PORTSMOUTH_AND_IOW("PS - Portsmouth and IoW"),
   PS_PRESTON("PS - Preston"),
@@ -201,17 +202,21 @@ enum class LocalDeliveryUnit(val label: String, val isInWales: Boolean = false) 
   PS_WARRINGTON("PS - Warrington"),
   PS_WARWICKSHIRE("PS - Warwickshire"),
   PS_WEST_BERKSHIRE("PS - West Berkshire"),
-  PS_WEST_CHESHIRE("PS - West Cheshire"), // No longer active 10 Dec 2021
+  PS_WEST_CHESHIRE("PS - West Cheshire", validTo = LocalDate.of(2021, 12, 10)), // No longer active 10 Dec 2021
   PS_WEST_KENT("PS - West Kent"),
   PS_WEST_SUSSEX("PS - West Sussex"),
   PS_WIGAN("PS - Wigan"),
   PS_WIRRAL("PS - Wirral"),
   PS_WOLVERHAMPTON("PS - Wolverhampton"),
   PS_WORCESTERSHIRE("PS - Worcestershire"),
-  PS_WORKINGTON("PS - Workington"), // Active from 10 Dec 2021
+  PS_WORKINGTON("PS - Workington", validFrom = LocalDate.of(2021, 12, 10)), // Active from 10 Dec 2021
   PS_YORK("PS - York"),
   REGIONAL_CT_ADMIN("Regional CT Admin"),
   REPUBLIC_OF_IRELAND("Republic of Ireland"),
   SCOTLAND("Scotland"),
-  YOT_SEE_COMMENTS("YOT - See Comments")
+  YOT_SEE_COMMENTS("YOT - See Comments");
+
+  fun isActiveOn(localDate: LocalDate): Boolean {
+    return (localDate.isEqual(validFrom) || localDate.isAfter(validFrom)) && (localDate.isEqual(validTo) || localDate.isBefore(validTo))
+  }
 }
