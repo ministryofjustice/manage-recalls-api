@@ -6,7 +6,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ConfirmedRecallTypeRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Phase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
@@ -20,6 +23,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.PrisonApiClient
 import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
 import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.PrisonerOffenderSearchClient
@@ -35,6 +39,7 @@ class RecallService(
   @Autowired private val bankHolidayService: BankHolidayService,
   @Autowired private val prisonerOffenderSearchClient: PrisonerOffenderSearchClient,
   @Autowired private val prisonApiClient: PrisonApiClient,
+  @Autowired private val phaseRecordService: PhaseRecordService,
   @Autowired private val clock: Clock,
   @Autowired private val meterRegistry: MeterRegistry,
   @Value("\${returnToCustody.updateThresholdMinutes}") val returnToCustodyUpdateThresholdMinutes: Long,
@@ -47,6 +52,12 @@ class RecallService(
   private var rtcCounter: Counter = meterRegistry.counter("autoReturnedToCustody")
   private val log = LoggerFactory.getLogger(this::class.java)
 
+  fun bookRecall(bookRecallRequest: BookRecallRequest, currentUserId: UserId): Recall {
+    val recall = recallRepository.save(bookRecallRequest.toRecall(currentUserId, clock), currentUserId)
+    phaseRecordService.startPhase(recall.recallId(), Phase.BOOK, currentUserId)
+    return recall
+  }
+
   @Transactional
   fun assignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
     return recallRepository.getByRecallId(recallId)
@@ -57,7 +68,7 @@ class RecallService(
   }
 
   @Transactional
-  fun unassignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
+  fun unassignRecall(recallId: RecallId, currentUserId: UserId): Recall {
     return recallRepository.getByRecallId(recallId)
       .copy(
         assignee = null
@@ -212,6 +223,22 @@ class RecallService(
         currentUserId
       )
     }
+}
+
+fun BookRecallRequest.toRecall(userUuid: UserId, clock: Clock): Recall {
+  val now = OffsetDateTime.now(clock)
+  return Recall(
+    ::RecallId.random(),
+    nomsNumber,
+    userUuid,
+    now,
+    firstName,
+    middleNames,
+    lastName,
+    croNumber,
+    dateOfBirth,
+    licenceNameCategory = if (middleNames == null) NameFormatCategory.FIRST_LAST else null
+  )
 }
 
 private fun Prisoner.isInCustody(): Boolean {

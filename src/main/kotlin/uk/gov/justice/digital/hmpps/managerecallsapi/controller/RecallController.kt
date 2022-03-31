@@ -57,12 +57,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.WarrantReferenceNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
-import java.time.Clock
 import java.time.LocalDate
 import java.time.OffsetDateTime
 
@@ -76,7 +74,6 @@ class RecallController(
   @Autowired private val prisonValidationService: PrisonValidationService,
   @Autowired private val courtValidationService: CourtValidationService,
   @Autowired private val tokenExtractor: TokenExtractor,
-  @Autowired private val clock: Clock,
 ) {
 
   @PostMapping("/recalls")
@@ -86,7 +83,7 @@ class RecallController(
     @RequestHeader("Authorization") bearerToken: String
   ): RecallResponse =
     tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
-      recallRepository.save(bookRecallRequest.toRecall(currentUserId, clock), currentUserId).toResponse()
+      recallService.bookRecall(bookRecallRequest, currentUserId).toResponse()
     }
 
   @GetMapping("/recalls")
@@ -170,7 +167,7 @@ class RecallController(
     @RequestHeader("Authorization") bearerToken: String
   ): RecallResponse =
     tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
-      return recallService.unassignRecall(recallId, assignee, currentUserId).toResponse()
+      return recallService.unassignRecall(recallId, currentUserId).toResponse()
     }
 
   fun Recall.toResponseLite(users: Map<UserId, UserDetails>) =
@@ -390,22 +387,6 @@ class RecallController(
     index,
     userDetailsService.get(createdByUserId()).fullName(),
     createdDateTime
-  )
-}
-
-fun BookRecallRequest.toRecall(userUuid: UserId, clock: Clock): Recall {
-  val now = OffsetDateTime.now(clock)
-  return Recall(
-    ::RecallId.random(),
-    nomsNumber,
-    userUuid,
-    now,
-    firstName,
-    middleNames,
-    lastName,
-    croNumber,
-    dateOfBirth,
-    licenceNameCategory = if (middleNames == null) NameFormatCategory.FIRST_LAST else null
   )
 }
 

@@ -46,7 +46,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 
 @Entity
-@Table(name = "recall")
+@Table
 data class Recall(
 
 // NON-NULLABLE FIELDS

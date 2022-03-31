@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import reactor.core.publisher.Mono
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Phase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallLength.TWENTY_EIGHT_DAYS
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
@@ -56,6 +58,7 @@ class RecallServiceTest {
   private val bankHolidayService = mockk<BankHolidayService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val prisonApiClient = mockk<PrisonApiClient>()
+  private val phaseRecordService = mockk<PhaseRecordService>()
   private val meterRegistry = mockk<MeterRegistry>(relaxed = true)
   private val autoReturnedToCustodyCounter = mockk<Counter>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:14:50.00Z"), ZoneId.of("UTC"))
@@ -155,6 +158,7 @@ class RecallServiceTest {
       bankHolidayService,
       prisonerOffenderSearchClient,
       prisonApiClient,
+      phaseRecordService,
       fixedClock,
       meterRegistry,
       returnToCustodyUpdateThresholdMinutes
@@ -416,7 +420,7 @@ class RecallServiceTest {
     )
     every { recallRepository.save(recall, currentUserId) } returns recall
 
-    val assignedRecall = underTest.unassignRecall(recallId, ::UserId.random(), currentUserId)
+    val assignedRecall = underTest.unassignRecall(recallId, currentUserId)
     assertThat(assignedRecall, equalTo(recall))
   }
 
@@ -564,5 +568,29 @@ class RecallServiceTest {
 
     verify { recallRepository.getByRecallId(recallId) }
     verify { recallRepository.save(updatedRecall, currentUserId) }
+  }
+
+  @Test
+  fun `book recall also begins phase for BOOK`() {
+    val bookRecallRequest = BookRecallRequest(
+      NomsNumber("A1234BC"),
+      FirstName("Bob"),
+      null,
+      LastName("Smith"),
+      CroNumber("AB123"),
+      LocalDate.of(1999, 12, 31)
+    )
+    val recall = mockk<Recall>()
+
+    every { recallRepository.save(any(), currentUserId) } returns recall
+    every { recall.recallId() } returns recallId
+    every { phaseRecordService.startPhase(recallId, Phase.BOOK, currentUserId) } returns mockk()
+
+    val response = underTest.bookRecall(bookRecallRequest, currentUserId)
+
+    assertThat(response, equalTo(recall))
+
+    verify { recallRepository.save(any(), currentUserId) }
+    verify { phaseRecordService.startPhase(recallId, Phase.BOOK, currentUserId) }
   }
 }

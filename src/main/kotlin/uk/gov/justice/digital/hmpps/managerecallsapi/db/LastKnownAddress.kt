@@ -18,7 +18,7 @@ enum class AddressSource {
 }
 
 @Entity
-@Table(name = "last_known_address")
+@Table
 data class LastKnownAddress(
   @Id
   val id: UUID,

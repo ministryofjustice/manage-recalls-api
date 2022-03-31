@@ -14,7 +14,7 @@ import javax.persistence.JoinColumn
 import javax.persistence.Table
 
 @Entity
-@Table(name = "rescind_record")
+@Table
 data class RescindRecord(
   @Id
   val id: UUID,
@@ -45,7 +45,7 @@ data class RescindRecord(
   val requestDetails: String,
 
   @Column
-  val approved: Boolean? = null,
+  val approved: Boolean?,
 
   @Column
   @JoinColumn(name = "document_id", table = "document")
