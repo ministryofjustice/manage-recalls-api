@@ -571,7 +571,7 @@ class RecallServiceTest {
   }
 
   @Test
-  fun `book recall also begins phase for BOOK`() {
+  fun `book recall starts BOOK phase`() {
     val bookRecallRequest = BookRecallRequest(
       NomsNumber("A1234BC"),
       FirstName("Bob"),

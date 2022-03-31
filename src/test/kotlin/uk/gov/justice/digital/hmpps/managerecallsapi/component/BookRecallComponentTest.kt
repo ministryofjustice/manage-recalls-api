@@ -48,7 +48,6 @@ class BookRecallComponentTest : ComponentTestBase() {
     )
 
     val phaseRecords = phaseRecordRepository.findAll()
-    println(phaseRecords[0])
     assertThat(phaseRecords.size, equalTo(1))
     assertThat(phaseRecords[0].recallId(), equalTo(response.recallId))
     assertThat(phaseRecords[0].phase, equalTo(Phase.BOOK))

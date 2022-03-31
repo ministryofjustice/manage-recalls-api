@@ -32,7 +32,7 @@ class PhaseRecordComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `start the Phase for recall creates new record`() {
+  fun `starting a Phase (other than BOOK) for recall creates new record`() {
     val phase = Phase.ASSESS
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
@@ -47,7 +47,7 @@ class PhaseRecordComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `starting the phase twice for a recall overwrites first record`() {
+  fun `starting a phase twice for a recall overwrites first record`() {
     val phase = Phase.DOSSIER
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
@@ -64,7 +64,7 @@ class PhaseRecordComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `ending the phase updates existing record and unassigns when indicated`() {
+  fun `ending a phase updates existing record and unassigns when indicated`() {
     val phase = Phase.ASSESS
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val assignedRecall = authenticatedClient.assignRecall(recall.recallId, authenticatedClient.userId)
@@ -88,7 +88,7 @@ class PhaseRecordComponentTest : ComponentTestBase() {
   }
 
   @Test
-  fun `ending the phase twice updates existing record`() {
+  fun `ending a phase twice updates existing record`() {
     val phase = Phase.DOSSIER
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val assignedRecall = authenticatedClient.assignRecall(recall.recallId, authenticatedClient.userId)

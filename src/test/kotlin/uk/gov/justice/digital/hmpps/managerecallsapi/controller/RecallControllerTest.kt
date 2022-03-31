@@ -45,7 +45,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
-import java.time.Clock
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -59,7 +58,6 @@ class RecallControllerTest {
   private val courtValidationService = mockk<CourtValidationService>()
   private val tokenExtractor = mockk<TokenExtractor>()
   private val now = OffsetDateTime.now(ZoneId.of("UTC"))
-  private val fixedClock = Clock.fixed(now.toInstant(), ZoneId.of("UTC"))
 
   private val underTest =
     RecallController(

@@ -52,6 +52,7 @@ class RecallService(
   private var rtcCounter: Counter = meterRegistry.counter("autoReturnedToCustody")
   private val log = LoggerFactory.getLogger(this::class.java)
 
+  @Transactional
   fun bookRecall(bookRecallRequest: BookRecallRequest, currentUserId: UserId): Recall {
     val recall = recallRepository.save(bookRecallRequest.toRecall(currentUserId, clock), currentUserId)
     phaseRecordService.startPhase(recall.recallId(), Phase.BOOK, currentUserId)
