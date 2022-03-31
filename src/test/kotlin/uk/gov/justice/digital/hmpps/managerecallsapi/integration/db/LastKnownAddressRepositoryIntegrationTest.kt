@@ -6,12 +6,12 @@ import com.natpryce.hamkrest.startsWith
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.dao.DataIntegrityViolationException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.LastKnownAddressNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.LastKnownAddressNotFoundException
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
 

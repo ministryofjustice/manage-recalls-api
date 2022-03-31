@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongPhaseBeginException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongPhaseStartException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.PhaseRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -39,7 +39,7 @@ class PhaseController(
     tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
       val phase = request.phase
       if (phase == Phase.BOOK) {
-        throw WrongPhaseBeginException(recallId, phase)
+        throw WrongPhaseStartException(recallId, phase)
       }
       phaseRecordService.startPhase(recallId, phase, currentUserId)
     }
@@ -53,10 +53,11 @@ class PhaseController(
     @RequestHeader("Authorization") bearerToken: String
   ): PhaseRecord =
     tokenExtractor.getTokenFromHeader(bearerToken).userUuid().let { currentUserId ->
+      val phase = phaseRecordService.endPhase(recallId, request.phase, currentUserId)
       if (request.shouldUnassign) {
         recallService.unassignRecall(recallId, currentUserId)
       }
-      phaseRecordService.endPhase(recallId, request.phase, currentUserId)
+      return phase
     }
 }
 

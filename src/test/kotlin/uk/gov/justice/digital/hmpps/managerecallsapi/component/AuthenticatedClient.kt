@@ -199,6 +199,10 @@ class AuthenticatedClient(
   fun startPhase(recallId: RecallId, phase: Phase) =
     postRequest("/recalls/$recallId/start-phase", StartPhaseRequest(phase), PhaseRecord::class.java, CREATED)
 
+  fun endPhase(recallId: RecallId, phase: Phase, shouldUnassign: Boolean, responseStatus: HttpStatus) =
+    sendPatchRequest("/recalls/$recallId/end-phase", EndPhaseRequest(phase, shouldUnassign))
+      .expectStatus().isEqualTo(responseStatus)
+
   fun endPhase(recallId: RecallId, phase: Phase, shouldUnassign: Boolean) =
     patchRequest("/recalls/$recallId/end-phase", EndPhaseRequest(phase, shouldUnassign))
       .expectBody(PhaseRecord::class.java)

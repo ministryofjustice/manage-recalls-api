@@ -15,6 +15,9 @@ import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import software.amazon.awssdk.services.s3.model.S3Exception
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.DocumentDeleteException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.DocumentNotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.RecallDocumentWithCategoryNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LICENCE

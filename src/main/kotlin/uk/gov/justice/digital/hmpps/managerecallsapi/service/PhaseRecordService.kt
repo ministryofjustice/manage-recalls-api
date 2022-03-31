@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.MissingPhaseStartException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Phase
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.PhaseRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.PhaseRecordRepository
@@ -36,7 +37,7 @@ class PhaseRecordService(
 
   @Transactional
   fun endPhase(recallId: RecallId, phase: Phase, currentUserId: UserId): PhaseRecord {
-    val phaseRecord = phaseRecordRepository.getByRecallIdAndPhase(recallId.value, phase)
+    val phaseRecord = phaseRecordRepository.findByRecallIdAndPhase(recallId.value, phase) ?: throw MissingPhaseStartException(recallId, phase)
 
     val updatedPhaseRecord = phaseRecord.copy(
       endedDateTime = OffsetDateTime.now(),

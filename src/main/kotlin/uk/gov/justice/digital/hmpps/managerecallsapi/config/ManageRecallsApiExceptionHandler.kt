@@ -15,12 +15,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Phase
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.MultiFileException
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
-import java.lang.IllegalStateException
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 
 @RestControllerAdvice
 class ManageRecallsApiExceptionHandler {
@@ -126,6 +131,8 @@ open class ManageRecallsException(override val message: String? = null, override
   }
 }
 
+open class NotFoundException : ManageRecallsException()
+
 class ClientTimeoutException(clientName: String, errorType: String) : ManageRecallsException("$clientName: [$errorType]")
 class ClientException(clientName: String, exception: Exception) : ManageRecallsException("$clientName: [${exception.message}]", exception)
 
@@ -135,4 +142,24 @@ class ReturnedToCustodyRecallExpectedException(val recallId: RecallId) : ManageR
 class InvalidPrisonOrCourtException(validAndActiveCurrentPrison: Boolean, validLastReleasePrison: Boolean, validSentencingCourt: Boolean) :
   ManageRecallsException("validAndActiveCurrentPrison=[$validAndActiveCurrentPrison], validLastReleasePrison=[$validLastReleasePrison], validSentencingCourt=[$validSentencingCourt]")
 
-class WrongPhaseBeginException(val recallId: RecallId, phase: Phase) : ManageRecallsException("$recallId: [$phase]")
+data class WrongPhaseStartException(val recallId: RecallId, val phase: Phase) : ManageRecallsException("$recallId: [$phase]")
+data class MissingPhaseStartException(val recallId: RecallId, val phase: Phase) : ManageRecallsException("$recallId: [$phase]")
+
+data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
+data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
+data class LastKnownAddressNotFoundException(val recallId: RecallId, val lastKnownAddressId: LastKnownAddressId) : NotFoundException()
+data class RescindRecordNotFoundException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : NotFoundException()
+data class RescindRecordAlreadyDecidedException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : java.lang.IllegalStateException()
+data class UndecidedRescindRecordAlreadyExistsException(val recallId: RecallId) : java.lang.IllegalStateException()
+data class InvalidStopReasonException(val recallId: RecallId, val stopReason: StopReason) : java.lang.IllegalStateException()
+data class RecallDocumentWithCategoryNotFoundException(val recallId: RecallId, val documentCategory: DocumentCategory) : NotFoundException()
+
+class VirusFoundException : ManageRecallsException()
+class MultiFileException(override val message: String, val failures: List<Pair<DocumentCategory, FileName>>) : Exception()
+class DocumentDeleteException(override val message: String?) : ManageRecallsException(message)
+class IllegalDocumentStateException(override val message: String?) : ManageRecallsException(message)
+
+data class CourtNotFoundException(val courtId: CourtId) : NotFoundException()
+data class PrisonNotFoundException(val prisonId: PrisonId) : NotFoundException()
+data class PoliceForceNotFoundException(val policeForceId: PoliceForceId) : NotFoundException()
+data class PrisonerNotFoundException(val nomsNumber: NomsNumber) : NotFoundException()

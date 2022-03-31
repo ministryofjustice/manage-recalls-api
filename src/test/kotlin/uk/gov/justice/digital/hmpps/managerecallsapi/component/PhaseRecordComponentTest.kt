@@ -113,4 +113,19 @@ class PhaseRecordComponentTest : ComponentTestBase() {
     assertThat(endRecord2.endedDateTime!!.isAfter(endRecord1.endedDateTime!!), equalTo(true))
     assertThat(endRecord2.endedByUserId(), equalTo(authenticatedClient.userId))
   }
+
+  @Test
+  fun `ending a phase that hasn't started throws exception and recall remains assigned`() {
+    val phase = Phase.DOSSIER
+    val recall = authenticatedClient.bookRecall(bookRecallRequest)
+    val assignedRecall = authenticatedClient.assignRecall(recall.recallId, authenticatedClient.userId)
+
+    assertThat(assignedRecall.assignee, equalTo(authenticatedClient.userId))
+
+    authenticatedClient.endPhase(recall.recallId, phase, true, BAD_REQUEST)
+
+    val unchangedRecall = authenticatedClient.getRecall(recall.recallId)
+
+    assertThat(unchangedRecall.assignee, equalTo(authenticatedClient.userId))
+  }
 }

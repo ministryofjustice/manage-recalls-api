@@ -9,8 +9,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.PrisonerNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.webclient.AuthenticatingWebClient
 import java.time.Duration
 import java.time.LocalDate
@@ -44,8 +44,6 @@ class PrisonerOffenderSearchClient(
         ClientTimeoutException(this.javaClass.simpleName, ex.javaClass.canonicalName)
       }
 }
-
-data class PrisonerNotFoundException(val nomsNumber: NomsNumber) : NotFoundException()
 
 data class Prisoner(
   val prisonerNumber: String? = null,

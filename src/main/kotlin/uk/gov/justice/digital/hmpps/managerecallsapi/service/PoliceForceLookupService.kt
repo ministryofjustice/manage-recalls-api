@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.PoliceForceNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PoliceUkApiClient
@@ -14,5 +15,3 @@ class PoliceForceLookupService(@Autowired private val policeUkApiClient: PoliceU
       .mapNotNull { it?.name }
       .block() ?: throw PoliceForceNotFoundException(policeForceId)
 }
-
-data class PoliceForceNotFoundException(val policeForceId: PoliceForceId) : NotFoundException()

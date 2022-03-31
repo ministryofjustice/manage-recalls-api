@@ -16,11 +16,6 @@ interface JpaPhaseRecordRepository : JpaRepository<PhaseRecord, UUID> {
     @Param("recallId") recallId: UUID,
     @Param("phase") phase: Phase
   ): PhaseRecord?
-
-  fun getByRecallIdAndPhase(
-    @Param("recallId") recallId: UUID,
-    @Param("phase") phase: Phase
-  ): PhaseRecord
 }
 
 @NoRepositoryBean

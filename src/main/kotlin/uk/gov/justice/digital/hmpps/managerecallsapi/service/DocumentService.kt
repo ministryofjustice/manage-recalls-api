@@ -7,25 +7,23 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
-import uk.gov.justice.digital.hmpps.managerecallsapi.config.ManageRecallsException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.DocumentDeleteException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.IllegalDocumentStateException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.RecallDocumentWithCategoryNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
-import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.NoVirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult.VirusFound
 import uk.gov.justice.digital.hmpps.managerecallsapi.storage.S3Service
-import java.lang.IllegalStateException
 import java.time.Clock
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
@@ -186,26 +184,4 @@ class DocumentService(
   }
 }
 
-data class RecallNotFoundException(val recallId: RecallId) : NotFoundException()
-data class DocumentNotFoundException(val recallId: RecallId, val documentId: DocumentId) : NotFoundException()
-data class LastKnownAddressNotFoundException(val recallId: RecallId, val lastKnownAddressId: LastKnownAddressId) : NotFoundException()
-data class RescindRecordNotFoundException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : NotFoundException()
-data class RescindRecordAlreadyDecidedException(val recallId: RecallId, val rescindRecordId: RescindRecordId) : IllegalStateException()
-data class UndecidedRescindRecordAlreadyExistsException(val recallId: RecallId) : IllegalStateException()
-data class InvalidStopReasonException(val recallId: RecallId, val stopReason: StopReason) : IllegalStateException()
-data class RecallDocumentWithCategoryNotFoundException(
-  val recallId: RecallId,
-  val documentCategory: DocumentCategory
-) : NotFoundException()
-
-open class NotFoundException : ManageRecallsException()
-class VirusFoundException : ManageRecallsException()
-class MultiFileException(override val message: String, val failures: List<Pair<DocumentCategory, FileName>>) : Exception()
-class DocumentDeleteException(override val message: String?) : ManageRecallsException(message)
-class IllegalDocumentStateException(override val message: String?) : ManageRecallsException(message)
-
-data class VirusFoundEvent(
-  val recallId: RecallId,
-  val documentCategory: DocumentCategory,
-  val foundViruses: Map<String, Collection<String>>
-)
+data class VirusFoundEvent(val recallId: RecallId, val documentCategory: DocumentCategory, val foundViruses: Map<String, Collection<String>>)
