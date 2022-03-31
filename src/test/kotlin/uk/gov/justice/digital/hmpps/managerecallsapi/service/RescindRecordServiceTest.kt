@@ -14,6 +14,10 @@ import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.RecallNotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.RescindRecordAlreadyDecidedException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.RescindRecordNotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.UndecidedRescindRecordAlreadyExistsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason

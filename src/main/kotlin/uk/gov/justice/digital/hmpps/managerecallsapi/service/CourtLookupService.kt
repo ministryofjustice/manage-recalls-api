@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.CourtNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.CourtRegisterClient
@@ -13,5 +14,3 @@ class CourtLookupService(@Autowired private val courtRegisterClient: CourtRegist
       .mapNotNull { it?.courtName }
       .block() ?: throw CourtNotFoundException(courtId)
 }
-
-data class CourtNotFoundException(val courtId: CourtId) : NotFoundException()

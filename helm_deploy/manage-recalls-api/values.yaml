@@ -34,7 +34,7 @@ generic-service:
     SPRING_PROFILES_ACTIVE: "logstash"
     APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=$(APPINSIGHTS_INSTRUMENTATIONKEY)"
     GOTENBERG_ENDPOINT_URL: http://manage-recalls-api-gotenberg
-    SENTRY_IGNORED_EXCEPTIONS_FOR_TYPE: uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException,org.springframework.security.web.firewall.RequestRejectedException,org.springframework.web.HttpMediaTypeNotAcceptableException,uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
+    SENTRY_IGNORED_EXCEPTIONS_FOR_TYPE: uk.gov.justice.digital.hmpps.managerecallsapi.config.VirusFoundException,org.springframework.security.web.firewall.RequestRejectedException,org.springframework.web.HttpMediaTypeNotAcceptableException,uk.gov.justice.digital.hmpps.managerecallsapi.config.ClientTimeoutException
     CLAMAV_HOSTNAME: manage-recalls-api-clamav
     CLAMAV_PORT: 3310
 

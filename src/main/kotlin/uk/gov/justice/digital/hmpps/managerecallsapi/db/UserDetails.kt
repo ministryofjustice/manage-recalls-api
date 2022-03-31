@@ -18,7 +18,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "user_details")
+@Table
 data class UserDetails(
   @Id
   val id: UUID,

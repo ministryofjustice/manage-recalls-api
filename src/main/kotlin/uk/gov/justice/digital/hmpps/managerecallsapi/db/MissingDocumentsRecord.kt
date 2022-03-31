@@ -17,7 +17,7 @@ import javax.persistence.JoinTable
 import javax.persistence.Table
 
 @Entity
-@Table(name = "missing_documents_record")
+@Table
 data class MissingDocumentsRecord(
   @Id
   val id: UUID,

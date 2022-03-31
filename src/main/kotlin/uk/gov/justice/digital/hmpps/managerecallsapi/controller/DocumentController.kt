@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.VirusFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
@@ -50,7 +51,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusScanResult
 import java.net.URI
 import java.time.OffsetDateTime

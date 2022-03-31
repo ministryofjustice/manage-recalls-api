@@ -15,6 +15,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ConfirmedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.CreateLastKnownAddressRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.EndPhaseRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditEntry
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.FieldAuditSummary
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.GenerateDocumentRequest
@@ -23,6 +24,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.MissingDocuments
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NewDocumentResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.PartBRecordController.PartBRecordRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Phase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallSearchRequest
@@ -32,6 +34,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordCon
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ReturnedToCustodyRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.SearchController
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StartPhaseRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateDocumentRequest
@@ -40,6 +43,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequ
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UploadDocumentRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UserDetailsResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.PhaseRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
@@ -187,6 +191,23 @@ class AuthenticatedClient(
   fun stopRecall(recallId: RecallId, stopReason: StopReason) =
     sendPostRequest("/recalls/$recallId/stop", StopRecallRequest(stopReason))
       .expectStatus().isEqualTo(OK)
+
+  fun startPhase(recallId: RecallId, phase: Phase, expectedStatus: HttpStatus = CREATED) =
+    sendPostRequest("/recalls/$recallId/start-phase", StartPhaseRequest(phase))
+      .expectStatus().isEqualTo(expectedStatus)
+
+  fun startPhase(recallId: RecallId, phase: Phase) =
+    postRequest("/recalls/$recallId/start-phase", StartPhaseRequest(phase), PhaseRecord::class.java, CREATED)
+
+  fun endPhase(recallId: RecallId, phase: Phase, shouldUnassign: Boolean, responseStatus: HttpStatus) =
+    sendPatchRequest("/recalls/$recallId/end-phase", EndPhaseRequest(phase, shouldUnassign))
+      .expectStatus().isEqualTo(responseStatus)
+
+  fun endPhase(recallId: RecallId, phase: Phase, shouldUnassign: Boolean) =
+    patchRequest("/recalls/$recallId/end-phase", EndPhaseRequest(phase, shouldUnassign))
+      .expectBody(PhaseRecord::class.java)
+      .returnResult()
+      .responseBody!!
 
   fun <T> missingDocumentsRecord(
     request: MissingDocumentsRecordRequest,

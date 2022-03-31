@@ -9,6 +9,7 @@ import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Phase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
@@ -16,6 +17,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import java.time.LocalDate
+import java.time.OffsetDateTime
 
 class BookRecallComponentTest : ComponentTestBase() {
 
@@ -44,6 +46,15 @@ class BookRecallComponentTest : ComponentTestBase() {
         has(RecallResponse::licenceNameCategory, equalTo(NameFormatCategory.FIRST_LAST)),
       )
     )
+
+    val phaseRecords = phaseRecordRepository.findAll()
+    assertThat(phaseRecords.size, equalTo(1))
+    assertThat(phaseRecords[0].recallId(), equalTo(response.recallId))
+    assertThat(phaseRecords[0].phase, equalTo(Phase.BOOK))
+    assertThat(phaseRecords[0].startedByUserId(), equalTo(authenticatedClient.userId))
+    assertThat(phaseRecords[0].startedDateTime, !equalTo<OffsetDateTime>(null))
+    assertThat(phaseRecords[0].endedByUserId, equalTo(null))
+    assertThat(phaseRecords[0].endedDateTime, equalTo(null))
   }
 
   @Test

@@ -18,9 +18,6 @@ import org.springframework.web.server.ResponseStatusException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.OASYS_RISK_ASSESSMENT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_RISK_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.MultiFileException
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.NotFoundException
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 
 class ManageRecallsApiExceptionHandlerTest {
 

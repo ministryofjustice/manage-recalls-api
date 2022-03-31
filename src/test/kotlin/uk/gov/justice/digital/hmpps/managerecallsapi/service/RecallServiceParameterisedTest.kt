@@ -41,6 +41,7 @@ class RecallServiceParameterisedTest {
   private val bankHolidayService = mockk<BankHolidayService>()
   private val prisonerOffenderSearchClient = mockk<PrisonerOffenderSearchClient>()
   private val prisonApiClient = mockk<PrisonApiClient>()
+  private val phaseRecordService = mockk<PhaseRecordService>()
   private val meterRegistry = mockk<MeterRegistry>()
   private val autoReturnedToCustodyCounter = mockk<Counter>()
   private val fixedClock = Clock.fixed(Instant.parse("2021-10-04T13:15:50.00Z"), ZoneId.of("UTC"))
@@ -90,6 +91,7 @@ class RecallServiceParameterisedTest {
       bankHolidayService,
       prisonerOffenderSearchClient,
       prisonApiClient,
+      phaseRecordService,
       fixedClock,
       meterRegistry,
       returnToCustodyUpdateThresholdMinutes

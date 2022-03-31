@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.VirusFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
@@ -29,7 +30,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsReco
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentService
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.VirusFoundException
 import java.time.OffsetDateTime
 
 @RestController

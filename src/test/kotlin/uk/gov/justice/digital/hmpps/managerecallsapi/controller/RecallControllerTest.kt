@@ -45,7 +45,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.service.CourtValidationServ
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.PrisonValidationService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.RecallService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.UserDetailsService
-import java.time.Clock
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -59,7 +58,6 @@ class RecallControllerTest {
   private val courtValidationService = mockk<CourtValidationService>()
   private val tokenExtractor = mockk<TokenExtractor>()
   private val now = OffsetDateTime.now(ZoneId.of("UTC"))
-  private val fixedClock = Clock.fixed(now.toInstant(), ZoneId.of("UTC"))
 
   private val underTest =
     RecallController(
@@ -68,8 +66,7 @@ class RecallControllerTest {
       recallService,
       prisonValidationService,
       courtValidationService,
-      tokenExtractor,
-      fixedClock
+      tokenExtractor
     )
 
   private val recallId = ::RecallId.random()
@@ -112,23 +109,13 @@ class RecallControllerTest {
   fun `book recall returns request with id`() {
     val bearerToken = "Bearer header.payload"
     val userUuid = ::UserId.random()
-    val recall = recallRequest.toRecall(userUuid, fixedClock)
 
-    every { recallRepository.save(any(), userUuid) } returns recall
+    every { recallService.bookRecall(any(), userUuid) } returns recall
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(userUuid.toString())
 
     val results = underTest.bookRecall(recallRequest, bearerToken)
 
-    assertThat(
-      results,
-      equalTo(
-        recallResponse.copy(
-          recallId = recall.recallId(),
-          createdByUserId = userUuid,
-          licenceNameCategory = NameFormatCategory.FIRST_LAST
-        )
-      )
-    )
+    assertThat(results, equalTo(recallResponse))
   }
 
   private fun newRecall() =
@@ -444,7 +431,7 @@ class RecallControllerTest {
     val bearerToken = "BEARER"
 
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns Token(assignee.toString())
-    every { recallService.unassignRecall(recallId, assignee, assignee) } returns unassignedRecall
+    every { recallService.unassignRecall(recallId, assignee) } returns unassignedRecall
 
     val result = underTest.unassignRecall(recallId, assignee, bearerToken)
 

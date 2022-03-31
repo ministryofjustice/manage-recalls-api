@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.PrisonNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.register.PrisonRegisterClient
@@ -26,5 +27,3 @@ class PrisonLookupService(@Autowired private val prisonRegisterClient: PrisonReg
   fun isWelsh(prisonId: PrisonId): Boolean =
     welshPrisonsByCode.contains(prisonId)
 }
-
-data class PrisonNotFoundException(val prisonId: PrisonId) : NotFoundException()

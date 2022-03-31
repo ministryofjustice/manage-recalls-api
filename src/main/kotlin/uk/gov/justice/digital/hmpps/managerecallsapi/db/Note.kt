@@ -13,7 +13,7 @@ import javax.persistence.JoinColumn
 import javax.persistence.Table
 
 @Entity
-@Table(name = "note")
+@Table
 data class Note(
   @Id
   val id: UUID,

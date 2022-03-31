@@ -4,6 +4,9 @@ import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.map
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.RescindRecordAlreadyDecidedException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.RescindRecordNotFoundException
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.UndecidedRescindRecordAlreadyExistsException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason

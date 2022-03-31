@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.DocumentNotFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.WrongDocumentTypeException
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
@@ -22,7 +23,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomUnVersionedDocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomVersionedDocumentCategory
-import uk.gov.justice.digital.hmpps.managerecallsapi.service.DocumentNotFoundException
 import java.time.OffsetDateTime
 import javax.transaction.Transactional
 

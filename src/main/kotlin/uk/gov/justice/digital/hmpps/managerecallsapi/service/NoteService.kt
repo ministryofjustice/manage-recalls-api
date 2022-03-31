@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.service
 import dev.forkhandles.result4k.onFailure
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import uk.gov.justice.digital.hmpps.managerecallsapi.config.VirusFoundException
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NoteController.CreateNoteRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note

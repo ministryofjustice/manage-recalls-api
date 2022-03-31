@@ -17,7 +17,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "document")
+@Table
 data class Document(
   @Id
   val id: UUID,
