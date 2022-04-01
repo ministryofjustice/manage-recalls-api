@@ -34,15 +34,15 @@ interface JpaRecallAuditRepository : JpaRepository<RawRecallAudit, Int> {
 
   @Query(
     value = """
-      select column_name as columnName, auditId, updatedDateTime,
+      select columnName, auditId, 
         concat(u.first_name , ' ', u.last_name) as updatedByUserName,
-        auditCount
+        updatedDateTime, auditCount
         from ( 
-          select max(updated_date_time) as updatedDateTime, max(audit_id) as auditId, column_name, count(*) as auditCount from ( 
-              select audit_id, updated_date_time, json_object_keys(updated_values) as column_name 
+          select max(updated_date_time) as updatedDateTime, max(audit_id) as auditId, columnName, count(*) as auditCount from ( 
+              select audit_id, updated_date_time, json_object_keys(updated_values) as columnName 
               from recall_audit where recall_id = :recallId) as audit_by_field
-         where column_name <> 'id' -- dont include ID as it clashes with array properties (e.g. reasonsForRecall)
-          group by column_name) grouped_audit, 
+         where columnName <> 'id' -- dont include ID as it clashes with array properties (e.g. reasonsForRecall)
+          group by columnName) grouped_audit, 
            recall_audit a,
            user_details u 
           where a.updated_by_user_id = u.id 

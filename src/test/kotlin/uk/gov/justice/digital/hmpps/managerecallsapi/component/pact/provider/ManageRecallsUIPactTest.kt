@@ -99,7 +99,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   fun `delete all recalls`() {
     // Due to DB constraints, need to clear out the reasons before deleting the audit else the recallRepository delete
     // triggers the audit and you can not delete the recalls as they are referenced in the recall_reason_audit
-    recallRepository.findAll().map { it.copy(reasonsForRecall = emptySet()) }.map { recallRepository.save(it, authenticatedClient.userId) }
+    recallRepository.findAll().map { it.copy(reasonsForRecall = emptySet()) }
+      .map { recallRepository.save(it, authenticatedClient.userId) }
     recallReasonAuditRepository.deleteAll()
     recallAuditRepository.deleteAll()
     missingDocumentsRecordRepository.deleteAll()
@@ -295,6 +296,39 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
       createdByUserId
     )
     `a document exists`(matchedDocumentId, UNCATEGORISED, FileName("uncategorised.pdf"), null, null)
+  }
+
+  @State("summary statistics exist")
+  fun `summary statistics exist`() {
+    `a user and a fully populated Fixed Term recall without documents exists`()
+    val now = OffsetDateTime.now()
+    phaseRecordRepository.findByRecallIdAndPhase(matchedRecallId.value, Phase.BOOK)!!.copy(
+      startedDateTime = now.minusMinutes(20),
+      endedByUserId = userIdOnes.value,
+      endedDateTime = now.minusMinutes(11)
+    ).let { phaseRecordRepository.save(it) }
+    phaseRecordRepository.save(
+      PhaseRecord(
+        ::PhaseRecordId.random(),
+        matchedRecallId,
+        Phase.ASSESS,
+        userIdOnes,
+        now.minusMinutes(10),
+        userIdOnes,
+        now.minusMinutes(8),
+      )
+    )
+    phaseRecordRepository.save(
+      PhaseRecord(
+        ::PhaseRecordId.random(),
+        matchedRecallId,
+        Phase.DOSSIER,
+        userIdOnes,
+        now.minusMinutes(7),
+        userIdOnes,
+        now.minusMinutes(6)
+      )
+    )
   }
 
   fun `a document exists`(
