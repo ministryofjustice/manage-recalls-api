@@ -46,15 +46,13 @@ class LastKnownAddressController(
     )
   )
   @PostMapping(
-    "/recalls/{recallId}/last-known-addresses",
-    "/last-known-addresses" // FIXME PUD-1364
+    "/recalls/{recallId}/last-known-addresses"
   )
   fun createLastKnownAddress( // TODO: PUD-1500: should be moved into a service class and annotated @Transactional
-    @PathVariable("recallId") pathRecallId: RecallId?,
+    @PathVariable("recallId") recallId: RecallId,
     @RequestBody request: CreateLastKnownAddressRequest,
     @RequestHeader("Authorization") bearerToken: String
   ): ResponseEntity<LastKnownAddressId> {
-    val recallId = pathRecallId ?: request.recallId!!
     return recallRepository.getByRecallId(recallId).let { recall ->
       val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       val previousIndex = recall.lastKnownAddresses.maxByOrNull { it.index }?.index ?: 0
@@ -88,7 +86,6 @@ class LastKnownAddressController(
 }
 
 data class CreateLastKnownAddressRequest(
-  val recallId: RecallId?,
   val line1: String,
   val line2: String?,
   val town: String,

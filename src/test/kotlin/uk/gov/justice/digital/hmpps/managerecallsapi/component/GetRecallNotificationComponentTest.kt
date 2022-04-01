@@ -57,7 +57,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
     )
     updateRecallWithRequiredInformationForTheRecallNotification(recall.recallId, userId, true, FIXED)
     authenticatedClient.addLastKnownAddress(
-      recall.recallId, CreateLastKnownAddressRequest(null, "1 The Road", null, "A Town", "AB12 3CD", AddressSource.MANUAL),
+      recall.recallId, CreateLastKnownAddressRequest("1 The Road", null, "A Town", "AB12 3CD", AddressSource.MANUAL),
       HttpStatus.CREATED, LastKnownAddressId::class.java
     )
 

@@ -59,7 +59,7 @@ class LastKnownAddressControllerTest {
     every { lastKnownAddress.id() } returns lastKnownAddressId
 
     val request = CreateLastKnownAddressRequest(
-      null, line1, line2, town, postcode, source
+      line1, line2, town, postcode, source
     )
 
     val response = underTest.createLastKnownAddress(recallId, request, bearerToken)
@@ -106,10 +106,10 @@ class LastKnownAddressControllerTest {
     every { address.id() } returns lastKnownAddressId
 
     val request = CreateLastKnownAddressRequest(
-      recallId, line1, line2, town, postcode, source
+      line1, line2, town, postcode, source
     )
 
-    val response = underTest.createLastKnownAddress(null, request, bearerToken)
+    val response = underTest.createLastKnownAddress(recallId, request, bearerToken)
 
     assertThat(savedLastKnownAddress.captured.index, equalTo(previousMaxIndex + 1))
     assertThat(savedLastKnownAddress.captured.line1, equalTo(line1))
