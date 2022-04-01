@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import uk.gov.justice.digital.hmpps.managerecallsapi.component.ComponentTestBase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Phase
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType.FIXED
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Document
@@ -38,6 +39,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.PartBRecord
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.PhaseRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.toBase64DecodedByteArray
@@ -52,6 +54,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsReco
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhaseRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -167,6 +170,15 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
     setupUserDetailsFor(UserId(UUID.fromString("00000000-1111-0000-0000-000000000000")))
     setupUserDetailsFor(UserId(UUID.fromString("00000000-2222-0000-0000-000000000000")))
     recallRepository.save(recall, userIdOnes)
+    phaseRecordRepository.save(
+      PhaseRecord(
+        ::PhaseRecordId.random(),
+        matchedRecallId,
+        Phase.BOOK,
+        userIdOnes,
+        OffsetDateTime.now()
+      )
+    )
   }
 
   @State(
