@@ -35,7 +35,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
 import java.time.LocalDate
@@ -70,9 +69,20 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   )
   private val updateDocumentRequest = UpdateDocumentRequest(DocumentCategory.values().random())
   private val generateDocumentRequest = GenerateDocumentRequest(DocumentCategory.RECALL_NOTIFICATION, FileName("RECALL_NOTIFICATION.pdf"), "some more detail")
-  private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(::RecallId.random(), listOf(DocumentCategory.values().random()), "some detail", "content", FileName("email.msg"))
+  private val missingDocumentsRecordRequest = MissingDocumentsRecordRequest(
+    listOf(DocumentCategory.values().random()),
+    "some detail",
+    "content",
+    FileName("email.msg")
+  )
   private val partBRecordRequest = PartBRecordRequest("some detail", LocalDate.now(), FileName("partB.pdf"), "part B content", FileName("email.msg"), "email content", FileName("oasys.pdf"), "oasys content")
-  private val createLastKnownAddressRequest = CreateLastKnownAddressRequest(::RecallId.random(), "address line 1", "address line 2", "some town", "some postcode", AddressSource.LOOKUP)
+  private val createLastKnownAddressRequest = CreateLastKnownAddressRequest(
+    "address line 1",
+    "address line 2",
+    "some town",
+    "some postcode",
+    AddressSource.LOOKUP
+  )
   private val rescindRequestRequest = RescindRequestRequest("details", LocalDate.now(), "some content", FileName("filename"))
   private val rescindDecisionRequest = RescindDecisionRequest(true, "details", LocalDate.now(), "some content", FileName("filename"))
   private val returnedToCustodyRequest = ReturnedToCustodyRequest(OffsetDateTime.now().minusDays(1), OffsetDateTime.now().minusMinutes(1))

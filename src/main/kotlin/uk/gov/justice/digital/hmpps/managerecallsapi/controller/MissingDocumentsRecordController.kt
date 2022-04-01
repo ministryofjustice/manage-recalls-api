@@ -50,15 +50,13 @@ class MissingDocumentsRecordController(
     )
   )
   @PostMapping(
-    "/recalls/{recallId}//missing-documents-records",
-    "/missing-documents-records" // FIXME PUD-1364
+    "/recalls/{recallId}/missing-documents-records"
   )
   fun createMissingDocumentsRecord(
-    @PathVariable("recallId") pathRecallId: RecallId?,
+    @PathVariable("recallId") recallId: RecallId,
     @RequestBody missingDocumentsRecordRequest: MissingDocumentsRecordRequest,
     @RequestHeader("Authorization") bearerToken: String
   ): ResponseEntity<MissingDocumentsRecordId> {
-    val recallId = pathRecallId ?: missingDocumentsRecordRequest.recallId!!
     return recallRepository.getByRecallId(recallId).let { // TODO: PUD-1500: should be moved into a service class and annotated @Transactional
       val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       documentService.scanAndStoreDocument(
@@ -92,7 +90,6 @@ class MissingDocumentsRecordController(
 }
 
 data class MissingDocumentsRecordRequest(
-  val recallId: RecallId?,
   val categories: List<DocumentCategory>,
   val details: String,
   val emailFileContent: String,

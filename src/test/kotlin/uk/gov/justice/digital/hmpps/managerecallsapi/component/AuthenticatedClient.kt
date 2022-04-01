@@ -210,27 +210,12 @@ class AuthenticatedClient(
       .responseBody!!
 
   fun <T> missingDocumentsRecord(
-    request: MissingDocumentsRecordRequest,
-    expectedStatus: HttpStatus = CREATED,
-    responseClass: Class<T>
-  ) =
-    postRequest("/missing-documents-records", request, responseClass, expectedStatus)
-
-  fun <T> missingDocumentsRecord(
     recallId: RecallId,
     request: MissingDocumentsRecordRequest,
     expectedStatus: HttpStatus = CREATED,
     responseClass: Class<T>
   ) =
     postRequest("/recalls/$recallId/missing-documents-records", request, responseClass, expectedStatus)
-
-  // FIXME PUD-1364
-  fun <T> addLastKnownAddress(
-    request: CreateLastKnownAddressRequest,
-    expectedStatus: HttpStatus = CREATED,
-    responseClass: Class<T>
-  ) =
-    postRequest("/last-known-addresses", request, responseClass, expectedStatus)
 
   fun <T> addLastKnownAddress(
     recallId: RecallId,

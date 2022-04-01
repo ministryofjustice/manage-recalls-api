@@ -40,18 +40,18 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val details = "Some detail"
     val missingDocsRecordReq = MissingDocumentsRecordRequest(
-      recall.recallId,
       listOf(PART_A_RECALL_REPORT),
       details,
       base64EncodedDocumentContents,
       fileName
     )
 
-    val response = authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
+    val recallId = recall.recallId
+    val response = authenticatedClient.missingDocumentsRecord(recallId, missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
 
     assertThat(response, present())
 
-    val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
+    val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recallId)
     assertThat(recall.missingDocumentsRecords, isEmpty)
     assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.size, equalTo(1))
     assertThat(recallWithMissingDocumentsRecord.missingDocumentsRecords.first().version, equalTo(1))
@@ -65,20 +65,20 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
     val detailsOldest = "Some detail"
     val missingDocsRecordReq = MissingDocumentsRecordRequest(
-      recall.recallId,
       listOf(PART_A_RECALL_REPORT),
       detailsOldest,
       base64EncodedDocumentContents,
       fileName
     )
 
-    authenticatedClient.missingDocumentsRecord(missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
+    val recallId = recall.recallId
+    authenticatedClient.missingDocumentsRecord(recallId, missingDocsRecordReq, CREATED, MissingDocumentsRecordId::class.java)
     val detailsMostRecent = "Some details; some more detail"
-    val response = authenticatedClient.missingDocumentsRecord(recall.recallId, missingDocsRecordReq.copy(recallId = null, details = detailsMostRecent), CREATED, MissingDocumentsRecordId::class.java)
+    val response = authenticatedClient.missingDocumentsRecord(recallId, missingDocsRecordReq.copy(details = detailsMostRecent), CREATED, MissingDocumentsRecordId::class.java)
 
     assertThat(response, present())
 
-    val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recall.recallId)
+    val recallWithMissingDocumentsRecord = authenticatedClient.getRecall(recallId)
     assertThat(recall.missingDocumentsRecords, isEmpty)
     val missingDocumentsRecords = recallWithMissingDocumentsRecord.missingDocumentsRecords
     assertThat(missingDocumentsRecords.size, equalTo(2))
@@ -93,7 +93,12 @@ class MissingDocumentsRecordComponentTest : ComponentTestBase() {
     expectAVirusWillBeFound()
 
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
-    val missingDocsRecordReq = MissingDocumentsRecordRequest(null, listOf(PART_A_RECALL_REPORT), "Some detail", base64EncodedDocumentContents, fileName)
+    val missingDocsRecordReq = MissingDocumentsRecordRequest(
+      listOf(PART_A_RECALL_REPORT),
+      "Some detail",
+      base64EncodedDocumentContents,
+      fileName
+    )
 
     val response = authenticatedClient.missingDocumentsRecord(recall.recallId, missingDocsRecordReq, BAD_REQUEST, ErrorResponse::class.java)
 
