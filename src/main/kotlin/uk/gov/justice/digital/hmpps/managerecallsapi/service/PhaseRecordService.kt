@@ -20,12 +20,10 @@ class PhaseRecordService(
 
   @Transactional
   fun startPhase(recallId: RecallId, phase: Phase, currentUserId: UserId): PhaseRecord {
-    val phaseRecord = phaseRecordRepository.findByRecallIdAndPhase(recallId.value, phase)?.let { existingRecord ->
-      existingRecord.copy(
-        startedDateTime = OffsetDateTime.now(),
-        startedByUserId = currentUserId.value,
-      )
-    } ?: PhaseRecord(
+    val phaseRecord = phaseRecordRepository.findByRecallIdAndPhase(recallId.value, phase)?.copy(
+      startedDateTime = OffsetDateTime.now(),
+      startedByUserId = currentUserId.value,
+    ) ?: PhaseRecord(
       ::PhaseRecordId.random(),
       recallId,
       phase,

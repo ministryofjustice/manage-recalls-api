@@ -55,6 +55,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.StatisticsSummary
 import java.time.OffsetDateTime
 
 class AuthenticatedClient(
@@ -208,6 +209,9 @@ class AuthenticatedClient(
       .expectBody(PhaseRecord::class.java)
       .returnResult()
       .responseBody!!
+
+  fun summaryStatistics(): StatisticsSummary =
+    getRequest("/statistics/summary", StatisticsSummary::class.java)
 
   fun <T> missingDocumentsRecord(
     recallId: RecallId,

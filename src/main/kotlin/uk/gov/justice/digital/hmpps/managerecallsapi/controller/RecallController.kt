@@ -590,6 +590,12 @@ class Api {
     val id: PoliceForceId,
     val name: PoliceForceName
   )
+
+  data class PhaseAverageDuration(
+    val phase: Phase,
+    val averageDuration: Long,
+    val count: Long
+  )
 }
 
 data class Pdf(val content: String)
