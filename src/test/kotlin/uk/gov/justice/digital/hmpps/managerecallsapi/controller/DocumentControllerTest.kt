@@ -131,9 +131,8 @@ class DocumentControllerTest {
     every { userDetails.fullName() } returns fullName
     every { documentService.getDocument(recallId1, documentId) } returns Pair(aRecallDocument, bytes)
 
-    val response = underTest.getRecallDocument(recallId1, documentId)
+    val body = underTest.getRecallDocument(recallId1, documentId)
 
-    assertThat(response.statusCode, equalTo(HttpStatus.OK))
     val expected = GetDocumentResponse(
       documentId,
       aRecallDocument.category,
@@ -144,7 +143,7 @@ class DocumentControllerTest {
       fullName,
       now
     )
-    assertThat(response.body, equalTo(expected))
+    assertThat(body, equalTo(expected))
   }
 
   @Test
@@ -171,9 +170,9 @@ class DocumentControllerTest {
     every { userDetailsService.get(createdByUserId) } returns userDetails
     every { userDetails.fullName() } returns FullName("Andy Newton")
 
-    val result = underTest.getRecallDocumentsByCategory(recallId, category)
+    val body = underTest.getRecallDocumentsByCategory(recallId, category)
 
-    assertThat(result.body, equalTo(listOf(Api.RecallDocument(document.id(), category, FileName("file.pdf"), 1, null, now, FullName("Andy Newton")))))
+    assertThat(body, equalTo(listOf(Api.RecallDocument(document.id(), category, FileName("file.pdf"), 1, null, now, FullName("Andy Newton")))))
   }
 
   @Test
