@@ -305,7 +305,7 @@ class RescindRecordServiceTest {
   }
 
   @Test
-  fun `cant update a record which has already been decided`() {
+  fun `can not update a record which has already been decided`() {
     val recall = mockk<Recall>()
     val documentBytes = "a document".toByteArray()
     val fileName = FileName("email.msg")
