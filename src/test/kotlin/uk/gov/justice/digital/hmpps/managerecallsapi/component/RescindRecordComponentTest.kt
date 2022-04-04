@@ -7,8 +7,13 @@ import com.natpryce.hamkrest.isEmpty
 import com.natpryce.hamkrest.present
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.OK
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.ErrorResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponse
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
@@ -61,7 +66,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
 
     assertThat(recall.rescindRecords, isEmpty)
 
-    val rescindRecordId = authenticatedClient.requestRescind(recall.recallId, createRequest)
+    val rescindRecordId = requestRescindSuccess(recall, createRequest)
     val recallWithRequestedRescindRecord = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithRequestedRescindRecord.rescindRecords.size, equalTo(1))
@@ -80,7 +85,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
     assertThat(recallWithRequestedRescindRecord.stopByUserName, absent())
     assertThat(recallWithRequestedRescindRecord.stopDateTime, absent())
 
-    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
+    decideRescindSuccess(recall, rescindRecordId, decisionRequest)
     val recallWithApprovedRescindRecord = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithApprovedRescindRecord.status, equalTo(Status.STOPPED))
@@ -123,7 +128,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
 
     assertThat(recall.rescindRecords, isEmpty)
 
-    val rescindRecordId = authenticatedClient.requestRescind(recall.recallId, createRequest)
+    val rescindRecordId = requestRescindSuccess(recall, createRequest)
     val recallWithRequestedRescindRecord = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithRequestedRescindRecord.rescindRecords.size, equalTo(1))
@@ -132,7 +137,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
     assertThat(recallWithRequestedRescindRecord.stopByUserName, absent())
     assertThat(recallWithRequestedRescindRecord.stopDateTime, absent())
 
-    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
+    decideRescindSuccess(recall, rescindRecordId, decisionRequest)
     val recallWithApprovedRescindRecord = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithApprovedRescindRecord.status, equalTo(Status.BEING_BOOKED_ON))
@@ -148,7 +153,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
-    val putRequest = RescindRecordController.RescindDecisionRequest(
+    val decisionRequest = RescindRecordController.RescindDecisionRequest(
       true,
       "Some details",
       LocalDate.now(),
@@ -156,7 +161,10 @@ class RescindRecordComponentTest : ComponentTestBase() {
       approvalFileName
     )
 
-    authenticatedClient.decideRescind(recall.recallId, ::RescindRecordId.random(), putRequest, HttpStatus.NOT_FOUND)
+    val rescindRecordId = ::RescindRecordId.random()
+    val result = decideRescindFailure(recall, rescindRecordId, decisionRequest, NOT_FOUND)
+
+    assertThat(result, equalTo(ErrorResponse(NOT_FOUND, "RescindRecordNotFoundException(recallId=${recall.recallId}, rescindRecordId=$rescindRecordId)")))
   }
 
   @Test
@@ -173,8 +181,7 @@ class RescindRecordComponentTest : ComponentTestBase() {
       requestFileName
     )
 
-    val result = authenticatedClient.requestRescind(recall.recallId, createRequest, HttpStatus.BAD_REQUEST)
-      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+    val result = requestRescindFailure(recall, createRequest, HttpStatus.BAD_REQUEST)
 
     assertThat(result, equalTo(ErrorResponse(HttpStatus.BAD_REQUEST, "VirusFoundException")))
   }
@@ -191,12 +198,12 @@ class RescindRecordComponentTest : ComponentTestBase() {
       base64EncodedDocumentContents,
       requestFileName
     )
-    authenticatedClient.requestRescind(recall.recallId, createRequest)
-    authenticatedClient.requestRescind(recall.recallId, createRequest, HttpStatus.FORBIDDEN)
+    requestRescindSuccess(recall, createRequest)
+    requestRescindFailure(recall, createRequest, FORBIDDEN)
   }
 
   @Test
-  fun `cant update a record which has already been decided`() {
+  fun `can not update a record which has already been decided`() {
     expectNoVirusesWillBeFound()
     val recall = authenticatedClient.bookRecall(bookRecallRequest)
 
@@ -215,9 +222,33 @@ class RescindRecordComponentTest : ComponentTestBase() {
       approvalFileName
     )
 
-    val rescindRecordId = authenticatedClient.requestRescind(recall.recallId, createRequest)
+    val rescindRecordId = requestRescindSuccess(recall, createRequest)
 
-    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest)
-    authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest, HttpStatus.FORBIDDEN)
+    decideRescindSuccess(recall, rescindRecordId, decisionRequest)
+    decideRescindFailure(recall, rescindRecordId, decisionRequest, FORBIDDEN)
   }
+
+  private fun requestRescindSuccess(
+    recall: RecallResponse,
+    createRequest: RescindRequestRequest
+  ) = authenticatedClient.requestRescind(recall.recallId, createRequest, CREATED, RescindRecordId::class.java)
+
+  private fun requestRescindFailure(
+    recall: RecallResponse,
+    createRequest: RescindRequestRequest,
+    expectedStatus: HttpStatus
+  ) = authenticatedClient.requestRescind(recall.recallId, createRequest, expectedStatus, ErrorResponse::class.java)
+
+  private fun decideRescindSuccess(
+    recall: RecallResponse,
+    rescindRecordId: RescindRecordId,
+    decisionRequest: RescindRecordController.RescindDecisionRequest
+  ) = authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest, OK, RescindRecordId::class.java)
+
+  private fun decideRescindFailure(
+    recall: RecallResponse,
+    rescindRecordId: RescindRecordId,
+    decisionRequest: RescindRecordController.RescindDecisionRequest,
+    status: HttpStatus
+  ) = authenticatedClient.decideRescind(recall.recallId, rescindRecordId, decisionRequest, status, ErrorResponse::class.java)
 }

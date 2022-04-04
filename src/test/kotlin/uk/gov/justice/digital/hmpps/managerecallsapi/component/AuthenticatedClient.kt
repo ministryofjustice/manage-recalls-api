@@ -49,7 +49,6 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FieldPath
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
-import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
@@ -88,24 +87,14 @@ class AuthenticatedClient(
   fun getRecall(recallId: RecallId): RecallResponse =
     getRequest("/recalls/$recallId", RecallResponse::class.java)
 
-  fun requestRescind(recallId: RecallId, request: RescindRequestRequest, status: HttpStatus) =
-    sendPostRequest("/recalls/$recallId/rescind-records", request).expectStatus().isEqualTo(status)
+  fun <T> requestRescind(recallId: RecallId, request: RescindRequestRequest, expectedStatus: HttpStatus, responseClass: Class<T>): T =
+    postRequest("/recalls/$recallId/rescind-records", request, responseClass, expectedStatus)
 
-  fun requestRescind(recallId: RecallId, request: RescindRequestRequest): RescindRecordId =
-    requestRescind(recallId, request, CREATED).expectBody(RescindRecordId::class.java)
-      .returnResult()
-      .responseBody!!
+  fun <T> decideRescind(recallId: RecallId, rescindRecordId: RescindRecordId, request: RescindDecisionRequest, expectedStatus: HttpStatus, responseClass: Class<T>): T =
+    patchRequest("/recalls/$recallId/rescind-records/$rescindRecordId", request, responseClass, expectedStatus)
 
-  fun decideRescind(recallId: RecallId, rescindRecordId: RescindRecordId, request: RescindDecisionRequest, status: HttpStatus = OK) =
-    patchRequest("/recalls/$recallId/rescind-records/$rescindRecordId", request, status)
-
-  fun createNote(recallId: RecallId, request: CreateNoteRequest, status: HttpStatus) =
-    sendPostRequest("/recalls/$recallId/notes", request).expectStatus().isEqualTo(status)
-
-  fun createNote(recallId: RecallId, request: CreateNoteRequest): NoteId =
-    createNote(recallId, request, CREATED).expectBody(NoteId::class.java)
-      .returnResult()
-      .responseBody!!
+  fun <T> addNote(recallId: RecallId, request: CreateNoteRequest, expectedStatus: HttpStatus, responseClass: Class<T>): T =
+    postRequest("/recalls/$recallId/notes", request, responseClass, expectedStatus)
 
   fun partBRecord(recallId: RecallId, request: PartBRecordRequest, status: HttpStatus) =
     sendPostRequest("/recalls/$recallId/partb-records", request).expectStatus().isEqualTo(status)
@@ -205,28 +194,15 @@ class AuthenticatedClient(
       .expectStatus().isEqualTo(responseStatus)
 
   fun endPhase(recallId: RecallId, phase: Phase, shouldUnassign: Boolean) =
-    patchRequest("/recalls/$recallId/end-phase", EndPhaseRequest(phase, shouldUnassign))
-      .expectBody(PhaseRecord::class.java)
-      .returnResult()
-      .responseBody!!
+    patchRequest("/recalls/$recallId/end-phase", EndPhaseRequest(phase, shouldUnassign), PhaseRecord::class.java)
 
   fun summaryStatistics(): StatisticsSummary =
     getRequest("/statistics/summary", StatisticsSummary::class.java)
 
-  fun <T> missingDocumentsRecord(
-    recallId: RecallId,
-    request: MissingDocumentsRecordRequest,
-    expectedStatus: HttpStatus = CREATED,
-    responseClass: Class<T>
-  ) =
+  fun <T> missingDocumentsRecord(recallId: RecallId, request: MissingDocumentsRecordRequest, expectedStatus: HttpStatus, responseClass: Class<T>) =
     postRequest("/recalls/$recallId/missing-documents-records", request, responseClass, expectedStatus)
 
-  fun <T> addLastKnownAddress(
-    recallId: RecallId,
-    request: CreateLastKnownAddressRequest,
-    expectedStatus: HttpStatus = CREATED,
-    responseClass: Class<T>
-  ) =
+  fun <T> addLastKnownAddress(recallId: RecallId, request: CreateLastKnownAddressRequest, expectedStatus: HttpStatus, responseClass: Class<T>) =
     postRequest("/recalls/$recallId/last-known-addresses", request, responseClass, expectedStatus)
 
   fun deleteLastKnownAddress(recallId: RecallId, lastKnownAddressId: LastKnownAddressId, expectedStatus: HttpStatus = NO_CONTENT) =
@@ -269,13 +245,6 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  private fun <T> patchRequest(path: String, request: Any, responseClass: Class<T>): T =
-    sendPatchRequest(path, request)
-      .expectStatus().isOk
-      .expectBody(responseClass)
-      .returnResult()
-      .responseBody!!
-
   private fun sendPatchRequest(
     path: String,
     request: Any
@@ -294,14 +263,17 @@ class AuthenticatedClient(
       .returnResult()
       .responseBody!!
 
-  private fun patchRequest(
+  private fun <T> patchRequest(
     path: String,
     request: Any,
+    responseClass: Class<T>,
     responseStatus: HttpStatus = OK
-  ) =
-    webTestClient.patch()
-      .sendRequestWithBody(path, request)
+  ): T =
+    sendPatchRequest(path, request)
       .expectStatus().isEqualTo(responseStatus)
+      .expectBody(responseClass)
+      .returnResult()
+      .responseBody!!
 
   private fun <T> postWithoutBody(
     path: String,

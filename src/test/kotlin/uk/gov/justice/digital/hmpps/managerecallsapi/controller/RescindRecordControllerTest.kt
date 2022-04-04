@@ -6,7 +6,6 @@ import dev.forkhandles.result4k.Success
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindDecisionRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RescindRecordController.RescindRequestRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
@@ -45,10 +44,9 @@ class RescindRecordControllerTest {
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
     every { rescindRecordService.createRecord(recallId, userId, request) } returns Success(rescindRecordId)
 
-    val response = underTest.createRescindRecord(recallId, request, bearerToken)
+    val body = underTest.createRescindRecord(recallId, request, bearerToken)
 
-    assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
-    assertThat(response.body, equalTo(rescindRecordId))
+    assertThat(body, equalTo(rescindRecordId))
   }
 
   @Test
@@ -63,10 +61,8 @@ class RescindRecordControllerTest {
     every { tokenExtractor.getTokenFromHeader(bearerToken) } returns TokenExtractor.Token(userId.toString())
     every { rescindRecordService.makeDecision(recallId, userId, rescindRecordId, decisionRequest) } returns Success(rescindRecordId)
 
-    val response =
-      underTest.decideRescindRecord(recallId, rescindRecordId, decisionRequest, bearerToken)
+    val body = underTest.decideRescindRecord(recallId, rescindRecordId, decisionRequest, bearerToken)
 
-    assertThat(response.statusCode, equalTo(HttpStatus.OK))
-    assertThat(response.body, equalTo(rescindRecordId))
+    assertThat(body, equalTo(rescindRecordId))
   }
 }

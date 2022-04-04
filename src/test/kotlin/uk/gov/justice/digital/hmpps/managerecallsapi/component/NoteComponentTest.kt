@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomFileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.random.randomString
 import java.time.LocalDate
@@ -47,7 +48,8 @@ class NoteComponentTest : ComponentTestBase() {
 
     assertThat(recall.notes, isEmpty)
 
-    val noteId = authenticatedClient.createNote(recall.recallId, createRequest)
+    val noteId = authenticatedClient.addNote(recall.recallId, createRequest, HttpStatus.CREATED, NoteId::class.java)
+
     val recallWithNote = authenticatedClient.getRecall(recall.recallId)
 
     assertThat(recallWithNote.notes.size, equalTo(1))
@@ -72,8 +74,7 @@ class NoteComponentTest : ComponentTestBase() {
       base64EncodedDocumentContents,
     )
 
-    val result = authenticatedClient.createNote(recall.recallId, createRequest, HttpStatus.BAD_REQUEST)
-      .expectBody(ErrorResponse::class.java).returnResult().responseBody!!
+    val result = authenticatedClient.addNote(recall.recallId, createRequest, HttpStatus.BAD_REQUEST, ErrorResponse::class.java)
 
     assertThat(result, equalTo(ErrorResponse(HttpStatus.BAD_REQUEST, "VirusFoundException")))
   }

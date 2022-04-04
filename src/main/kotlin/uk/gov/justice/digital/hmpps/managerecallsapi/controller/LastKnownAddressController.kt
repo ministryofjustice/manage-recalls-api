@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -48,11 +47,12 @@ class LastKnownAddressController(
   @PostMapping(
     "/recalls/{recallId}/last-known-addresses"
   )
+  @ResponseStatus(HttpStatus.CREATED)
   fun createLastKnownAddress( // TODO: PUD-1500: should be moved into a service class and annotated @Transactional
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody request: CreateLastKnownAddressRequest,
     @RequestHeader("Authorization") bearerToken: String
-  ): ResponseEntity<LastKnownAddressId> {
+  ): LastKnownAddressId {
     return recallRepository.getByRecallId(recallId).let { recall ->
       val currentUserId = tokenExtractor.getTokenFromHeader(bearerToken).userUuid()
       val previousIndex = recall.lastKnownAddresses.maxByOrNull { it.index }?.index ?: 0
@@ -70,7 +70,7 @@ class LastKnownAddressController(
           OffsetDateTime.now()
         )
       )
-      ResponseEntity(saved.id(), HttpStatus.CREATED)
+      saved.id()
     }
   }
 

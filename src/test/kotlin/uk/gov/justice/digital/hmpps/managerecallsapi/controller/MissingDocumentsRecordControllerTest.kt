@@ -7,7 +7,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
@@ -72,13 +71,12 @@ class MissingDocumentsRecordControllerTest {
       fileName
     )
 
-    val response = underTest.createMissingDocumentsRecord(recallId, request, bearerToken)
+    val body = underTest.createMissingDocumentsRecord(recallId, request, bearerToken)
 
     assertThat(savedMissingDocumentsRecord.captured.version, equalTo(1))
     assertThat(savedMissingDocumentsRecord.captured.details, equalTo(details))
-    assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
     assertThat(
-      response.body,
+      body,
       equalTo(
         missingDocumentsRecordId
       )
@@ -121,12 +119,11 @@ class MissingDocumentsRecordControllerTest {
       fileName
     )
 
-    val response = underTest.createMissingDocumentsRecord(recallId, request, bearerToken)
+    val body = underTest.createMissingDocumentsRecord(recallId, request, bearerToken)
 
     assertThat(savedMissingDocumentsRecord.captured.version, equalTo(2))
-    assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
     assertThat(
-      response.body,
+      body,
       equalTo(
         missingDocumentsRecordId
       )

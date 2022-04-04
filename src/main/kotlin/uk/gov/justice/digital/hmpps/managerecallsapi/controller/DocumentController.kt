@@ -75,20 +75,18 @@ class DocumentController(
   fun getRecallDocument(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("documentId") documentId: DocumentId
-  ): ResponseEntity<GetDocumentResponse> {
+  ): GetDocumentResponse {
     val (document, bytes) = documentService.getDocument(recallId, documentId)
 
-    return ResponseEntity.ok(
-      GetDocumentResponse(
-        documentId,
-        document.category,
-        bytes.encodeToBase64String(),
-        document.fileName,
-        document.version,
-        document.details,
-        userDetailsService.get(document.createdByUserId()).fullName(),
-        document.createdDateTime
-      )
+    return GetDocumentResponse(
+      documentId,
+      document.category,
+      bytes.encodeToBase64String(),
+      document.fileName,
+      document.version,
+      document.details,
+      userDetailsService.get(document.createdByUserId()).fullName(),
+      document.createdDateTime
     )
   }
 
@@ -96,21 +94,18 @@ class DocumentController(
   fun getRecallDocumentsByCategory(
     @PathVariable("recallId") recallId: RecallId,
     @RequestParam("category") category: DocumentCategory
-  ): ResponseEntity<List<Api.RecallDocument>> {
-    return ResponseEntity.ok(
-      documentService.getAllDocumentsByCategory(recallId, category).map { document ->
-        Api.RecallDocument(
-          document.id(),
-          document.category,
-          document.fileName,
-          document.version,
-          document.details,
-          document.createdDateTime,
-          userDetailsService.get(document.createdByUserId()).fullName()
-        )
-      }
-    )
-  }
+  ): List<Api.RecallDocument> =
+    documentService.getAllDocumentsByCategory(recallId, category).map { document ->
+      Api.RecallDocument(
+        document.id(),
+        document.category,
+        document.fileName,
+        document.version,
+        document.details,
+        document.createdDateTime,
+        userDetailsService.get(document.createdByUserId()).fullName()
+      )
+    }
 
   @ApiResponses(
     ApiResponse(
@@ -199,16 +194,14 @@ class DocumentController(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("documentId") documentId: DocumentId,
     @RequestBody updateDocumentRequest: UpdateDocumentRequest
-  ): ResponseEntity<UpdateDocumentResponse> {
+  ): UpdateDocumentResponse {
     val document = documentService.updateDocumentCategory(recallId, documentId, updateDocumentRequest.category)
-    return ResponseEntity.ok(
-      UpdateDocumentResponse(
-        document.id(),
-        document.recallId(),
-        document.category,
-        document.fileName,
-        document.details
-      )
+    return UpdateDocumentResponse(
+      document.id(),
+      document.recallId(),
+      document.category,
+      document.fileName,
+      document.details
     )
   }
 

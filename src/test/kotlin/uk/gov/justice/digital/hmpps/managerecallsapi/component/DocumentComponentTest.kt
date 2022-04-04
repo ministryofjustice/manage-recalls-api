@@ -331,7 +331,7 @@ class DocumentComponentTest : ComponentTestBase() {
   }
 
   // TODO: there are no documents generated prior to `Assess Recall` - so why this test "for Recall being booked"?
-  //  - PS: Answer: for completion since we verify we cant delete an uploaded doc during 'being booked'
+  //  - PS: Answer: for completion since we verify we can not delete an uploaded doc during 'being booked'
   @Test
   fun `can't delete generated document for Recall being booked`() {
     expectNoVirusesWillBeFound()

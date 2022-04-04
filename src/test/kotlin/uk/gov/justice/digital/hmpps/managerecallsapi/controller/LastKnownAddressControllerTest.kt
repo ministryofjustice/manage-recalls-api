@@ -10,7 +10,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.Test
-import org.springframework.http.HttpStatus
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.extractor.TokenExtractor
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.AddressSource
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
@@ -62,7 +61,7 @@ class LastKnownAddressControllerTest {
       line1, line2, town, postcode, source
     )
 
-    val response = underTest.createLastKnownAddress(recallId, request, bearerToken)
+    val body = underTest.createLastKnownAddress(recallId, request, bearerToken)
 
     assertThat(savedLastKnownAddress.captured.index, equalTo(1))
     assertThat(UUID.fromString(savedLastKnownAddress.captured.id.toString()), present())
@@ -72,9 +71,9 @@ class LastKnownAddressControllerTest {
     assertThat(savedLastKnownAddress.captured.town, equalTo(town))
     assertThat(savedLastKnownAddress.captured.postcode, equalTo(postcode))
     assertThat(savedLastKnownAddress.captured.source, equalTo(source))
-    assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
+
     assertThat(
-      response.body,
+      body,
       equalTo(
         lastKnownAddressId
       )
@@ -109,7 +108,7 @@ class LastKnownAddressControllerTest {
       line1, line2, town, postcode, source
     )
 
-    val response = underTest.createLastKnownAddress(recallId, request, bearerToken)
+    val body = underTest.createLastKnownAddress(recallId, request, bearerToken)
 
     assertThat(savedLastKnownAddress.captured.index, equalTo(previousMaxIndex + 1))
     assertThat(savedLastKnownAddress.captured.line1, equalTo(line1))
@@ -117,9 +116,9 @@ class LastKnownAddressControllerTest {
     assertThat(savedLastKnownAddress.captured.town, equalTo(town))
     assertThat(savedLastKnownAddress.captured.postcode, equalTo(null))
     assertThat(savedLastKnownAddress.captured.source, equalTo(source))
-    assertThat(response.statusCode, equalTo(HttpStatus.CREATED))
+
     assertThat(
-      response.body,
+      body,
       equalTo(
         lastKnownAddressId
       )
