@@ -161,7 +161,10 @@ class RescindRecordComponentTest : ComponentTestBase() {
       approvalFileName
     )
 
-    decideRescindFailure(recall, ::RescindRecordId.random(), decisionRequest, NOT_FOUND)
+    val rescindRecordId = ::RescindRecordId.random()
+    val result = decideRescindFailure(recall, rescindRecordId, decisionRequest, NOT_FOUND)
+
+    assertThat(result, equalTo(ErrorResponse(NOT_FOUND, "RescindRecordNotFoundException(recallId=${recall.recallId}, rescindRecordId=$rescindRecordId)")))
   }
 
   @Test
