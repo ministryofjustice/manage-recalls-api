@@ -48,13 +48,13 @@ class PhaseRecordRepositoryIntegrationTest(
     underTest.save(PhaseRecord(::PhaseRecordId.random(), recallId, Phase.BOOK, currentUserId, OffsetDateTime.now(fixedClock).minusMinutes(5), currentUserId, OffsetDateTime.now(fixedClock).minusMinutes(4)))
     underTest.save(PhaseRecord(::PhaseRecordId.random(), recallId, Phase.ASSESS, currentUserId, OffsetDateTime.now(fixedClock).minusMinutes(3), currentUserId, OffsetDateTime.now(fixedClock).minusMinutes(1)))
 
-    val summary = underTest.summaryByPhaseSince(LocalDate.MIN)
+    val summary = underTest.summaryByPhaseSince(LocalDate.EPOCH)
 
     assertThat(summary.size, equalTo(2))
     val bookSummary = summary.first { it.phase == Phase.BOOK }
-    val assessSummary = summary.first { it.phase == Phase.ASSESS }
     assertThat(bookSummary.count, equalTo(1))
     assertThat(bookSummary.averageDuration, equalTo(60L))
+    val assessSummary = summary.first { it.phase == Phase.ASSESS }
     assertThat(assessSummary.count, equalTo(1))
     assertThat(assessSummary.averageDuration, equalTo(120L))
   }

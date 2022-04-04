@@ -30,21 +30,14 @@ class StatisticsComponentTest : ComponentTestBase() {
 
   @Test
   fun `Getting summary statistics returns average duration for ended phases`() {
-    val delay = 0L
     val phase = Phase.ASSESS
     val recall1 = authenticatedClient.bookRecall(bookRecallRequest)
-    Thread.sleep(delay)
     authenticatedClient.endPhase(recall1.recallId, Phase.BOOK, false)
-    Thread.sleep(delay)
     authenticatedClient.startPhase(recall1.recallId, phase)
-    Thread.sleep(delay)
     authenticatedClient.endPhase(recall1.recallId, phase, false)
     val recall2 = authenticatedClient.bookRecall(bookRecallRequest)
-    Thread.sleep(delay)
     authenticatedClient.endPhase(recall2.recallId, Phase.BOOK, false)
-    Thread.sleep(delay)
     authenticatedClient.startPhase(recall2.recallId, phase)
-    Thread.sleep(delay)
     authenticatedClient.endPhase(recall2.recallId, phase, false)
 
     val stats = authenticatedClient.summaryStatistics()

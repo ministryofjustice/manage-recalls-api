@@ -17,6 +17,6 @@ class StatisticsController(
 ) {
 
   @GetMapping("/statistics/summary")
-  fun startPhase(): StatisticsSummary =
+  fun summary(): StatisticsSummary =
     statisticsService.getSummary()
 }
