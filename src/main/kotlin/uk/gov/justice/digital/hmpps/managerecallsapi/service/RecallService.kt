@@ -144,6 +144,7 @@ class RecallService(
       recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
       rereleaseSupported = updateRecallRequest.rereleaseSupported ?: rereleaseSupported,
       sentencingInfo = sentencingInfo,
+      secondaryDossierDueDate = calculateSecondaryDossierDueDate(updateRecallRequest, this),
       vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity ?: vulnerabilityDiversity,
       vulnerabilityDiversityDetail = updateRecallRequest.vulnerabilityDiversityDetail ?: vulnerabilityDiversityDetail,
       warrantReferenceNumber = updateRecallRequest.warrantReferenceNumber ?: warrantReferenceNumber,
@@ -166,6 +167,13 @@ class RecallService(
       }
     } else null
     return partBDueDate ?: recall.partBDueDate
+  }
+
+  fun calculateSecondaryDossierDueDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? {
+    val secondaryDossierDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD && recall.inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest)) {
+      updateRecallRequest.recallNotificationEmailSentDateTime?.toLocalDate()?.plusDays(28)
+    } else null
+    return secondaryDossierDueDate ?: recall.secondaryDossierDueDate
   }
 
   @Transactional
@@ -203,6 +211,7 @@ class RecallService(
         ),
         dossierTargetDate = bankHolidayService.nextWorkingDate(returnedToCustodyNotificationDateTime.toLocalDate()),
         partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) bankHolidayService.plusWorkingDays(returnedToCustodyDateTime.toLocalDate(), 14) else null,
+        secondaryDossierDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) returnedToCustodyDateTime.toLocalDate().plusDays(28) else null
       ),
       recordedUserId
     )

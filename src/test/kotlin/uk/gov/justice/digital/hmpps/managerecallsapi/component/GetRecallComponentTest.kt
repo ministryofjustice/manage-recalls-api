@@ -201,6 +201,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.rereleaseSupported").isEqualTo(fullyPopulatedRecall.rereleaseSupported!!)
       .jsonPath("$.returnedToCustodyDateTime").value(endsWith("Z"))
       .jsonPath("$.returnedToCustodyNotificationDateTime").value(endsWith("Z"))
+      .jsonPath("$.secondaryDossierDueDate").isEqualTo(fullyPopulatedRecall.secondaryDossierDueDate!!.toString())
       .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.sentenceExpiryDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.sentencingCourt").isEqualTo(fullyPopulatedRecall.sentencingInfo!!.sentencingCourt.value)

@@ -1,0 +1,1 @@
+ALTER TABLE recall add column secondary_dossier_due_date DATE;

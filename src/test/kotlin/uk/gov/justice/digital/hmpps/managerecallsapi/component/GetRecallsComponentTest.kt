@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallReques
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory.FIRST_MIDDLE_LAST
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallResponseLite
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
@@ -18,6 +19,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Movement
 import uk.gov.justice.digital.hmpps.managerecallsapi.nomis.Prisoner
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.OffsetDateTime
 
 class GetRecallsComponentTest : ComponentTestBase() {
 
@@ -70,9 +72,9 @@ class GetRecallsComponentTest : ComponentTestBase() {
     authenticatedClient.updateRecall(recall1.recallId, UpdateRecallRequest(licenceNameCategory = FIRST_LAST))
     val recall2 = authenticatedClient.bookRecall(request2)
     authenticatedClient.updateRecall(recall2.recallId, UpdateRecallRequest(licenceNameCategory = FIRST_MIDDLE_LAST))
-    val rtcRecall = authenticatedClient.bookRecall(request3)
+    val rtcFixedRecall = authenticatedClient.bookRecall(request3)
     authenticatedClient.updateRecall(
-      rtcRecall.recallId,
+      rtcFixedRecall.recallId,
       UpdateRecallRequest(
         licenceNameCategory = FIRST_LAST,
         assessedByUserId = createdByUserId,
@@ -88,6 +90,19 @@ class GetRecallsComponentTest : ComponentTestBase() {
         assessedByUserId = createdByUserId,
         inCustodyAtAssessment = false,
         warrantReferenceNumber = WarrantReferenceNumber("ABC1234/C")
+      )
+    )
+    val inCustodyStandardRecall = authenticatedClient.bookRecall(request4)
+    authenticatedClient.updateRecommendedRecallType(inCustodyStandardRecall.recallId, RecallType.STANDARD)
+    authenticatedClient.updateRecall(
+      inCustodyStandardRecall.recallId,
+      UpdateRecallRequest(
+        licenceNameCategory = FIRST_LAST,
+        assessedByUserId = createdByUserId,
+        inCustodyAtBooking = true,
+        inCustodyAtAssessment = true,
+        warrantReferenceNumber = WarrantReferenceNumber("ABC1234/C"),
+        recallNotificationEmailSentDateTime = OffsetDateTime.now(fixedClock)
       )
     )
 
@@ -121,8 +136,8 @@ class GetRecallsComponentTest : ComponentTestBase() {
           licenceNameCategory = FIRST_MIDDLE_LAST,
         ),
         RecallResponseLite(
-          rtcRecall.recallId,
-          rtcRecall.nomsNumber,
+          rtcFixedRecall.recallId,
+          rtcFixedRecall.nomsNumber,
           createdByUserId,
           fixedClockTime,
           fixedClockTime,
@@ -146,6 +161,23 @@ class GetRecallsComponentTest : ComponentTestBase() {
           Status.AWAITING_RETURN_TO_CUSTODY,
           inCustodyAtAssessment = false,
           licenceNameCategory = FIRST_LAST,
+        ),
+        RecallResponseLite(
+          inCustodyStandardRecall.recallId,
+          inCustodyStandardRecall.nomsNumber,
+          createdByUserId,
+          fixedClockTime,
+          fixedClockTime,
+          FirstName("Mary"),
+          null,
+          LastName("Mouse"),
+          Status.AWAITING_DOSSIER_CREATION,
+          inCustodyAtBooking = true,
+          inCustodyAtAssessment = true,
+          licenceNameCategory = FIRST_LAST,
+          dossierTargetDate = LocalDate.of(2022, 2, 7),
+          partBDueDate = LocalDate.of(2022, 2, 24),
+          secondaryDossierDueDate = OffsetDateTime.now(fixedClock).plusDays(28).toLocalDate()
         ),
       )
     )

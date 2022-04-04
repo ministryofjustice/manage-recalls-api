@@ -244,18 +244,20 @@ class RecallServiceTest {
   }
 
   @Test
-  fun `dossierTargetDate and partBDueDate calculated and set for in custody standard recall when recallNotificationEmailSentDateTime is updated`() {
+  fun `dossierTargetDate, partBDueDate and secondaryDossierDueDate calculated and set for in custody standard recall when recallNotificationEmailSentDateTime is updated`() {
     val recall = existingRecall.copy(
       inCustodyAtAssessment = true,
       confirmedRecallType = STANDARD
     )
     val nextWorkingDay = LocalDate.now().plusDays(1)
     val partBDueDate = LocalDate.now().plusDays(14)
+    val secondaryDossierDueDate = LocalDate.now().plusDays(28)
     val recallNotificationEmailSentDateTime = OffsetDateTime.now()
     val updatedRecall = recall.copy(
       recallNotificationEmailSentDateTime = recallNotificationEmailSentDateTime,
       dossierTargetDate = nextWorkingDay,
       partBDueDate = partBDueDate,
+      secondaryDossierDueDate = secondaryDossierDueDate,
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -267,13 +269,14 @@ class RecallServiceTest {
 
     assertThat(response.dossierTargetDate, equalTo(nextWorkingDay))
     assertThat(response.partBDueDate, equalTo(partBDueDate))
+    assertThat(response.secondaryDossierDueDate, equalTo(secondaryDossierDueDate))
 
     verify { bankHolidayService.nextWorkingDate(LocalDate.now()) }
     verify { bankHolidayService.plusWorkingDays(LocalDate.now(), 14) }
   }
 
   @Test
-  fun `dossierTargetDate and partBDueDate not calculated and not set for not in custody standard recall when recallNotificationEmailSentDateTime is updated`() {
+  fun `dossierTargetDate, partBDueDate and secondaryDossierDueDate not calculated and not set for not in custody standard recall when recallNotificationEmailSentDateTime is updated`() {
     val recall = existingRecall.copy(
       inCustodyAtAssessment = false,
       confirmedRecallType = STANDARD
@@ -290,13 +293,14 @@ class RecallServiceTest {
 
     assertThat(response.dossierTargetDate, equalTo(null))
     assertThat(response.partBDueDate, equalTo(null))
+    assertThat(response.secondaryDossierDueDate, equalTo(null))
 
     verify(exactly = 0) { bankHolidayService.nextWorkingDate(any()) }
     verify(exactly = 0) { bankHolidayService.plusWorkingDays(any(), 14) }
   }
 
   @Test
-  fun `dossierTargetDate and partBDueDate are calculated and set for not in custody standard recall when return to custody is updated`() {
+  fun `dossierTargetDate, partBDueDate and secondaryDossierDueDate are calculated and set for not in custody standard recall when return to custody is updated`() {
     val recall = existingRecall.copy(
       inCustodyAtAssessment = false,
       confirmedRecallType = STANDARD
@@ -305,10 +309,12 @@ class RecallServiceTest {
     val now = OffsetDateTime.now()
     val nextWorkingDay = now.toLocalDate().plusDays(1)
     val partBDueDate = sameTimeYesterday.toLocalDate().plusDays(14)
+    val secondaryDossierDueDate = sameTimeYesterday.toLocalDate().plusDays(28)
     val updatedRecall = recall.copy(
       returnedToCustody = ReturnedToCustodyRecord(sameTimeYesterday, now, currentUserId, OffsetDateTime.now(fixedClock)),
       dossierTargetDate = nextWorkingDay,
-      partBDueDate = partBDueDate
+      partBDueDate = partBDueDate,
+      secondaryDossierDueDate = secondaryDossierDueDate,
     )
 
     every { recallRepository.getByRecallId(recallId) } returns recall
@@ -320,13 +326,14 @@ class RecallServiceTest {
 
     assertThat(response.dossierTargetDate, equalTo(nextWorkingDay))
     assertThat(response.partBDueDate, equalTo(partBDueDate))
+    assertThat(response.secondaryDossierDueDate, equalTo(secondaryDossierDueDate))
 
     verify { bankHolidayService.nextWorkingDate(now.toLocalDate()) }
     verify { bankHolidayService.plusWorkingDays(sameTimeYesterday.toLocalDate(), 14) }
   }
 
   @Test
-  fun `dossierTargetDate is calculated and set but partBDueDate is not calculated and not set for not in custody fixed term recall when return to custody is updated`() {
+  fun `dossierTargetDate is calculated and set but partBDueDate and secondaryDossierDueDate are not calculated and not set for not in custody fixed term recall when return to custody is updated`() {
     val recall = existingRecall.copy(
       inCustodyAtAssessment = false,
       confirmedRecallType = FIXED
@@ -346,6 +353,7 @@ class RecallServiceTest {
 
     assertThat(response.dossierTargetDate, equalTo(nextWorkingDay))
     assertThat(response.partBDueDate, equalTo(null))
+    assertThat(response.secondaryDossierDueDate, equalTo(null))
 
     verify { bankHolidayService.nextWorkingDate(LocalDate.now()) }
     verify(exactly = 0) { bankHolidayService.plusWorkingDays(LocalDate.now(), 14) }
@@ -489,7 +497,6 @@ class RecallServiceTest {
     val movementDate = returnedToCustodyDateTime.toLocalDate()
     val movementTime = returnedToCustodyDateTime.toLocalTime()
     val dossierTargetDate = OffsetDateTime.now(fixedClock).plusDays(1).toLocalDate()
-    val partBDueDate = OffsetDateTime.now(fixedClock).plusDays(14).toLocalDate()
     val expectedRecall = nicRtcRecall.copy(
       returnedToCustody = ReturnedToCustodyRecord(
         returnedToCustodyDateTime,
@@ -505,7 +512,6 @@ class RecallServiceTest {
 
     every { prisonApiClient.latestInboundMovements(setOf(rtcNoms)) } returns listOf(Movement(rtcNoms.value, movementDate, movementTime))
     every { bankHolidayService.nextWorkingDate(OffsetDateTime.now(fixedClock).toLocalDate()) } returns dossierTargetDate
-    every { bankHolidayService.plusWorkingDays(OffsetDateTime.now(fixedClock).toLocalDate(), 14) } returns partBDueDate
     every { recallRepository.save(expectedRecall, RecallService.SYSTEM_USER_ID) } returns expectedRecall
 
     underTest.updateCustodyStatus(currentUserId)
