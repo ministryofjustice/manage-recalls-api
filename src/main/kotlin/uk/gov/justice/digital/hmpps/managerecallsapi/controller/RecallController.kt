@@ -188,7 +188,8 @@ class RecallController(
       licenceNameCategory = licenceNameCategory,
       recallAssessmentDueDateTime = recallAssessmentDueDateTime(),
       assigneeUserName = assignee()?.let { users[it]!!.fullName() },
-      partBDueDate = partBDueDate
+      partBDueDate = partBDueDate,
+      secondaryDossierDueDate = secondaryDossierDueDate,
     )
 
   fun Recall.toResponse() = RecallResponse(
@@ -265,6 +266,7 @@ class RecallController(
     rereleaseSupported = rereleaseSupported,
     returnedToCustodyDateTime = returnedToCustody?.returnedToCustodyDateTime,
     returnedToCustodyNotificationDateTime = returnedToCustody?.returnedToCustodyNotificationDateTime,
+    secondaryDossierDueDate = secondaryDossierDueDate,
     sentenceDate = sentencingInfo?.sentenceDate,
     sentenceExpiryDate = sentencingInfo?.sentenceExpiryDate,
     sentenceLength = sentencingInfo?.sentenceLength?.let {
@@ -409,14 +411,15 @@ data class RecallResponseLite(
   val middleNames: MiddleNames?,
   val lastName: LastName,
   val status: Status,
-  val inCustodyAtBooking: Boolean? = null,
-  val inCustodyAtAssessment: Boolean? = null,
+  val assigneeUserName: FullName? = null,
   val dossierEmailSentDate: LocalDate? = null,
   val dossierTargetDate: LocalDate? = null,
+  val inCustodyAtAssessment: Boolean? = null,
+  val inCustodyAtBooking: Boolean? = null,
   val licenceNameCategory: NameFormatCategory? = null,
-  val recallAssessmentDueDateTime: OffsetDateTime? = null,
-  val assigneeUserName: FullName? = null,
   val partBDueDate: LocalDate? = null,
+  val recallAssessmentDueDateTime: OffsetDateTime? = null,
+  val secondaryDossierDueDate: LocalDate? = null,
 )
 
 data class RecallResponse(
@@ -493,6 +496,7 @@ data class RecallResponse(
   val rereleaseSupported: Boolean? = null,
   val returnedToCustodyDateTime: OffsetDateTime? = null,
   val returnedToCustodyNotificationDateTime: OffsetDateTime? = null,
+  val secondaryDossierDueDate: LocalDate? = null,
   val sentenceDate: LocalDate? = null,
   val sentenceExpiryDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,
@@ -610,6 +614,7 @@ enum class Status(val visibilityBands: Set<CaseworkerBand>) {
   AWAITING_DOSSIER_CREATION(ALL_BANDINGS),
   AWAITING_PART_B(ALL_BANDINGS),
   AWAITING_RETURN_TO_CUSTODY(ALL_BANDINGS),
+  AWAITING_SECONDARY_DOSSIER_CREATION(ALL_BANDINGS),
   BEING_BOOKED_ON(ALL_BANDINGS),
   BOOKED_ON(FOUR_PLUS_ONLY),
   DOSSIER_IN_PROGRESS(ALL_BANDINGS),

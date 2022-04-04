@@ -156,6 +156,7 @@ data class Recall(
   val rereleaseSupported: Boolean? = null,
   @Embedded
   val returnedToCustody: ReturnedToCustodyRecord? = null,
+  val secondaryDossierDueDate: LocalDate? = null,
   @Embedded
   val sentencingInfo: SentencingInfo? = null,
   @Embedded
@@ -224,6 +225,7 @@ data class Recall(
     recommendedRecallType: RecallType? = null,
     rereleaseSupported: Boolean? = null,
     returnedToCustodyRecord: ReturnedToCustodyRecord? = null,
+    secondaryDossierDueDate: LocalDate? = null,
     sentencingInfo: SentencingInfo? = null,
     stopRecord: StopRecord? = null,
     vulnerabilityDiversity: Boolean? = null,
@@ -288,6 +290,7 @@ data class Recall(
       recommendedRecallType,
       rereleaseSupported,
       returnedToCustodyRecord,
+      secondaryDossierDueDate,
       sentencingInfo,
       stopRecord,
       vulnerabilityDiversity,
@@ -342,7 +345,11 @@ data class Recall(
       Status.STOPPED
     } else if (dossierCreatedByUserId != null) {
       if (recallType() == RecallType.STANDARD) {
-        Status.AWAITING_PART_B
+        if (rereleaseSupported == false) {
+          Status.AWAITING_SECONDARY_DOSSIER_CREATION
+        } else {
+          Status.AWAITING_PART_B
+        }
       } else {
         Status.DOSSIER_ISSUED
       }
