@@ -25,7 +25,8 @@ interface JpaPhaseRecordRepository : JpaRepository<PhaseRecord, UUID> {
         select phase, extract(epoch FROM (ended_date_time)) - extract(epoch FROM (started_date_time)) as duration 
         from phase_record
         where ended_date_time is not null
-         AND ended_date_time > started_date_time) as records
+         AND ended_date_time > started_date_time
+         AND ended_date_time >= :fromDate) as records
       group by phase""",
     nativeQuery = true
   )

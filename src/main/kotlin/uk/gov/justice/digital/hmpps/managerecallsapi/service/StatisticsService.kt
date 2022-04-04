@@ -14,7 +14,7 @@ class StatisticsService(
 
   fun getSummary(): StatisticsSummary {
     val lastSevenDaysSummary = phaseRecordRepository.summaryByPhaseSince(LocalDate.now().minusDays(7)).map { it.toPhaseAverageDuration() }
-    val overallSummary = phaseRecordRepository.summaryByPhaseSince(LocalDate.MIN).map { it.toPhaseAverageDuration() }
+    val overallSummary = phaseRecordRepository.summaryByPhaseSince(LocalDate.EPOCH).map { it.toPhaseAverageDuration() }
     return StatisticsSummary(lastSevenDaysSummary, overallSummary)
   }
 }

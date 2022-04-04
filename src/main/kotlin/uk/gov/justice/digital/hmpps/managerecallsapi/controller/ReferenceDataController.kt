@@ -51,7 +51,7 @@ data class RecallReasonResponse(val id: String, val name: String)
 data class StopReasonResponse(val id: String, val name: String, val validForStopCall: Boolean)
 
 @Suppress("unused")
-enum class LocalDeliveryUnit(val label: String, val validFrom: LocalDate = LocalDate.MIN, val validTo: LocalDate = LocalDate.MAX, val isInWales: Boolean = false) {
+enum class LocalDeliveryUnit(val label: String, val validFrom: LocalDate = LocalDate.EPOCH, val validTo: LocalDate = LocalDate.MAX, val isInWales: Boolean = false) {
   CENTRAL_AUDIT_TEAM("Central Audit Team"),
   CHANNEL_ISLANDS("Channel Islands"),
   ISLE_OF_MAN("Isle of Man"),
