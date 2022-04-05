@@ -247,6 +247,35 @@ class RecallTest {
   }
 
   @Test
+  fun `Standard recall with rereleaseSupported not set and assignee set returns status SECONDARY_DOSSIER_IN_PROGRESS`() {
+    val recall = recall.copy(
+      bookedByUserId = ::UserId.random().value,
+      assessedByUserId = ::UserId.random().value,
+      dossierCreatedByUserId = ::UserId.random().value,
+      recommendedRecallType = STANDARD,
+      confirmedRecallType = STANDARD,
+      assignee = ::UserId.random().value
+    )
+
+    assertThat(recall.status(), equalTo(Status.AWAITING_PART_B))
+  }
+
+  @Test
+  fun `Standard recall with rereleaseSupported and assignee set returns status SECONDARY_DOSSIER_IN_PROGRESS`() {
+    val recall = recall.copy(
+      bookedByUserId = ::UserId.random().value,
+      assessedByUserId = ::UserId.random().value,
+      dossierCreatedByUserId = ::UserId.random().value,
+      recommendedRecallType = STANDARD,
+      confirmedRecallType = STANDARD,
+      rereleaseSupported = true,
+      assignee = ::UserId.random().value
+    )
+
+    assertThat(recall.status(), equalTo(Status.SECONDARY_DOSSIER_IN_PROGRESS))
+  }
+
+  @Test
   fun `Recall with recallEmailReceivedDateTime set returns recallAssessmentDueDateTime as 24 hours later`() {
     val dateTime = OffsetDateTime.now()
     val recall = recall.copy(
