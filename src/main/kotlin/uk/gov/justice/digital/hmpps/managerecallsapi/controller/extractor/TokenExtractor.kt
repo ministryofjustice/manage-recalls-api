@@ -20,9 +20,11 @@ class TokenExtractor(
     fun userUuid(): UserId = UserId(UUID.fromString(userUuid))
   }
 
+  private val json = Json { ignoreUnknownKeys = true }
+
   fun getTokenFromHeader(bearerToken: String): Token {
     val chunks: List<String> = bearerToken.replace("Bearer ", "").split(".")
     val payload = String(decoder.decode(chunks[1]))
-    return Json { ignoreUnknownKeys = true }.decodeFromString(payload)
+    return json.decodeFromString(payload)
   }
 }
