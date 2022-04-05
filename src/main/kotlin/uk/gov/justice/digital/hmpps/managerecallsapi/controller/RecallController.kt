@@ -181,8 +181,6 @@ class RecallController(
       middleNames = middleNames,
       lastName = lastName,
       status = status(),
-      inCustodyAtBooking = inCustodyAtBooking,
-      inCustodyAtAssessment = inCustodyAtAssessment,
       dossierEmailSentDate = dossierEmailSentDate,
       dossierTargetDate = dossierTargetDate,
       licenceNameCategory = licenceNameCategory,
@@ -414,8 +412,6 @@ data class RecallResponseLite(
   val assigneeUserName: FullName? = null,
   val dossierEmailSentDate: LocalDate? = null,
   val dossierTargetDate: LocalDate? = null,
-  val inCustodyAtAssessment: Boolean? = null,
-  val inCustodyAtBooking: Boolean? = null,
   val licenceNameCategory: NameFormatCategory? = null,
   val partBDueDate: LocalDate? = null,
   val recallAssessmentDueDateTime: OffsetDateTime? = null,
@@ -620,6 +616,7 @@ enum class Status(val visibilityBands: Set<CaseworkerBand>) {
   DOSSIER_IN_PROGRESS(ALL_BANDINGS),
   DOSSIER_ISSUED(ALL_BANDINGS),
   IN_ASSESSMENT(FOUR_PLUS_ONLY),
+  SECONDARY_DOSSIER_IN_PROGRESS(ALL_BANDINGS),
   STOPPED(ALL_BANDINGS);
 }
 

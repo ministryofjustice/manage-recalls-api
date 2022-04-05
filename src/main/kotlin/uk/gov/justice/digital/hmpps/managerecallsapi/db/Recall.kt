@@ -345,7 +345,9 @@ data class Recall(
       Status.STOPPED
     } else if (dossierCreatedByUserId != null) {
       if (recallType() == RecallType.STANDARD) {
-        if (rereleaseSupported == false) {
+        if (rereleaseSupported != null && assignee != null) {
+          Status.SECONDARY_DOSSIER_IN_PROGRESS
+        } else if (rereleaseSupported == false) {
           Status.AWAITING_SECONDARY_DOSSIER_CREATION
         } else {
           Status.AWAITING_PART_B

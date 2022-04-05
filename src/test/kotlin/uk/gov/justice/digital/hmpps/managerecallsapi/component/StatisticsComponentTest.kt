@@ -48,4 +48,11 @@ class StatisticsComponentTest : ComponentTestBase() {
     assertThat(stats.overall.first { it.phase == Phase.BOOK }.count, equalTo(2))
     assertThat(stats.overall.first { it.phase == phase }.count, equalTo(2))
   }
+
+  @Test
+  fun `Getting summary statistics returns empty lists when no records`() {
+    val stats = authenticatedClient.summaryStatistics()
+    assertThat(stats.lastSevenDays.size, equalTo(0))
+    assertThat(stats.overall.size, equalTo(0))
+  }
 }

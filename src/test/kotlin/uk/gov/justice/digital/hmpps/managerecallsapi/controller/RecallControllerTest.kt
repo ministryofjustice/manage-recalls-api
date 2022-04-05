@@ -204,16 +204,11 @@ class RecallControllerTest {
         recallLiteResponse(bookedOnRecall, Status.BOOKED_ON),
         recallLiteResponse(inAssessmentRecall, Status.IN_ASSESSMENT).copy(assigneeUserName = FullName("Mickey Mouse")),
         recallLiteResponse(stoppedRecall, Status.STOPPED),
-        recallLiteResponse(inCustodyAwaitingDossierCreationRecall, Status.AWAITING_DOSSIER_CREATION).copy(
-          inCustodyAtBooking = true
-        ),
+        recallLiteResponse(inCustodyAwaitingDossierCreationRecall, Status.AWAITING_DOSSIER_CREATION),
         recallLiteResponse(notInCustodyAssessedRecall, Status.ASSESSED_NOT_IN_CUSTODY).copy(
-          inCustodyAtBooking = false,
-          inCustodyAtAssessment = false,
           assigneeUserName = FullName("Mickey Mouse")
         ),
         recallLiteResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(
-          inCustodyAtBooking = true,
           assigneeUserName = FullName("Mickey Mouse")
         ),
         recallLiteResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED),
@@ -255,16 +250,11 @@ class RecallControllerTest {
       listOf(
         recallLiteResponse(beingBookedOnRecall, Status.BEING_BOOKED_ON),
         recallLiteResponse(stoppedRecall, Status.STOPPED),
-        recallLiteResponse(inCustodyAwaitingDossierCreationRecall, Status.AWAITING_DOSSIER_CREATION).copy(
-          inCustodyAtBooking = true
-        ),
+        recallLiteResponse(inCustodyAwaitingDossierCreationRecall, Status.AWAITING_DOSSIER_CREATION),
         recallLiteResponse(notInCustodyAssessedRecall, Status.ASSESSED_NOT_IN_CUSTODY).copy(
-          inCustodyAtBooking = false,
-          inCustodyAtAssessment = false,
           assigneeUserName = FullName("Mickey Mouse")
         ),
         recallLiteResponse(inCustodyDossierInProgressRecall, Status.DOSSIER_IN_PROGRESS).copy(
-          inCustodyAtBooking = true,
           assigneeUserName = FullName("Mickey Mouse")
         ),
         recallLiteResponse(dossierIssuedRecall, Status.DOSSIER_ISSUED),
