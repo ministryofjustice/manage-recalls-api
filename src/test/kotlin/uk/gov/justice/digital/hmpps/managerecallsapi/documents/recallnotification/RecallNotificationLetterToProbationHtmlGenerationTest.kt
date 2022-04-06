@@ -60,7 +60,7 @@ class RecallNotificationLetterToProbationHtmlGenerationTest(
   private fun letterToProbationContext(inCustody: Boolean, recallType: RecallType) = LetterToProbationContext(
     LocalDate.of(2021, 9, 29),
     RecallDescription(recallType, FOURTEEN_DAYS),
-    "Mr probation",
+    FullName("Mr Probation"),
     FullName("Bertie Offender"),
     BookingNumber("bookingNumber"),
     if (inCustody) PrisonName("Current prison name") else null,

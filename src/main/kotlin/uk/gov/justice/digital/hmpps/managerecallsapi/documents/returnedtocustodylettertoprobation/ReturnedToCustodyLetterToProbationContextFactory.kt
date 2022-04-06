@@ -47,11 +47,11 @@ data class ReturnedToCustodyLetterToProbationContext(
   val nomsNumberHeldUnder: NomsNumber,
   val differentNomsNumber: Boolean,
   val originalNomsNumber: NomsNumber,
-  val probationOfficerName: String,
+  val probationOfficerName: FullName,
   val prisonerNameOnLicence: FullName,
   val currentPrisonName: PrisonName,
   val returnedToCustodyDate: LocalDate,
   val originalCreatedDate: LocalDate,
-  val authorisingAssistantChiefOfficer: String,
+  val authorisingAssistantChiefOfficer: FullName,
   val partBDueDate: LocalDate?,
 )

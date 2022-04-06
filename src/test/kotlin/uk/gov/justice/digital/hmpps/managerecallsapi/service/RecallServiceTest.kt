@@ -24,10 +24,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopReason
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LegalRepresentativeInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SeniorProbationOfficerInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
@@ -125,6 +127,11 @@ class RecallServiceTest {
     lastKnownAddressOption = fullyPopulatedUpdateRecallRequest.lastKnownAddressOption,
     lastReleaseDate = fullyPopulatedUpdateRecallRequest.lastReleaseDate,
     lastReleasePrison = fullyPopulatedUpdateRecallRequest.lastReleasePrison,
+    legalRepresentativeInfo = LegalRepresentativeInfo(
+      fullyPopulatedUpdateRecallRequest.legalRepresentativeInfo!!.fullName,
+      fullyPopulatedUpdateRecallRequest.legalRepresentativeInfo!!.phoneNumber,
+      fullyPopulatedUpdateRecallRequest.legalRepresentativeInfo!!.email,
+    ),
     licenceConditionsBreached = fullyPopulatedUpdateRecallRequest.licenceConditionsBreached,
     licenceNameCategory = fullyPopulatedUpdateRecallRequest.licenceNameCategory!!,
     localPoliceForceId = fullyPopulatedUpdateRecallRequest.localPoliceForceId,
@@ -143,6 +150,11 @@ class RecallServiceTest {
     recallEmailReceivedDateTime = fullyPopulatedUpdateRecallRequest.recallEmailReceivedDateTime,
     recallNotificationEmailSentDateTime = fullyPopulatedUpdateRecallRequest.recallNotificationEmailSentDateTime,
     rereleaseSupported = fullyPopulatedUpdateRecallRequest.rereleaseSupported,
+    seniorProbationOfficerInfo = SeniorProbationOfficerInfo(
+      fullyPopulatedUpdateRecallRequest.seniorProbationOfficerInfo!!.fullName,
+      fullyPopulatedUpdateRecallRequest.seniorProbationOfficerInfo!!.phoneNumber,
+      fullyPopulatedUpdateRecallRequest.seniorProbationOfficerInfo!!.email,
+    ),
     sentencingInfo = fullyPopulatedRecallSentencingInfo,
     vulnerabilityDiversity = fullyPopulatedUpdateRecallRequest.vulnerabilityDiversity,
     vulnerabilityDiversityDetail = fullyPopulatedUpdateRecallRequest.vulnerabilityDiversityDetail,

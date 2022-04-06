@@ -17,7 +17,10 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.base64EncodedFileContents
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -46,7 +49,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         licenceNameCategory = NameFormatCategory.FIRST_LAST,
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
-        previousConvictionMainName = "Nat The Naughty",
+        previousConvictionMainName = FullName("Nat The Naughty"),
         bookingNumber = BookingNumber("NAT0001"),
         lastReleasePrison = PrisonId("MWI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
@@ -57,11 +60,11 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         sentencingCourt = CourtId("ACCRYC"),
         indexOffence = "Some index offence",
         reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE, ReasonForRecall.OTHER),
-        probationOfficerName = "Percy Pig",
-        probationOfficerPhoneNumber = "0898909090",
-        probationOfficerEmail = "probation.officer@moj.com",
+        probationOfficerName = FullName("Percy Probation-Officer"),
+        probationOfficerPhoneNumber = PhoneNumber("0898909090"),
+        probationOfficerEmail = Email("probation.officer@moj.com"),
         localDeliveryUnit = localDeliveryUnit,
-        authorisingAssistantChiefOfficer = "ACO",
+        authorisingAssistantChiefOfficer = FullName("ACO"),
         localPoliceForceId = PoliceForceId("metropolitan"),
         currentPrison = currentPrisonId,
         contraband = contraband,
@@ -96,7 +99,7 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         licenceNameCategory = NameFormatCategory.FIRST_LAST,
         mappaLevel = MappaLevel.LEVEL_1,
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
-        previousConvictionMainName = "Nat The Naughty",
+        previousConvictionMainName = FullName("Nat The Naughty"),
         bookingNumber = BookingNumber("NAT0001"),
         lastReleasePrison = PrisonId("MWI"),
         lastReleaseDate = LocalDate.of(2021, 9, 2),
@@ -107,11 +110,11 @@ abstract class GotenbergComponentTestBase : ComponentTestBase(useRealGotenbergSe
         sentencingCourt = CourtId("HVRFCT"),
         indexOffence = "Some index offence",
         reasonsForRecall = setOf(ReasonForRecall.ELM_FURTHER_OFFENCE),
-        probationOfficerName = "Percy Pig",
-        probationOfficerPhoneNumber = "0898909090",
-        probationOfficerEmail = "probation.officer@moj.com",
+        probationOfficerName = FullName("Percy Probation-Officer"),
+        probationOfficerPhoneNumber = PhoneNumber("0898909090"),
+        probationOfficerEmail = Email("probation.officer@moj.com"),
         localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
-        authorisingAssistantChiefOfficer = "ACO",
+        authorisingAssistantChiefOfficer = FullName("ACO"),
         localPoliceForceId = PoliceForceId("metropolitan"),
         currentPrison = PrisonId("MWI"),
         contraband = contraband,

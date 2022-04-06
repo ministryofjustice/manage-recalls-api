@@ -19,10 +19,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.documents.RecallDescription
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -54,7 +56,7 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
     lastReleasePrison = PrisonId("BOB"),
     licenceNameCategory = NameFormatCategory.FIRST_LAST,
     recallLength = recallLength,
-    probationInfo = ProbationInfo("Paul Probation", "0123", "m@m.com", LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, "Mr ACO"),
+    probationInfo = ProbationInfo(FullName("Paul Probation"), PhoneNumber("0123"), Email("m@m.com"), LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, FullName("Mr ACO")),
     returnedToCustodyRecord = ReturnedToCustodyRecord(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), createdByUserId, OffsetDateTime.now())
   )
 
@@ -76,12 +78,12 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
           fixedTermRecall.nomsNumber,
           false,
           fixedTermRecall.nomsNumber,
-          "Paul Probation",
+          FullName("Paul Probation"),
           FullName("Barrie Badger"),
           currentPrisonName,
           LocalDate.now().minusDays(1),
           LocalDate.now(),
-          "Mr ACO",
+          FullName("Mr ACO"),
           null
         )
       )
@@ -108,12 +110,12 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
           fixedTermRecall.nomsNumber,
           false,
           fixedTermRecall.nomsNumber,
-          "Paul Probation",
+          FullName("Paul Probation"),
           FullName("Barrie Badger"),
           currentPrisonName,
           LocalDate.now().minusDays(1),
           LocalDate.now().minusDays(5),
-          "Mr ACO",
+          FullName("Mr ACO"),
           null
         )
       )
@@ -139,12 +141,12 @@ class ReturnedToCustodyLetterToProbationContextFactoryTest {
           standardRecall.nomsNumber,
           false,
           standardRecall.nomsNumber,
-          "Paul Probation",
+          FullName("Paul Probation"),
           FullName("Barrie Badger"),
           currentPrisonName,
           LocalDate.now().minusDays(1),
           LocalDate.now(),
-          "Mr ACO",
+          FullName("Mr ACO"),
           LocalDate.now().plusDays(20)
         )
       )

@@ -24,11 +24,14 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.encodeToBase64Str
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastKnownAddressId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -196,7 +199,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         arrestIssues = !inCustody,
         arrestIssuesDetail = if (inCustody) null else "Some arrest issues",
         assessedByUserId = userId,
-        authorisingAssistantChiefOfficer = "Ms Authoriser",
+        authorisingAssistantChiefOfficer = FullName("Ms Authoriser"),
         bookingNumber = BookingNumber("B1234"),
         contraband = true,
         contrabandDetail = "Some contraband detail",
@@ -212,11 +215,11 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         localDeliveryUnit = LocalDeliveryUnit.PS_BARNET,
         localPoliceForceId = PoliceForceId("greater-manchester"),
         mappaLevel = MappaLevel.LEVEL_3,
-        previousConvictionMainName = "Bryan Badger",
+        previousConvictionMainName = FullName("Bryan Badger"),
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
-        probationOfficerEmail = "officer@myprobation.com",
-        probationOfficerName = "Mr Probation Officer",
-        probationOfficerPhoneNumber = "01234567890",
+        probationOfficerEmail = Email("officer@myprobation.com"),
+        probationOfficerName = FullName("Mr Probation Officer"),
+        probationOfficerPhoneNumber = PhoneNumber("01234567890"),
         reasonsForRecall = setOf(POOR_BEHAVIOUR_FURTHER_OFFENCE),
         sentenceDate = LocalDate.of(2012, 5, 17),
         sentenceExpiryDate = LocalDate.of(2020, 10, 29),

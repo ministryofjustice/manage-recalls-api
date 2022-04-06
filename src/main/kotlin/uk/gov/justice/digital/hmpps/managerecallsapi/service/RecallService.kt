@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.managerecallsapi.config.InvalidStopReasonException
+import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Api
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.BookRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.ConfirmedRecallTypeRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.NameFormatCategory
@@ -15,10 +16,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.controller.RecallType
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.Status
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.StopRecallRequest
 import uk.gov.justice.digital.hmpps.managerecallsapi.controller.UpdateRecallRequest
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LegalRepresentativeInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ProbationInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.ReturnedToCustodyRecord
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SeniorProbationOfficerInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentenceLength
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.SentencingInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.StopRecord
@@ -129,6 +132,7 @@ class RecallService(
       lastKnownAddressOption = updateRecallRequest.lastKnownAddressOption ?: lastKnownAddressOption,
       lastReleaseDate = updateRecallRequest.lastReleaseDate ?: lastReleaseDate,
       lastReleasePrison = updateRecallRequest.lastReleasePrison ?: lastReleasePrison,
+      legalRepresentativeInfo = updateRecallRequest.legalRepresentativeInfo?.toDomain() ?: legalRepresentativeInfo,
       licenceConditionsBreached = updateRecallRequest.licenceConditionsBreached ?: licenceConditionsBreached,
       licenceNameCategory = updateRecallRequest.licenceNameCategory ?: licenceNameCategory,
       localPoliceForceId = updateRecallRequest.localPoliceForceId ?: localPoliceForceId,
@@ -143,6 +147,7 @@ class RecallService(
       recallLength = sentencingInfo?.calculateRecallLength(recommendedRecallType),
       recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
       rereleaseSupported = updateRecallRequest.rereleaseSupported ?: rereleaseSupported,
+      seniorProbationOfficerInfo = updateRecallRequest.seniorProbationOfficerInfo?.toDomain() ?: seniorProbationOfficerInfo,
       sentencingInfo = sentencingInfo,
       secondaryDossierDueDate = calculateSecondaryDossierDueDate(updateRecallRequest, this),
       vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity ?: vulnerabilityDiversity,
@@ -298,3 +303,9 @@ private fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): Probati
   } else {
     existingRecall.probationInfo
   }
+
+private fun Api.SeniorProbationOfficerInfo.toDomain(): SeniorProbationOfficerInfo =
+  SeniorProbationOfficerInfo(fullName, phoneNumber, email)
+
+private fun Api.LegalRepresentativeInfo.toDomain(): LegalRepresentativeInfo =
+  LegalRepresentativeInfo(fullName, phoneNumber, email)

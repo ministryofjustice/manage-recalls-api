@@ -28,17 +28,20 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_A_
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PART_B_RISK_REPORT
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.PREVIOUS_CONVICTIONS_SHEET
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.LastKnownAddress
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.LegalRepresentativeInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.MissingDocumentsRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Note
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.PartBRecord
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RescindRecord
+import uk.gov.justice.digital.hmpps.managerecallsapi.db.SeniorProbationOfficerInfo
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.UserDetails
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.DocumentId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
@@ -49,6 +52,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MissingDocumentsReco
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NoteId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PartBRecordId
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
@@ -243,6 +247,7 @@ class RecallController(
     lastKnownAddressOption = lastKnownAddressOption,
     lastReleaseDate = lastReleaseDate,
     lastReleasePrison = lastReleasePrison,
+    legalRepresentativeInfo = legalRepresentativeInfo?.toResponse(),
     licenceConditionsBreached = licenceConditionsBreached,
     licenceExpiryDate = sentencingInfo?.licenceExpiryDate,
     licenceNameCategory = licenceNameCategory,
@@ -265,6 +270,7 @@ class RecallController(
     returnedToCustodyDateTime = returnedToCustody?.returnedToCustodyDateTime,
     returnedToCustodyNotificationDateTime = returnedToCustody?.returnedToCustodyNotificationDateTime,
     secondaryDossierDueDate = secondaryDossierDueDate,
+    seniorProbationOfficerInfo = seniorProbationOfficerInfo?.toResponse(),
     sentenceDate = sentencingInfo?.sentenceDate,
     sentenceExpiryDate = sentencingInfo?.sentenceExpiryDate,
     sentenceLength = sentencingInfo?.sentenceLength?.let {
@@ -388,6 +394,18 @@ class RecallController(
     userDetailsService.get(createdByUserId()).fullName(),
     createdDateTime
   )
+
+  fun LegalRepresentativeInfo.toResponse() = Api.LegalRepresentativeInfo(
+    legalRepresentativeName,
+    legalRepresentativeEmail,
+    legalRepresentativePhoneNumber
+  )
+
+  fun SeniorProbationOfficerInfo.toResponse() = Api.SeniorProbationOfficerInfo(
+    seniorProbationOfficerName,
+    seniorProbationOfficerEmail,
+    seniorProbationOfficerPhoneNumber
+  )
 }
 
 data class BookRecallRequest(
@@ -447,7 +465,7 @@ data class RecallResponse(
   val assessedByUserName: FullName? = null,
   val assignee: UserId? = null,
   val assigneeUserName: FullName? = null,
-  val authorisingAssistantChiefOfficer: String? = null,
+  val authorisingAssistantChiefOfficer: FullName? = null,
   val bookedByUserId: UserId? = null,
   val bookedByUserName: FullName? = null,
   val bookingNumber: BookingNumber? = null,
@@ -470,6 +488,7 @@ data class RecallResponse(
   val lastKnownAddressOption: LastKnownAddressOption? = null,
   val lastReleaseDate: LocalDate? = null,
   val lastReleasePrison: PrisonId? = null,
+  val legalRepresentativeInfo: Api.LegalRepresentativeInfo? = null,
   val licenceConditionsBreached: String? = null,
   val licenceExpiryDate: LocalDate? = null,
   val licenceNameCategory: NameFormatCategory? = null,
@@ -478,11 +497,11 @@ data class RecallResponse(
   val mappaLevel: MappaLevel? = null,
   val missingDocuments: MissingDocuments? = null,
   val partBDueDate: LocalDate? = null,
-  val previousConvictionMainName: String? = null,
+  val previousConvictionMainName: FullName? = null,
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
-  val probationOfficerEmail: String? = null,
-  val probationOfficerName: String? = null,
-  val probationOfficerPhoneNumber: String? = null,
+  val probationOfficerEmail: Email? = null,
+  val probationOfficerName: FullName? = null,
+  val probationOfficerPhoneNumber: PhoneNumber? = null,
   val reasonsForRecallOtherDetail: String? = null,
   val recallAssessmentDueDateTime: OffsetDateTime? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
@@ -493,6 +512,7 @@ data class RecallResponse(
   val returnedToCustodyDateTime: OffsetDateTime? = null,
   val returnedToCustodyNotificationDateTime: OffsetDateTime? = null,
   val secondaryDossierDueDate: LocalDate? = null,
+  val seniorProbationOfficerInfo: Api.SeniorProbationOfficerInfo? = null,
   val sentenceDate: LocalDate? = null,
   val sentenceExpiryDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,
@@ -596,6 +616,18 @@ class Api {
     val averageDuration: Long,
     val count: Long
   )
+
+  data class SeniorProbationOfficerInfo(
+    val fullName: FullName,
+    val email: Email,
+    val phoneNumber: PhoneNumber
+  )
+
+  data class LegalRepresentativeInfo(
+    val fullName: FullName,
+    val email: Email,
+    val phoneNumber: PhoneNumber
+  )
 }
 
 data class Pdf(val content: String)
@@ -642,7 +674,7 @@ data class UpdateRecallRequest(
   val arrestIssues: Boolean? = null,
   val arrestIssuesDetail: String? = null,
   val assessedByUserId: UserId? = null,
-  val authorisingAssistantChiefOfficer: String? = null,
+  val authorisingAssistantChiefOfficer: FullName? = null,
   val bookedByUserId: UserId? = null,
   val bookingNumber: BookingNumber? = null,
   val conditionalReleaseDate: LocalDate? = null,
@@ -660,22 +692,24 @@ data class UpdateRecallRequest(
   val lastKnownAddressOption: LastKnownAddressOption? = null,
   val lastReleaseDate: LocalDate? = null,
   val lastReleasePrison: PrisonId? = null,
+  val legalRepresentativeInfo: Api.LegalRepresentativeInfo? = null,
   val licenceConditionsBreached: String? = null,
   val licenceExpiryDate: LocalDate? = null,
   val licenceNameCategory: NameFormatCategory? = null,
   val localDeliveryUnit: LocalDeliveryUnit? = null,
   val localPoliceForceId: PoliceForceId? = null,
   val mappaLevel: MappaLevel? = null,
-  val previousConvictionMainName: String? = null,
+  val previousConvictionMainName: FullName? = null,
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
-  val probationOfficerEmail: String? = null,
-  val probationOfficerName: String? = null,
-  val probationOfficerPhoneNumber: String? = null,
+  val probationOfficerEmail: Email? = null,
+  val probationOfficerName: FullName? = null,
+  val probationOfficerPhoneNumber: PhoneNumber? = null,
   val reasonsForRecall: Set<ReasonForRecall>? = null,
   val reasonsForRecallOtherDetail: String? = null,
   val recallEmailReceivedDateTime: OffsetDateTime? = null,
   val recallNotificationEmailSentDateTime: OffsetDateTime? = null,
   val rereleaseSupported: Boolean? = null,
+  val seniorProbationOfficerInfo: Api.SeniorProbationOfficerInfo? = null,
   val sentenceDate: LocalDate? = null,
   val sentenceExpiryDate: LocalDate? = null,
   val sentenceLength: Api.SentenceLength? = null,

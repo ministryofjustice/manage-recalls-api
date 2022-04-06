@@ -15,10 +15,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.DocumentCategory.LETTER_
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
@@ -99,11 +102,11 @@ class ReturnedToCustodyLetterToProbationGotenbergComponentTest : GotenbergCompon
         sentenceLength = Api.SentenceLength(2, 1, 5),
         sentencingCourt = CourtId("HVRFCT"),
         indexOffence = "Some index offence",
-        probationOfficerName = "Percy Pig",
-        probationOfficerPhoneNumber = "0898909090",
-        probationOfficerEmail = "probation.officer@moj.com",
+        probationOfficerName = FullName("Percy Probation-Officer"),
+        probationOfficerPhoneNumber = PhoneNumber("0898909090"),
+        probationOfficerEmail = Email("probation.officer@moj.com"),
         localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
-        authorisingAssistantChiefOfficer = "Mr ACO",
+        authorisingAssistantChiefOfficer = FullName("Mr ACO"),
         currentPrison = PrisonId("MWI"),
         differentNomsNumber = true,
         differentNomsNumberDetail = "ABC123",
