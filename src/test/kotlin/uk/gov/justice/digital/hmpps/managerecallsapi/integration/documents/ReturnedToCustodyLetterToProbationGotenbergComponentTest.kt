@@ -102,7 +102,7 @@ class ReturnedToCustodyLetterToProbationGotenbergComponentTest : GotenbergCompon
         sentenceLength = Api.SentenceLength(2, 1, 5),
         sentencingCourt = CourtId("HVRFCT"),
         indexOffence = "Some index offence",
-        probationOfficerName = FullName("Percy Pig"),
+        probationOfficerName = FullName("Percy Probation-Officer"),
         probationOfficerPhoneNumber = PhoneNumber("0898909090"),
         probationOfficerEmail = Email("probation.officer@moj.com"),
         localDeliveryUnit = LocalDeliveryUnit.ISLE_OF_MAN,
