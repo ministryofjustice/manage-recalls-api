@@ -48,13 +48,12 @@ class ReportsServiceTest {
     assertThat(response.fileName, equalTo(FileName("weekly_recalls_new.csv")))
     assertThat(response.content, startsWith("${headers[0]},${headers[1]}"))
 
-    val csvParser: CSVParser? = CSVFormat.DEFAULT
-      .withHeader(*headers)
-      .withFirstRecordAsHeader()
+    val csvParser: CSVParser? = CSVFormat.Builder.create()
+      .setHeader()
+      .build()
       .parse(StringReader(response.content))
 
-    val headerNames = csvParser!!.headerNames
-    assertThat(headerNames, equalTo(headers.asList()))
+    assertThat(csvParser!!.headerNames, equalTo(headers.asList()))
     assertThat(csvParser.records.size, equalTo(0))
   }
 
@@ -80,15 +79,26 @@ class ReportsServiceTest {
     assertThat(response.fileName, equalTo(FileName("weekly_recalls_new.csv")))
     assertThat(response.content, startsWith("${headers[0]},${headers[1]}"))
 
-    val csvParser: CSVParser? = CSVFormat.DEFAULT
-      .withHeader(*headers)
-      .withFirstRecordAsHeader()
+    val csvParser: CSVParser? = CSVFormat.Builder.create()
+      .setHeader(*headers)
+      .setSkipHeaderRecord(false)
+      .build()
       .parse(StringReader(response.content))
 
     val headerNames = csvParser!!.headerNames
     assertThat(headerNames, equalTo(headers.asList()))
 
-    val rowOne = csvParser.records.get(0)
+    val csvRecords = csvParser.records
+
+    val headerRow = csvRecords.get(0)
+    assertThat(headerRow.get(0), equalTo("CUSTODY_TYPE_DESCRIPTION"))
+    assertThat(headerRow.get(1), equalTo("CUSTODY_TYPE_AT_TIME_OF_RECALL_DESCRIPTION"))
+    assertThat(headerRow.get(2), equalTo("FAMILY_NAME"))
+    assertThat(headerRow.get(3), equalTo("FIRST_NAMES"))
+    assertThat(headerRow.get(4), equalTo("NOMS_ID"))
+    assertThat(headerRow.get(5), equalTo("PRISON_NUMBER"))
+
+    val rowOne = csvRecords.get(1)
     assertThat(rowOne.get(0), equalTo("Not in custody"))
     assertThat(rowOne.get(1), equalTo("In custody"))
     assertThat(rowOne.get(2), equalTo("Surname"))

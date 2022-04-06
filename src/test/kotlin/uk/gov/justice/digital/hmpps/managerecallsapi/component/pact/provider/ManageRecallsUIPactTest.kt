@@ -96,8 +96,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @BeforeEach
-  fun `delete all recalls and set no virus found`() {
-    `delete all recalls`()
+  fun `delete all recall data and set no virus found`() {
+    `delete all recall data`()
     every { virusScanner.scan(any()) } returns VirusScanResult.NoVirusFound
   }
 

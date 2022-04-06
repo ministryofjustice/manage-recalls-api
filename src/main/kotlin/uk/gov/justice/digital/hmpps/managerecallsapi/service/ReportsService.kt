@@ -16,7 +16,7 @@ class ReportsService(
 ) {
 
   val csvMimeType = "text/csv"
-  private val headers = arrayOf(
+  private val recallsReportCsvHeaders = arrayOf(
     "CUSTODY_TYPE_DESCRIPTION",
     "CUSTODY_TYPE_AT_TIME_OF_RECALL_DESCRIPTION",
     "FAMILY_NAME",
@@ -39,8 +39,18 @@ RESCIND_FLAG
   fun getWeeklyRecallsNew(start: OffsetDateTime): Api.GetReportResponse {
     val end = start.plusDays(7)
     val data = recallRepository.findAllByCreatedDateTimeIsBetweenOrderByCreatedDateTimeAsc(start, end)
+    val out = recallsReportCsv(data)
+    return Api.GetReportResponse(
+      WEEKLY_RECALLS_NEW,
+      csvMimeType,
+      FileName("weekly_recalls_new.csv"),
+      out.toString()
+    )
+  }
+
+  private fun recallsReportCsv(data: List<Recall>): StringBuilder {
     val out = StringBuilder()
-    val format = CSVFormat.DEFAULT.withHeader(*headers)
+    val format = CSVFormat.Builder.create().setHeader(*recallsReportCsvHeaders).build()
     CSVPrinter(
       out, format
     ).use { printer ->
@@ -48,12 +58,7 @@ RESCIND_FLAG
         printer.printRecord(recallCsvRecord(r))
       }
     }
-    return Api.GetReportResponse(
-      WEEKLY_RECALLS_NEW,
-      csvMimeType,
-      FileName("weekly_recalls_new.csv"),
-      out.toString()
-    )
+    return out
   }
 
   private fun recallCsvRecord(r: Recall): MutableIterable<String> =
