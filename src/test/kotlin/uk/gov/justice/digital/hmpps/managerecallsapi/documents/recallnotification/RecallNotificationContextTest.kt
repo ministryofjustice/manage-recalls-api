@@ -54,7 +54,7 @@ class RecallNotificationContextTest {
   private val lastReleaseDate = LocalDate.of(2020, 10, 1)
 
   private val recallLength = RecallLength.TWENTY_EIGHT_DAYS
-  private val probationOfficerName = "Mr Probation Officer"
+  private val probationOfficerName = FullName("Mr Probation Officer")
   private val inCustody = Random.nextBoolean()
 
   private val recall = Recall(
@@ -80,14 +80,14 @@ class RecallNotificationContextTest {
     lastReleaseDate = lastReleaseDate,
     localPoliceForceId = PoliceForceId("metropolitan"),
     mappaLevel = LEVEL_3,
-    previousConvictionMainName = "Bryan Badger",
+    previousConvictionMainName = FullName("Bryan Badger"),
     previousConvictionMainNameCategory = NameFormatCategory.OTHER,
     probationInfo = ProbationInfo(
       probationOfficerName,
-      "01234567890",
-      "officer@myprobation.com",
+      PhoneNumber("01234567890"),
+      Email("officer@myprobation.com"),
       PS_TOWER_HAMLETS,
-      "Ms Authoriser"
+      FullName("Ms Authoriser")
     ),
     recallLength = recallLength,
     recommendedRecallType = STANDARD,

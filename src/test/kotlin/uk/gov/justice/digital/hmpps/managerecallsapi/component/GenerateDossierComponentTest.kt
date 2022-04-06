@@ -22,10 +22,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.readText
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FileName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.matchers.hasNumberOfPages
@@ -70,7 +73,7 @@ class GenerateDossierComponentTest : ComponentTestBase() {
     authenticatedClient.updateRecall(
       recall.recallId,
       UpdateRecallRequest(
-        authorisingAssistantChiefOfficer = "not empty",
+        authorisingAssistantChiefOfficer = FullName("not empty"),
         bookingNumber = BookingNumber("bookingNumber"),
         currentPrison = PrisonId("MWI"),
         inCustodyAtBooking = true,
@@ -82,9 +85,9 @@ class GenerateDossierComponentTest : ComponentTestBase() {
         licenceNameCategory = NameFormatCategory.FIRST_LAST,
         localDeliveryUnit = LocalDeliveryUnit.PS_SWINDON_AND_WILTSHIRE,
         localPoliceForceId = PoliceForceId("avon-and-somerset"),
-        probationOfficerEmail = "not empty",
-        probationOfficerName = "not empty",
-        probationOfficerPhoneNumber = "not empty",
+        probationOfficerEmail = Email("not empty"),
+        probationOfficerName = FullName("not empty"),
+        probationOfficerPhoneNumber = PhoneNumber("not empty"),
         sentenceDate = LocalDate.of(2012, 5, 17),
         sentenceExpiryDate = LocalDate.of(2021, 1, 12),
         sentenceLength = Api.SentenceLength(10, 1, 5),

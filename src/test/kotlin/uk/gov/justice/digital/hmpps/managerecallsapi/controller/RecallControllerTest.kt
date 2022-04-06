@@ -602,11 +602,11 @@ class RecallControllerTest {
   fun `missingDocuments contains PART_A & LICENCE as required and OASYS and PRECONS as desired when probationInfo is set but no documents uploaded`() {
     every { recallRepository.getByRecallId(recallId) } returns recall.copy(
       probationInfo = ProbationInfo(
-        "Mr Probation",
-        "01234 567890",
-        "mr@probation.com",
+        FullName("Mr Probation"),
+        PhoneNumber("01234 567890"),
+        Email("mr@probation.com"),
         LocalDeliveryUnit.CHANNEL_ISLANDS,
-        "Chief"
+        FullName("Chief"),
       )
     )
 
@@ -625,11 +625,11 @@ class RecallControllerTest {
   fun `missingDocuments contains LICENCE as required and OASYS and PRECONS as desired when probationInfo is set and only PART_A document uploaded`() {
     every { recallRepository.getByRecallId(recallId) } returns recall.copy(
       probationInfo = ProbationInfo(
-        "Mr Probation",
-        "01234 567890",
-        "mr@probation.com",
+        FullName("Mr Probation"),
+        PhoneNumber("01234 567890"),
+        Email("mr@probation.com"),
         LocalDeliveryUnit.CHANNEL_ISLANDS,
-        "Chief"
+        FullName("Chief"),
       ),
       documents = setOf(document(PART_A_RECALL_REPORT))
     )
@@ -653,11 +653,11 @@ class RecallControllerTest {
   fun `missingDocuments null when probationInfo is set and PART_A, LICENCE, PRECONS & OASYS documents uploaded`() {
     every { recallRepository.getByRecallId(recallId) } returns recall.copy(
       probationInfo = ProbationInfo(
-        "Mr Probation",
-        "01234 567890",
-        "mr@probation.com",
+        FullName("Mr Probation"),
+        PhoneNumber("01234 567890"),
+        Email("mr@probation.com"),
         LocalDeliveryUnit.CHANNEL_ISLANDS,
-        "Chief"
+        FullName("Chief"),
       ),
       documents = setOf(
         document(PART_A_RECALL_REPORT),
@@ -682,11 +682,11 @@ class RecallControllerTest {
       recommendedRecallType = RecallType.STANDARD,
       confirmedRecallType = RecallType.STANDARD,
       probationInfo = ProbationInfo(
-        "Mr Probation",
-        "01234 567890",
-        "mr@probation.com",
+        FullName("Mr Probation"),
+        PhoneNumber("01234 567890"),
+        Email("mr@probation.com"),
         LocalDeliveryUnit.CHANNEL_ISLANDS,
-        "Chief"
+        FullName("Chief"),
       ),
       documents = setOf(
         document(PART_A_RECALL_REPORT),
@@ -709,11 +709,11 @@ class RecallControllerTest {
   fun `missingDocuments contains PART_B as required for Standard recall when Dossier created but PART_B not uploaded`() {
     every { recallRepository.getByRecallId(recallId) } returns recall.copy(
       probationInfo = ProbationInfo(
-        "Mr Probation",
-        "01234 567890",
-        "mr@probation.com",
+        FullName("Mr Probation"),
+        PhoneNumber("01234 567890"),
+        Email("mr@probation.com"),
         LocalDeliveryUnit.CHANNEL_ISLANDS,
-        "Chief"
+        FullName("Chief"),
       ),
       recommendedRecallType = RecallType.STANDARD,
       confirmedRecallType = RecallType.STANDARD,
@@ -740,11 +740,11 @@ class RecallControllerTest {
   fun `missingDocuments null for Standard recall when Dossier created and PART_B uploaded`() {
     every { recallRepository.getByRecallId(recallId) } returns recall.copy(
       probationInfo = ProbationInfo(
-        "Mr Probation",
-        "01234 567890",
-        "mr@probation.com",
+        FullName("Mr Probation"),
+        PhoneNumber("01234 567890"),
+        Email("mr@probation.com"),
         LocalDeliveryUnit.CHANNEL_ISLANDS,
-        "Chief"
+        FullName("Chief"),
       ),
       recommendedRecallType = RecallType.STANDARD,
       confirmedRecallType = RecallType.STANDARD,

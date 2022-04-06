@@ -20,9 +20,12 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.db.Recall
 import uk.gov.justice.digital.hmpps.managerecallsapi.db.RecallRepository
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
@@ -132,10 +135,10 @@ class RecallServiceParameterisedTest {
     localDeliveryUnit: LocalDeliveryUnit? = LocalDeliveryUnit.PS_DURHAM,
     authorisingAssistantChiefOfficer: String? = "AACO"
   ) = UpdateRecallRequest(
-    probationOfficerName = probationOfficerName,
-    probationOfficerPhoneNumber = probationOfficerPhoneNumber,
-    probationOfficerEmail = probationOfficerEmail,
+    probationOfficerName = probationOfficerName?.let { FullName(it) },
+    probationOfficerPhoneNumber = probationOfficerPhoneNumber?.let { PhoneNumber(it) },
+    probationOfficerEmail = probationOfficerEmail?.let { Email(it) },
     localDeliveryUnit = localDeliveryUnit,
-    authorisingAssistantChiefOfficer = authorisingAssistantChiefOfficer
+    authorisingAssistantChiefOfficer = authorisingAssistantChiefOfficer?.let { FullName(it) }
   )
 }

@@ -29,12 +29,12 @@ class ReturnedToCustodyLetterToProbationHtmlGenerationTest(@Autowired private va
           NomsNumber("AB1234C"),
           true,
           NomsNumber("ZY9876X"),
-          "Probation Paul",
+          FullName("Probation Paul"),
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           originalCreatedDate.minusDays(1),
           originalCreatedDate,
-          "Mr ACO",
+          FullName("Mr ACO"),
           null,
         )
       )
@@ -51,12 +51,12 @@ class ReturnedToCustodyLetterToProbationHtmlGenerationTest(@Autowired private va
           NomsNumber("AB1234C"),
           true,
           NomsNumber("ZY9876X"),
-          "Probation Paul",
+          FullName("Probation Paul"),
           FullName("Billie Badger"),
           PrisonName("Prison A"),
           originalCreatedDate.minusDays(1),
           originalCreatedDate,
-          "Mr ACO",
+          FullName("Mr ACO"),
           originalCreatedDate.plusDays(10),
         )
       )

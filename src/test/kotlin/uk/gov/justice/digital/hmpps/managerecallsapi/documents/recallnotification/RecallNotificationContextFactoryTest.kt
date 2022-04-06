@@ -204,24 +204,23 @@ class RecallNotificationContextFactoryTest {
 
   private fun prevConsMainNameOptions(): Stream<Arguments> {
     return Stream.of(
-      Arguments.of("Bobby Badger", NameFormatCategory.FIRST_LAST, "Andy Badger"),
-      Arguments.of("Bobby Badger", NameFormatCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
-      Arguments.of("Other Name", NameFormatCategory.OTHER, "Other Name"),
-      Arguments.of("", NameFormatCategory.FIRST_LAST, "Andy Badger"),
-      Arguments.of("", NameFormatCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
-      Arguments.of("", NameFormatCategory.OTHER, "")
+      Arguments.of(FullName("Bobby Badger"), NameFormatCategory.FIRST_LAST, "Andy Badger"),
+      Arguments.of(FullName("Bobby Badger"), NameFormatCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger"),
+      Arguments.of(FullName("Other Name"), NameFormatCategory.OTHER, "Other Name"),
+      Arguments.of(null, NameFormatCategory.FIRST_LAST, "Andy Badger"),
+      Arguments.of(null, NameFormatCategory.FIRST_MIDDLE_LAST, "Andy Bertie Badger")
     )
   }
 
   @ParameterizedTest(name = "create RecallSummaryContext when preCons Main Name Category is {1}")
   @MethodSource("prevConsMainNameOptions")
-  fun `create RecallSummaryContext with required details`(prevConsMainName: String?, prevConsMainNameCategory: NameFormatCategory?, expectedName: String) {
+  fun `create RecallSummaryContext with required details`(prevConsMainName: FullName?, prevConsMainNameCategory: NameFormatCategory?, expectedName: String) {
     val recallId = ::RecallId.random()
     val nomsNumber = NomsNumber("nomsNumber")
     val userIdGeneratingRecallNotification = ::UserId.random()
     val lastReleasePrisonId = PrisonId("XXX")
     val lastReleasePrisonName = PrisonName("Last Prison Name")
-    val probationInfo = ProbationInfo("", "", "", LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, "")
+    val probationInfo = ProbationInfo(FullName("Mr Pro Bation"), PhoneNumber("01234567890"), Email("me@my.com"), LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, FullName("Mr ACO"))
     val sentencingCourtId = CourtId("ABCDE")
     val sentencingInfo =
       SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))
@@ -267,7 +266,7 @@ class RecallNotificationContextFactoryTest {
 
     val result = underTest.createContext(recallId, userIdGeneratingRecallNotification).getRecallSummaryContext()
 
-    assertThat(result.previousConvictionMainName, equalTo(expectedName))
+    assertThat(result.previousConvictionMainName.value, equalTo(expectedName))
     assertThat(result.inCustodyRecall, equalTo(false))
     assertThat(
       result.lastKnownAddress,
@@ -288,7 +287,7 @@ class RecallNotificationContextFactoryTest {
     val bookingNumber = BookingNumber("A12345")
     val lastReleasePrisonId = PrisonId("XXX")
     val lastReleasePrisonName = PrisonName("Last Prison Name")
-    val probationInfo = ProbationInfo("", "", "", LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, "")
+    val probationInfo = ProbationInfo(FullName("Mr Pro Bation"), PhoneNumber("01234567890"), Email("me@my.com"), LocalDeliveryUnit.CENTRAL_AUDIT_TEAM, FullName("Mr ACO"))
     val sentencingCourtId = CourtId("ABCDE")
     val sentencingInfo =
       SentencingInfo(LocalDate.now(), LocalDate.now(), LocalDate.now(), sentencingCourtId, "", SentenceLength(3, 1, 0))

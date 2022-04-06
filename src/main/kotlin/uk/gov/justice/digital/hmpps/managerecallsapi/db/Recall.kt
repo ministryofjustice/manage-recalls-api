@@ -17,11 +17,13 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.documents.PersonName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.BookingNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CourtId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.CroNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.Email
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FirstName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.FullName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.LastName
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.MiddleNames
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.NomsNumber
+import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PhoneNumber
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PoliceForceId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.PrisonId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
@@ -132,6 +134,8 @@ data class Recall(
   val lastReleaseDate: LocalDate? = null,
   @Convert(converter = PrisonIdJpaConverter::class)
   val lastReleasePrison: PrisonId? = null,
+  @Enumerated(STRING)
+  val legalRepresentativeInfo: LegalRepresentativeInfo? = null,
   val licenceConditionsBreached: String? = null,
   @Enumerated(STRING)
   val licenceNameCategory: NameFormatCategory? = null,
@@ -141,7 +145,8 @@ data class Recall(
   val mappaLevel: MappaLevel? = null,
   @Column(name = "part_b_due_date")
   val partBDueDate: LocalDate? = null,
-  val previousConvictionMainName: String? = null,
+  @Convert(converter = FullNameJpaConverter::class)
+  val previousConvictionMainName: FullName? = null,
   @Enumerated(STRING)
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
   @Embedded
@@ -157,6 +162,8 @@ data class Recall(
   @Embedded
   val returnedToCustody: ReturnedToCustodyRecord? = null,
   val secondaryDossierDueDate: LocalDate? = null,
+  @Embedded
+  val seniorProbationOfficerInfo: SeniorProbationOfficerInfo? = null,
   @Embedded
   val sentencingInfo: SentencingInfo? = null,
   @Embedded
@@ -210,12 +217,13 @@ data class Recall(
     lastKnownAddressOption: LastKnownAddressOption? = null,
     lastReleaseDate: LocalDate? = null,
     lastReleasePrison: PrisonId? = null,
+    legalRepresentativeInfo: LegalRepresentativeInfo? = null,
     licenceConditionsBreached: String? = null,
     licenceNameCategory: NameFormatCategory? = null,
     localPoliceForceId: PoliceForceId? = null,
     mappaLevel: MappaLevel? = null,
     partBDueDate: LocalDate? = null,
-    previousConvictionMainName: String? = null,
+    previousConvictionMainName: FullName? = null,
     previousConvictionMainNameCategory: NameFormatCategory? = null,
     probationInfo: ProbationInfo? = null,
     reasonsForRecallOtherDetail: String? = null,
@@ -226,6 +234,7 @@ data class Recall(
     rereleaseSupported: Boolean? = null,
     returnedToCustodyRecord: ReturnedToCustodyRecord? = null,
     secondaryDossierDueDate: LocalDate? = null,
+    seniorProbationOfficerInfo: SeniorProbationOfficerInfo? = null,
     sentencingInfo: SentencingInfo? = null,
     stopRecord: StopRecord? = null,
     vulnerabilityDiversity: Boolean? = null,
@@ -275,6 +284,7 @@ data class Recall(
       lastKnownAddressOption,
       lastReleaseDate,
       lastReleasePrison,
+      legalRepresentativeInfo,
       licenceConditionsBreached,
       licenceNameCategory,
       localPoliceForceId,
@@ -291,6 +301,7 @@ data class Recall(
       rereleaseSupported,
       returnedToCustodyRecord,
       secondaryDossierDueDate,
+      seniorProbationOfficerInfo,
       sentencingInfo,
       stopRecord,
       vulnerabilityDiversity,
@@ -320,10 +331,10 @@ data class Recall(
 
   private fun prisonerName() = PersonName(firstName, middleNames, lastName)
 
-  fun previousConvictionMainName(): String {
+  fun previousConvictionMainName(): FullName {
     return when (previousConvictionMainNameCategory) {
-      FIRST_LAST -> prisonerName().firstAndLastName().value
-      FIRST_MIDDLE_LAST -> prisonerName().firstMiddleLast().value
+      FIRST_LAST -> prisonerName().firstAndLastName()
+      FIRST_MIDDLE_LAST -> prisonerName().firstMiddleLast()
       OTHER -> previousConvictionMainName!!
       else -> throw IllegalStateException("Unexpected or unset previousConvictionMainNameCategory $previousConvictionMainNameCategory")
     }
@@ -420,12 +431,36 @@ data class SentenceLength(val sentenceYears: Int, val sentenceMonths: Int, val s
 
 @Embeddable
 data class ProbationInfo(
-  val probationOfficerName: String,
-  val probationOfficerPhoneNumber: String,
-  val probationOfficerEmail: String,
+  @Convert(converter = FullNameJpaConverter::class)
+  val probationOfficerName: FullName,
+  @Convert(converter = PhoneNumberJpaConverter::class)
+  val probationOfficerPhoneNumber: PhoneNumber,
+  @Convert(converter = EmailJpaConverter::class)
+  val probationOfficerEmail: Email,
   @Enumerated(STRING)
   val localDeliveryUnit: LocalDeliveryUnit,
-  val authorisingAssistantChiefOfficer: String
+  @Convert(converter = FullNameJpaConverter::class)
+  val authorisingAssistantChiefOfficer: FullName
+)
+
+@Embeddable
+data class SeniorProbationOfficerInfo(
+  @Convert(converter = FullNameJpaConverter::class)
+  val seniorProbationOfficerName: FullName,
+  @Convert(converter = PhoneNumberJpaConverter::class)
+  val seniorProbationOfficerPhoneNumber: PhoneNumber,
+  @Convert(converter = EmailJpaConverter::class)
+  val seniorProbationOfficerEmail: Email,
+)
+
+@Embeddable
+data class LegalRepresentativeInfo(
+  @Convert(converter = FullNameJpaConverter::class)
+  val legalRepresentativeName: FullName,
+  @Convert(converter = PhoneNumberJpaConverter::class)
+  val legalRepresentativePhoneNumber: PhoneNumber,
+  @Convert(converter = EmailJpaConverter::class)
+  val legalRepresentativeEmail: Email,
 )
 
 @Suppress("JpaAttributeMemberSignatureInspection")
