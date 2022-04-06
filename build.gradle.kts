@@ -1,6 +1,6 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.3-beta"
-  kotlin("plugin.spring") version "1.5.21"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.3"
+  kotlin("plugin.spring") version "1.6.20"
   kotlin("plugin.jpa") version "1.5.20"
   kotlin("plugin.serialization") version "1.4.31"
   id("org.owasp.dependencycheck") version "6.5.0.1"
@@ -61,6 +61,8 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.6.0")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.0")
+
+  implementation("org.apache.commons:commons-csv:1.9.0")
 
   testImplementation("io.jsonwebtoken:jjwt:0.9.1")
 

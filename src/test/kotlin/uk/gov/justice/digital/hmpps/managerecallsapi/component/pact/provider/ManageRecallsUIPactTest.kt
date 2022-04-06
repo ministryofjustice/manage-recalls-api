@@ -96,22 +96,8 @@ class ManagerRecallsUiAuthorizedPactTest : ManagerRecallsUiPactTestBase() {
   }
 
   @BeforeEach
-  fun `delete all recalls`() {
-    // Due to DB constraints, need to clear out the reasons before deleting the audit else the recallRepository delete
-    // triggers the audit and you can not delete the recalls as they are referenced in the recall_reason_audit
-    recallRepository.findAll().map { it.copy(reasonsForRecall = emptySet()) }
-      .map { recallRepository.save(it, authenticatedClient.userId) }
-    recallReasonAuditRepository.deleteAll()
-    recallAuditRepository.deleteAll()
-    missingDocumentsRecordRepository.deleteAll()
-    phaseRecordRepository.deleteAll()
-    partBRecordRepository.deleteAll()
-    lastKnownAddressRepository.deleteAll()
-    rescindRecordRepository.deleteAll()
-    noteRepository.deleteAll()
-    documentRepository.deleteAll()
-    recallRepository.deleteAll()
-
+  fun `delete all recalls and set no virus found`() {
+    `delete all recalls`()
     every { virusScanner.scan(any()) } returns VirusScanResult.NoVirusFound
   }
 

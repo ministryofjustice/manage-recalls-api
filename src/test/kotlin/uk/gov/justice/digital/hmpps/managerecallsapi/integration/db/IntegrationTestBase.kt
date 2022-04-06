@@ -34,13 +34,16 @@ import java.time.OffsetDateTime
 abstract class IntegrationTestBase {
   final val recallId = ::RecallId.random()
   final val createdByUserId = ::UserId.random()
-  val currentUserId = ::UserId.random()
-  final val nomsNumber = randomNoms()
+  final val currentUserId = ::UserId.random()
+  final val randomNoms = randomNoms()
+  final val now = OffsetDateTime.now()
+
+  final val nomsNumber = randomNoms
   val recall = Recall(
     recallId,
     nomsNumber,
     createdByUserId,
-    OffsetDateTime.now(),
+    now,
     FirstName("Barrie"),
     null,
     LastName("Badger"),
@@ -76,7 +79,7 @@ abstract class IntegrationTestBase {
         Email("test@user.com"),
         PhoneNumber("09876543210"),
         CaseworkerBand.FOUR_PLUS,
-        OffsetDateTime.now()
+        now
       )
     )
   }

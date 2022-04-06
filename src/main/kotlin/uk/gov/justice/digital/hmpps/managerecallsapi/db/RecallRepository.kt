@@ -18,6 +18,8 @@ import java.util.UUID
 @Repository("jpaRecallRepository")
 interface JpaRecallRepository : JpaRepository<Recall, UUID> {
   fun findAllByNomsNumber(nomsNumber: NomsNumber): List<Recall>
+
+  fun findAllByCreatedDateTimeIsBetweenOrderByCreatedDateTimeAsc(startCreatedDateTime: OffsetDateTime, endCreatedDateTime: OffsetDateTime): List<Recall>
 }
 
 @NoRepositoryBean
