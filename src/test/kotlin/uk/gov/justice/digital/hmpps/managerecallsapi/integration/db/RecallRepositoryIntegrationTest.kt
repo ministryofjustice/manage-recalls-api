@@ -91,6 +91,7 @@ class RecallRepositoryIntegrationTest(
   }
 
   @Test
+  @Transactional
   fun `find by recallId returns null if a recall does not exist`() {
     assertThat(repository.findByRecallId(::RecallId.random()), absent())
   }
@@ -129,6 +130,67 @@ class RecallRepositoryIntegrationTest(
     repository.save(recall, currentUserId)
 
     assertThat(repository.search(RecallSearchRequest(randomNoms())), equalTo(emptyList()))
+  }
+
+  @Test
+  @Transactional
+  fun `findAllByCreatedDateTimeIsBetweenOrderByCreatedDateTimeAsc returns only matching recalls, ordered by createdDateTime, oldest first`() {
+    val recallAfterPeriod = recall.copy(createdDateTime = now)
+    val recallWithinPeriodNewest = recallAfterPeriod.copy(createdDateTime = now.minusDays(4), id = ::RecallId.random().value)
+    val recallWithinPeriodMiddle = recallAfterPeriod.copy(createdDateTime = now.minusDays(6), id = ::RecallId.random().value)
+    val recallWithinPeriodOldest = recallAfterPeriod.copy(createdDateTime = now.minusDays(11), id = ::RecallId.random().value)
+    val recallBeforePeriod = recallAfterPeriod.copy(createdDateTime = now.minusDays(13), id = ::RecallId.random().value)
+
+    listOf(
+      recallAfterPeriod,
+      recallWithinPeriodOldest,
+      recallWithinPeriodNewest,
+      recallWithinPeriodMiddle,
+      recallBeforePeriod
+    ).forEach { repository.save(it, currentUserId) }
+
+    val fourDaysAgo = now.minusDays(4)
+    val elevenDaysAgo = now.minusDays(11)
+
+    val retrieved = repository.findAllByCreatedDateTimeIsBetweenOrderByCreatedDateTimeAsc(elevenDaysAgo, fourDaysAgo)
+
+    assertThat(retrieved.size, equalTo(3))
+    val expected = listOf(
+      recallWithinPeriodOldest,
+      recallWithinPeriodMiddle,
+      recallWithinPeriodNewest
+    ).map {
+      it.copy(
+        lastUpdatedByUserId = currentUserId.value,
+        lastUpdatedDateTime = OffsetDateTime.now(fixedClock)
+      )
+    }
+
+    assertThat(
+      retrieved,
+      equalTo(
+        expected
+      )
+    )
+  }
+
+  @Test
+  @Transactional
+  fun `findAllByCreatedDateTimeIsBetweenOrderByCreatedDateTimeAsc returns empty list given zero matching recalls`() {
+    val recallAfterPeriod = recall.copy(createdDateTime = now)
+    val recallBeforePeriod = recallAfterPeriod.copy(createdDateTime = now.minusDays(13), id = ::RecallId.random().value)
+
+    listOf(
+      recallAfterPeriod,
+      recallBeforePeriod
+    ).forEach { repository.save(it, currentUserId) }
+
+    val fourDaysAgo = now.minusDays(4)
+    val elevenDaysAgo = now.minusDays(11)
+
+    val retrieved = repository.findAllByCreatedDateTimeIsBetweenOrderByCreatedDateTimeAsc(elevenDaysAgo, fourDaysAgo)
+
+    assertThat(retrieved.size, equalTo(0))
   }
 
   @Test

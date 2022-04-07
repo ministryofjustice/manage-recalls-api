@@ -150,6 +150,23 @@ abstract class ComponentTestBase(private val useRealGotenbergServer: Boolean = f
     setupUserDetailsFor(authenticatedClient.userId)
   }
 
+  fun `delete all recall data`() {
+    // Due to DB constraints, need to clear out the reasons before deleting the audit else the recallRepository delete
+    // triggers the audit and you can not delete the recalls as they are referenced in the recall_reason_audit
+    recallRepository.findAll().map { it.copy(reasonsForRecall = emptySet()) }
+      .map { recallRepository.save(it, authenticatedClient.userId) }
+    recallReasonAuditRepository.deleteAll()
+    recallAuditRepository.deleteAll()
+    missingDocumentsRecordRepository.deleteAll()
+    phaseRecordRepository.deleteAll()
+    partBRecordRepository.deleteAll()
+    lastKnownAddressRepository.deleteAll()
+    rescindRecordRepository.deleteAll()
+    noteRepository.deleteAll()
+    documentRepository.deleteAll()
+    recallRepository.deleteAll()
+  }
+
   @AfterAll
   fun stopMocks() {
     hmppsAuthMockServer.stop()

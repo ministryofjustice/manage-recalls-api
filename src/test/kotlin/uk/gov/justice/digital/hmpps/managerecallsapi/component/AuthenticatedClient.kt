@@ -54,6 +54,7 @@ import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RecallId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.RescindRecordId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.UserId
 import uk.gov.justice.digital.hmpps.managerecallsapi.domain.random
+import uk.gov.justice.digital.hmpps.managerecallsapi.service.ReportsService
 import uk.gov.justice.digital.hmpps.managerecallsapi.service.StatisticsSummary
 import java.time.OffsetDateTime
 
@@ -198,6 +199,9 @@ class AuthenticatedClient(
 
   fun summaryStatistics(): StatisticsSummary =
     getRequest("/statistics/summary", StatisticsSummary::class.java)
+
+  fun weeklyRecallsNew(): ReportsService.Api.GetReportResponse =
+    getRequest("/reports/weekly-recalls-new", ReportsService.Api.GetReportResponse::class.java)
 
   fun <T> missingDocumentsRecord(recallId: RecallId, request: MissingDocumentsRecordRequest, expectedStatus: HttpStatus, responseClass: Class<T>) =
     postRequest("/recalls/$recallId/missing-documents-records", request, responseClass, expectedStatus)

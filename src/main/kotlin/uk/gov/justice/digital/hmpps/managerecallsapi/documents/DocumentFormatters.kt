@@ -42,7 +42,7 @@ data class PersonName(val firstName: FirstName, val middleNames: MiddleNames? = 
 
   fun firstMiddleLast(): FullName = FullName("${firstAndMiddleNames()} $lastName")
 
-  private fun firstAndMiddleNames(): String =
+  fun firstAndMiddleNames(): String =
     when (middleNames) {
       null -> "$firstName"
       else -> "$firstName $middleNames"
