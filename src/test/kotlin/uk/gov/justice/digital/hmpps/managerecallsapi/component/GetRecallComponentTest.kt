@@ -208,6 +208,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.seniorProbationOfficerInfo.fullName").isEqualTo(fullyPopulatedRecall.seniorProbationOfficerInfo!!.seniorProbationOfficerName.value)
       .jsonPath("$.seniorProbationOfficerInfo.email").isEqualTo(fullyPopulatedRecall.seniorProbationOfficerInfo!!.seniorProbationOfficerEmail.value)
       .jsonPath("$.seniorProbationOfficerInfo.phoneNumber").isEqualTo(fullyPopulatedRecall.seniorProbationOfficerInfo!!.seniorProbationOfficerPhoneNumber.value)
+      .jsonPath("$.seniorProbationOfficerInfo.functionalEmail").isEqualTo(fullyPopulatedRecall.seniorProbationOfficerInfo!!.seniorProbationFunctionalEmail.value)
       .jsonPath("$.sentenceDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.sentenceExpiryDate").isEqualTo(LocalDate.now().toString())
       .jsonPath("$.sentencingCourt").isEqualTo(fullyPopulatedRecall.sentencingInfo!!.sentencingCourt.value)

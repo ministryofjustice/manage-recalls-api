@@ -451,6 +451,8 @@ data class SeniorProbationOfficerInfo(
   val seniorProbationOfficerPhoneNumber: PhoneNumber,
   @Convert(converter = EmailJpaConverter::class)
   val seniorProbationOfficerEmail: Email,
+  @Convert(converter = EmailJpaConverter::class)
+  val seniorProbationFunctionalEmail: Email,
 )
 
 @Embeddable

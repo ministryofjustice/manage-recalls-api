@@ -154,6 +154,7 @@ class RecallServiceTest {
       fullyPopulatedUpdateRecallRequest.seniorProbationOfficerInfo!!.fullName,
       fullyPopulatedUpdateRecallRequest.seniorProbationOfficerInfo!!.phoneNumber,
       fullyPopulatedUpdateRecallRequest.seniorProbationOfficerInfo!!.email,
+      fullyPopulatedUpdateRecallRequest.seniorProbationOfficerInfo!!.functionalEmail,
     ),
     sentencingInfo = fullyPopulatedRecallSentencingInfo,
     vulnerabilityDiversity = fullyPopulatedUpdateRecallRequest.vulnerabilityDiversity,

@@ -404,7 +404,8 @@ class RecallController(
   fun SeniorProbationOfficerInfo.toResponse() = Api.SeniorProbationOfficerInfo(
     seniorProbationOfficerName,
     seniorProbationOfficerEmail,
-    seniorProbationOfficerPhoneNumber
+    seniorProbationOfficerPhoneNumber,
+    seniorProbationFunctionalEmail
   )
 }
 
@@ -620,7 +621,8 @@ class Api {
   data class SeniorProbationOfficerInfo(
     val fullName: FullName,
     val email: Email,
-    val phoneNumber: PhoneNumber
+    val phoneNumber: PhoneNumber,
+    val functionalEmail: Email,
   )
 
   data class LegalRepresentativeInfo(
