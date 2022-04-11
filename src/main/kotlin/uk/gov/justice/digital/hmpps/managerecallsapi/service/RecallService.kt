@@ -305,7 +305,7 @@ private fun UpdateRecallRequest.toProbationInfo(existingRecall: Recall): Probati
   }
 
 private fun Api.SeniorProbationOfficerInfo.toDomain(): SeniorProbationOfficerInfo =
-  SeniorProbationOfficerInfo(fullName, phoneNumber, email)
+  SeniorProbationOfficerInfo(fullName, phoneNumber, email, functionalEmail)
 
 private fun Api.LegalRepresentativeInfo.toDomain(): LegalRepresentativeInfo =
   LegalRepresentativeInfo(fullName, phoneNumber, email)
