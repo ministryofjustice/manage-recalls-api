@@ -48,7 +48,7 @@ done
 
 # check for the ENV variable
 set +u
-if [[ ! "${ENV}" =~ ^(dev|preprod)$ ]]; then
+if [[ ! "${ENV}" =~ ^(dev|preprod|prod)$ ]]; then
   usage
   exit 1
 fi
