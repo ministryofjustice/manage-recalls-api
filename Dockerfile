@@ -36,4 +36,4 @@ COPY --from=builder --chown=appuser:appgroup /app/applicationinsights.json /app
 USER 2000
 EXPOSE 8080 8081
 
-ENTRYPOINT ["java", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-XX:+AlwaysActAsServerClassMachine", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]
