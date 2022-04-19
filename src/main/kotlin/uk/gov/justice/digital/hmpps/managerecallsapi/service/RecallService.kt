@@ -64,22 +64,20 @@ class RecallService(
   }
 
   @Transactional
-  fun assignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall {
-    return recallRepository.getByRecallId(recallId)
+  fun assignRecall(recallId: RecallId, assignee: UserId, currentUserId: UserId): Recall =
+    recallRepository.getByRecallId(recallId)
       .copy(
         assignee = assignee.value
       )
       .let { recallRepository.save(it, currentUserId) }
-  }
 
   @Transactional
-  fun unassignRecall(recallId: RecallId, currentUserId: UserId): Recall {
-    return recallRepository.getByRecallId(recallId)
+  fun unassignRecall(recallId: RecallId, currentUserId: UserId): Recall =
+    recallRepository.getByRecallId(recallId)
       .copy(
         assignee = null
       )
       .let { recallRepository.save(it, currentUserId) }
-  }
 
   @Transactional
   fun updateRecommendedRecallType(recallId: RecallId, recallType: RecallType, currentUserId: UserId): Recall {
@@ -112,7 +110,8 @@ class RecallService(
     val sentencingInfo = updateRecallRequest.toSentencingInfo(this)
     return copy(
       additionalLicenceConditions = updateRecallRequest.additionalLicenceConditions ?: additionalLicenceConditions,
-      additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail ?: additionalLicenceConditionsDetail,
+      additionalLicenceConditionsDetail = updateRecallRequest.additionalLicenceConditionsDetail
+        ?: additionalLicenceConditionsDetail,
       arrestIssues = updateRecallRequest.arrestIssues ?: arrestIssues,
       arrestIssuesDetail = updateRecallRequest.arrestIssuesDetail ?: arrestIssuesDetail,
       assessedByUserId = updateRecallRequest.assessedByUserId?.value ?: assessedByUserId,
@@ -139,15 +138,18 @@ class RecallService(
       mappaLevel = updateRecallRequest.mappaLevel ?: mappaLevel,
       partBDueDate = calculatePartBDueDate(updateRecallRequest, this),
       previousConvictionMainName = updateRecallRequest.previousConvictionMainName ?: previousConvictionMainName,
-      previousConvictionMainNameCategory = updateRecallRequest.previousConvictionMainNameCategory ?: previousConvictionMainNameCategory,
+      previousConvictionMainNameCategory = updateRecallRequest.previousConvictionMainNameCategory
+        ?: previousConvictionMainNameCategory,
       probationInfo = updateRecallRequest.toProbationInfo(this),
       reasonsForRecall = updateRecallRequest.reasonsForRecall ?: reasonsForRecall,
       reasonsForRecallOtherDetail = updateRecallRequest.reasonsForRecallOtherDetail ?: reasonsForRecallOtherDetail,
       recallEmailReceivedDateTime = updateRecallRequest.recallEmailReceivedDateTime ?: recallEmailReceivedDateTime,
       recallLength = sentencingInfo?.calculateRecallLength(recommendedRecallType),
-      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime ?: recallNotificationEmailSentDateTime,
+      recallNotificationEmailSentDateTime = updateRecallRequest.recallNotificationEmailSentDateTime
+        ?: recallNotificationEmailSentDateTime,
       rereleaseSupported = updateRecallRequest.rereleaseSupported ?: rereleaseSupported,
-      seniorProbationOfficerInfo = updateRecallRequest.seniorProbationOfficerInfo?.toDomain() ?: seniorProbationOfficerInfo,
+      seniorProbationOfficerInfo = updateRecallRequest.seniorProbationOfficerInfo?.toDomain()
+        ?: seniorProbationOfficerInfo,
       sentencingInfo = sentencingInfo,
       secondaryDossierDueDate = calculateSecondaryDossierDueDate(updateRecallRequest, this),
       vulnerabilityDiversity = updateRecallRequest.vulnerabilityDiversity ?: vulnerabilityDiversity,
@@ -166,7 +168,7 @@ class RecallService(
   }
 
   fun calculatePartBDueDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? {
-    val partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD && recall.inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest)) {
+    val partBDueDate = if (isInCustodyStandardRecall(recall, updateRecallRequest)) {
       updateRecallRequest.recallNotificationEmailSentDateTime?.let {
         bankHolidayService.plusWorkingDays(it.toLocalDate(), 14)
       }
@@ -175,17 +177,28 @@ class RecallService(
   }
 
   fun calculateSecondaryDossierDueDate(updateRecallRequest: UpdateRecallRequest, recall: Recall): LocalDate? {
-    val secondaryDossierDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD && recall.inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest)) {
+    val secondaryDossierDueDate = if (isInCustodyStandardRecall(recall, updateRecallRequest)) {
       updateRecallRequest.recallNotificationEmailSentDateTime?.toLocalDate()?.plusDays(28)
     } else null
     return secondaryDossierDueDate ?: recall.secondaryDossierDueDate
   }
 
+  private fun isInCustodyStandardRecall(
+    recall: Recall,
+    updateRecallRequest: UpdateRecallRequest
+  ) = recall.recallTypeOrNull() == RecallType.STANDARD && recall.inCustodyRecallOrBeingUpdatedToBe(updateRecallRequest)
+
   @Transactional
   fun updateCustodyStatus(currentUserId: UserId) {
     val rtcRecalls = recallRepository.findAll()
       .filter { it.status() == Status.AWAITING_RETURN_TO_CUSTODY }
-      .filter { (0L == returnToCustodyUpdateThresholdMinutes) || it.lastUpdatedDateTime.isBefore(OffsetDateTime.now(clock).minusMinutes(returnToCustodyUpdateThresholdMinutes)) }
+      .filter {
+        (0L == returnToCustodyUpdateThresholdMinutes) || it.lastUpdatedDateTime.isBefore(
+          OffsetDateTime.now(
+            clock
+          ).minusMinutes(returnToCustodyUpdateThresholdMinutes)
+        )
+      }
       .filter { prisonerOffenderSearchClient.prisonerByNomsNumber(it.nomsNumber).block()!!.isInCustody() }
 
     if (rtcRecalls.isNotEmpty()) {
@@ -202,10 +215,25 @@ class RecallService(
   }
 
   @Transactional
-  fun manuallyReturnedToCustody(recallId: RecallId, returnedToCustodyDateTime: OffsetDateTime, returnedToCustodyNotificationDateTime: OffsetDateTime, currentUserId: UserId): Recall =
-    returnedToCustody(recallRepository.getByRecallId(recallId), returnedToCustodyDateTime, returnedToCustodyNotificationDateTime, currentUserId)
+  fun manuallyReturnedToCustody(
+    recallId: RecallId,
+    returnedToCustodyDateTime: OffsetDateTime,
+    returnedToCustodyNotificationDateTime: OffsetDateTime,
+    currentUserId: UserId
+  ): Recall =
+    returnedToCustody(
+      recallRepository.getByRecallId(recallId),
+      returnedToCustodyDateTime,
+      returnedToCustodyNotificationDateTime,
+      currentUserId
+    )
 
-  private fun returnedToCustody(recall: Recall, returnedToCustodyDateTime: OffsetDateTime, returnedToCustodyNotificationDateTime: OffsetDateTime, recordedUserId: UserId): Recall =
+  private fun returnedToCustody(
+    recall: Recall,
+    returnedToCustodyDateTime: OffsetDateTime,
+    returnedToCustodyNotificationDateTime: OffsetDateTime,
+    recordedUserId: UserId
+  ): Recall =
     recallRepository.save(
       recall.copy(
         returnedToCustody = ReturnedToCustodyRecord(
@@ -215,8 +243,12 @@ class RecallService(
           OffsetDateTime.now(clock)
         ),
         dossierTargetDate = bankHolidayService.nextWorkingDate(returnedToCustodyNotificationDateTime.toLocalDate()),
-        partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) bankHolidayService.plusWorkingDays(returnedToCustodyDateTime.toLocalDate(), 14) else null,
-        secondaryDossierDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) returnedToCustodyDateTime.toLocalDate().plusDays(28) else null
+        partBDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) bankHolidayService.plusWorkingDays(
+          returnedToCustodyDateTime.toLocalDate(),
+          14
+        ) else null,
+        secondaryDossierDueDate = if (recall.recallTypeOrNull() == RecallType.STANDARD) returnedToCustodyDateTime.toLocalDate()
+          .plusDays(28) else null
       ),
       recordedUserId
     )
