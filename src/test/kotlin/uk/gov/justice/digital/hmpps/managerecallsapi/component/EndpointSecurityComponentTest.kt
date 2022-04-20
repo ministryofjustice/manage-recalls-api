@@ -142,13 +142,13 @@ class EndpointSecurityComponentTest : ComponentTestBase() {
   @Suppress("unused")
   private fun noRoleRequiredRequestBodySpecs(): Stream<WebTestClient.RequestHeadersSpec<*>>? {
     return Stream.of(
+      webTestClient.get().uri("/reference-data/courts"),
       webTestClient.get().uri("/reference-data/local-delivery-units"),
       webTestClient.get().uri("/reference-data/mappa-levels"),
+      webTestClient.get().uri("/reference-data/police-forces"),
+      webTestClient.get().uri("/reference-data/prisons"),
       webTestClient.get().uri("/reference-data/recall-reasons"),
       webTestClient.get().uri("/reference-data/stop-reasons"),
-      webTestClient.get().uri("/reference-data/courts"),
-      webTestClient.get().uri("/reference-data/prisons"),
-      webTestClient.get().uri("/reference-data/police-forces"),
     )
   }
 
