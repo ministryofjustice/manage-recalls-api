@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -27,6 +28,7 @@ class StatusController(
 
   @PostMapping("/recalls/{recallId}/returned-to-custody")
   @ResponseStatus(HttpStatus.OK)
+  @Operation(summary = "Updates information on the recall associated with the offender returning to custody")
   fun returnedToCustody(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody request: ReturnedToCustodyRequest,
@@ -39,6 +41,7 @@ class StatusController(
   @PostMapping("/recalls/{recallId}/stop")
   @Transactional
   @ResponseStatus(HttpStatus.OK)
+  @Operation(summary = "Marks the recall identified by the recallId as stopped")
   fun stopRecall(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody request: StopRecallRequest,

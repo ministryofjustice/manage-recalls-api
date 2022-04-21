@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
@@ -33,6 +34,7 @@ class UserController(
 ) {
 
   @PostMapping("/users")
+  @Operation(summary = "Creates internal user details for the current user")
   fun addUserDetails(
     @RequestBody addUserDetailsRequest: AddUserDetailsRequest,
     @RequestHeader("Authorization") bearerToken: String
@@ -47,6 +49,7 @@ class UserController(
     )
 
   @GetMapping("/users/current")
+  @Operation(summary = "Returns the internal user details for the current user")
   fun getCurrentUserDetails(
     @RequestHeader("Authorization") bearerToken: String
   ) = userDetailsService.get(tokenExtractor.getTokenFromHeader(bearerToken).userUuid()).toResponse()

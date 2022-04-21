@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -17,6 +18,7 @@ class StatisticsController(
 ) {
 
   @GetMapping("/statistics/summary")
+  @Operation(summary = "Returns a summary of statistics for the recall service")
   fun summary(): StatisticsSummary =
     statisticsService.getSummary()
 }

@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.recover
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -49,6 +50,7 @@ class PartBRecordController(
     )
   )
   @PostMapping("/recalls/{recallId}/partb-records")
+  @Operation(summary = "Creates a Part B record for the recall identified by the recallId")
   @ResponseStatus(HttpStatus.CREATED)
   fun createPartBRecord(
     @PathVariable("recallId") recallId: RecallId,

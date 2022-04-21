@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.prepost.PreAuthorize
@@ -20,6 +21,7 @@ class ReportsController(
 ) {
 
   @GetMapping("/reports/weekly-recalls-new")
+  @Operation(summary = "WIP: Returns a CSV of new weekly recalls information")
   fun weeklyRecallsNew(): GetReportResponse {
     val now = OffsetDateTime.now(clock)
     return reportsService.getWeeklyRecallsNew(now.minusDays(7))

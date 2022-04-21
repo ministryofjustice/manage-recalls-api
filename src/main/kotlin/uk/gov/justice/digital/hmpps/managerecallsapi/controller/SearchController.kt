@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -31,6 +32,7 @@ class SearchController(@Autowired private val prisonerOffenderSearchClient: Pris
     ]
   )
   @GetMapping("/prisoner/{nomsNumber}")
+  @Operation(summary = "Finds an offender by NOMS number from the prisoner offender search client")
   fun prisonerByNomsNumber(@PathVariable("nomsNumber") nomsNumber: NomsNumber): Mono<Api.Prisoner> =
     prisonerOffenderSearchClient.prisonerByNomsNumber(nomsNumber)
       .map { it.toApiPrisoner() }

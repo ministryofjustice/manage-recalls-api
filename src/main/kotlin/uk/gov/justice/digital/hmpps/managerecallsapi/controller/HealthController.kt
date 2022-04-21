@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
-class HealthController() {
+class HealthController {
   @GetMapping("/health")
   @ResponseStatus(HttpStatus.OK)
   fun getHealth(): Map<String, String> =
