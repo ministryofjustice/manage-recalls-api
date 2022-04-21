@@ -78,7 +78,7 @@ class LastKnownAddressController(
 
   @Throws(LastKnownAddressNotFoundException::class)
   @DeleteMapping("recalls/{recallId}/last-known-addresses/{lastKnownAddressId}")
-  @Operation(summary = "Deletes the last known address for the recall identified by the recallId")
+  @Operation(summary = "Deletes the lastKnownAddressId last known address for the recall identified by the recallId")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   fun deleteAddress(
     @PathVariable("recallId") recallId: RecallId,
