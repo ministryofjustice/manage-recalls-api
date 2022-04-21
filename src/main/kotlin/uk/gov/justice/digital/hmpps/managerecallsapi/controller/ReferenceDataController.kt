@@ -48,7 +48,7 @@ class ReferenceDataController(
   fun prisons(): List<Api.Prison> = prisonRegisterClient.getAllPrisons().block()!!
 
   @GetMapping("/police-forces")
-  @Operation(summary = "Returns the list of courts sourced from the Police UK API")
+  @Operation(summary = "Returns the list of police forces sourced from the Police UK API")
   fun policeForces(): List<Api.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!
 }
 
