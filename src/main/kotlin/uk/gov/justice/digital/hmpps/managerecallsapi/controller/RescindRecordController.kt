@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.onFailure
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -31,6 +32,7 @@ class RescindRecordController(
 ) {
 
   @PostMapping("/recalls/{recallId}/rescind-records")
+  @Operation(summary = "Creates a new rescind record for the recall identified by the recallId")
   @ResponseStatus(HttpStatus.CREATED)
   fun createRescindRecord(
     @PathVariable("recallId") recallId: RecallId,
@@ -46,6 +48,7 @@ class RescindRecordController(
     }
 
   @PatchMapping("/recalls/{recallId}/rescind-records/{rescindRecordId}")
+  @Operation(summary = "Adds decision information to the open rescind record for the recall identified by the recallId")
   fun decideRescindRecord(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("rescindRecordId") rescindRecordId: RescindRecordId,

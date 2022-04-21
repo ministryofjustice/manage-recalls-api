@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.security.access.prepost.PreAuthorize
@@ -21,6 +22,7 @@ class AuditController(
   @Autowired private val recallAuditService: RecallAuditService,
 ) {
 
+  @Operation(summary = "Returns a list of historic values for the given fieldPath of the recall associated with the given recallId")
   @GetMapping("/audit/{recallId}/{fieldPath}")
   fun auditForField(
     @PathVariable("recallId") recallId: RecallId,
@@ -28,6 +30,7 @@ class AuditController(
   ): List<FieldAuditEntry> =
     recallAuditService.getAuditForField(recallId, fieldPath)
 
+  @Operation(summary = "Returns a summary for each value of the recall associated with the given recallId")
   @GetMapping("/audit/{recallId}")
   fun auditSummaryForRecall(
     @PathVariable("recallId") recallId: RecallId

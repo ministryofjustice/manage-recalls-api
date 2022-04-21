@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -30,6 +31,7 @@ class PhaseController(
 ) {
 
   @PostMapping("/recalls/{recallId}/start-phase")
+  @Operation(summary = "Creates a Phase record for the supplied phase of the recall identified by the recallId")
   @ResponseStatus(HttpStatus.CREATED)
   fun startPhase(
     @PathVariable("recallId") recallId: RecallId,
@@ -46,6 +48,7 @@ class PhaseController(
 
   @PatchMapping("/recalls/{recallId}/end-phase")
   @ResponseStatus(HttpStatus.OK)
+  @Operation(summary = "Adds end information to the Phase record for the supplied phase of the recall identified by the recallId")
   @Transactional
   fun endPhase(
     @PathVariable("recallId") recallId: RecallId,

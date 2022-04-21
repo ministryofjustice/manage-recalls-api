@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -44,6 +45,7 @@ class LastKnownAddressController(
       content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
     )
   )
+  @Operation(summary = "Creates a new last known address for the recall identified by the recallId")
   @PostMapping(
     "/recalls/{recallId}/last-known-addresses"
   )
@@ -76,6 +78,7 @@ class LastKnownAddressController(
 
   @Throws(LastKnownAddressNotFoundException::class)
   @DeleteMapping("recalls/{recallId}/last-known-addresses/{lastKnownAddressId}")
+  @Operation(summary = "Deletes the lastKnownAddressId last known address for the recall identified by the recallId")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   fun deleteAddress(
     @PathVariable("recallId") recallId: RecallId,

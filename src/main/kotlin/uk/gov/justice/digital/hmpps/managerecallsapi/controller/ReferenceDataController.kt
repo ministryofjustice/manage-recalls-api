@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,28 +20,35 @@ class ReferenceDataController(
 ) {
 
   @GetMapping("/local-delivery-units")
+  @Operation(summary = "Returns the list of local delivery units")
   fun localDeliveryUnits(): List<LocalDeliveryUnitResponse> = LocalDeliveryUnit.values()
     .map { LocalDeliveryUnitResponse(it.name, it.label, it.isActiveOn(LocalDate.now())) }.toList()
 
   @GetMapping("/mappa-levels")
+  @Operation(summary = "Returns the list of mappa levels")
   fun mappaLevels(): List<MappaLevelResponse> = MappaLevel.values()
     .map { MappaLevelResponse(it.name, it.label) }.toList()
 
   @GetMapping("/recall-reasons")
+  @Operation(summary = "Returns the list of recall reasons")
   fun reasonsForRecalls(): List<RecallReasonResponse> = ReasonForRecall.values()
     .map { ldu -> RecallReasonResponse(ldu.name, ldu.label) }.toList()
 
   @GetMapping("/stop-reasons")
+  @Operation(summary = "Returns the list of stop reasons")
   fun stopReasons(): List<StopReasonResponse> = StopReason.values()
     .map { sr -> StopReasonResponse(sr.name, sr.label, sr.validForStopCall) }.toList()
 
   @GetMapping("/courts")
+  @Operation(summary = "Returns the list of courts sourced from the Court Register")
   fun courts(): List<CourtRegisterClient.Court> = courtRegisterClient.getAllCourts().block()!!
 
   @GetMapping("/prisons")
+  @Operation(summary = "Returns the list of courts sourced from the Prison Register")
   fun prisons(): List<Api.Prison> = prisonRegisterClient.getAllPrisons().block()!!
 
   @GetMapping("/police-forces")
+  @Operation(summary = "Returns the list of police forces sourced from the Police UK API")
   fun policeForces(): List<Api.PoliceForce> = policeUkApiClient.getAllPoliceForces().block()!!
 }
 

@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.onFailure
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -71,6 +72,7 @@ class DocumentController(
   @Value("\${manage-recalls-api.base-uri}") private val baseUri: String
 ) {
 
+  @Operation(summary = "Returns a metadata and content associated with specific documentId and recallId")
   @GetMapping("/recalls/{recallId}/documents/{documentId}")
   fun getRecallDocument(
     @PathVariable("recallId") recallId: RecallId,
@@ -90,6 +92,7 @@ class DocumentController(
     )
   }
 
+  @Operation(summary = "Returns list of document metadata for the specific recallid and category")
   @GetMapping("/recalls/{recallId}/documents")
   fun getRecallDocumentsByCategory(
     @PathVariable("recallId") recallId: RecallId,
@@ -114,6 +117,7 @@ class DocumentController(
       content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
     )
   )
+  @Operation(summary = "Uploads a document and associates it with the recall identified by the recallId")
   @PostMapping("/recalls/{recallId}/documents/uploaded")
   fun uploadDocument(
     @PathVariable("recallId") recallId: RecallId,
@@ -138,6 +142,7 @@ class DocumentController(
       )
     ]
   )
+  @Operation(summary = "Generates and stores a document of Category in the request and associates it with the recall identified by the recallId")
   @PostMapping("/recalls/{recallId}/documents/generated")
   fun generateDocument(
     @PathVariable("recallId") recallId: RecallId,
@@ -190,6 +195,7 @@ class DocumentController(
   }
 
   @PatchMapping("/recalls/{recallId}/documents/{documentId}")
+  @Operation(summary = "Updates the category of the specified documentId. Only valid for UNCATEGORISED documents.")
   fun updateDocumentCategory(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("documentId") documentId: DocumentId,
@@ -206,6 +212,7 @@ class DocumentController(
   }
 
   @DeleteMapping("/recalls/{recallId}/documents/{documentId}")
+  @Operation(summary = "Deletes the document. Only valid for uploaded documents on recalls in BEING_BOOKED_ON state.")
   @ResponseStatus(value = NO_CONTENT)
   fun deleteDocument(
     @PathVariable("recallId") recallId: RecallId,

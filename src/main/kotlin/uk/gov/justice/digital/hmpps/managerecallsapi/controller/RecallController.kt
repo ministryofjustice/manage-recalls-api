@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -82,6 +83,7 @@ class RecallController(
 
   @PostMapping("/recalls")
   @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Creates a new recall")
   fun bookRecall(
     @RequestBody bookRecallRequest: BookRecallRequest,
     @RequestHeader("Authorization") bearerToken: String
@@ -91,6 +93,7 @@ class RecallController(
     }
 
   @GetMapping("/recalls")
+  @Operation(summary = "Returns all recalls appropriate to the current user")
   fun findAll(@RequestHeader("Authorization") bearerToken: String): List<RecallResponseLite> {
     // Fetching all users to prevent repeated requests to database
     val users = userDetailsService.getAll()
@@ -104,14 +107,17 @@ class RecallController(
   }
 
   @PostMapping("/recalls/search")
+  @Operation(summary = "Returns all recalls matching the search parameters")
   fun recallSearch(@RequestBody searchRequest: RecallSearchRequest): List<RecallResponse> =
     recallRepository.search(searchRequest).map { it.toResponse() }
 
   @GetMapping("/recalls/{recallId}")
+  @Operation(summary = "Returns the recall identified by the recallId")
   fun getRecall(@PathVariable("recallId") recallId: RecallId): RecallResponse =
     recallRepository.getByRecallId(recallId).toResponse()
 
   @PatchMapping("/recalls/{recallId}")
+  @Operation(summary = "Updates the recall identified by the recallId")
   @ResponseStatus(HttpStatus.OK)
   fun updateRecall(
     @PathVariable("recallId") recallId: RecallId,
@@ -133,6 +139,7 @@ class RecallController(
   }
 
   @PatchMapping("/recalls/{recallId}/recommended-recall-type")
+  @Operation(summary = "Updates the recommended recall type for the recall identified by the recallId")
   @ResponseStatus(HttpStatus.OK)
   fun updateRecommendedRecallType(
     @PathVariable("recallId") recallId: RecallId,
@@ -144,6 +151,7 @@ class RecallController(
     }
 
   @PatchMapping("/recalls/{recallId}/confirmed-recall-type")
+  @Operation(summary = "Updates the confirmed recall type for the recall identified by the recallId")
   @ResponseStatus(HttpStatus.OK)
   fun confirmedRecallType(
     @PathVariable("recallId") recallId: RecallId,
@@ -155,6 +163,7 @@ class RecallController(
     }
 
   @PostMapping("/recalls/{recallId}/assignee/{assignee}")
+  @Operation(summary = "Sets the current user as the assignee for the recall identified by the recallId")
   fun assignRecall(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("assignee") assignee: UserId,
@@ -165,6 +174,7 @@ class RecallController(
     }
 
   @DeleteMapping("/recalls/{recallId}/assignee/{assignee}")
+  @Operation(summary = "Removes the assignee for the recall identified by the recallId")
   fun unassignRecall(
     @PathVariable("recallId") recallId: RecallId,
     @PathVariable("assignee") assignee: UserId,

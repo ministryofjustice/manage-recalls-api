@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -39,6 +40,7 @@ class NoteController(
   )
   @PostMapping("/recalls/{recallId}/notes")
   @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Creates a note for the recall identified by the recallId")
   fun createNote(
     @PathVariable("recallId") recallId: RecallId,
     @RequestBody request: CreateNoteRequest,

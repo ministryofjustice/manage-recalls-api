@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.managerecallsapi.controller
 
 import dev.forkhandles.result4k.map
 import dev.forkhandles.result4k.onFailure
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -49,9 +50,8 @@ class MissingDocumentsRecordController(
       content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class))]
     )
   )
-  @PostMapping(
-    "/recalls/{recallId}/missing-documents-records"
-  )
+  @PostMapping("/recalls/{recallId}/missing-documents-records")
+  @Operation(summary = "Creates a missing document record for the recall identified by the recallId")
   @ResponseStatus(HttpStatus.CREATED)
   fun createMissingDocumentsRecord(
     @PathVariable("recallId") recallId: RecallId,
