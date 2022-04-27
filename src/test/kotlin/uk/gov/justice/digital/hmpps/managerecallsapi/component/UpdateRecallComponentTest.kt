@@ -381,6 +381,61 @@ class UpdateRecallComponentTest : ComponentTestBase() {
   }
 
   @Test
+  fun `update a recall with Other PreConsMainName and then FIRST_LAST resets the other name to empty string`() {
+    val response = authenticatedClient.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        previousConvictionMainName = "Some Other Name",
+        previousConvictionMainNameCategory = NameFormatCategory.OTHER
+      )
+    )
+
+    assertThat(
+      response,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          createdByUserId,
+          now,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
+          Status.BEING_BOOKED_ON,
+          previousConvictionMainName = FullName("Some Other Name"),
+          previousConvictionMainNameCategory = NameFormatCategory.OTHER
+        )
+      )
+    )
+
+    val secondResponse = authenticatedClient.updateRecall(
+      recallId,
+      UpdateRecallRequest(
+        previousConvictionMainName = "",
+        previousConvictionMainNameCategory = NameFormatCategory.FIRST_LAST
+      )
+    )
+
+    assertThat(
+      secondResponse,
+      equalTo(
+        RecallResponse(
+          recallId,
+          nomsNumber,
+          createdByUserId,
+          now,
+          fixedClockTime, FirstName("Barrie"), null, LastName("Badger"),
+          CroNumber("ABC/1234A"),
+          LocalDate.of(1999, 12, 1),
+          Status.BEING_BOOKED_ON,
+          previousConvictionMainName = null,
+          previousConvictionMainNameCategory = NameFormatCategory.FIRST_LAST
+        )
+      )
+    )
+  }
+
+  @Test
   fun `complete assessment of an in custody recall updates assessedByUserId and calculates dossierTargetDate as after weekend and bank holidays`() {
     val assessedByUserId = ::UserId.random()
     setupUserDetailsFor(assessedByUserId)
