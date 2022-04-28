@@ -215,7 +215,7 @@ class GetRecallNotificationComponentTest : ComponentTestBase() {
         localDeliveryUnit = LocalDeliveryUnit.PS_BARNET,
         localPoliceForceId = PoliceForceId("greater-manchester"),
         mappaLevel = MappaLevel.LEVEL_3,
-        previousConvictionMainName = FullName("Bryan Badger"),
+        previousConvictionMainName = "Bryan Badger",
         previousConvictionMainNameCategory = NameFormatCategory.OTHER,
         probationOfficerEmail = Email("officer@myprobation.com"),
         probationOfficerName = FullName("Mr Probation Officer"),

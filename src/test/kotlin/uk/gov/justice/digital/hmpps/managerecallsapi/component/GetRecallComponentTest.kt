@@ -189,7 +189,7 @@ class GetRecallComponentTest : ComponentTestBase() {
       .jsonPath("$.missingDocuments.required").isNotEmpty
       .jsonPath("$.missingDocuments.desired").isNotEmpty
       .jsonPath("$.partBDueDate").isEqualTo(fullyPopulatedRecall.partBDueDate!!.toString())
-      .jsonPath("$.previousConvictionMainName").isEqualTo(fullyPopulatedRecall.previousConvictionMainName!!.value)
+      .jsonPath("$.previousConvictionMainName").isEqualTo(fullyPopulatedRecall.previousConvictionMainName!!)
       .jsonPath("$.previousConvictionMainNameCategory").isEqualTo(fullyPopulatedRecall.previousConvictionMainNameCategory!!.toString())
       .jsonPath("$.probationOfficerEmail").isEqualTo(fullyPopulatedRecall.probationInfo!!.probationOfficerEmail.value)
       .jsonPath("$.probationOfficerName").isEqualTo(fullyPopulatedRecall.probationInfo!!.probationOfficerName.value)

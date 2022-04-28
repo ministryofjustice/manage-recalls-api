@@ -145,8 +145,7 @@ data class Recall(
   val mappaLevel: MappaLevel? = null,
   @Column(name = "part_b_due_date")
   val partBDueDate: LocalDate? = null,
-  @Convert(converter = FullNameJpaConverter::class)
-  val previousConvictionMainName: FullName? = null,
+  val previousConvictionMainName: String? = null,
   @Enumerated(STRING)
   val previousConvictionMainNameCategory: NameFormatCategory? = null,
   @Embedded
@@ -223,7 +222,7 @@ data class Recall(
     localPoliceForceId: PoliceForceId? = null,
     mappaLevel: MappaLevel? = null,
     partBDueDate: LocalDate? = null,
-    previousConvictionMainName: FullName? = null,
+    previousConvictionMainName: String? = null,
     previousConvictionMainNameCategory: NameFormatCategory? = null,
     probationInfo: ProbationInfo? = null,
     reasonsForRecallOtherDetail: String? = null,
@@ -335,7 +334,7 @@ data class Recall(
     return when (previousConvictionMainNameCategory) {
       FIRST_LAST -> prisonerName().firstAndLastName()
       FIRST_MIDDLE_LAST -> prisonerName().firstMiddleLast()
-      OTHER -> previousConvictionMainName!!
+      OTHER -> FullName(previousConvictionMainName!!)
       else -> throw IllegalStateException("Unexpected or unset previousConvictionMainNameCategory $previousConvictionMainNameCategory")
     }
   }

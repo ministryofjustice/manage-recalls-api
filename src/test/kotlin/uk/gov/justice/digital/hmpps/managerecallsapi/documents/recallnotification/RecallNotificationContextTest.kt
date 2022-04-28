@@ -80,7 +80,7 @@ class RecallNotificationContextTest {
     lastReleaseDate = lastReleaseDate,
     localPoliceForceId = PoliceForceId("metropolitan"),
     mappaLevel = LEVEL_3,
-    previousConvictionMainName = FullName("Bryan Badger"),
+    previousConvictionMainName = "Bryan Badger",
     previousConvictionMainNameCategory = NameFormatCategory.OTHER,
     probationInfo = ProbationInfo(
       probationOfficerName,

@@ -250,7 +250,7 @@ class RecallNotificationContextFactoryTest {
       licenceNameCategory = NameFormatCategory.FIRST_LAST,
       localPoliceForceId = localPoliceForceId,
       mappaLevel = MappaLevel.LEVEL_2,
-      previousConvictionMainName = prevConsMainName,
+      previousConvictionMainName = prevConsMainName?.value,
       previousConvictionMainNameCategory = prevConsMainNameCategory,
       probationInfo = probationInfo,
       sentencingInfo = sentencingInfo,
