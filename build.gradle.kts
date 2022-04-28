@@ -1,8 +1,8 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.3"
-  kotlin("plugin.spring") version "1.6.20"
-  kotlin("plugin.jpa") version "1.5.20"
-  kotlin("plugin.serialization") version "1.4.31"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.5"
+  kotlin("plugin.spring") version "1.6.21"
+  kotlin("plugin.jpa") version "1.6.21"
+  kotlin("plugin.serialization") version "1.6.21"
   id("org.owasp.dependencycheck") version "6.5.0.1"
 }
 
