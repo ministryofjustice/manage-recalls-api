@@ -88,13 +88,15 @@ dependencies {
 }
 
 kotlin {
-  kotlinDaemonJvmArgs = listOf("-Xmx2g", "-Xms=1g", "-XX:ThreadStackSize=4096", "-XX:CompilerThreadStackSize=4096")
+  // Re. PUD-1705 compilation failure: So that JVM params are consistent for local and CircleCI builds this and ./gradle.properties org.gradle.jvmargs setting should match precisely
+  kotlinDaemonJvmArgs = listOf("-Xmx2g", "-XX:ThreadStackSize=4096", "-XX:CompilerThreadStackSize=4096", "-XX:MaxMetaspaceSize=512m", "-XX:+HeapDumpOnOutOfMemoryError", "-Dfile.encoding=UTF-8")
 }
 
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
       jvmTarget = JavaVersion.VERSION_17.toString()
+      verbose = true
     }
   }
 
