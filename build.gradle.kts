@@ -87,6 +87,10 @@ dependencies {
   testImplementation("io.swagger.parser.v3:swagger-parser:2.0.31")
 }
 
+kotlin {
+  kotlinDaemonJvmArgs = listOf("-Xmx2g", "-Xms=1g", "-XX:ThreadStackSize=4096", "-XX:CompilerThreadStackSize=4096")
+}
+
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
