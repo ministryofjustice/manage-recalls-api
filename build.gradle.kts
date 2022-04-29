@@ -1,8 +1,8 @@
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.3"
-  kotlin("plugin.spring") version "1.6.20"
-  kotlin("plugin.jpa") version "1.5.20"
-  kotlin("plugin.serialization") version "1.4.31"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "4.1.5"
+  kotlin("plugin.spring") version "1.6.21"
+  kotlin("plugin.jpa") version "1.6.21"
+  kotlin("plugin.serialization") version "1.6.21"
   id("org.owasp.dependencycheck") version "6.5.0.1"
 }
 
@@ -85,6 +85,13 @@ dependencies {
   testImplementation("au.com.dius.pact.provider:junit5spring:4.3.6")
   testImplementation("org.http4k:http4k-testing-approval:4.25.5.2")
   testImplementation("io.swagger.parser.v3:swagger-parser:2.0.31")
+}
+
+kotlin {
+  // Re. PUD-1705 compilation stackoverflowError: for compileTestKotlin to pass on local and CircleCI below and ./gradle.properties org.gradle.jvmargs setting should match
+  // This setting is applied for the local build but ./gradle.properties is not; whereas ./gradle.properties is applied on CircleCI and this setting is not ... at least not successfully.
+  // And when changing these properties the change may be ignored for a local build unless you kill all running gradle daemons between changes with e.g. ./gradlew --stop
+  kotlinDaemonJvmArgs = listOf("-Xmx2g", "-XX:ThreadStackSize=4096", "-XX:CompilerThreadStackSize=4096", "-XX:MaxMetaspaceSize=512m", "-XX:+HeapDumpOnOutOfMemoryError")
 }
 
 tasks {
