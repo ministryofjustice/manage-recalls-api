@@ -88,15 +88,16 @@ dependencies {
 }
 
 kotlin {
-  // Re. PUD-1705 compilation failure: So that JVM params are consistent for local and CircleCI builds this and ./gradle.properties org.gradle.jvmargs setting should match precisely
-  kotlinDaemonJvmArgs = listOf("-Xmx2g", "-XX:ThreadStackSize=4096", "-XX:CompilerThreadStackSize=4096", "-XX:MaxMetaspaceSize=512m", "-XX:+HeapDumpOnOutOfMemoryError", "-Dfile.encoding=UTF-8")
+  // Re. PUD-1705 compilation stackoverflowError: for compileTestKotlin to pass on local and CircleCI below and ./gradle.properties org.gradle.jvmargs setting should match
+  // This setting is applied for the local build but ./gradle.properties is not; whereas ./gradle.properties is applied on CircleCI and this setting is not ... at least not successfully.
+  // And when changing these properties the change may be ignored for a local build unless you kill all running gradle daemons between changes with e.g. ./gradlew --stop
+  kotlinDaemonJvmArgs = listOf("-Xmx2g", "-XX:ThreadStackSize=4096", "-XX:CompilerThreadStackSize=4096", "-XX:MaxMetaspaceSize=512m", "-XX:+HeapDumpOnOutOfMemoryError")
 }
 
 tasks {
   withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
       jvmTarget = JavaVersion.VERSION_17.toString()
-      verbose = true
     }
   }
 
