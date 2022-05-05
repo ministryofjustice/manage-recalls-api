@@ -1,34 +1,34 @@
 version: 2.1
 
-slack-fail-post-step: &slack-fail-post-step
-  post-steps:
-    - slack/notify:
-        event: fail
-        branch_pattern: main
-        channel: << pipeline.parameters.alerts-slack-channel >>
-        custom: |
-          {
-            "text": "",
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "❌ *Failure* `${CIRCLE_PROJECT_REPONAME}` - `${CIRCLE_JOB}` (Build: #${CIRCLE_BUILD_NUM}) on `${CIRCLE_BRANCH}`"
-                }
-              },
-              {
-                "type": "actions",
-                "elements": [
-                  {
-                    "type": "button",
-                    "text": { "type": "plain_text", "text": "View Job" },
-                    "url": "${CIRCLE_BUILD_URL}"
-                  }
-                ]
-              }
-            ]
-          }
+# slack-fail-post-step: &slack-fail-post-step
+#   post-steps:
+#     - slack/notify:
+#         event: fail
+#         branch_pattern: main
+#         channel: << pipeline.parameters.alerts-slack-channel >>
+#         custom: |
+#           {
+#             "text": "",
+#             "blocks": [
+#               {
+#                 "type": "section",
+#                 "text": {
+#                   "type": "mrkdwn",
+#                   "text": "❌ *Failure* `${CIRCLE_PROJECT_REPONAME}` - `${CIRCLE_JOB}` (Build: #${CIRCLE_BUILD_NUM}) on `${CIRCLE_BRANCH}`"
+#                 }
+#               },
+#               {
+#                 "type": "actions",
+#                 "elements": [
+#                   {
+#                     "type": "button",
+#                     "text": { "type": "plain_text", "text": "View Job" },
+#                     "url": "${CIRCLE_BUILD_URL}"
+#                   }
+#                 ]
+#               }
+#             ]
+#           }
 
 orbs:
   hmpps: ministryofjustice/hmpps@3.14
@@ -258,18 +258,18 @@ workflows:
       - validate:
           context:
             - hmpps-common-vars
-          <<: *slack-fail-post-step
+          # <<: *slack-fail-post-step
 
       - document-generation-tests:
           context:
             - hmpps-common-vars
-          <<: *slack-fail-post-step
+          # <<: *slack-fail-post-step
 
       - hmpps/helm_lint:
           name: helm_lint
           context:
             - hmpps-common-vars
-          <<: *slack-fail-post-step
+          # <<: *slack-fail-post-step
 
       - hmpps/build_docker:
           name: build_docker
@@ -279,7 +279,7 @@ workflows:
           additional_docker_build_args: --build-arg BUILD_URL=${CIRCLE_BUILD_URL}
           context:
             - hmpps-common-vars
-          <<: *slack-fail-post-step
+          # <<: *slack-fail-post-step
 
       - hmpps/trivy_pipeline_scan:
           name: trivy_scan_low_medium_cves
@@ -294,7 +294,7 @@ workflows:
             - build_docker
           context:
             - hmpps-common-vars
-          <<: *slack-fail-post-step
+          # <<: *slack-fail-post-step
 
       - hmpps/publish_docker:
           name: publish_docker
@@ -309,232 +309,232 @@ workflows:
                 - main
           context:
             - hmpps-common-vars
-          <<: *slack-fail-post-step
+          # <<: *slack-fail-post-step
 
-      - hmpps/deploy_env:
-          name: deploy_dev
-          env: dev
-          filters:
-            branches:
-              only:
-                - main
-          requires:
-            - publish_docker
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - hmpps/deploy_env:
+  #         name: deploy_dev
+  #         env: dev
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #         requires:
+  #           - publish_docker
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - tag_pact_version:
-          name: tag_pact_version_dev
-          tag: deployed:dev
-          requires:
-            - deploy_dev
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - tag_pact_version:
+  #         name: tag_pact_version_dev
+  #         tag: deployed:dev
+  #         requires:
+  #           - deploy_dev
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - hmpps/sentry_release_and_deploy:
-          name: notify_sentry_dev
-          sentry_project: manage-recalls-api
-          sentry_environment: DEV
-          sentry_create_release: true
-          requires:
-            - deploy_dev
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - hmpps/sentry_release_and_deploy:
+  #         name: notify_sentry_dev
+  #         sentry_project: manage-recalls-api
+  #         sentry_environment: DEV
+  #         sentry_create_release: true
+  #         requires:
+  #           - deploy_dev
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - e2e-tests:
-          name: e2e-tests-dev
-          environment: dev
-          requires:
-            - deploy_dev
-          context:
-            - ppud-replacement-circleci-vars
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - e2e-tests:
+  #         name: e2e-tests-dev
+  #         environment: dev
+  #         requires:
+  #           - deploy_dev
+  #         context:
+  #           - ppud-replacement-circleci-vars
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - request-preprod-approval:
-          type: approval
-          requires:
-            - e2e-tests-dev
+  #     - request-preprod-approval:
+  #         type: approval
+  #         requires:
+  #           - e2e-tests-dev
 
-      - can_i_deploy:
-          name: can_i_deploy_to_preprod
-          environment: preprod
-          requires:
-            - request-preprod-approval
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - can_i_deploy:
+  #         name: can_i_deploy_to_preprod
+  #         environment: preprod
+  #         requires:
+  #           - request-preprod-approval
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - hmpps/deploy_env:
-          name: deploy_preprod
-          env: preprod
-          context:
-            - hmpps-common-vars
-            - manage-recalls-api-preprod
-          requires:
-            - can_i_deploy_to_preprod
-          <<: *slack-fail-post-step
+  #     - hmpps/deploy_env:
+  #         name: deploy_preprod
+  #         env: preprod
+  #         context:
+  #           - hmpps-common-vars
+  #           - manage-recalls-api-preprod
+  #         requires:
+  #           - can_i_deploy_to_preprod
+  #         # <<: *slack-fail-post-step
 
-      - tag_pact_version:
-          name: tag_pact_version_preprod
-          tag: deployed:preprod
-          requires:
-            - deploy_preprod
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - tag_pact_version:
+  #         name: tag_pact_version_preprod
+  #         tag: deployed:preprod
+  #         requires:
+  #           - deploy_preprod
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - hmpps/sentry_release_and_deploy:
-          name: notify_sentry_preprod
-          sentry_project: manage-recalls-api
-          sentry_environment: PRE-PROD
-          requires:
-            - deploy_preprod
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - hmpps/sentry_release_and_deploy:
+  #         name: notify_sentry_preprod
+  #         sentry_project: manage-recalls-api
+  #         sentry_environment: PRE-PROD
+  #         requires:
+  #           - deploy_preprod
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - e2e-tests:
-          name: e2e-tests-preprod
-          environment: preprod
-          requires:
-            - deploy_preprod
-          context:
-            - ppud-replacement-circleci-vars
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - e2e-tests:
+  #         name: e2e-tests-preprod
+  #         environment: preprod
+  #         requires:
+  #           - deploy_preprod
+  #         context:
+  #           - ppud-replacement-circleci-vars
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - request-prod-approval:
-          type: approval
-          requires:
-            - e2e-tests-preprod
+  #     - request-prod-approval:
+  #         type: approval
+  #         requires:
+  #           - e2e-tests-preprod
 
-      - can_i_deploy:
-          name: can_i_deploy_to_prod
-          environment: prod
-          requires:
-            - request-prod-approval
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - can_i_deploy:
+  #         name: can_i_deploy_to_prod
+  #         environment: prod
+  #         requires:
+  #           - request-prod-approval
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - hmpps/deploy_env:
-          name: deploy_prod
-          env: prod
-          context:
-            - hmpps-common-vars
-            - manage-recalls-api-prod
-          requires:
-            - can_i_deploy_to_prod
-          slack_notification: true
-          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
-          <<: *slack-fail-post-step
+  #     - hmpps/deploy_env:
+  #         name: deploy_prod
+  #         env: prod
+  #         context:
+  #           - hmpps-common-vars
+  #           - manage-recalls-api-prod
+  #         requires:
+  #           - can_i_deploy_to_prod
+  #         slack_notification: true
+  #         slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+  #         # <<: *slack-fail-post-step
 
-      - tag_pact_version:
-          name: "tag_pact_version_prod"
-          tag: "deployed:prod"
-          requires:
-            - deploy_prod
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - tag_pact_version:
+  #         name: "tag_pact_version_prod"
+  #         tag: "deployed:prod"
+  #         requires:
+  #           - deploy_prod
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-      - hmpps/sentry_release_and_deploy:
-          name: notify_sentry_prod
-          sentry_project: manage-recalls-api
-          sentry_environment: PROD
-          requires:
-            - deploy_prod
-          context:
-            - hmpps-common-vars
-          <<: *slack-fail-post-step
+  #     - hmpps/sentry_release_and_deploy:
+  #         name: notify_sentry_prod
+  #         sentry_project: manage-recalls-api
+  #         sentry_environment: PROD
+  #         requires:
+  #           - deploy_prod
+  #         context:
+  #           - hmpps-common-vars
+  #         # <<: *slack-fail-post-step
 
-  security:
-    triggers:
-      - schedule:
-          cron: "3 5 * * 1-5"
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - hmpps/trivy_latest_scan:
-          context:
-            - hmpps-common-vars
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
-      - hmpps/gradle_owasp_dependency_check:
-          cache_key: v2_1
-          context:
-            - hmpps-common-vars
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
-      - hmpps/veracode_pipeline_scan:
-          context:
-            - veracode-credentials
-            - hmpps-common-vars
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+  # security:
+  #   triggers:
+  #     - schedule:
+  #         cron: "3 5 * * 1-5"
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #   jobs:
+  #     - hmpps/trivy_latest_scan:
+  #         context:
+  #           - hmpps-common-vars
+  #         slack_channel: << pipeline.parameters.alerts-slack-channel >>
+  #     - hmpps/gradle_owasp_dependency_check:
+  #         cache_key: v2_1
+  #         context:
+  #           - hmpps-common-vars
+  #         slack_channel: << pipeline.parameters.alerts-slack-channel >>
+  #     - hmpps/veracode_pipeline_scan:
+  #         context:
+  #           - veracode-credentials
+  #           - hmpps-common-vars
+  #         slack_channel: << pipeline.parameters.alerts-slack-channel >>
 
-  security-weekly:
-    triggers:
-      - schedule:
-          cron: "1 6 * * 1"
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - hmpps/veracode_policy_scan:
-          context:
-            - veracode-credentials
-            - hmpps-common-vars
-          slack_channel: << pipeline.parameters.alerts-slack-channel >>
+  # security-weekly:
+  #   triggers:
+  #     - schedule:
+  #         cron: "1 6 * * 1"
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #   jobs:
+  #     - hmpps/veracode_policy_scan:
+  #         context:
+  #           - veracode-credentials
+  #           - hmpps-common-vars
+  #         slack_channel: << pipeline.parameters.alerts-slack-channel >>
 
-  pact_webhook:
-    when: << pipeline.parameters.only_run_pact_workflow >>
-    jobs:
-      - verify_pact_and_publish:
-          name: verify_pact_and_publish_ui_webhook
-          context: hmpps-common-vars
-          consumer_tags: << pipeline.parameters.pact_consumer_tags >>
+  # pact_webhook:
+  #   when: << pipeline.parameters.only_run_pact_workflow >>
+  #   jobs:
+  #     - verify_pact_and_publish:
+  #         name: verify_pact_and_publish_ui_webhook
+  #         context: hmpps-common-vars
+  #         consumer_tags: << pipeline.parameters.pact_consumer_tags >>
 
-  pact_pr:
-    unless: << pipeline.parameters.only_run_pact_workflow >>
-    jobs:
-      - verify_pact_and_publish:
-          name: verify_pact_and_publish_main
-          context: hmpps-common-vars
-          consumer_tags: main
-          filters:
-            branches:
-              ignore:
-                - main
+  # pact_pr:
+  #   unless: << pipeline.parameters.only_run_pact_workflow >>
+  #   jobs:
+  #     - verify_pact_and_publish:
+  #         name: verify_pact_and_publish_main
+  #         context: hmpps-common-vars
+  #         consumer_tags: main
+  #         filters:
+  #           branches:
+  #             ignore:
+  #               - main
 
-  pact_main:
-    unless: << pipeline.parameters.only_run_pact_workflow >>
-    jobs:
-      - verify_pact_and_publish:
-          name: verify_pact_and_publish_main
-          context: hmpps-common-vars
-          consumer_tags: main
-          filters:
-            branches:
-              only:
-                - main
-      - verify_pact_and_publish:
-          name: verify_pact_and_publish_preprod
-          context: hmpps-common-vars
-          consumer_tags: deployed:preprod
-          filters:
-            branches:
-              only:
-                - main
-      - verify_pact_and_publish:
-          name: verify_pact_and_publish_prod
-          context: hmpps-common-vars
-          consumer_tags: deployed:prod
-          filters:
-            branches:
-              only:
-                - main
+  # pact_main:
+  #   unless: << pipeline.parameters.only_run_pact_workflow >>
+  #   jobs:
+  #     - verify_pact_and_publish:
+  #         name: verify_pact_and_publish_main
+  #         context: hmpps-common-vars
+  #         consumer_tags: main
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #     - verify_pact_and_publish:
+  #         name: verify_pact_and_publish_preprod
+  #         context: hmpps-common-vars
+  #         consumer_tags: deployed:preprod
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #     - verify_pact_and_publish:
+  #         name: verify_pact_and_publish_prod
+  #         context: hmpps-common-vars
+  #         consumer_tags: deployed:prod
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
